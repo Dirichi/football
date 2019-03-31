@@ -1,4 +1,6 @@
-export class Field {
+import { IBoundary } from "../src/iboundary";
+
+export class Field implements IBoundary {
   public x: number;
   public y: number;
   public xlength: number;
@@ -9,5 +11,9 @@ export class Field {
     this.y = y;
     this.xlength = xlength;
     this.ylength = ylength;
+  }
+
+  public containsCircle(x: number, y: number, diameter: number): boolean {
+    return true;
   }
 }

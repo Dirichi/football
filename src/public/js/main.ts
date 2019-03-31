@@ -1,6 +1,7 @@
 import p5 from "p5";
 import { Ball } from "../../ball";
 import { BallGraphics } from "../../ball_graphics";
+import { BallPhysics } from "../../ball_physics";
 import { Box } from "../../box";
 import { Field } from "../../field";
 import { FieldGraphics } from "../../field_graphics";
@@ -61,6 +62,8 @@ const sketch = (p: p5) => {
   const hollowBoxGraphics = new HollowBoxGraphics(animationEngine);
   const ballGraphics = new BallGraphics(animationEngine);
 
+  const ballPhysics = new BallPhysics(field);
+
   p.setup = () => {
     p.createCanvas(p.windowWidth, p.windowHeight);
   };
@@ -70,6 +73,7 @@ const sketch = (p: p5) => {
     boxes.forEach((box) => hollowBoxGraphics.animate(box));
     posts.forEach((post) => postGraphics.animate(post));
     ballGraphics.animate(ball);
+    ballPhysics.update(ball);
   };
 };
 

@@ -1,4 +1,3 @@
-// import { EventQueue } from "../src/event_queue";
 export class Ball {
   public x: number;
   public y: number;
@@ -13,5 +12,4 @@ export class Ball {
     this.vy = vy;
     this.diameter = diameter;
   }
-
 }
