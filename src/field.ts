@@ -14,6 +14,15 @@ export class Field implements IBoundary {
   }
 
   public containsCircle(x: number, y: number, diameter: number): boolean {
-    return true;
+    const xLowest = this.x;
+    const xHighest = this.x + this.xlength;
+    const yLowest = this.y;
+    const yHighest = this.y + this.ylength;
+    const radius = diameter / 2;
+
+    const withinXBounds = ((x - radius) > xLowest) && ((x + radius) < xHighest);
+    const withinYBounds = ((y - radius) > yLowest) && ((y + radius) < yHighest);
+
+    return withinXBounds && withinYBounds;
   }
 }
