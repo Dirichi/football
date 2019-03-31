@@ -10,7 +10,9 @@ export class PostGraphics {
   }
 
   public animate(post: Post) {
+    this.engine.push();
     this.engine.fill(255, 255, 255);
     this.engine.rectangle(post.x, post.y, post.xlength, post.ylength);
+    this.engine.pop();
   }
 }

@@ -7,6 +7,14 @@ export class P5AnimationEngine {
     this.animator = animator;
   }
 
+  public push() {
+    this.animator.push();
+  }
+
+  public pop() {
+    this.animator.pop();
+  }
+
   public line(x1: number, y1: number, x2: number, y2: number) {
     this.animator.line(x1, y1, x2, y2);
   }

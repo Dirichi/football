@@ -1,4 +1,6 @@
 import p5 from "p5";
+import { Ball } from "../../ball";
+import { BallGraphics } from "../../ball_graphics";
 import { Box } from "../../box";
 import { Field } from "../../field";
 import { FieldGraphics } from "../../field_graphics";
@@ -6,6 +8,7 @@ import { HollowBoxGraphics } from "../../hollow_box_graphics";
 import { P5AnimationEngine } from "../../p5_animation_engine";
 import { Post } from "../../post";
 import { PostGraphics } from "../../post_graphics";
+import { constants } from "../../constants";
 
 const symmetricalBoxesCoordinates =
   (field: Field, xlengthRatio: number, ylengthRatio: number) => {
@@ -17,32 +20,34 @@ const symmetricalBoxesCoordinates =
     const xStartB = (field.x + field.xlength) - xlength;
 
     return [
-            [xStartA, yStart, xlength, ylength],
-            [xStartB, yStart, xlength, ylength]
-          ];
-        }
-
-const BOX6_XLENGTH_TO_FIELD_XLENGTH = 0.06;
-const BOX6_YLENGTH_TO_FIELD_YLENGTH = 0.28;
-const BOX18_XLENGTH_TO_FIELD_XLENGTH = 0.17;
-const BOX18_YLENGTH_TO_FIELD_YLENGTH = 0.58;
-const POST_XLENGTH_TO_FIELD_XLENGTH = 0.01;
-const POST_YLENGTH_TO_FIELD_YLENGTH = 0.15;
+      [xStartA, yStart, xlength, ylength],
+      [xStartB, yStart, xlength, ylength],
+    ];
+  }
 
 const sketch = (p: p5) => {
   const field = new Field(0, 0, p.windowWidth, p.windowHeight);
-  const [postACoordinates, postBCoordinates] = symmetricalBoxesCoordinates(
-    field, POST_XLENGTH_TO_FIELD_XLENGTH, POST_YLENGTH_TO_FIELD_YLENGTH);
+  const ballX = field.x + (field.xlength / 2);
+  const ballY = field.y + (field.ylength / 2);
+  const ballDiameter = field.ylength * constants.BALL_DIAMETER_TO_FIELD_YLENGTH;
+
+  const ball = new Ball(ballX, ballY, constants.BALL_INITIAL_VX,
+    constants.BALL_INITIAL_VY, ballDiameter);
+  const [postACoordinates, postBCoordinates] =
+    symmetricalBoxesCoordinates(field, constants.POST_XLENGTH_TO_FIELD_XLENGTH,
+      constants.POST_YLENGTH_TO_FIELD_YLENGTH);
 
   const postA = new Post(...postACoordinates);
   const postB = new Post(...postBCoordinates);
   const posts = [postA, postB];
 
-  const [box18ACoordinates, box18BCoordinates] = symmetricalBoxesCoordinates(
-    field, BOX18_XLENGTH_TO_FIELD_XLENGTH, BOX18_YLENGTH_TO_FIELD_YLENGTH);
+  const [box18ACoordinates, box18BCoordinates] =
+    symmetricalBoxesCoordinates(field, constants.BOX18_XLENGTH_TO_FIELD_XLENGTH,
+      constants.BOX18_YLENGTH_TO_FIELD_YLENGTH);
 
-  const [box6ACoordinates, box6BCoordinates] = symmetricalBoxesCoordinates(
-    field, BOX6_XLENGTH_TO_FIELD_XLENGTH, BOX6_YLENGTH_TO_FIELD_YLENGTH);
+  const [box6ACoordinates, box6BCoordinates] =
+    symmetricalBoxesCoordinates(field, constants.BOX6_XLENGTH_TO_FIELD_XLENGTH,
+      constants.BOX6_YLENGTH_TO_FIELD_YLENGTH);
 
   const box6A = new Box(...box6ACoordinates);
   const box6B = new Box(...box6BCoordinates);
@@ -54,6 +59,7 @@ const sketch = (p: p5) => {
   const fieldGraphics = new FieldGraphics(animationEngine);
   const postGraphics = new PostGraphics(animationEngine);
   const hollowBoxGraphics = new HollowBoxGraphics(animationEngine);
+  const ballGraphics = new BallGraphics(animationEngine);
 
   p.setup = () => {
     p.createCanvas(p.windowWidth, p.windowHeight);
@@ -63,6 +69,7 @@ const sketch = (p: p5) => {
     fieldGraphics.animate(field);
     boxes.forEach((box) => hollowBoxGraphics.animate(box));
     posts.forEach((post) => postGraphics.animate(post));
+    ballGraphics.animate(ball);
   };
 };
 

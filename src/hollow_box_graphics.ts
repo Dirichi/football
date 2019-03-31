@@ -11,8 +11,10 @@ export class HollowBoxGraphics {
   }
 
   public animate(box: Box) {
+    this.engine.push();
     this.engine.stroke(255, 255, 255);
     this.engine.strokeWeight(4);
     this.engine.rectangle(box.x, box.y, box.xlength, box.ylength);
+    this.engine.pop();
   }
 }
