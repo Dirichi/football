@@ -1,4 +1,4 @@
-export class Box6 {
+export class Box {
   public x: number;
   public y: number;
   public xlength: number;

@@ -1,16 +1,14 @@
 import p5 from "p5";
-import { Box6 } from "../../box_6";
-import { Box18 } from "../../box_18";
-import { Box6Graphics } from "../../box_6_graphics";
-import { Box18Graphics } from "../../box_18_graphics";
+import { Box } from "../../box";
 import { Field } from "../../field";
 import { FieldGraphics } from "../../field_graphics";
+import { HollowBoxGraphics } from "../../hollow_box_graphics";
 import { P5AnimationEngine } from "../../p5_animation_engine";
-import { PostGraphics } from "../../post_graphics";
 import { Post } from "../../post";
+import { PostGraphics } from "../../post_graphics";
 
-const symmetricalBoxesCoordinates = (
-  field: Field, xlengthRatio: number, ylengthRatio: number) => {
+const symmetricalBoxesCoordinates =
+  (field: Field, xlengthRatio: number, ylengthRatio: number) => {
     const xlength = xlengthRatio * field.xlength;
     const ylength = ylengthRatio * field.ylength;
     const yOffset = (1 - ylengthRatio) / 2;
@@ -43,22 +41,19 @@ const sketch = (p: p5) => {
   const [box18ACoordinates, box18BCoordinates] = symmetricalBoxesCoordinates(
     field, BOX18_XLENGTH_TO_FIELD_XLENGTH, BOX18_YLENGTH_TO_FIELD_YLENGTH);
 
-  const box18A = new Box18(...box18ACoordinates);
-  const box18B = new Box18(...box18BCoordinates);
-  const box18s = [box18A, box18B];
-
   const [box6ACoordinates, box6BCoordinates] = symmetricalBoxesCoordinates(
     field, BOX6_XLENGTH_TO_FIELD_XLENGTH, BOX6_YLENGTH_TO_FIELD_YLENGTH);
 
-  const box6A = new Box6(...box6ACoordinates);
-  const box6B = new Box6(...box6BCoordinates);
-  const box6s = [box6A, box6B];
+  const box6A = new Box(...box6ACoordinates);
+  const box6B = new Box(...box6BCoordinates);
+  const box18A = new Box(...box18ACoordinates);
+  const box18B = new Box(...box18BCoordinates);
+  const boxes = [box18A, box18B, box6A, box6B];
 
   const animationEngine = new P5AnimationEngine(p);
   const fieldGraphics = new FieldGraphics(animationEngine);
   const postGraphics = new PostGraphics(animationEngine);
-  const box6Graphics = new Box6Graphics(animationEngine);
-  const box18Graphics = new Box18Graphics(animationEngine);
+  const hollowBoxGraphics = new HollowBoxGraphics(animationEngine);
 
   p.setup = () => {
     p.createCanvas(p.windowWidth, p.windowHeight);
@@ -66,8 +61,7 @@ const sketch = (p: p5) => {
 
   p.draw = () => {
     fieldGraphics.animate(field);
-    box18s.forEach((box18) => box18Graphics.animate(box18));
-    box6s.forEach((box6) => box6Graphics.animate(box6));
+    boxes.forEach((box) => hollowBoxGraphics.animate(box));
     posts.forEach((post) => postGraphics.animate(post));
   };
 };
