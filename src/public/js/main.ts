@@ -3,6 +3,7 @@ import { Ball } from "../../ball";
 import { BallGraphics } from "../../ball_graphics";
 import { BallPhysics } from "../../ball_physics";
 import { Box } from "../../box";
+import { EventQueue } from '../../event_queue';
 import { Field } from "../../field";
 import { FieldGraphics } from "../../field_graphics";
 import { HollowBoxGraphics } from "../../hollow_box_graphics";
@@ -13,6 +14,7 @@ import { constants } from "../../constants";
 
 import io from 'socket.io-client';
 const socket = io();
+const queue = new EventQueue();
 
 const symmetricalBoxesCoordinates =
   (field: Field, xlengthRatio: number, ylengthRatio: number) => {
@@ -63,7 +65,7 @@ const sketch = (p: p5) => {
   const fieldGraphics = new FieldGraphics(animationEngine);
   const postGraphics = new PostGraphics(animationEngine);
   const hollowBoxGraphics = new HollowBoxGraphics(animationEngine);
-  const ballGraphics = new BallGraphics(animationEngine);
+  const ballGraphics = new BallGraphics(animationEngine, queue);
 
   const ballPhysics = new BallPhysics(field);
 
@@ -75,9 +77,13 @@ const sketch = (p: p5) => {
     fieldGraphics.animate(field);
     boxes.forEach((box) => hollowBoxGraphics.animate(box));
     posts.forEach((post) => postGraphics.animate(post));
-    ballGraphics.animate(ball);
-    ballPhysics.update(ball);
+    ballGraphics.animate();
+    // ballPhysics.update(ball);
   };
 };
+
+socket.on('ball.data', (data) => {
+  queue.trigger('ball.data', data);
+});
 
 const psketch = new p5(sketch);

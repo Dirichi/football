@@ -26,6 +26,17 @@ httpServer.listen(port, () => {
 });
 
 io.on("connection", (socket) => {
+  let x = 0;
   // tslint:disable-next-line:no-console
   console.log("a user connected");
+  setInterval(() => {
+    x += 1;
+    socket.emit("ball.data", {
+      diameter: 30,
+      vx: 0,
+      vy: 0,
+      x,
+      y: 50,
+    });
+  }, 200);
 });
