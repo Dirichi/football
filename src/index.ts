@@ -1,8 +1,12 @@
 import express from "express";
+import * as http from "http";
 import path from "path";
+import socketIo from "socket.io";
 
 const app = express();
-const port = 8080; // default port to listen
+const httpServer = http.createServer(app);
+const io = socketIo(httpServer);
+const port = 3000;
 
 // Configure Express to use EJS
 app.set( "views", path.join( __dirname, "views" ) );
@@ -16,7 +20,12 @@ app.get("/", (req, res) => {
 });
 
 // start the Express server
-app.listen(port, () => {
+httpServer.listen(port, () => {
   // tslint:disable-next-line:no-console
   console.log(`server started at http://localhost:${port}`);
+});
+
+io.on("connection", (socket) => {
+  // tslint:disable-next-line:no-console
+  console.log("a user connected");
 });

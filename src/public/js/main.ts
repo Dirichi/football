@@ -11,6 +11,9 @@ import { Post } from "../../post";
 import { PostGraphics } from "../../post_graphics";
 import { constants } from "../../constants";
 
+import io from 'socket.io-client';
+const socket = io();
+
 const symmetricalBoxesCoordinates =
   (field: Field, xlengthRatio: number, ylengthRatio: number) => {
     const xlength = xlengthRatio * field.xlength;

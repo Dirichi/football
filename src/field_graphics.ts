@@ -12,7 +12,7 @@ export class FieldGraphics {
   public animate(field: Field) {
     // Don't push / pop on the field so that it can perpetually be drawn
     // over hollow elements.
-    this.engine.fill(0, 255, 0);
+    this.engine.fill(0, 0, 0);
     this.engine.rectangle(field.x, field.y, field.xlength, field.ylength);
     this.animateCenterCircle(field);
     this.animateHalfWayLine(field);

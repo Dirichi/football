@@ -13,6 +13,7 @@ export class Field implements IBoundary {
     this.ylength = ylength;
   }
 
+  // TODO: Perhaps this code doesn't belong here.
   public containsCircle(x: number, y: number, diameter: number): boolean {
     const xLowest = this.x;
     const xHighest = this.x + this.xlength;
