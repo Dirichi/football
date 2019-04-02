@@ -30,5 +30,16 @@ describe('BallGraphics', () => {
         graphics.animate();
         expect(circleStub).to.have.been.calledWith(1, 2, 5);
       });
+
+      it('does not display if no data has been received from the queue',
+        () => {
+          const engine = new TestAnimationEngine();
+          const queue = new EventQueue();
+          const graphics = new BallGraphics(engine, queue);
+          const circleStub = sinon.stub(engine, 'circle');
+
+          graphics.animate();
+          expect(circleStub).not.to.have.been.calledWith(1, 2, 5);
+        });
   });
 });
