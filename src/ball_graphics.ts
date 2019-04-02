@@ -1,15 +1,15 @@
-import { constants } from "../src/constants";
-import { EventQueue } from "../src/event_queue";
-import { IBallSchema } from "../src/iball_schema";
-import { P5AnimationEngine } from "./p5_animation_engine";
+import { constants } from "./constants";
+import { EventQueue } from "./event_queue";
+import { IAnimationEngine } from "./ianimation_engine";
+import { IBallSchema } from "./iball_schema";
 
 export class BallGraphics {
-  public engine: P5AnimationEngine;
+  public engine: IAnimationEngine;
   public queue: EventQueue;
 
   private ball?: IBallSchema;
 
-  constructor(engine: P5AnimationEngine, queue: EventQueue) {
+  constructor(engine: IAnimationEngine, queue: EventQueue) {
     this.engine = engine;
     this.queue = queue;
     this.configureListeners();

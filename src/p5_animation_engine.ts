@@ -1,6 +1,7 @@
 import p5 from "p5";
+import { IAnimationEngine } from "./ianimation_engine";
 
-export class P5AnimationEngine {
+export class P5AnimationEngine implements IAnimationEngine {
   public animator: p5;
 
   constructor(animator: p5) {

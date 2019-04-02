@@ -78,7 +78,6 @@ const sketch = (p: p5) => {
     boxes.forEach((box) => hollowBoxGraphics.animate(box));
     posts.forEach((post) => postGraphics.animate(post));
     ballGraphics.animate();
-    // ballPhysics.update(ball);
   };
 };
 
