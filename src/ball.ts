@@ -1,3 +1,5 @@
+import { IBallSchema } from "./iball_schema";
+
 export class Ball {
   public x: number;
   public y: number;
@@ -11,5 +13,15 @@ export class Ball {
     this.vx = vx;
     this.vy = vy;
     this.diameter = diameter;
+  }
+
+  public serialized(): IBallSchema {
+    return {
+      diameter: this.diameter,
+      vx: this.vx,
+      vy: this.vy,
+      x: this.x,
+      y: this.y,
+    } as IBallSchema;
   }
 }

@@ -1,3 +1,5 @@
+import { IBoxSchema } from "../src/ibox_schema";
+
 export class Box {
   public x: number;
   public y: number;
@@ -9,5 +11,14 @@ export class Box {
     this.y = y;
     this.xlength = xlength;
     this.ylength = ylength;
+  }
+
+  public serialized(): IBoxSchema {
+    return {
+      x: this.x,
+      xlength: this.xlength,
+      y: this.y,
+      ylength: this.ylength,
+    } as IBoxSchema;
   }
 }
