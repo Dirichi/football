@@ -55,7 +55,6 @@ app.set("view engine", "ejs");
 
 app.use(express.static(path.join(__dirname, "public")));
 
-// define a route handler for the default home page
 app.get("/", (req, res) => {
   res.render("index");
 });
@@ -67,16 +66,13 @@ httpServer.listen(port, () => {
 });
 
 io.on("connection", (socket) => {
-  const x = 0;
-  // tslint:disable-next-line:no-console
-  console.log("a user connected");
   setInterval(() => {
     const data = {
       [EVENTS.BALL_DATA]: ball.serialized(),
-      // "boxes.data": boxes.map((box) => box.serialized()),
-      [EVENTS.STATE_CHANGED]: field.serialized(),
-      // "posts.data": posts.map((post) => post.serialized()),
+      [EVENTS.BOXES_DATA]: boxes.map((box) => box.serialized()),
+      [EVENTS.FIELD_DATA]: field.serialized(),
+      [EVENTS.POST_DATA]: posts.map((post) => post.serialized()),
     };
-    socket.emit("state.changed", data);
+    socket.emit(EVENTS.STATE_CHANGED, data);
   }, 2000);
 });

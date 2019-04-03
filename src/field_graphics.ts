@@ -64,6 +64,7 @@ export class FieldGraphics {
   }
 
   private toScale(data: IBoxSchema): IBoxSchema {
+    // TODO: Should scaling the gameObject also be a job of the serializer?
     const [xmin, ymin, xmax, ymax] = this.scale;
     const xrange = xmax - xmin;
     const yrange = ymax - ymin;
