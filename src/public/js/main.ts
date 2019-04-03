@@ -1,26 +1,24 @@
+import io from 'socket.io-client';
 import p5 from "p5";
+import { constants, EVENTS } from "../../constants";
 import { BallGraphics } from "../../ball_graphics";
 import { EventQueue } from '../../event_queue';
 import { FieldGraphics } from "../../field_graphics";
 import { HollowBoxGraphics } from "../../hollow_box_graphics";
 import { P5AnimationEngine } from "../../p5_animation_engine";
 import { PostGraphics } from "../../post_graphics";
-import { constants, EVENTS } from "../../constants";
 
-import io from 'socket.io-client';
 const socket = io();
 const queue = new EventQueue();
 
 const sketch = (p: p5) => {
   const animationEngine = new P5AnimationEngine(p);
   const fieldGraphics = new FieldGraphics(animationEngine, queue);
-  // const postGraphics = new PostGraphics(animationEngine, queue);
-  // const hollowBoxGraphics = new HollowBoxGraphics(animationEngine, queue);
+  const postGraphics = new PostGraphics(animationEngine, queue);
+  const hollowBoxGraphics = new HollowBoxGraphics(animationEngine, queue);
   const ballGraphics = new BallGraphics(animationEngine, queue);
-  // const graphics =
-  //   [fieldGraphics, hollowBoxGraphics, postGraphics, ballGraphics];
-    const graphics =
-      [fieldGraphics, ballGraphics];
+  const graphics =
+    [fieldGraphics, hollowBoxGraphics, postGraphics, ballGraphics];
 
   const fieldCoordinates = [];
 

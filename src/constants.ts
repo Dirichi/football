@@ -19,7 +19,9 @@ export enum constants {
 
 export enum EVENTS {
   BALL_DATA = "ball.data",
+  BOXES_DATA = "boxes.data",
   FIELD_DATA = "field.data",
+  POST_DATA = "posts.data",
   STATE_CHANGED = "state.changed",
 }
 
