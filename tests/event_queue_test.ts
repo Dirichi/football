@@ -48,5 +48,26 @@ describe('EventQueue', () => {
         expect(cb).to.have.been.calledOnceWith(payload);
       });
     });
+
+    it('does not run callbacks for untriggered events', () => {
+      const queue = new EventQueue();
+      const callbacks = [sinon.spy(), sinon.spy()];
+      callbacks.forEach((cb) => {
+        queue.when('something.happened', cb);
+      });
+
+      queue.trigger('something.else.happened', {data: 1});
+      callbacks.forEach((cb) => {
+        expect(cb).to.not.have.been.called;
+      });
+    });
+
+    it('does not error out if an unregistered event is triggered', () => {
+      const queue = new EventQueue();
+      const trigger = () => {
+        queue.trigger('something.happened', {data: 1});
+      };
+      expect(trigger).not.to.throw();
+    });
   });
 });

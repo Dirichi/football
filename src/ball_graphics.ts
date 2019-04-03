@@ -1,4 +1,4 @@
-import { constants } from "./constants";
+import { constants, EVENTS } from "./constants";
 import { EventQueue } from "./event_queue";
 import { IAnimationEngine } from "./ianimation_engine";
 import { IBallSchema } from "./iball_schema";
@@ -8,11 +8,12 @@ export class BallGraphics {
   public queue: EventQueue;
 
   private ball?: IBallSchema;
-  private scale?: number[];
+  private scale: number[];
 
   constructor(engine: IAnimationEngine, queue: EventQueue) {
     this.engine = engine;
     this.queue = queue;
+    this.scale = [0, 0, 1, 1]; // default scale
     this.configureListeners();
   }
 
@@ -30,9 +31,7 @@ export class BallGraphics {
   }
 
   private configureListeners() {
-    this.queue.when("ball.data", (data) => {
-      // tslint:disable-next-line:no-console
-      console.log(data);
+    this.queue.when(EVENTS.BALL_DATA, (data) => {
       const deserializedData = data as IBallSchema;
       this.ball = this.toScale(deserializedData);
     });

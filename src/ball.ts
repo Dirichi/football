@@ -7,12 +7,12 @@ export class Ball {
   public vy: number;
   public diameter: number;
 
-  constructor(coordinates: number[]) {
-    this.x = coordinates[0];
-    this.y = coordinates[1];
-    this.vx = coordinates[2];
-    this.vy = coordinates[3];
-    this.diameter = coordinates[4];
+  constructor(x: number, y: number, vx: number, vy: number, diameter: number) {
+    this.x = x;
+    this.y = y;
+    this.vx = vx;
+    this.vy = vy;
+    this.diameter = diameter;
   }
 
   public serialized(): IBallSchema {

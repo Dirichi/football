@@ -1,4 +1,4 @@
-import { constants } from "./constants";
+import { constants, EVENTS } from "./constants";
 import { EventQueue } from "./event_queue";
 import { Field } from "./field";
 import { IBoxSchema } from "./ibox_schema";
@@ -57,7 +57,7 @@ export class FieldGraphics {
   }
 
   private configureListeners() {
-    this.queue.when(constants.FIELD_DATA_EVENT, (data) => {
+    this.queue.when(EVENTS.FIELD_DATA, (data) => {
       const deserializedData = data as IBoxSchema;
       this.field = this.toScale(deserializedData);
     });

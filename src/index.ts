@@ -6,8 +6,8 @@ import { Ball } from "./ball";
 import { BallPhysics } from "./ball_physics";
 import { Box } from "./box";
 import { BALL_INITIAL_ARGS, BOX18A_INITIAL_COORDINATES,
-  BOX18B_INITIAL_COORDINATES, BOX6A_INITIAL_COORDINATES, BOX6B_INITIAL_COORDINATES,
-  constants, FIELD_INITIAL_COORDINATES,
+  BOX18B_INITIAL_COORDINATES, BOX6A_INITIAL_COORDINATES,
+  BOX6B_INITIAL_COORDINATES, constants, EVENTS, FIELD_INITIAL_COORDINATES,
   POSTA_INITIAL_COORDINATES, POSTB_INITIAL_COORDINATES } from "./constants";
 import { Field } from "./field";
 import { Post } from "./post";
@@ -17,19 +17,36 @@ const httpServer = http.createServer(app);
 const io = socketIo(httpServer);
 const port = 3000;
 
-const field = new Field(FIELD_INITIAL_COORDINATES);
+// TODO: Perhaps if these game objects were initialized with hashes, this part
+// of the code would not look so messy.
+const [fieldx, fieldy, fieldxlength, fieldylength] = FIELD_INITIAL_COORDINATES;
+const field = new Field(fieldx, fieldy, fieldxlength, fieldylength);
 
-const ball = new Ball(BALL_INITIAL_ARGS);
+const [ballx, bally, ballvx, ballvy, balldiameter] = BALL_INITIAL_ARGS;
+const ball = new Ball(ballx, bally, ballvx, ballvy, balldiameter);
 const ballPhysics = new BallPhysics(field);
 
-const postA = new Post(POSTA_INITIAL_COORDINATES);
-const postB = new Post(POSTB_INITIAL_COORDINATES);
+const [postAX, postAY, postAXlength, postAYlength] = POSTA_INITIAL_COORDINATES;
+const postA = new Post(postAX, postAY, postAXlength, postAYlength);
+
+const [postBX, postBY, postBXlength, postBYlength] = POSTB_INITIAL_COORDINATES;
+const postB = new Post(postBX, postBY, postBXlength, postBYlength);
 const posts = [postA, postB];
 
-const box6A = new Box(BOX6A_INITIAL_COORDINATES);
-const box6B = new Box(BOX6B_INITIAL_COORDINATES);
-const box18A = new Box(BOX18A_INITIAL_COORDINATES);
-const box18B = new Box(BOX18B_INITIAL_COORDINATES);
+const [box6AX, box6AY, box6AXlength, box6AYlength] = BOX6A_INITIAL_COORDINATES;
+const box6A = new Box(box6AX, box6AY, box6AXlength, box6AYlength);
+
+const [box6BX, box6BY, box6BXlength, box6BYlength] = BOX6B_INITIAL_COORDINATES;
+const box6B = new Box(box6BX, box6BY, box6BXlength, box6BYlength);
+
+const [box18AX, box18AY, box18AXlength, box18AYlength]
+  = BOX18A_INITIAL_COORDINATES;
+const box18A = new Box(box18AX, box18AY, box18AXlength, box18AYlength);
+
+const [box18BX, box18BY, box18BXlength, box18BYlength]
+  = BOX18B_INITIAL_COORDINATES;
+const box18B = new Box(box18BX, box18BY, box18BXlength, box18BYlength);
+
 const boxes = [box18A, box18B, box6A, box6B];
 
 // Configure Express to use EJS
@@ -55,9 +72,9 @@ io.on("connection", (socket) => {
   console.log("a user connected");
   setInterval(() => {
     const data = {
-      "ball.data": ball.serialized(),
+      [EVENTS.BALL_DATA]: ball.serialized(),
       // "boxes.data": boxes.map((box) => box.serialized()),
-      "field.data": field.serialized(),
+      [EVENTS.STATE_CHANGED]: field.serialized(),
       // "posts.data": posts.map((post) => post.serialized()),
     };
     socket.emit("state.changed", data);

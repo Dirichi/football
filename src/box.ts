@@ -6,11 +6,11 @@ export class Box {
   public xlength: number;
   public ylength: number;
 
-  constructor(coordinates: number[]) {
-    this.x = coordinates[0];
-    this.y = coordinates[1];
-    this.xlength = coordinates[2];
-    this.ylength = coordinates[3];
+  constructor(x: number, y: number, xlength: number, ylength: number) {
+    this.x = x;
+    this.y = y;
+    this.xlength = xlength;
+    this.ylength = ylength;
   }
 
   public serialized(): IBoxSchema {

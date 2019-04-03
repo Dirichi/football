@@ -7,14 +7,14 @@ export class Field implements IBoundary {
   public xlength: number;
   public ylength: number;
 
-  constructor(coordinates: number[]) {
-    this.x = coordinates[0];
-    this.y = coordinates[1];
-    this.xlength = coordinates[2];
-    this.ylength = coordinates[3];
+  constructor(x: number, y: number, xlength: number, ylength: number) {
+    this.x = x;
+    this.y = y;
+    this.xlength = xlength;
+    this.ylength = ylength;
   }
 
-  // TODO: Perhaps this code doesn't belong here.
+  // TODO: Perhaps this method doesn't belong here.
   public containsCircle(x: number, y: number, diameter: number): boolean {
     const xLowest = this.x;
     const xHighest = this.x + this.xlength;

@@ -1,6 +1,7 @@
 import * as chai from 'chai';
 import * as sinon from 'sinon';
 import { BallGraphics } from '../src/ball_graphics';
+import { constants, EVENTS } from '../src/constants';
 import { EventQueue } from "../src/event_queue";
 import { IAnimationEngine } from "../src/ianimation_engine";
 
@@ -24,11 +25,11 @@ describe('BallGraphics', () => {
         const circleStub = sinon.stub(engine, 'circle');
         const graphics = new BallGraphics(engine, queue);
 
-        const ballData = { x: 1, y: 2, vx: 3, vy: 4, diameter: 5};
-        queue.trigger("ball.data", ballData);
+        const ballData = { x: 0.1, y: 0.2, vx: 0.3, vy: 0.4, diameter: 0.5};
+        queue.trigger(EVENTS.BALL_DATA, ballData);
 
         graphics.animate();
-        expect(circleStub).to.have.been.calledWith(1, 2, 5);
+        expect(circleStub).to.have.been.calledWith(0.1, 0.2, 0.5);
       });
 
       it('does not display if no data has been received from the queue',

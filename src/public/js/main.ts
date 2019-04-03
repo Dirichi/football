@@ -5,7 +5,7 @@ import { FieldGraphics } from "../../field_graphics";
 import { HollowBoxGraphics } from "../../hollow_box_graphics";
 import { P5AnimationEngine } from "../../p5_animation_engine";
 import { PostGraphics } from "../../post_graphics";
-import { constants } from "../../constants";
+import { constants, EVENTS } from "../../constants";
 
 import io from 'socket.io-client';
 const socket = io();
@@ -35,7 +35,7 @@ const sketch = (p: p5) => {
   };
 };
 
-socket.on(constants.STATE_CHANGED_EVENT, (data) => {
+socket.on(EVENTS.STATE_CHANGED, (data) => {
   Object.keys(data).forEach((event) {
     const payload = data[event];
     queue.trigger(event, payload);
