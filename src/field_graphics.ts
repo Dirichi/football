@@ -1,40 +1,77 @@
+import { constants } from "./constants";
+import { EventQueue } from "./event_queue";
 import { Field } from "./field";
+import { IBoxSchema } from "./ibox_schema";
 import { P5AnimationEngine } from "./p5_animation_engine";
 
 export class FieldGraphics {
   // TODO: implement AnimationEngine interface
   public engine: P5AnimationEngine;
+  public queue: EventQueue;
 
-  constructor(engine: P5AnimationEngine) {
+  private field?: IBoxSchema;
+  private scale?: number[];
+
+  constructor(engine: P5AnimationEngine, queue: EventQueue) {
     this.engine = engine;
+    this.queue = queue;
   }
 
-  public animate(field: Field) {
+  public animate() {
     // Don't push / pop on the field so that it can perpetually be drawn
     // over hollow elements.
-    this.engine.fill(0, 0, 0);
-    this.engine.rectangle(field.x, field.y, field.xlength, field.ylength);
-    this.animateCenterCircle(field);
-    this.animateHalfWayLine(field);
+    if (this.field) {
+      this.engine.fill(0, 0, 0);
+      this.engine.rectangle(this.field.x, this.field.y, this.field.xlength,
+        this.field.ylength);
+      this.animateCenterCircle();
+      this.animateHalfWayLine();
+    }
   }
 
-  private animateCenterCircle(field: Field) {
+  public setScale(scale: number[]) {
+    this.scale = scale;
+  }
+
+  private animateCenterCircle() {
     this.engine.push();
     this.engine.stroke(255, 255, 255);
     this.engine.strokeWeight(4);
-    const midPointX = field.x + (field.xlength / 2);
-    const midPointY = field.y + (field.ylength / 2);
-    const diameter = field.xlength * 0.2;
+    const midPointX = this.field.x + (this.field.xlength / 2);
+    const midPointY = this.field.y + (this.field.ylength / 2);
+    const diameter =
+      this.field.xlength * constants.CENTER_CIRCLE_DIAMETER_TO_FIELD_XLENGTH;
     this.engine.circle(midPointX, midPointY, diameter);
     this.engine.pop();
   }
 
-  private animateHalfWayLine(field: Field) {
+  private animateHalfWayLine() {
     this.engine.push();
     this.engine.stroke(255, 255, 255);
     this.engine.strokeWeight(4);
-    const midPointX = field.x + (field.xlength / 2);
-    this.engine.line(midPointX, field.y, midPointX, (field.y + field.ylength));
+    const midPointX = this.field.x + (this.field.xlength / 2);
+    this.engine.line(
+      midPointX, this.field.y, midPointX, (this.field.y + this.field.ylength));
     this.engine.pop();
+  }
+
+  private configureListeners() {
+    this.queue.when(constants.FIELD_DATA_EVENT, (data) => {
+      const deserializedData = data as IBoxSchema;
+      this.field = this.toScale(deserializedData);
+    });
+  }
+
+  private toScale(data: IBoxSchema): IBoxSchema {
+    const [xmin, ymin, xmax, ymax] = this.scale;
+    const xrange = xmax - xmin;
+    const yrange = ymax - ymin;
+
+    return {
+      x: (data.x * xrange) + xmin,
+      xlength: (data.xlength * xrange),
+      y: (data.y * yrange) + ymin,
+      ylength: (data.ylength * yrange),
+    } as IBoxSchema;
   }
 }

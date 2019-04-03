@@ -8,6 +8,7 @@ export class BallGraphics {
   public queue: EventQueue;
 
   private ball?: IBallSchema;
+  private scale?: number[];
 
   constructor(engine: IAnimationEngine, queue: EventQueue) {
     this.engine = engine;
@@ -24,10 +25,27 @@ export class BallGraphics {
     }
   }
 
+  public setScale(scale: number[]) {
+    this.scale = scale;
+  }
+
   private configureListeners() {
     this.queue.when("ball.data", (data) => {
       const deserializedData = data as IBallSchema;
-      this.ball = deserializedData;
+      this.ball = this.toScale(deserializedData);
     });
+  }
+
+  private toScale(data: IBallSchema): IBallSchema {
+    const [xmin, ymin, xmax, ymax] = this.scale;
+    const xrange = xmax - xmin;
+    const yrange = ymax - ymin;
+
+    return {
+      diameter: (data.diameter * yrange),
+      vx: data.vx * xrange,
+      vy: data.vy * yrange,
+      x: (data.x * xrange) + xmin,
+    } as IBallSchema;
   }
 }

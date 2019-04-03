@@ -1,4 +1,5 @@
 import { IBoundary } from "../src/iboundary";
+import { IBoxSchema } from "../src/ibox_schema";
 
 export class Field implements IBoundary {
   public x: number;
@@ -6,11 +7,11 @@ export class Field implements IBoundary {
   public xlength: number;
   public ylength: number;
 
-  constructor(x: number, y: number, xlength: number, ylength: number) {
-    this.x = x;
-    this.y = y;
-    this.xlength = xlength;
-    this.ylength = ylength;
+  constructor(coordinates: number[]) {
+    this.x = coordinates[0];
+    this.y = coordinates[1];
+    this.xlength = coordinates[2];
+    this.ylength = coordinates[3];
   }
 
   // TODO: Perhaps this code doesn't belong here.
@@ -25,5 +26,14 @@ export class Field implements IBoundary {
     const withinYBounds = ((y - radius) > yLowest) && ((y + radius) < yHighest);
 
     return withinXBounds && withinYBounds;
+  }
+
+  public serialized(): IBoxSchema {
+    return {
+      x: this.x,
+      xlength: this.xlength,
+      y: this.y,
+      ylength: this.ylength,
+    } as IBoxSchema;
   }
 }

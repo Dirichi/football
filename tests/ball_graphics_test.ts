@@ -39,7 +39,7 @@ describe('BallGraphics', () => {
           const circleStub = sinon.stub(engine, 'circle');
 
           graphics.animate();
-          expect(circleStub).not.to.have.been.calledWith(1, 2, 5);
+          expect(circleStub).not.to.have.been.called;
         });
   });
 });
