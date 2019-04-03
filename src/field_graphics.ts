@@ -15,6 +15,7 @@ export class FieldGraphics {
   constructor(engine: P5AnimationEngine, queue: EventQueue) {
     this.engine = engine;
     this.queue = queue;
+    this.configureListeners();
   }
 
   public animate() {

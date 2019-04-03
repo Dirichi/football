@@ -33,8 +33,8 @@ const box18B = new Box(BOX18B_INITIAL_COORDINATES);
 const boxes = [box18A, box18B, box6A, box6B];
 
 // Configure Express to use EJS
-app.set( "views", path.join( __dirname, "views" ) );
-app.set( "view engine", "ejs" );
+app.set("views", path.join(__dirname, "views"));
+app.set("view engine", "ejs");
 
 app.use(express.static(path.join(__dirname, "public")));
 
@@ -56,9 +56,9 @@ io.on("connection", (socket) => {
   setInterval(() => {
     const data = {
       "ball.data": ball.serialized(),
-      "boxes.data": boxes.map((box) => box.serialized()),
+      // "boxes.data": boxes.map((box) => box.serialized()),
       "field.data": field.serialized(),
-      "posts.data": posts.map((post) => post.serialized()),
+      // "posts.data": posts.map((post) => post.serialized()),
     };
     socket.emit("state.changed", data);
   }, 2000);

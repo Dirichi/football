@@ -31,6 +31,8 @@ export class BallGraphics {
 
   private configureListeners() {
     this.queue.when("ball.data", (data) => {
+      // tslint:disable-next-line:no-console
+      console.log(data);
       const deserializedData = data as IBallSchema;
       this.ball = this.toScale(deserializedData);
     });
@@ -46,6 +48,7 @@ export class BallGraphics {
       vx: data.vx * xrange,
       vy: data.vy * yrange,
       x: (data.x * xrange) + xmin,
+      y: (data.y * yrange) + ymin,
     } as IBallSchema;
   }
 }
