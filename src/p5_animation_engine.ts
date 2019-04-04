@@ -22,7 +22,7 @@ export class P5AnimationEngine implements IAnimationEngine {
     this.drawHalfWayLine(field);
   }
 
-  public drawBox(box: Box) {
+  public drawBox(box: IBoxSchema) {
     this.animator.push();
     this.animator.stroke(255, 255, 255);
     this.animator.strokeWeight(4);

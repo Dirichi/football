@@ -1,4 +1,4 @@
-import { constants, EVENTS } from "./constants";
+import { EVENTS } from "./constants";
 import { EventQueue } from "./event_queue";
 import { IAnimationEngine } from "./ianimation_engine";
 import { IBallSchema } from "./iball_schema";

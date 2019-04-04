@@ -72,7 +72,7 @@ io.on("connection", (socket) => {
       [EVENTS.BALL_DATA]: ball.serialized(),
       [EVENTS.BOXES_DATA]: boxes.map((box) => box.serialized()),
       [EVENTS.FIELD_DATA]: field.serialized(),
-      [EVENTS.POST_DATA]: posts.map((post) => post.serialized()),
+      [EVENTS.POSTS_DATA]: posts.map((post) => post.serialized()),
     };
     socket.emit(EVENTS.STATE_CHANGED, data);
   }, 100);

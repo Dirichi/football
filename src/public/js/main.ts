@@ -25,7 +25,7 @@ const sketch = (p: p5) => {
   p.setup = () => {
     p.createCanvas(p.windowWidth, p.windowHeight);
     const fieldCoordinates = [0, 0, p.windowWidth, p.windowHeight];
-    graphics.forEach((graphic) => graphic.setScale(fieldCoordinates))
+    graphics.forEach((graphic) => graphic.setScale(fieldCoordinates));
   };
 
   p.draw = () => {

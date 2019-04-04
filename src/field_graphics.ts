@@ -1,8 +1,8 @@
-import { constants, EVENTS } from "./constants";
+import { EVENTS } from "./constants";
 import { EventQueue } from "./event_queue";
 import { Field } from "./field";
-import { IBoxSchema } from "./ibox_schema";
 import { IAnimationEngine } from "./ianimation_engine";
+import { IBoxSchema } from "./ibox_schema";
 
 export class FieldGraphics {
   // TODO: implement AnimationEngine interface
