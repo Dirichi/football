@@ -15,17 +15,10 @@ export class PostGraphics {
   }
 
   public animate() {
-    this.engine.push();
-    this.posts.forEach((post) => this.animatePost(post));
-    this.engine.pop();
+    this.posts.forEach((post) => this.engine.drawPost(post));
   }
 
   public setScale(scale: number[]) {
     this.scale = scale;
-  }
-
-  private animatePost(post: Post) {
-    this.engine.fill(255, 255, 255);
-    this.engine.rectangle(post.x, post.y, post.xlength, post.ylength);
   }
 }

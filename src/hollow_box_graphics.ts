@@ -16,18 +16,10 @@ export class HollowBoxGraphics {
   }
 
   public animate() {
-    this.engine.push();
-    this.boxes.forEach((box) => this.animateBox(box));
-    this.engine.pop();
+    this.boxes.forEach((box) => this.engine.drawBox(box));
   }
 
   public setScale(scale: number[]) {
     this.scale = scale;
-  }
-
-  private animateBox(box: Box) {
-    this.engine.stroke(255, 255, 255);
-    this.engine.strokeWeight(4);
-    this.engine.rectangle(box.x, box.y, box.xlength, box.ylength);
   }
 }

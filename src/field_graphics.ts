@@ -19,41 +19,13 @@ export class FieldGraphics {
   }
 
   public animate() {
-    // Don't push / pop on the field so that it can perpetually be drawn
-    // over hollow elements.
     if (this.field) {
-      this.engine.fill(0, 0, 0);
-      this.engine.rectangle(this.field.x, this.field.y, this.field.xlength,
-        this.field.ylength);
-      this.animateCenterCircle();
-      this.animateHalfWayLine();
+      this.engine.drawField(this.field);
     }
   }
 
   public setScale(scale: number[]) {
     this.scale = scale;
-  }
-
-  private animateCenterCircle() {
-    this.engine.push();
-    this.engine.stroke(255, 255, 255);
-    this.engine.strokeWeight(4);
-    const midPointX = this.field.x + (this.field.xlength / 2);
-    const midPointY = this.field.y + (this.field.ylength / 2);
-    const diameter =
-      this.field.xlength * constants.CENTER_CIRCLE_DIAMETER_TO_FIELD_XLENGTH;
-    this.engine.circle(midPointX, midPointY, diameter);
-    this.engine.pop();
-  }
-
-  private animateHalfWayLine() {
-    this.engine.push();
-    this.engine.stroke(255, 255, 255);
-    this.engine.strokeWeight(4);
-    const midPointX = this.field.x + (this.field.xlength / 2);
-    this.engine.line(
-      midPointX, this.field.y, midPointX, (this.field.y + this.field.ylength));
-    this.engine.pop();
   }
 
   private configureListeners() {

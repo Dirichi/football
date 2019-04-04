@@ -19,10 +19,7 @@ export class BallGraphics {
 
   public animate() {
     if (this.ball) {
-      this.engine.push();
-      this.engine.fill(200, 200, 200);
-      this.engine.circle(this.ball.x, this.ball.y, this.ball.diameter);
-      this.engine.pop();
+      this.engine.drawBall(this.ball);
     }
   }
 
