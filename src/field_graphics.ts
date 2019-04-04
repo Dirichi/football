@@ -2,19 +2,20 @@ import { constants, EVENTS } from "./constants";
 import { EventQueue } from "./event_queue";
 import { Field } from "./field";
 import { IBoxSchema } from "./ibox_schema";
-import { P5AnimationEngine } from "./p5_animation_engine";
+import { IAnimationEngine } from "./ianimation_engine";
 
 export class FieldGraphics {
   // TODO: implement AnimationEngine interface
-  public engine: P5AnimationEngine;
+  public engine: IAnimationEngine;
   public queue: EventQueue;
 
   private field?: IBoxSchema;
-  private scale?: number[];
+  private scale: number[];
 
-  constructor(engine: P5AnimationEngine, queue: EventQueue) {
+  constructor(engine: IAnimationEngine, queue: EventQueue) {
     this.engine = engine;
     this.queue = queue;
+    this.scale = [0, 0, 1, 1];
     this.configureListeners();
   }
 

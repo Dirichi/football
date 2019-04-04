@@ -1,14 +1,13 @@
-import { P5AnimationEngine } from "./p5_animation_engine";
+import { IAnimationEngine } from "./ianimation_engine";
 import { Post } from "./post";
 
 export class PostGraphics {
-  // TODO: implement AnimationEngine interface
-  public engine: P5AnimationEngine;
+  public engine: IAnimationEngine;
 
   private posts: Post[];
   private scale: number[];
 
-  constructor(engine: P5AnimationEngine) {
+  constructor(engine: IAnimationEngine) {
     this.engine = engine;
     this.posts = [];
     this.scale = [0, 0, 1, 1];

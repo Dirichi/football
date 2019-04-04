@@ -67,6 +67,7 @@ httpServer.listen(port, () => {
 
 io.on("connection", (socket) => {
   setInterval(() => {
+    ballPhysics.update(ball);
     const data = {
       [EVENTS.BALL_DATA]: ball.serialized(),
       [EVENTS.BOXES_DATA]: boxes.map((box) => box.serialized()),
@@ -74,5 +75,5 @@ io.on("connection", (socket) => {
       [EVENTS.POST_DATA]: posts.map((post) => post.serialized()),
     };
     socket.emit(EVENTS.STATE_CHANGED, data);
-  }, 2000);
+  }, 100);
 });
