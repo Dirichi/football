@@ -6,6 +6,7 @@ import { EventQueue } from '../../event_queue';
 import { FieldGraphics } from "../../field_graphics";
 import { HollowBoxGraphics } from "../../hollow_box_graphics";
 import { P5AnimationEngine } from "../../p5_animation_engine";
+import { PlayerGraphics } from "../../player_graphics";
 import { PostGraphics } from "../../post_graphics";
 
 const socket = io();
@@ -17,12 +18,21 @@ const sketch = (p: p5) => {
   const postGraphics = new PostGraphics(animationEngine, queue);
   const hollowBoxGraphics = new HollowBoxGraphics(animationEngine, queue);
   const ballGraphics = new BallGraphics(animationEngine, queue);
-  const graphics =
-    [fieldGraphics, hollowBoxGraphics, postGraphics, ballGraphics];
+  const playerGraphics = new PlayerGraphics(animationEngine, queue);
+
+  const graphics = [
+    fieldGraphics,
+    hollowBoxGraphics,
+    postGraphics,
+    playerGraphics,
+    ballGraphics,
+  ];
 
   const fieldCoordinates = [];
 
   p.setup = () => {
+    // TODO: These calls to p5 should be hidden inside the p5AnimationEngine or
+    // somewhere else so that the GameClient is animation library agnostic
     p.createCanvas(p.windowWidth, p.windowHeight);
     const fieldCoordinates = [0, 0, p.windowWidth, p.windowHeight];
     graphics.forEach((graphic) => graphic.setScale(fieldCoordinates));
@@ -33,6 +43,7 @@ const sketch = (p: p5) => {
   };
 };
 
+// TODO: Socket configuration could be encapsulated in another class
 socket.on(EVENTS.STATE_CHANGED, (data) => {
   Object.keys(data).forEach((event) {
     const payload = data[event];

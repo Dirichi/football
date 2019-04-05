@@ -8,8 +8,10 @@ import { Box } from "./box";
 import { BALL_INITIAL_ARGS, BOX18A_INITIAL_COORDINATES,
   BOX18B_INITIAL_COORDINATES, BOX6A_INITIAL_COORDINATES,
   BOX6B_INITIAL_COORDINATES, constants, EVENTS, FIELD_INITIAL_COORDINATES,
-  POSTA_INITIAL_COORDINATES, POSTB_INITIAL_COORDINATES } from "./constants";
+  PLAYER_INITIAL_ARGS, POSTA_INITIAL_COORDINATES,
+  POSTB_INITIAL_COORDINATES } from "./constants";
 import { Field } from "./field";
+import { Player } from "./player";
 import { Post } from "./post";
 
 const app = express();
@@ -49,6 +51,10 @@ const box18B = new Box(box18BX, box18BY, box18BXlength, box18BYlength);
 
 const boxes = [box18A, box18B, box6A, box6B];
 
+const [playerx, playery, playervx, playervy, playerdiameter]
+  = PLAYER_INITIAL_ARGS;
+const player = new Player(playerx, playery, playervx, playervy, playerdiameter);
+
 // Configure Express to use EJS
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
@@ -72,6 +78,7 @@ io.on("connection", (socket) => {
       [EVENTS.BALL_DATA]: ball.serialized(),
       [EVENTS.BOXES_DATA]: boxes.map((box) => box.serialized()),
       [EVENTS.FIELD_DATA]: field.serialized(),
+      [EVENTS.PLAYER_DATA]: player.serialized(),
       [EVENTS.POSTS_DATA]: posts.map((post) => post.serialized()),
     };
     socket.emit(EVENTS.STATE_CHANGED, data);

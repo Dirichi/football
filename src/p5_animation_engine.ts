@@ -4,6 +4,7 @@ import { constants } from "./constants";
 import { IAnimationEngine } from "./ianimation_engine";
 import { IBallSchema } from "./iball_schema";
 import { IBoxSchema } from "./ibox_schema";
+import { IPlayerSchema } from "./iplayer_schema";
 import { Post } from "./post";
 
 export class P5AnimationEngine implements IAnimationEngine {
@@ -41,6 +42,13 @@ export class P5AnimationEngine implements IAnimationEngine {
     this.animator.push();
     this.animator.fill(200, 200, 200);
     this.animator.circle(ball.x, ball.y, ball.diameter);
+    this.animator.pop();
+  }
+
+  public drawPlayer(player: IPlayerSchema) {
+    this.animator.push();
+    this.animator.fill(0, 0, 255);
+    this.animator.circle(player.x, player.y, player.diameter);
     this.animator.pop();
   }
 
