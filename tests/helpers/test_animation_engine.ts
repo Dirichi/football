@@ -1,12 +1,12 @@
-import { Box } from "../../src/box";
 import { IAnimationEngine } from "../../src/ianimation_engine";
 import { IBallSchema } from "../../src/iball_schema";
 import { IBoxSchema } from "../../src/ibox_schema";
-import { Post } from "../../src/post";
+import { IPlayerSchema } from "../../src/iplayer_schema";
 
 export class TestAnimationEngine implements IAnimationEngine {
   public drawBall(ball: IBallSchema) {};
-  public drawBox(box: Box) {};
+  public drawBox(box: IBoxSchema) {};
   public drawField(field: IBoxSchema) {};
-  public drawPost(post: Post) {};
+  public drawPost(post: IBoxSchema) {};
+  public drawPlayer(player: IPlayerSchema) {};
 }

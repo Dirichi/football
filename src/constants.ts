@@ -1,7 +1,7 @@
 export enum constants {
   BALL_DIAMETER_TO_FIELD_YLENGTH = 0.01,
-  BALL_INITIAL_VX = 0.002,
-  BALL_INITIAL_VY = 0.002,
+  BALL_INITIAL_VX = 0,
+  BALL_INITIAL_VY = 0,
   BALL_INITIAL_X = 0.6,
   BALL_INITIAL_Y = 0.6,
   BOX6_XLENGTH_TO_FIELD_XLENGTH = 0.06,
@@ -14,10 +14,11 @@ export enum constants {
   FIELD_INITIAL_XLENGTH = 1,
   FIELD_INITIAL_YLENGTH = 1,
   PLAYER_DIAMETER_TO_FIELD_YLENGTH = 0.03,
-  PLAYER_INITIAL_VX = 0.002,
-  PLAYER_INITIAL_VY = 0.002,
+  PLAYER_INITIAL_VX = 0,
+  PLAYER_INITIAL_VY = 0,
   PLAYER_INITIAL_X = 0.3,
   PLAYER_INITIAL_Y = 0.8,
+  PLAYER_DEFAULT_SPEED = 0.001,
   POST_XLENGTH_TO_FIELD_XLENGTH = 0.01,
   POST_YLENGTH_TO_FIELD_YLENGTH = 0.15,
 }
@@ -31,7 +32,14 @@ export enum EVENTS {
   STATE_CHANGED = "state.changed",
 }
 
-export const BALL_INITIAL_ARGS: number[] = [
+export enum COMMANDS {
+  MOVE_PLAYER_LEFT = "move.player.left",
+  MOVE_PLAYER_DOWN = "move.player.down",
+  MOVE_PLAYER_RIGHT = "move.player.right",
+  MOVE_PLAYER_UP = "move.player.up",
+}
+
+export const BALL_INITIAL_ARGS = [
   constants.BALL_INITIAL_X as number,
   constants.BALL_INITIAL_Y as number,
   constants.BALL_INITIAL_VX as number,
@@ -39,7 +47,7 @@ export const BALL_INITIAL_ARGS: number[] = [
   constants.BALL_DIAMETER_TO_FIELD_YLENGTH as number,
 ];
 
-export const BOX6A_INITIAL_COORDINATES: number[] = [
+export const BOX6A_INITIAL_COORDINATES = [
   constants.FIELD_INITIAL_X as number,
   ((constants.FIELD_INITIAL_YLENGTH - constants.BOX6_YLENGTH_TO_FIELD_YLENGTH) / 2) as number,
   constants.BOX6_XLENGTH_TO_FIELD_XLENGTH as number,
@@ -74,11 +82,12 @@ export const FIELD_INITIAL_COORDINATES = [
   constants.FIELD_INITIAL_YLENGTH as number,
 ];
 
-export const PLAYER_INITIAL_ARGS: number[] = [
+export const PLAYER_INITIAL_ARGS = [
   constants.PLAYER_INITIAL_X as number,
   constants.PLAYER_INITIAL_Y as number,
   constants.PLAYER_INITIAL_VX as number,
   constants.PLAYER_INITIAL_VY as number,
+  constants.PLAYER_DEFAULT_SPEED as number,
   constants.PLAYER_DIAMETER_TO_FIELD_YLENGTH as number,
 ];
 

@@ -9,13 +9,21 @@ export class BallPhysics {
   }
 
   public update(ball: Ball) {
+    const nextX = ball.x + ball.vx;
+    const nextY = ball.y + ball.vy;
     const withinBoundary =
-      this.boundary.containsCircle(ball.x, ball.y, ball.diameter);
-    withinBoundary ? this.move(ball) : this.stop(ball);
+      this.boundary.containsCircle(nextX, nextY, ball.diameter);
+
+    if (withinBoundary) {
+      this.move(ball, nextX, nextY);
+    } else {
+      this.stop(ball);
+    }
   }
-  private move(ball: Ball) {
-    ball.x += ball.vx;
-    ball.y += ball.vy;
+
+  private move(ball: Ball, x: number, y: number) {
+    ball.x = x;
+    ball.y = y;
   }
 
   private stop(ball: Ball) {

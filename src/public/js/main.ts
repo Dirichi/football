@@ -5,12 +5,14 @@ import { BallGraphics } from "../../ball_graphics";
 import { EventQueue } from '../../event_queue';
 import { FieldGraphics } from "../../field_graphics";
 import { HollowBoxGraphics } from "../../hollow_box_graphics";
+import { ManualInputHandler } from "./manual_input_handler";
 import { P5AnimationEngine } from "../../p5_animation_engine";
 import { PlayerGraphics } from "../../player_graphics";
 import { PostGraphics } from "../../post_graphics";
 
 const socket = io();
 const queue = new EventQueue();
+const manualInputHandler = new ManualInputHandler(socket);
 
 const sketch = (p: p5) => {
   const animationEngine = new P5AnimationEngine(p);
@@ -49,6 +51,10 @@ socket.on(EVENTS.STATE_CHANGED, (data) => {
     const payload = data[event];
     queue.trigger(event, payload);
   });
+});
+
+document.onkeydown = (event) => {
+  manualInputHandler.handleInput(event);
 });
 
 const psketch = new p5(sketch);

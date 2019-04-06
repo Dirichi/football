@@ -7,17 +7,25 @@ import { BallPhysics } from "./ball_physics";
 import { Box } from "./box";
 import { BALL_INITIAL_ARGS, BOX18A_INITIAL_COORDINATES,
   BOX18B_INITIAL_COORDINATES, BOX6A_INITIAL_COORDINATES,
-  BOX6B_INITIAL_COORDINATES, constants, EVENTS, FIELD_INITIAL_COORDINATES,
-  PLAYER_INITIAL_ARGS, POSTA_INITIAL_COORDINATES,
+  BOX6B_INITIAL_COORDINATES, COMMANDS, constants, EVENTS,
+  FIELD_INITIAL_COORDINATES, PLAYER_INITIAL_ARGS, POSTA_INITIAL_COORDINATES,
   POSTB_INITIAL_COORDINATES } from "./constants";
+import { EventQueue } from "./event_queue";
 import { Field } from "./field";
+import { ICommand } from "./icommand";
+import { MoveDownCommand } from "./move_down_command";
+import { MoveLeftCommand } from "./move_left_command";
+import { MoveRightCommand } from "./move_right_command";
+import { MoveUpCommand } from "./move_up_command";
 import { Player } from "./player";
+import { PlayerPhysics } from "./player_physics";
 import { Post } from "./post";
-
 const app = express();
 const httpServer = http.createServer(app);
 const io = socketIo(httpServer);
 const port = 3000;
+
+const queue = new EventQueue();
 
 // TODO: Perhaps if these game objects were initialized with hashes, this part
 // of the code would not look so messy.
@@ -51,9 +59,11 @@ const box18B = new Box(box18BX, box18BY, box18BXlength, box18BYlength);
 
 const boxes = [box18A, box18B, box6A, box6B];
 
-const [playerx, playery, playervx, playervy, playerdiameter]
+const [playerx, playery, playervx, playervy, playerSpeed, playerdiameter]
   = PLAYER_INITIAL_ARGS;
-const player = new Player(playerx, playery, playervx, playervy, playerdiameter);
+const playerPhysics = new PlayerPhysics(field, queue);
+const player = new Player(playerx, playery, playervx, playervy, playerSpeed,
+   playerdiameter, queue, playerPhysics);
 
 // Configure Express to use EJS
 app.set("views", path.join(__dirname, "views"));
@@ -71,8 +81,28 @@ httpServer.listen(port, () => {
   console.log(`server started at http://localhost:${port}`);
 });
 
+interface IhashMapOfCommands {
+  [key: string]: ICommand;
+}
+
+const NAME_TO_COMMAND_MAPPING: IhashMapOfCommands = {
+  [COMMANDS.MOVE_PLAYER_DOWN]: MoveDownCommand,
+  [COMMANDS.MOVE_PLAYER_LEFT]: MoveLeftCommand,
+  [COMMANDS.MOVE_PLAYER_RIGHT]: MoveRightCommand,
+  [COMMANDS.MOVE_PLAYER_UP]: MoveUpCommand,
+};
+
 io.on("connection", (socket) => {
+  socket.on("command", (data) => {
+    const key = data as string;
+    const command = NAME_TO_COMMAND_MAPPING[key];
+    if (command) {
+      command.execute(player);
+    }
+  });
+
   setInterval(() => {
+    playerPhysics.update(player);
     ballPhysics.update(ball);
     const data = {
       [EVENTS.BALL_DATA]: ball.serialized(),
@@ -82,5 +112,5 @@ io.on("connection", (socket) => {
       [EVENTS.POSTS_DATA]: posts.map((post) => post.serialized()),
     };
     socket.emit(EVENTS.STATE_CHANGED, data);
-  }, 100);
+  }, 20);
 });
