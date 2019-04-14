@@ -1,5 +1,6 @@
 export enum constants {
   BALL_DIAMETER_TO_FIELD_YLENGTH = 0.01,
+  BALL_DEFAULT_SPEED = 0.002,
   BALL_INITIAL_VX = 0,
   BALL_INITIAL_VY = 0,
   BALL_INITIAL_X = 0.6,
@@ -33,10 +34,13 @@ export enum EVENTS {
 }
 
 export enum COMMANDS {
+  CHASE_BALL = "chase.ball",
   MOVE_PLAYER_LEFT = "move.player.left",
   MOVE_PLAYER_DOWN = "move.player.down",
   MOVE_PLAYER_RIGHT = "move.player.right",
   MOVE_PLAYER_UP = "move.player.up",
+  SHOOT_BALL = "shoot.ball",
+  STOP = "player.stop",
 }
 
 export const BALL_INITIAL_ARGS = [
@@ -81,6 +85,15 @@ export const FIELD_INITIAL_COORDINATES = [
   constants.FIELD_INITIAL_XLENGTH as number,
   constants.FIELD_INITIAL_YLENGTH as number,
 ];
+
+export const KEY_DOWN_EVENT_TO_COMMAND_MAP: Map<string, COMMANDS> = new Map([
+  ["ArrowDown", COMMANDS.MOVE_PLAYER_DOWN],
+  ["ArrowLeft", COMMANDS.MOVE_PLAYER_LEFT],
+  ["ArrowRight", COMMANDS.MOVE_PLAYER_RIGHT],
+  ["ArrowUp", COMMANDS.MOVE_PLAYER_UP],
+  ["KeyA", COMMANDS.SHOOT_BALL],
+  ["KeyF", COMMANDS.CHASE_BALL],
+]);
 
 export const PLAYER_INITIAL_ARGS = [
   constants.PLAYER_INITIAL_X as number,

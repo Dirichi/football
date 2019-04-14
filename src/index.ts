@@ -5,6 +5,8 @@ import socketIo from "socket.io";
 import { Ball } from "./ball";
 import { BallPhysics } from "./ball_physics";
 import { Box } from "./box";
+import { ChaseBallCommand } from "./chase_ball_command";
+// TODO: This is starting to look ugly
 import { BALL_INITIAL_ARGS, BOX18A_INITIAL_COORDINATES,
   BOX18B_INITIAL_COORDINATES, BOX6A_INITIAL_COORDINATES,
   BOX6B_INITIAL_COORDINATES, COMMANDS, constants, EVENTS,
@@ -20,6 +22,9 @@ import { MoveUpCommand } from "./move_up_command";
 import { Player } from "./player";
 import { PlayerPhysics } from "./player_physics";
 import { Post } from "./post";
+import { BallPossessionService } from "./services/ball_possession_service";
+import { ShootBallCommand } from "./shoot_ball_command";
+import { StopCommand } from "./stop_command";
 const app = express();
 const httpServer = http.createServer(app);
 const io = socketIo(httpServer);
@@ -33,8 +38,10 @@ const [fieldx, fieldy, fieldxlength, fieldylength] = FIELD_INITIAL_COORDINATES;
 const field = new Field(fieldx, fieldy, fieldxlength, fieldylength);
 
 const [ballx, bally, ballvx, ballvy, balldiameter] = BALL_INITIAL_ARGS;
-const ball = new Ball(ballx, bally, ballvx, ballvy, balldiameter);
 const ballPhysics = new BallPhysics(field);
+const ball = new Ball(ballx, bally, ballvx, ballvy, balldiameter);
+ball.setPhysics(ballPhysics);
+ball.setMaximumSpeed(constants.BALL_DEFAULT_SPEED);
 
 const [postAX, postAY, postAXlength, postAYlength] = POSTA_INITIAL_COORDINATES;
 const postA = new Post(postAX, postAY, postAXlength, postAYlength);
@@ -61,9 +68,12 @@ const boxes = [box18A, box18B, box6A, box6B];
 
 const [playerx, playery, playervx, playervy, playerSpeed, playerdiameter]
   = PLAYER_INITIAL_ARGS;
-const playerPhysics = new PlayerPhysics(field, queue);
+const playerPhysics = new PlayerPhysics(field);
 const player = new Player(playerx, playery, playervx, playervy, playerSpeed,
-   playerdiameter, queue, playerPhysics);
+   playerdiameter);
+player.setPhysics(playerPhysics);
+player.setOpposingGoalPost(postA);
+const ballPossessionService = new BallPossessionService(ball, [player]);
 
 // Configure Express to use EJS
 app.set("views", path.join(__dirname, "views"));
@@ -86,10 +96,13 @@ interface IhashMapOfCommands {
 }
 
 const NAME_TO_COMMAND_MAPPING: IhashMapOfCommands = {
-  [COMMANDS.MOVE_PLAYER_DOWN]: MoveDownCommand,
-  [COMMANDS.MOVE_PLAYER_LEFT]: MoveLeftCommand,
-  [COMMANDS.MOVE_PLAYER_RIGHT]: MoveRightCommand,
-  [COMMANDS.MOVE_PLAYER_UP]: MoveUpCommand,
+  [COMMANDS.MOVE_PLAYER_DOWN]: new MoveDownCommand(),
+  [COMMANDS.MOVE_PLAYER_LEFT]: new MoveLeftCommand(),
+  [COMMANDS.MOVE_PLAYER_RIGHT]: new MoveRightCommand(),
+  [COMMANDS.MOVE_PLAYER_UP]: new MoveUpCommand(),
+  [COMMANDS.CHASE_BALL]: new ChaseBallCommand(ball),
+  [COMMANDS.SHOOT_BALL]: new ShootBallCommand(ball, ballPossessionService),
+  [COMMANDS.STOP]: new StopCommand(),
 };
 
 io.on("connection", (socket) => {
@@ -102,8 +115,9 @@ io.on("connection", (socket) => {
   });
 
   setInterval(() => {
-    playerPhysics.update(player);
-    ballPhysics.update(ball);
+    ball.update();
+    player.update();
+
     const data = {
       [EVENTS.BALL_DATA]: ball.serialized(),
       [EVENTS.BOXES_DATA]: boxes.map((box) => box.serialized()),

@@ -1,7 +1,7 @@
 import { constants, EVENTS } from "./constants";
-import { EventQueue } from "./event_queue";
 import { IPlayerSchema } from "./iplayer_schema";
 import { PlayerPhysics } from "./player_physics";
+import { Post } from "./post";
 
 export class Player {
   public x: number;
@@ -10,41 +10,69 @@ export class Player {
   public vy: number;
   public diameter: number;
 
-  private queue: EventQueue;
-  private physics: PlayerPhysics;
+  private opposingGoalPost?: Post;
+  private physics?: PlayerPhysics;
   private speed: number;
 
-  constructor(x: number, y: number, vx: number, vy: number,
-              speed: number, diameter: number, queue: EventQueue,
-              physics: PlayerPhysics) {
+  constructor(x: number, y: number, vx: number, vy: number, speed: number,
+              diameter: number) {
+      // TODO: For some reason the player moves faster vertically
+      // than horizontally
       this.x = x;
       this.y = y;
       this.vx = vx;
       this.vy = vy;
       this.diameter = diameter;
-      this.queue = queue;
-      this.physics = physics;
       this.speed = speed;
+  }
+
+  public update() {
+    this.physics.update(this);
   }
 
   public moveUp() {
     [this.vx, this.vy] = [0, -this.speed];
-    this.physics.update(this);
   }
 
   public moveDown() {
     [this.vx, this.vy] = [0, this.speed];
-    this.physics.update(this);
   }
 
   public moveLeft() {
     [this.vx, this.vy] = [-this.speed, 0];
-    this.physics.update(this);
   }
 
   public moveRight() {
     [this.vx, this.vy] = [this.speed, 0];
-    this.physics.update(this);
+  }
+
+  public stop() {
+    [this.vx, this.vy] = [0, 0];
+  }
+
+  public moveTowards(x: number, y: number, margin: number) {
+    // TODO: Test this method
+    if (y - this.y > margin) {
+      this.moveDown();
+    } else if (this.y - y > margin) {
+      this.moveUp();
+    } else if (x - this.x > margin) {
+      this.moveRight();
+    } else if (this.x - x > margin) {
+      this.moveLeft();
+    }
+  }
+
+  public setPhysics(physics: PlayerPhysics) {
+    this.physics = physics;
+  }
+
+  public getOpposingGoalPost(): Post {
+    return this.opposingGoalPost;
+  }
+
+  public setOpposingGoalPost(post: Post) {
+    this.opposingGoalPost = post;
   }
 
   public serialized(): IPlayerSchema {

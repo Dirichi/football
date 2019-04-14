@@ -1,7 +1,8 @@
+import { ICommand } from "./icommand";
 import { Player } from "./player";
 
-export class MoveRightCommand {
-  public static execute(player: Player) {
+export class MoveRightCommand implements ICommand {
+  public execute(player: Player) {
     player.moveRight();
   }
 }

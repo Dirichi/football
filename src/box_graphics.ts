@@ -4,8 +4,7 @@ import { Field } from "./field";
 import { IAnimationEngine } from "./ianimation_engine";
 import { IBoxSchema } from "./ibox_schema";
 
-export class HollowBoxGraphics {
-  // TODO: implement AnimationEngine interface
+export class BoxGraphics {
   public engine: IAnimationEngine;
   public queue: EventQueue;
 

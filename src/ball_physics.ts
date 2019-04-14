@@ -13,12 +13,7 @@ export class BallPhysics {
     const nextY = ball.y + ball.vy;
     const withinBoundary =
       this.boundary.containsCircle(nextX, nextY, ball.diameter);
-
-    if (withinBoundary) {
-      this.move(ball, nextX, nextY);
-    } else {
-      this.stop(ball);
-    }
+    withinBoundary ? this.move(ball, nextX, nextY) : this.stop(ball);
   }
 
   private move(ball: Ball, x: number, y: number) {

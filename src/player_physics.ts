@@ -1,15 +1,12 @@
 import { constants, EVENTS } from "./constants";
-import { EventQueue } from "./event_queue";
 import { IBoundary } from "./iboundary";
 import { Player } from "./player";
 
 export class PlayerPhysics {
   private boundary: IBoundary;
-  private queue: EventQueue;
 
-  constructor(boundary: IBoundary, queue: EventQueue) {
+  constructor(boundary: IBoundary) {
     this.boundary = boundary;
-    this.queue = queue;
   }
 
   public update(player: Player) {
@@ -17,7 +14,11 @@ export class PlayerPhysics {
     const nextY = player.y + player.vy;
     const withinBoundary =
       this.boundary.containsCircle(nextX, nextY, player.diameter);
-    withinBoundary ? this.move(player) : this.stop(player);
+
+    if (!withinBoundary) {
+      this.stop(player);
+    }
+    this.move(player);
   }
 
   private move(player: Player) {
