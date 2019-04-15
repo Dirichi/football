@@ -1,7 +1,3 @@
 .cache
-dist/*.js
-dist/*.js.map
-dist/public/js/main.js
-dist/public/js/main.js.map
-dist/views/*.ejs
+dist
 node_modules

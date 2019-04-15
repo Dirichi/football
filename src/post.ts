@@ -1,4 +1,5 @@
-import { IBoxSchema } from "../src/ibox_schema";
+import { IBoxSchema } from "./ibox_schema";
+import { Vector } from "./vector";
 
 export class Post {
   public x: number;
@@ -11,6 +12,13 @@ export class Post {
     this.y = y;
     this.xlength = xlength;
     this.ylength = ylength;
+  }
+
+  public getMidPoint(): Vector {
+    const x = this.x + this.xlength / 2;
+    const y = this.y + this.ylength / 2;
+
+    return new Vector(x, y, 0);
   }
 
   public serialized(): IBoxSchema {

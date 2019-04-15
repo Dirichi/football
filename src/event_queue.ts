@@ -4,7 +4,7 @@ export class EventQueue {
     this.events = events || new Map();
   }
 
-  public trigger(event: string, payload: any) {
+  public trigger(event: string, payload: object) {
     const callbacks = this.events.get(event) || [];
     callbacks.forEach((callback) => {
       callback.call(this, payload);

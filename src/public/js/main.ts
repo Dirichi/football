@@ -2,27 +2,32 @@ import io from 'socket.io-client';
 import p5 from "p5";
 import { constants, EVENTS } from "../../constants";
 import { BallGraphics } from "../../ball_graphics";
+import { BoxGraphics } from "../../box_graphics";
 import { EventQueue } from '../../event_queue';
 import { FieldGraphics } from "../../field_graphics";
-import { HollowBoxGraphics } from "../../hollow_box_graphics";
+import { ManualInputHandler } from "../../manual_input_handler";
 import { P5AnimationEngine } from "../../p5_animation_engine";
 import { PlayerGraphics } from "../../player_graphics";
 import { PostGraphics } from "../../post_graphics";
 
 const socket = io();
 const queue = new EventQueue();
+const manualInputHandler = new ManualInputHandler(socket);
 
 const sketch = (p: p5) => {
   const animationEngine = new P5AnimationEngine(p);
   const fieldGraphics = new FieldGraphics(animationEngine, queue);
   const postGraphics = new PostGraphics(animationEngine, queue);
-  const hollowBoxGraphics = new HollowBoxGraphics(animationEngine, queue);
+  const boxGraphics = new BoxGraphics(animationEngine, queue);
   const ballGraphics = new BallGraphics(animationEngine, queue);
   const playerGraphics = new PlayerGraphics(animationEngine, queue);
 
+// DO NOT REORDER THIS
+// Maybe there should be a way to specify the order in which animations
+// should be drawn, other than this list. But that may be over-engineering.
   const graphics = [
     fieldGraphics,
-    hollowBoxGraphics,
+    boxGraphics,
     postGraphics,
     playerGraphics,
     ballGraphics,
@@ -50,5 +55,14 @@ socket.on(EVENTS.STATE_CHANGED, (data) => {
     queue.trigger(event, payload);
   });
 });
+
+document.onkeydown = (event: KeyboardEvent) => {
+  manualInputHandler.handleInput(event);
+});
+
+document.onkeyup = (event: KeyboardEvent) => {
+  manualInputHandler.sendStop();
+});
+
 
 const psketch = new p5(sketch);

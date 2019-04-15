@@ -18,24 +18,33 @@ describe('BallPhysics', () => {
   describe('`update`', () => {
     it('updates the ball position with velocity if within the boundary', () => {
       const boundary = new TestBoundary();
-      sinon.stub(boundary, 'containsCircle').returns(true);
+      const containsCircleStub =
+        sinon.stub(boundary, 'containsCircle').returns(true);
 
       const ballPhysics = new BallPhysics(boundary);
       const [x, y, vx, vy, diameter] = [2, 3, 4, 8, 5];
       const ball = new Ball(x, y, vx, vy, diameter);
       ballPhysics.update(ball);
       expect([ball.x, ball.y]).to.eql([6, 11]);
+      // the boundary should validate that nextX and nextY
+      // (not currentX and currentY) are contained
+      expect(containsCircleStub).to.have.been.calledWith(6, 11, 5);
     });
 
     it('ensures that the ball does not get outside of its boundary', () => {
       const boundary = new TestBoundary();
-      sinon.stub(boundary, 'containsCircle').returns(false);
+      const containsCircleStub =
+        sinon.stub(boundary, 'containsCircle').returns(false);
 
       const ballPhysics = new BallPhysics(boundary);
       const [x, y, vx, vy, diameter] = [2, 3, 4, 8, 5];
       const ball = new Ball(x, y, vx, vy, diameter);
       ballPhysics.update(ball);
       expect([ball.x, ball.y]).to.eql([2, 3]);
+
+      // the boundary should validate that nextX and nextY
+      // (not currentX and currentY) are contained
+      expect(containsCircleStub).to.have.been.calledWith(6, 11, 5);
     });
 
     it('stops the ball when it hits a boundary', () => {

@@ -5,19 +5,32 @@ import socketIo from "socket.io";
 import { Ball } from "./ball";
 import { BallPhysics } from "./ball_physics";
 import { Box } from "./box";
+import { ChaseBallCommand } from "./chase_ball_command";
+// TODO: This is starting to look ugly
 import { BALL_INITIAL_ARGS, BOX18A_INITIAL_COORDINATES,
   BOX18B_INITIAL_COORDINATES, BOX6A_INITIAL_COORDINATES,
-  BOX6B_INITIAL_COORDINATES, constants, EVENTS, FIELD_INITIAL_COORDINATES,
-  PLAYER_INITIAL_ARGS, POSTA_INITIAL_COORDINATES,
+  BOX6B_INITIAL_COORDINATES, COMMANDS, constants, EVENTS,
+  FIELD_INITIAL_COORDINATES, PLAYER_INITIAL_ARGS, POSTA_INITIAL_COORDINATES,
   POSTB_INITIAL_COORDINATES } from "./constants";
+import { EventQueue } from "./event_queue";
 import { Field } from "./field";
+import { ICommand } from "./icommand";
+import { MoveDownCommand } from "./move_down_command";
+import { MoveLeftCommand } from "./move_left_command";
+import { MoveRightCommand } from "./move_right_command";
+import { MoveUpCommand } from "./move_up_command";
 import { Player } from "./player";
+import { PlayerPhysics } from "./player_physics";
 import { Post } from "./post";
-
+import { BallPossessionService } from "./services/ball_possession_service";
+import { ShootBallCommand } from "./shoot_ball_command";
+import { StopCommand } from "./stop_command";
 const app = express();
 const httpServer = http.createServer(app);
 const io = socketIo(httpServer);
 const port = 3000;
+
+const queue = new EventQueue();
 
 // TODO: Perhaps if these game objects were initialized with hashes, this part
 // of the code would not look so messy.
@@ -25,8 +38,10 @@ const [fieldx, fieldy, fieldxlength, fieldylength] = FIELD_INITIAL_COORDINATES;
 const field = new Field(fieldx, fieldy, fieldxlength, fieldylength);
 
 const [ballx, bally, ballvx, ballvy, balldiameter] = BALL_INITIAL_ARGS;
-const ball = new Ball(ballx, bally, ballvx, ballvy, balldiameter);
 const ballPhysics = new BallPhysics(field);
+const ball = new Ball(ballx, bally, ballvx, ballvy, balldiameter);
+ball.setPhysics(ballPhysics);
+ball.setMaximumSpeed(constants.BALL_DEFAULT_SPEED);
 
 const [postAX, postAY, postAXlength, postAYlength] = POSTA_INITIAL_COORDINATES;
 const postA = new Post(postAX, postAY, postAXlength, postAYlength);
@@ -51,9 +66,14 @@ const box18B = new Box(box18BX, box18BY, box18BXlength, box18BYlength);
 
 const boxes = [box18A, box18B, box6A, box6B];
 
-const [playerx, playery, playervx, playervy, playerdiameter]
+const [playerx, playery, playervx, playervy, playerSpeed, playerdiameter]
   = PLAYER_INITIAL_ARGS;
-const player = new Player(playerx, playery, playervx, playervy, playerdiameter);
+const playerPhysics = new PlayerPhysics(field);
+const player = new Player(playerx, playery, playervx, playervy, playerSpeed,
+   playerdiameter);
+player.setPhysics(playerPhysics);
+player.setOpposingGoalPost(postA);
+const ballPossessionService = new BallPossessionService(ball, [player]);
 
 // Configure Express to use EJS
 app.set("views", path.join(__dirname, "views"));
@@ -71,9 +91,33 @@ httpServer.listen(port, () => {
   console.log(`server started at http://localhost:${port}`);
 });
 
+interface IhashMapOfCommands {
+  [key: string]: ICommand;
+}
+
+const NAME_TO_COMMAND_MAPPING: IhashMapOfCommands = {
+  [COMMANDS.MOVE_PLAYER_DOWN]: new MoveDownCommand(),
+  [COMMANDS.MOVE_PLAYER_LEFT]: new MoveLeftCommand(),
+  [COMMANDS.MOVE_PLAYER_RIGHT]: new MoveRightCommand(),
+  [COMMANDS.MOVE_PLAYER_UP]: new MoveUpCommand(),
+  [COMMANDS.CHASE_BALL]: new ChaseBallCommand(ball),
+  [COMMANDS.SHOOT_BALL]: new ShootBallCommand(ball, ballPossessionService),
+  [COMMANDS.STOP]: new StopCommand(),
+};
+
 io.on("connection", (socket) => {
+  socket.on("command", (data) => {
+    const key = data as string;
+    const command = NAME_TO_COMMAND_MAPPING[key];
+    if (command) {
+      command.execute(player);
+    }
+  });
+
   setInterval(() => {
-    ballPhysics.update(ball);
+    ball.update();
+    player.update();
+
     const data = {
       [EVENTS.BALL_DATA]: ball.serialized(),
       [EVENTS.BOXES_DATA]: boxes.map((box) => box.serialized()),
@@ -82,5 +126,5 @@ io.on("connection", (socket) => {
       [EVENTS.POSTS_DATA]: posts.map((post) => post.serialized()),
     };
     socket.emit(EVENTS.STATE_CHANGED, data);
-  }, 100);
+  }, 20);
 });
