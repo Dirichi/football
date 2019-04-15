@@ -1,5 +1,5 @@
-import { Ball } from "../ball";
-import { Player } from "../player";
+import { Ball } from "../game_objects/ball";
+import { Player } from "../game_objects/player";
 
 export class BallPossessionService {
   private ball: Ball;

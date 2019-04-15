@@ -1,4 +1,4 @@
-import { IWebSocket } from "../../src/iweb_socket";
+import { IWebSocket } from "../../src/interfaces/iweb_socket";
 
 export class TestWebSocket implements IWebSocket {
   private events: Map<string, Array<Function>>;

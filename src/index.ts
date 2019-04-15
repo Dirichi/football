@@ -2,10 +2,13 @@ import express from "express";
 import * as http from "http";
 import path from "path";
 import socketIo from "socket.io";
-import { Ball } from "./ball";
-import { BallPhysics } from "./ball_physics";
-import { Box } from "./box";
-import { ChaseBallCommand } from "./chase_ball_command";
+import { ChaseBallCommand } from "./commands/chase_ball_command";
+import { MoveDownCommand } from "./commands/move_down_command";
+import { MoveLeftCommand } from "./commands/move_left_command";
+import { MoveRightCommand } from "./commands/move_right_command";
+import { MoveUpCommand } from "./commands/move_up_command";
+import { ShootBallCommand } from "./commands/shoot_ball_command";
+import { StopCommand } from "./commands/stop_command";
 // TODO: This is starting to look ugly
 import { BALL_INITIAL_ARGS, BOX18A_INITIAL_COORDINATES,
   BOX18B_INITIAL_COORDINATES, BOX6A_INITIAL_COORDINATES,
@@ -13,18 +16,15 @@ import { BALL_INITIAL_ARGS, BOX18A_INITIAL_COORDINATES,
   FIELD_INITIAL_COORDINATES, PLAYER_INITIAL_ARGS, POSTA_INITIAL_COORDINATES,
   POSTB_INITIAL_COORDINATES } from "./constants";
 import { EventQueue } from "./event_queue";
-import { Field } from "./field";
-import { ICommand } from "./icommand";
-import { MoveDownCommand } from "./move_down_command";
-import { MoveLeftCommand } from "./move_left_command";
-import { MoveRightCommand } from "./move_right_command";
-import { MoveUpCommand } from "./move_up_command";
-import { Player } from "./player";
-import { PlayerPhysics } from "./player_physics";
-import { Post } from "./post";
+import { Ball } from "./game_objects/ball";
+import { Box } from "./game_objects/box";
+import { Field } from "./game_objects/field";
+import { Player } from "./game_objects/player";
+import { Post } from "./game_objects/post";
+import { ICommand } from "./interfaces/icommand";
+import { BallPhysics } from "./physics/ball_physics";
+import { PlayerPhysics } from "./physics/player_physics";
 import { BallPossessionService } from "./services/ball_possession_service";
-import { ShootBallCommand } from "./shoot_ball_command";
-import { StopCommand } from "./stop_command";
 const app = express();
 const httpServer = http.createServer(app);
 const io = socketIo(httpServer);
