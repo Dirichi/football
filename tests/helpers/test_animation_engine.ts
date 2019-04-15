@@ -1,7 +1,7 @@
-import { IAnimationEngine } from "../../src/ianimation_engine";
-import { IBallSchema } from "../../src/iball_schema";
-import { IBoxSchema } from "../../src/ibox_schema";
-import { IPlayerSchema } from "../../src/iplayer_schema";
+import { IAnimationEngine } from "../../src/interfaces/ianimation_engine";
+import { IBallSchema } from "../../src/interfaces/iball_schema";
+import { IBoxSchema } from "../../src/interfaces/ibox_schema";
+import { IPlayerSchema } from "../../src/interfaces/iplayer_schema";
 
 export class TestAnimationEngine implements IAnimationEngine {
   public drawBall(ball: IBallSchema) {};

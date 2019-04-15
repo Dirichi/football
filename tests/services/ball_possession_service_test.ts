@@ -1,6 +1,6 @@
-import { Ball } from '../../src/ball';
+import { Ball } from '../../src/game_objects/ball';
 import { BallPossessionService } from '../../src/services/ball_possession_service';
-import { Player } from '../../src/player';
+import { Player } from '../../src/game_objects/player';
 import * as chai from 'chai';
 import * as sinon from 'sinon';
 

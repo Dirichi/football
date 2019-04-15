@@ -1,14 +1,14 @@
 import io from 'socket.io-client';
 import p5 from "p5";
 import { constants, EVENTS } from "../../constants";
-import { BallGraphics } from "../../ball_graphics";
-import { BoxGraphics } from "../../box_graphics";
+import { BallGraphics } from "../../graphics/ball_graphics";
+import { BoxGraphics } from "../../graphics/box_graphics";
 import { EventQueue } from '../../event_queue';
-import { FieldGraphics } from "../../field_graphics";
-import { ManualInputHandler } from "../../manual_input_handler";
-import { P5AnimationEngine } from "../../p5_animation_engine";
-import { PlayerGraphics } from "../../player_graphics";
-import { PostGraphics } from "../../post_graphics";
+import { FieldGraphics } from "../../graphics/field_graphics";
+import { ManualInputHandler } from "../../client/manual_input_handler";
+import { P5AnimationEngine } from "../../client/p5_animation_engine";
+import { PlayerGraphics } from "../../graphics/player_graphics";
+import { PostGraphics } from "../../graphics/post_graphics";
 
 const socket = io();
 const queue = new EventQueue();
