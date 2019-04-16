@@ -39,6 +39,7 @@ export enum COMMANDS {
   MOVE_PLAYER_DOWN = "move.player.down",
   MOVE_PLAYER_RIGHT = "move.player.right",
   MOVE_PLAYER_UP = "move.player.up",
+  PASS_BALL = "pass.ball",
   SHOOT_BALL = "shoot.ball",
   STOP = "player.stop",
 }
@@ -93,6 +94,7 @@ export const KEY_DOWN_EVENT_TO_COMMAND_MAP: Map<string, COMMANDS> = new Map([
   ["ArrowUp", COMMANDS.MOVE_PLAYER_UP],
   ["KeyA", COMMANDS.SHOOT_BALL],
   ["KeyF", COMMANDS.CHASE_BALL],
+  ["KeyS", COMMANDS.PASS_BALL],
 ]);
 
 export const PLAYER_INITIAL_ARGS = [

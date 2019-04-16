@@ -7,20 +7,19 @@ export class PlayerGraphics {
   public engine: IAnimationEngine;
   public queue: EventQueue;
 
-  private player?: IPlayerSchema;
+  private players: IPlayerSchema[];
   private scale: number[];
 
   constructor(engine: IAnimationEngine, queue: EventQueue) {
     this.engine = engine;
+    this.players = [];
     this.queue = queue;
     this.scale = [0, 0, 1, 1]; // default scale
     this.configureListeners();
   }
 
   public animate() {
-    if (this.player) {
-      this.engine.drawPlayer(this.player);
-    }
+    this.players.forEach((player) => this.engine.drawPlayer(player));
   }
 
   public setScale(scale: number[]) {
@@ -29,8 +28,8 @@ export class PlayerGraphics {
 
   private configureListeners() {
     this.queue.when(EVENTS.PLAYER_DATA, (data) => {
-      const deserializedData = data as IPlayerSchema;
-      this.player = this.toScale(deserializedData);
+      const deserializedData = data as IPlayerSchema[];
+      this.players = deserializedData.map((player) => this.toScale(player));
     });
   }
 

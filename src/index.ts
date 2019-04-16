@@ -7,6 +7,7 @@ import { MoveDownCommand } from "./commands/move_down_command";
 import { MoveLeftCommand } from "./commands/move_left_command";
 import { MoveRightCommand } from "./commands/move_right_command";
 import { MoveUpCommand } from "./commands/move_up_command";
+import { PassBallCommand } from "./commands/pass_ball_command";
 import { ShootBallCommand } from "./commands/shoot_ball_command";
 import { StopCommand } from "./commands/stop_command";
 // TODO: This is starting to look ugly
@@ -69,11 +70,20 @@ const boxes = [box18A, box18B, box6A, box6B];
 const [playerx, playery, playervx, playervy, playerSpeed, playerdiameter]
   = PLAYER_INITIAL_ARGS;
 const playerPhysics = new PlayerPhysics(field);
-const player = new Player(playerx, playery, playervx, playervy, playerSpeed,
+const playerA = new Player(playerx, playery, playervx, playervy, playerSpeed,
    playerdiameter);
-player.setPhysics(playerPhysics);
-player.setOpposingGoalPost(postA);
-const ballPossessionService = new BallPossessionService(ball, [player]);
+playerA.setPhysics(playerPhysics);
+playerA.setOpposingGoalPost(postA);
+
+const [playerbx, playerby, playerbvx, playerbvy, playerbSpeed, playerbdiameter]
+  = PLAYER_INITIAL_ARGS;
+const playerB = new Player(0.8, 0.3, playerbvx, playerbvy, playerbSpeed,
+   playerbdiameter);
+playerB.setPhysics(playerPhysics);
+playerB.setOpposingGoalPost(postA);
+
+const players = [playerA, playerB];
+const ballPossessionService = new BallPossessionService(ball, players);
 
 // Configure Express to use EJS
 app.set("views", path.join(__dirname, "views"));
@@ -101,6 +111,7 @@ const NAME_TO_COMMAND_MAPPING: IhashMapOfCommands = {
   [COMMANDS.MOVE_PLAYER_RIGHT]: new MoveRightCommand(),
   [COMMANDS.MOVE_PLAYER_UP]: new MoveUpCommand(),
   [COMMANDS.CHASE_BALL]: new ChaseBallCommand(ball),
+  [COMMANDS.PASS_BALL]: new PassBallCommand(ball, ballPossessionService, [playerB]),
   [COMMANDS.SHOOT_BALL]: new ShootBallCommand(ball, ballPossessionService),
   [COMMANDS.STOP]: new StopCommand(),
 };
@@ -110,19 +121,18 @@ io.on("connection", (socket) => {
     const key = data as string;
     const command = NAME_TO_COMMAND_MAPPING[key];
     if (command) {
-      command.execute(player);
+      command.execute(playerA);
     }
   });
 
   setInterval(() => {
     ball.update();
-    player.update();
-
+    players.forEach((player) => player.update());
     const data = {
       [EVENTS.BALL_DATA]: ball.serialized(),
       [EVENTS.BOXES_DATA]: boxes.map((box) => box.serialized()),
       [EVENTS.FIELD_DATA]: field.serialized(),
-      [EVENTS.PLAYER_DATA]: player.serialized(),
+      [EVENTS.PLAYER_DATA]: players.map((player) => player.serialized()),
       [EVENTS.POSTS_DATA]: posts.map((post) => post.serialized()),
     };
     socket.emit(EVENTS.STATE_CHANGED, data);
