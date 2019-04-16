@@ -13,7 +13,7 @@ chai.use(sinonChai);
 
 describe('PlayerGraphics', () => {
   describe('`animate`', () => {
-    it('displays a player with data received from the queue with default scale',
+    it('displays a players with data received from the queue with default scale',
       () => {
         const engine = new TestAnimationEngine();
         const queue = new EventQueue();
@@ -21,20 +21,20 @@ describe('PlayerGraphics', () => {
         const graphics = new PlayerGraphics(engine, queue);
 
         const playerData = { x: 0.1, y: 0.2, vx: 0.3, vy: 0.4, diameter: 0.5};
-        queue.trigger(EVENTS.PLAYER_DATA, playerData);
+        queue.trigger(EVENTS.PLAYER_DATA, [playerData]);
 
         graphics.animate();
         expect(drawPlayerStub).to.have.been.calledWith(playerData);
       });
 
-      it('draws the player to the provided scale ([xmin, ymin, xmax, ymax])',
+      it('draws the players to the provided scale ([xmin, ymin, xmax, ymax])',
         () => {
           const engine = new TestAnimationEngine();
           const queue = new EventQueue();
           const graphics = new PlayerGraphics(engine, queue);
           graphics.setScale([1, 2, 3, 5]);
           const playerData = {x: 0.1, y: 0.2, vx: 0.3, vy: 0.4, diameter: 0.5};
-          queue.trigger(EVENTS.PLAYER_DATA, playerData);
+          queue.trigger(EVENTS.PLAYER_DATA, [playerData]);
 
           sinon.stub(engine, 'drawPlayer').callsFake(
             (playerArgument: IPlayerSchema) => {
