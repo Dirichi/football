@@ -10,6 +10,7 @@ export class Ball {
 
   private physics?: BallPhysics;
   private maximumSpeed?: number;
+  private mass?: number;
 
   constructor(x: number, y: number, vx: number, vy: number, diameter: number) {
     this.x = x;
@@ -40,6 +41,10 @@ export class Ball {
 
   public setMaximumSpeed(speed: number) {
     this.maximumSpeed = speed;
+  }
+
+  public setMass(mass: number) {
+    this.mass = mass;
   }
 
   public serialized(): IBallSchema {

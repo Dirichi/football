@@ -25,7 +25,7 @@ describe('PlayerPhysics', () => {
       const player = new Player(x, y, vx, vy, speed, diameter);
       const physics = new PlayerPhysics(boundary);
       player.setPhysics(physics);
-      physics.update(player);
+      physics.update();
       expect([player.x, player.y]).to.eql([6, 11]);
       // the boundary should validate that nextX and nextY
       // (not currentX and currentY) are contained
@@ -41,7 +41,7 @@ describe('PlayerPhysics', () => {
       const player = new Player(x, y, vx, vy, speed, diameter);
       const physics = new PlayerPhysics(boundary);
       player.setPhysics(physics);
-      physics.update(player);
+      physics.update();
       expect([player.x, player.y]).to.eql([2, 3]);
 
       // the boundary should validate that nextX and nextY
@@ -57,7 +57,7 @@ describe('PlayerPhysics', () => {
       const player = new Player(x, y, vx, vy, speed, diameter);
       const physics = new PlayerPhysics(boundary);
       player.setPhysics(physics);
-      physics.update(player);
+      physics.update();
       expect([player.vx, player.vy]).to.eql([0, 0]);
     });
   });

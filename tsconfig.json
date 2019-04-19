@@ -2,6 +2,9 @@
     "compilerOptions": {
       "baseUrl": ".",
       "esModuleInterop": true,
+      "lib": [
+        "esnext",
+      ],
       "module": "commonjs",
       "moduleResolution": "node",
       "noImplicitAny": true,
