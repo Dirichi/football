@@ -28,8 +28,8 @@ describe('CollisionDetectionService', () => {
 
       const collidableOne = new TestCollidable('1');
       const collidableTwo = new TestCollidable('2');
-      collidableOne.setShapeData(circleOne);
-      collidableTwo.setShapeData(circleTwo);
+      collidableOne.setShape(circleOne);
+      collidableTwo.setShape(circleTwo);
 
       expect(service.isColliding(collidableOne, collidableTwo)).to.be.true;
     });
@@ -50,8 +50,8 @@ describe('CollisionDetectionService', () => {
 
       const collidableOne = new TestCollidable('1');
       const collidableTwo = new TestCollidable('2');
-      collidableOne.setShapeData(circleOne);
-      collidableTwo.setShapeData(circleTwo);
+      collidableOne.setShape(circleOne);
+      collidableTwo.setShape(circleTwo);
 
       expect(service.isColliding(collidableOne, collidableTwo)).to.be.true;
     });
@@ -72,8 +72,8 @@ describe('CollisionDetectionService', () => {
 
       const collidableOne = new TestCollidable('1');
       const collidableTwo = new TestCollidable('2');
-      collidableOne.setShapeData(circleOne);
-      collidableTwo.setShapeData(circleTwo);
+      collidableOne.setShape(circleOne);
+      collidableTwo.setShape(circleTwo);
 
       expect(service.isColliding(collidableOne, collidableTwo)).to.be.false;
     });

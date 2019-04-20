@@ -1,7 +1,9 @@
 import { TestEventQueue } from '../helpers/test_event_queue';
+import { ThreeDimensionalVector } from '../../src/three_dimensional_vector';
 import { Player } from '../../src/game_objects/player';
 import { PlayerPhysics } from '../../src/physics/player_physics';
 import { IBoundary } from '../../src/interfaces/iboundary';
+import { ICircle } from '../../src/interfaces/icircle';
 import * as chai from 'chai';
 import * as sinon from 'sinon';
 
@@ -92,15 +94,45 @@ describe('PlayerPhysics', () => {
         boundary = null;
       });
 
-      it('publishes a message to control the ball', () => {
-        const [x, y, vx, vy, diameter] = [2, 3, 4, 8, 5];
+      it('publishes a message to stop and reposition the ball', () => {
+        const [x, y, vx, vy, diameter] = [2, 3, 4, 8, 6];
         const player = new Player(x, y, vx, vy, diameter);
         const physics = new PlayerPhysics(boundary, queue);
         physics.setPlayer(player);
 
+        const circle = {
+          kind: 'circle',
+          getCentre: () => new ThreeDimensionalVector(2, 5, 0),
+          getDiameter: () => 2,
+        } as ICircle;
+
         queue.trigger(`${player.getGameObjectId()}.collision`,
-          { colliderType: 'ball' });
-        const expected = { newX: 2, newY: 3, newVx: 4, newVy: 8 };
+          { colliderType: 'ball', shape: circle });
+
+        const newX = (4 / Math.sqrt(5)) + 2;
+        const newY = (8 / Math.sqrt(5)) + 3;
+        const expected = { newX: newX, newY: newY, newVx: 0, newVy: 0 };
+        expect(queue.triggeredEvents.get('ball.control')).to.eql([expected]);
+      });
+
+      it('does not reposition the ball if the player is stationary', () => {
+        const [x, y, vx, vy, diameter] = [2, 3, 0, 0, 6];
+        const player = new Player(x, y, vx, vy, diameter);
+        const physics = new PlayerPhysics(boundary, queue);
+        physics.setPlayer(player);
+
+        const circle = {
+          kind: 'circle',
+          getCentre: () => new ThreeDimensionalVector(2, 5, 0),
+          getDiameter: () => 2,
+        } as ICircle;
+
+        queue.trigger(`${player.getGameObjectId()}.collision`,
+          { colliderType: 'ball', shape: circle });
+
+        const newX = (4 / Math.sqrt(5)) + 2;
+        const newY = (8 / Math.sqrt(5)) + 3;
+        const expected = { newX: 2, newY: 5, newVx: 0, newVy: 0 };
         expect(queue.triggeredEvents.get('ball.control')).to.eql([expected]);
       });
     });
