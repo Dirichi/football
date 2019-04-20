@@ -21,7 +21,7 @@ export class ChaseBallCommand implements ICommand {
     const margin = (player.diameter + this.ball.diameter) / 2;
 
     if (distance > margin) {
-      player.moveTowards(this.ball.x, this.ball.y, margin);
+      player.moveTowards(this.ball.x, this.ball.y);
     } else {
       player.stop();
     }
