@@ -35,11 +35,11 @@ export class CollisionNotificationService {
   private notifyCollision(collisionPair: [ICollidable, ICollidable]): void {
     const [collidableA, collidableB] = collisionPair;
     this.queue.trigger(`${collidableA.getGameObjectId()}.collision`, {
-      collidingObject: collidableB,
+      colliderType: collidableB.constructor.name.toLowerCase(),
     });
 
     this.queue.trigger(`${collidableB.getGameObjectId()}.collision`, {
-      collidingObject: collidableA,
+      colliderType: collidableA.constructor.name.toLowerCase(),
     });
   }
 

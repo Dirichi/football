@@ -1,12 +1,19 @@
-import { IEventQueue } from "./interfaces/ievent_queue";
+import { IEventQueue } from "../../src/interfaces/ievent_queue";
 
-export class EventQueue implements IEventQueue {
-  public events: Map<string, Array<(payload: object) => void>>;
+export class TestEventQueue implements IEventQueue {
+  private events: Map<string, Array<(payload: object) => void>>;
+  public triggeredEvents: Map<string, object[]>
+
   constructor(events?: Map<string, Array<(payload: object) => void>>) {
     this.events = events || new Map();
+    this.triggeredEvents = new Map();
   }
 
   public trigger(event: string, payload: object) {
+    const payloads = this.triggeredEvents.get(event) || [];
+    payloads.push(payload);
+    this.triggeredEvents.set(event, payloads);
+
     const callbacks = this.events.get(event) || [];
     callbacks.forEach((callback) => {
       callback.call(this, payload);

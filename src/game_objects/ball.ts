@@ -1,8 +1,11 @@
+import v4 from "uuid/v4";
 import { IBallSchema } from "../interfaces/iball_schema";
+import { ICircle } from "../interfaces/icircle";
+import { ICollidable } from "../interfaces/icollidable";
 import { BallPhysics } from "../physics/ball_physics";
 import { ThreeDimensionalVector } from "../three_dimensional_vector";
 
-export class Ball {
+export class Ball implements ICollidable {
   public x: number;
   public y: number;
   public vx: number;
@@ -12,8 +15,10 @@ export class Ball {
   private physics?: BallPhysics;
   private maximumSpeed?: number;
   private mass?: number;
+  private id: string;
 
   constructor(x: number, y: number, vx: number, vy: number, diameter: number) {
+    this.id = v4(); // Random unique id generation
     this.x = x;
     this.y = y;
     this.vx = vx;
@@ -55,5 +60,17 @@ export class Ball {
       x: this.x,
       y: this.y,
     } as IBallSchema;
+  }
+
+  public getGameObjectId(): string {
+    return this.id;
+  }
+
+  public getShape(): ICircle {
+    return {
+      getCentre: () => new ThreeDimensionalVector(this.x, this.y, 0),
+      getDiameter: () => this.diameter,
+      kind: "circle",
+    } as ICircle;
   }
 }

@@ -30,6 +30,7 @@ export class PassBallCommand implements ICommand {
     const owner = this.possessionService.getPlayerInPossession();
 
     if (receiver && owner === sender) {
+      sender.kickingBall = true;
       const target = new ThreeDimensionalVector(receiver.x, receiver.y, 0);
       this.ball.moveTowards(target);
     }

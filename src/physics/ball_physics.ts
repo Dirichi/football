@@ -1,18 +1,22 @@
 import { Ball } from "../game_objects/ball";
 import { IBoundary } from "../interfaces/iboundary";
+import { IEventQueue } from "../interfaces/ievent_queue";
 
 export class BallPhysics {
   private boundary: IBoundary;
   private ball?: Ball;
   private friction: number;
+  private queue: IEventQueue;
 
-  constructor(boundary: IBoundary) {
+  constructor(boundary: IBoundary, queue: IEventQueue) {
     this.boundary = boundary;
+    this.queue = queue;
     this.friction = 0;
   }
 
   public setBall(ball: Ball) {
     this.ball = ball;
+    this.listenForControl();
   }
 
   public update() {
@@ -42,5 +46,22 @@ export class BallPhysics {
   private stop() {
     this.ball.vx = 0;
     this.ball.vy = 0;
+  }
+
+  private listenForControl() {
+    // TODO: Listen for the specific ball by id
+    this.queue.when("ball.control", (data) => {
+      const controlPayload =
+        data as { newX: number, newY: number, newVx: number, newVy: number };
+      this.adjustBall(controlPayload);
+    });
+  }
+
+  private adjustBall(controlPayload:
+      { newX: number, newY: number, newVx: number, newVy: number }) {
+    this.ball.x = controlPayload.newX;
+    this.ball.y = controlPayload.newY;
+    this.ball.vx = controlPayload.newVx;
+    this.ball.vy = controlPayload.newVy;
   }
 }

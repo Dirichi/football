@@ -1,29 +1,36 @@
+import v4 from "uuid/v4";
 import { constants, EVENTS } from "../constants";
+import { ICircle } from "../interfaces/icircle";
+import { ICollidable } from "../interfaces/icollidable";
 import { IPlayerSchema } from "../interfaces/iplayer_schema";
 import { PlayerPhysics } from "../physics/player_physics";
 import { ThreeDimensionalVector } from "../three_dimensional_vector";
 import { Post } from "./post";
 
-export class Player {
+export class Player implements ICollidable {
   public x: number;
   public y: number;
   public vx: number;
   public vy: number;
   public diameter: number;
+  public kickingBall: boolean;
 
   private opposingGoalPost?: Post;
   private physics?: PlayerPhysics;
   private maximumSpeed?: number;
   private mass?: number;
+  private id: string;
 
   constructor(x: number, y: number, vx: number, vy: number, diameter: number) {
-      // TODO: For some reason the player moves faster vertically
-      // than horizontally
+      this.id = v4(); // Randomly generated id
       this.x = x;
       this.y = y;
       this.vx = vx;
       this.vy = vy;
       this.diameter = diameter;
+      // TODO: This is a temporary flag to ensure the ball moves when it's kicked
+      // It will be changed to a state object
+      this.kickingBall = false;
   }
 
   public update() {
@@ -51,6 +58,7 @@ export class Player {
   }
 
   public moveTowards(target: ThreeDimensionalVector) {
+    // TODO: Move to physics class
     const position = new ThreeDimensionalVector(this.x, this.y, 0);
     const unitDelta = target.minus(position).unit();
     const velocity = unitDelta.scalarMultiply(this.maximumSpeed);
@@ -87,5 +95,17 @@ export class Player {
       x: this.x,
       y: this.y,
     } as IPlayerSchema;
+  }
+
+  public getGameObjectId(): string {
+    return this.id;
+  }
+
+  public getShape(): ICircle {
+    return {
+      getCentre: () => new ThreeDimensionalVector(this.x, this.y, 0),
+      getDiameter: () => this.diameter,
+      kind: "circle",
+    } as ICircle;
   }
 }
