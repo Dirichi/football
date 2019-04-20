@@ -60,9 +60,4 @@ document.onkeydown = (event: KeyboardEvent) => {
   manualInputHandler.handleInput(event);
 });
 
-document.onkeyup = (event: KeyboardEvent) => {
-  manualInputHandler.sendStop();
-});
-
-
 const psketch = new p5(sketch);

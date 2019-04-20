@@ -20,10 +20,6 @@ export class ManualInputHandler {
     }
   }
 
-  public sendStop() {
-    this.sendCommand(COMMANDS.STOP);
-  }
-
   private sendCommand(command: string) {
     this.socket.emit("command", command);
   }

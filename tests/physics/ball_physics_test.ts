@@ -41,6 +41,7 @@ describe('BallPhysics', () => {
       const [x, y, vx, vy, diameter] = [2, 3, 4, 8, 5];
       const ball = new Ball(x, y, vx, vy, diameter);
       ballPhysics.setBall(ball);
+
       ballPhysics.update();
       expect([ball.x, ball.y]).to.eql([2, 3]);
 
@@ -57,8 +58,23 @@ describe('BallPhysics', () => {
       const [x, y, vx, vy, diameter] = [2, 3, 4, 8, 5];
       const ball = new Ball(x, y, vx, vy, diameter);
       ballPhysics.setBall(ball);
+
       ballPhysics.update();
       expect([ball.vx, ball.vy]).to.eql([0, 0]);
+    });
+
+    it('updates the velocity of the player based on friction', () => {
+      const boundary = new TestBoundary();
+      sinon.stub(boundary, 'containsCircle').returns(true);
+
+      const [x, y, vx, vy, diameter] = [2, 3, 4, 8, 5];
+      const ball = new Ball(x, y, vx, vy, diameter);
+      const physics = new BallPhysics(boundary);
+      physics.setFriction(0.1);
+      physics.setBall(ball);
+
+      physics.update();
+      expect([ball.vx, ball.vy]).to.eql([3.6, 7.2]);
     });
   });
 });
