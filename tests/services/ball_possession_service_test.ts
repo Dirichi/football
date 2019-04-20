@@ -11,8 +11,8 @@ chai.use(sinonChai);
 describe('BallPossessionService', () => {
   describe('`getPlayerInPossession`', () => {
     it('returns the player in possession of the ball', () => {
-      const playerA = new Player(1, 1, 0, 0, 1, 2); // x, y, vx, vy, speed, diameter
-      const playerB = new Player(5, 0, 0, 0, 1, 2); // x, y, vx, vy, speed, diameter
+      const playerA = new Player(1, 1, 0, 0, 2); // x, y, vx, vy, diameter
+      const playerB = new Player(5, 0, 0, 0, 2); // x, y, vx, vy, diameter
       const ball = new Ball(0, 0, 0, 0, 2); // x, y, vx, vy, diameter
 
       const service = new BallPossessionService(ball, [playerA, playerB]);
@@ -21,8 +21,8 @@ describe('BallPossessionService', () => {
     });
 
     it('returns null if there is no player in possession', () => {
-      const playerA = new Player(5, 0, 0, 0, 1, 2); // x, y, vx, vy, speed, diameter
-      const playerB = new Player(5, 0, 0, 0, 1, 2); // x, y, vx, vy, speed, diameter
+      const playerA = new Player(5, 0, 0, 0, 2); // x, y, vx, vy, diameter
+      const playerB = new Player(5, 0, 0, 0, 2); // x, y, vx, vy, diameter
       const ball = new Ball(0, 0, 0, 0, 2); // x, y, vx, vy, diameter
 
       const service = new BallPossessionService(ball, [playerA, playerB]);

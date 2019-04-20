@@ -12,11 +12,10 @@ export class Player {
 
   private opposingGoalPost?: Post;
   private physics?: PlayerPhysics;
-  private speed: number;
+  private maximumSpeed?: number;
   private mass?: number;
 
-  constructor(x: number, y: number, vx: number, vy: number, speed: number,
-              diameter: number) {
+  constructor(x: number, y: number, vx: number, vy: number, diameter: number) {
       // TODO: For some reason the player moves faster vertically
       // than horizontally
       this.x = x;
@@ -24,7 +23,6 @@ export class Player {
       this.vx = vx;
       this.vy = vy;
       this.diameter = diameter;
-      this.speed = speed;
   }
 
   public update() {
@@ -32,37 +30,33 @@ export class Player {
   }
 
   public moveUp() {
-    [this.vx, this.vy] = [0, -this.speed];
+    [this.vx, this.vy] = [0, -this.maximumSpeed];
   }
 
   public moveDown() {
-    [this.vx, this.vy] = [0, this.speed];
+    [this.vx, this.vy] = [0, this.maximumSpeed];
   }
 
   public moveLeft() {
-    [this.vx, this.vy] = [-this.speed, 0];
+    [this.vx, this.vy] = [-this.maximumSpeed, 0];
   }
 
   public moveRight() {
-    [this.vx, this.vy] = [this.speed, 0];
+    [this.vx, this.vy] = [this.maximumSpeed, 0];
   }
 
   public stop() {
     [this.vx, this.vy] = [0, 0];
   }
 
-  public moveTowards(x: number, y: number, margin: number) {
-    // TODO: Test this method
-    // May need to move it to physics
-    if (y - this.y > margin) {
-      this.moveDown();
-    } else if (this.y - y > margin) {
-      this.moveUp();
-    } else if (x - this.x > margin) {
-      this.moveRight();
-    } else if (this.x - x > margin) {
-      this.moveLeft();
-    }
+  public moveTowards(x: number, y: number) {
+    const [dy, dx] = [y - this.y, x - this.x];
+    const magnitude = Math.sqrt((dy * dy) + (dx * dx));
+    const [unitDy, unitDx] = [dy / magnitude, dx / magnitude];
+    [this.vy, this.vx] = [
+      this.maximumSpeed * unitDy,
+      this.maximumSpeed * unitDx
+    ];
   }
 
   public setPhysics(physics: PlayerPhysics) {
@@ -72,6 +66,10 @@ export class Player {
 
   public setMass(mass: number) {
     this.mass = mass;
+  }
+
+  public setMaximumSpeed(speed: number) {
+    this.maximumSpeed = speed;
   }
 
   public getOpposingGoalPost(): Post {

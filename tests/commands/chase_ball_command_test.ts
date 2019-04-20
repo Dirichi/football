@@ -14,18 +14,18 @@ describe('ChaseBallCommand', () => {
       const ball = new Ball(0, 0, 0, 0, 0.5); // x, y, vx, vy, diameter
       const command = new ChaseBallCommand(ball);
 
-      const player = new Player(0, 1, 0, 0, 1, 1); // x, y, vx, vy, speed, diameter
+      const player = new Player(0, 1, 0, 0, 1); // x, y, vx, vy, diameter
       const moveStub = sinon.stub(player, 'moveTowards');
       command.execute(player);
 
-      expect(moveStub).to.have.been.calledWith(ball.x, ball.y, 0.75);
+      expect(moveStub).to.have.been.calledWith(ball.x, ball.y);
     });
 
     it('stops the player if already within the margin', () => {
       const ball = new Ball(0, 0, 0, 0, 0.5); // x, y, vx, vy, diameter
       const command = new ChaseBallCommand(ball);
 
-      const player = new Player(0, 0.7, 0, 0, 1, 1); // x, y, vx, vy, speed, diameter
+      const player = new Player(0, 0.7, 0, 0, 1); // x, y, vx, vy, diameter
       const stopStub = sinon.stub(player, 'stop');
       const moveStub = sinon.stub(player, 'moveTowards');
       command.execute(player);

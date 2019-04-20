@@ -14,7 +14,7 @@ describe('ShootBallCommand', () => {
   describe('`execute`', () => {
     it('moves the ball towards the player\'s opposition goal post', () => {
       const post = new Post(0, 0, 1, 1);
-      const player = new Player(1, 1, 0, 0, 1, 2); // x, y, vx, vy, speed, diameter
+      const player = new Player(1, 1, 0, 0, 2); // x, y, vx, vy, diameter
       player.setOpposingGoalPost(post);
       const ball = new Ball(0, 0, 0, 0, 2); // x, y, vx, vy, diameter
       const service = new BallPossessionService(ball, [player]);
@@ -29,8 +29,8 @@ describe('ShootBallCommand', () => {
 
     it('does not move the ball if the player is not in possession', () => {
       const post = new Post(0, 0, 1, 1);
-      const playerA = new Player(1, 1, 0, 0, 1, 2); // x, y, vx, vy, speed, diameter
-      const playerB = new Player(1, 1, 0, 0, 1, 2); // x, y, vx, vy, speed, diameter
+      const playerA = new Player(1, 1, 0, 0, 2); // x, y, vx, vy, diameter
+      const playerB = new Player(1, 1, 0, 0, 2); // x, y, vx, vy, diameter
       playerA.setOpposingGoalPost(post);
       playerB.setOpposingGoalPost(post);
       const ball = new Ball(0, 0, 0, 0, 2); // x, y, vx, vy, diameter
@@ -46,7 +46,7 @@ describe('ShootBallCommand', () => {
 
     it('does not move the ball if there is no player in possession', () => {
       const post = new Post(0, 0, 1, 1);
-      const player = new Player(1, 1, 0, 0, 1, 2); // x, y, vx, vy, speed, diameter
+      const player = new Player(1, 1, 0, 0, 2); // x, y, vx, vy, diameter
       player.setOpposingGoalPost(post);
       const ball = new Ball(0, 0, 0, 0, 2); // x, y, vx, vy, diameter
       const service = new BallPossessionService(ball, [player]);

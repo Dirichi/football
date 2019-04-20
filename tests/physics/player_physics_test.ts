@@ -22,7 +22,8 @@ describe('PlayerPhysics', () => {
         sinon.stub(boundary, 'containsCircle').returns(true);
 
       const [x, y, vx, vy, speed, diameter] = [2, 3, 4, 8, 1, 5];
-      const player = new Player(x, y, vx, vy, speed, diameter);
+      const player = new Player(x, y, vx, vy, diameter);
+      player.setMaximumSpeed(speed);
       const physics = new PlayerPhysics(boundary);
       player.setPhysics(physics);
       physics.update();
@@ -38,7 +39,8 @@ describe('PlayerPhysics', () => {
         sinon.stub(boundary, 'containsCircle').returns(false);
 
       const [x, y, vx, vy, speed, diameter] = [2, 3, 4, 8, 1, 5];
-      const player = new Player(x, y, vx, vy, speed, diameter);
+      const player = new Player(x, y, vx, vy, diameter);
+      player.setMaximumSpeed(speed);
       const physics = new PlayerPhysics(boundary);
       player.setPhysics(physics);
       physics.update();
@@ -54,7 +56,8 @@ describe('PlayerPhysics', () => {
       sinon.stub(boundary, 'containsCircle').returns(false);
 
       const [x, y, vx, vy, speed, diameter] = [2, 3, 4, 8, 1, 5];
-      const player = new Player(x, y, vx, vy, speed, diameter);
+      const player = new Player(x, y, vx, vy, diameter);
+      player.setMaximumSpeed(speed);
       const physics = new PlayerPhysics(boundary);
       player.setPhysics(physics);
       physics.update();

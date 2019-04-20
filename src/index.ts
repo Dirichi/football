@@ -75,16 +75,16 @@ const boxes = [box18A, box18B, box6A, box6B];
 const [playerx, playery, playervx, playervy, playerSpeed, playerdiameter]
   = PLAYER_INITIAL_ARGS;
 const playerPhysicsA = new PlayerPhysics(field);
-const playerA = new Player(playerx, playery, playervx, playervy, playerSpeed,
-   playerdiameter);
+const playerA = new Player(playerx, playery, playervx, playervy, playerdiameter);
+playerA.setMaximumSpeed(playerSpeed);
 playerA.setPhysics(playerPhysicsA);
 playerA.setOpposingGoalPost(postA);
 
 const [playerbx, playerby, playerbvx, playerbvy, playerbSpeed, playerbdiameter]
   = PLAYER_INITIAL_ARGS;
 const playerPhysicsB = new PlayerPhysics(field);
-const playerB = new Player(0.8, 0.3, playerbvx, playerbvy, playerbSpeed,
-   playerbdiameter);
+const playerB = new Player(0.8, 0.3, playerbvx, playerbvy, playerbdiameter);
+playerA.setMaximumSpeed(playerbSpeed);
 playerB.setPhysics(playerPhysicsB);
 playerB.setOpposingGoalPost(postB);
 

@@ -12,8 +12,8 @@ chai.use(sinonChai);
 describe('PassBallCommand', () => {
   describe('`execute`', () => {
     it('moves the ball towards the receiver\'s position', () => {
-      const sender = new Player(1, 1, 0, 0, 1, 2); // x, y, vx, vy, speed, diameter
-      const receiver = new Player(5, 4, 0, 0, 1, 2); // x, y, vx, vy, speed, diameter
+      const sender = new Player(1, 1, 0, 0, 2); // x, y, vx, vy, diameter
+      const receiver = new Player(5, 4, 0, 0, 2); // x, y, vx, vy, diameter
       const ball = new Ball(0, 0, 0, 0, 2); // x, y, vx, vy, diameter
       const service = new BallPossessionService(ball, [sender, receiver]);
 
@@ -26,8 +26,8 @@ describe('PassBallCommand', () => {
     });
 
     it('does not move the ball if the sender is not in possession', () => {
-      const sender = new Player(1, 1, 0, 0, 1, 2); // x, y, vx, vy, speed, diameter
-      const receiver = new Player(1, 1, 0, 0, 1, 2); // x, y, vx, vy, speed, diameter
+      const sender = new Player(1, 1, 0, 0, 2); // x, y, vx, vy, diameter
+      const receiver = new Player(1, 1, 0, 0, 2); // x, y, vx, vy, diameter
       const ball = new Ball(0, 0, 0, 0, 2); // x, y, vx, vy, diameter
       const service = new BallPossessionService(ball, [sender, receiver]);
 
@@ -40,8 +40,8 @@ describe('PassBallCommand', () => {
     });
 
     it('does not move the ball if there is no player in possession', () => {
-      const sender = new Player(1, 1, 0, 0, 1, 2); // x, y, vx, vy, speed, diameter
-      const receiver = new Player(1, 1, 0, 0, 1, 2); // x, y, vx, vy, speed, diameter
+      const sender = new Player(1, 1, 0, 0, 2); // x, y, vx, vy, diameter
+      const receiver = new Player(1, 1, 0, 0, 2); // x, y, vx, vy, diameter
       const ball = new Ball(0, 0, 0, 0, 2); // x, y, vx, vy, diameter
       const service = new BallPossessionService(ball, [sender, receiver]);
 
@@ -54,7 +54,7 @@ describe('PassBallCommand', () => {
     });
 
     it('does not move the ball if there is no available receiver', () => {
-      const sender = new Player(1, 1, 0, 0, 1, 2); // x, y, vx, vy, speed, diameter
+      const sender = new Player(1, 1, 0, 0, 2); // x, y, vx, vy, diameter
       const ball = new Ball(0, 0, 0, 0, 2); // x, y, vx, vy, diameter
       const service = new BallPossessionService(ball, [sender]);
 
