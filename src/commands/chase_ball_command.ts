@@ -1,6 +1,7 @@
 import { Ball } from "../game_objects/ball";
 import { Player } from "../game_objects/player";
 import { ICommand } from "../interfaces/icommand";
+import { ThreeDimensionalVector } from "../three_dimensional_vector";
 
 // The implementation of chasing the ball is not satisfactory
 // The player usually stops when they are already on top of the
@@ -21,7 +22,8 @@ export class ChaseBallCommand implements ICommand {
     const margin = (player.diameter + this.ball.diameter) / 2;
 
     if (distance > margin) {
-      player.moveTowards(this.ball.x, this.ball.y);
+      const target = new ThreeDimensionalVector(this.ball.x, this.ball.y, 0);
+      player.moveTowards(target);
     } else {
       player.stop();
     }

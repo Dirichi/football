@@ -1,6 +1,7 @@
 import { Ball } from '../../src/game_objects/ball';
 import { BallPossessionService } from '../../src/services/ball_possession_service';
 import { ShootBallCommand } from '../../src/commands/shoot_ball_command';
+import { ThreeDimensionalVector } from '../../src/three_dimensional_vector';
 import { Player } from '../../src/game_objects/player';
 import { Post } from '../../src/game_objects/post';
 import * as chai from 'chai';
@@ -20,11 +21,15 @@ describe('ShootBallCommand', () => {
       const service = new BallPossessionService(ball, [player]);
 
       sinon.stub(service, 'getPlayerInPossession').returns(player);
-      const moveStub = sinon.stub(ball, 'moveTowards');
+      const moveStub = sinon.stub(ball, 'moveTowards').callsFake(
+        (actual: ThreeDimensionalVector) => {
+          const expected = new ThreeDimensionalVector(0.5, 0.5, 0);
+          expect(expected.equals(actual));
+        });;
 
       const command = new ShootBallCommand(ball, service);
       command.execute(player);
-      expect(moveStub).to.have.been.calledWith(0.5, 0.5);
+      expect(moveStub).to.have.been.called;
     });
 
     it('does not move the ball if the player is not in possession', () => {

@@ -1,6 +1,7 @@
 import { constants, EVENTS } from "../constants";
 import { IPlayerSchema } from "../interfaces/iplayer_schema";
 import { PlayerPhysics } from "../physics/player_physics";
+import { ThreeDimensionalVector } from "../three_dimensional_vector";
 import { Post } from "./post";
 
 export class Player {
@@ -49,14 +50,12 @@ export class Player {
     [this.vx, this.vy] = [0, 0];
   }
 
-  public moveTowards(x: number, y: number) {
-    const [dy, dx] = [y - this.y, x - this.x];
-    const magnitude = Math.sqrt((dy * dy) + (dx * dx));
-    const [unitDy, unitDx] = [dy / magnitude, dx / magnitude];
-    [this.vy, this.vx] = [
-      this.maximumSpeed * unitDy,
-      this.maximumSpeed * unitDx
-    ];
+  public moveTowards(target: ThreeDimensionalVector) {
+    const position = new ThreeDimensionalVector(this.x, this.y, 0);
+    const unitDelta = target.minus(position).unit();
+    const velocity = unitDelta.scalarMultiply(this.maximumSpeed);
+
+    [this.vx, this.vy] = [velocity.x, velocity.y];
   }
 
   public setPhysics(physics: PlayerPhysics) {

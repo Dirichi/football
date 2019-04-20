@@ -2,6 +2,7 @@ import { Ball } from "../game_objects/ball";
 import { Player } from "../game_objects/player";
 import { ICommand } from "../interfaces/icommand";
 import { BallPossessionService } from "../services/ball_possession_service";
+import { ThreeDimensionalVector } from "../three_dimensional_vector";
 
 export class PassBallCommand implements ICommand {
   // should this command be able to access the ball directly?
@@ -29,7 +30,8 @@ export class PassBallCommand implements ICommand {
     const owner = this.possessionService.getPlayerInPossession();
 
     if (receiver && owner === sender) {
-      this.ball.moveTowards(receiver.x, receiver.y);
+      const target = new ThreeDimensionalVector(receiver.x, receiver.y, 0);
+      this.ball.moveTowards(target);
     }
   }
 }
