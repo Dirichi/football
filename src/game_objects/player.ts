@@ -53,6 +53,7 @@ export class Player {
 
   public moveTowards(x: number, y: number, margin: number) {
     // TODO: Test this method
+    // May need to move it to physics
     if (y - this.y > margin) {
       this.moveDown();
     } else if (this.y - y > margin) {

@@ -1,19 +1,24 @@
 import { ICollidable } from "../../src/interfaces/icollidable";
+import { Shape } from "../../src/custom_types/shape";
 
 export class TestCollidable implements ICollidable {
   private gameObjectId: string;
-  private shape: string;
+  private shapeData?: Shape;
 
-  constructor(gameObjectId: string, shape: string) {
+  constructor(gameObjectId: string) {
     this.gameObjectId = gameObjectId;
-    this.shape = shape;
   }
 
   public getGameObjectId(): string {
     return this.gameObjectId;
   }
 
-  public getShape(): string {
-    return this.shape;
+  public getShapeData(): Shape | null {
+    const shape = this.shapeData || null;
+    return this.shapeData;
+  }
+
+  public setShapeData(shape: Shape) {
+    this.shapeData = shape;
   }
 }

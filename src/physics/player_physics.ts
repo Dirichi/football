@@ -18,6 +18,10 @@ export class PlayerPhysics {
     withinBoundary ? this.move() : this.stop();
   }
 
+  public setPlayer(player: Player) {
+    this.player = player;
+  }
+
   private move() {
     this.player.x += this.player.vx;
     this.player.y += this.player.vy;
@@ -26,9 +30,5 @@ export class PlayerPhysics {
   private stop() {
     this.player.vx = 0;
     this.player.vy = 0;
-  }
-
-  public setPlayer(player: Player) {
-    this.player = player;
   }
 }

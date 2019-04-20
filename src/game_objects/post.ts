@@ -1,5 +1,5 @@
 import { IBoxSchema } from "../interfaces/ibox_schema";
-import { Vector } from "../vector";
+import { ThreeDimensionalVector } from "../three_dimensional_vector";
 
 export class Post {
   public x: number;
@@ -14,11 +14,11 @@ export class Post {
     this.ylength = ylength;
   }
 
-  public getMidPoint(): Vector {
+  public getMidPoint(): ThreeDimensionalVector {
     const x = this.x + this.xlength / 2;
     const y = this.y + this.ylength / 2;
 
-    return new Vector(x, y, 0);
+    return new ThreeDimensionalVector(x, y, 0);
   }
 
   public serialized(): IBoxSchema {

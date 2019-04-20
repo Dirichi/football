@@ -1,6 +1,6 @@
-import { CollisionDetectionService } from "./collision_detection_service";
 import { EventQueue } from "../event_queue";
 import { ICollidable } from "../interfaces/icollidable";
+import { CollisionDetectionService } from "./collision_detection_service";
 
 export class CollisionNotificationService {
   private collisionGroups: ICollidable[][];

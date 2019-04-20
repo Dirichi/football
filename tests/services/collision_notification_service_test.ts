@@ -16,9 +16,10 @@ describe('CollisionNotificationService', () => {
       const detectionService = new CollisionDetectionService();
       const notificationService =
         new CollisionNotificationService(detectionService, queue);
-      const collidableA = new TestCollidable('1', 'cirlce');
-      const collidableB = new TestCollidable('2', 'cirlce');
-      const collidableC = new TestCollidable('3', 'cirlce');
+
+      const collidableA = new TestCollidable('1');
+      const collidableB = new TestCollidable('2');
+      const collidableC = new TestCollidable('3');
 
       notificationService.registerCollisionGroup([collidableA, collidableB]);
       notificationService.registerCollisionGroup([collidableA, collidableC]);
@@ -40,14 +41,16 @@ describe('CollisionNotificationService', () => {
       const notificationService =
         new CollisionNotificationService(detectionService, queue);
 
-      const collidableA = new TestCollidable('collider.1', 'cirlce');
-      const collidableB = new TestCollidable('collider.2', 'cirlce');
-      const collidableC = new TestCollidable('collider.3', 'cirlce');
+      const collidableA = new TestCollidable('collider.1');
+      const collidableB = new TestCollidable('collider.2');
+      const collidableC = new TestCollidable('collider.3');
 
       const isCollidingStub = sinon.stub(detectionService, 'isColliding');
       isCollidingStub.withArgs(collidableA, collidableB).returns(true);
       isCollidingStub.withArgs(collidableA, collidableC).returns(false);
 
+      // Consider creating a test class for the eventQueue that behaves the
+      // way this stub is described. Will need to implement an interface
       const eventMessageMap = new Map<string, object[]>();
       sinon.stub(queue, 'trigger').callsFake((event: string, payload: object) => {
         const eventMessages = eventMessageMap.get(event) || [];
@@ -61,14 +64,11 @@ describe('CollisionNotificationService', () => {
 
       expect(eventMessageMap.get('collider.1.collision')).to.eql([
         {collidingObject: collidableB},
-        {collidingObject: collidableC},
       ]);
       expect(eventMessageMap.get('collider.2.collision')).to.eql([
         {collidingObject: collidableA},
       ]);
-      expect(eventMessageMap.get('collider.3.collision')).to.eql([
-        { collidingObject: collidableA },
-      ]);
+      expect(eventMessageMap.get('collider.3.collision')).to.be.undefined;
     });
   });
 });
