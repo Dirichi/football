@@ -1,5 +1,6 @@
 import { IBallSchema } from "../interfaces/iball_schema";
 import { BallPhysics } from "../physics/ball_physics";
+import { ThreeDimensionalVector } from "../three_dimensional_vector";
 
 export class Ball {
   public x: number;
@@ -24,16 +25,13 @@ export class Ball {
     this.physics.update();
   }
 
-  public moveTowards(x: number, y: number) {
-    // TODO: Test this method
-    // Should probably be the responsibility of physics
-    const [dy, dx] = [y - this.y, x - this.x];
-    const magnitude = Math.sqrt((dy * dy) + (dx * dx));
-    const [unitDy, unitDx] = [dy / magnitude, dx / magnitude];
-    [this.vy, this.vx] = [
-      this.maximumSpeed * unitDy,
-      this.maximumSpeed * unitDx
-    ];
+  public moveTowards(target: ThreeDimensionalVector) {
+    // this should be the responsibility of physics
+    const position = new ThreeDimensionalVector(this.x, this.y, 0);
+    const unitDelta = target.minus(position).unit();
+    const velocity = unitDelta.scalarMultiply(this.maximumSpeed);
+
+    [this.vx, this.vy] = [velocity.x, velocity.y];
   }
 
   public setPhysics(physics: BallPhysics) {

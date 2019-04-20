@@ -1,6 +1,7 @@
 import { Ball } from '../../src/game_objects/ball';
 import { BallPossessionService } from '../../src/services/ball_possession_service';
 import { PassBallCommand } from '../../src/commands/pass_ball_command';
+import { ThreeDimensionalVector } from '../../src/three_dimensional_vector';
 import { Player } from '../../src/game_objects/player';
 import * as chai from 'chai';
 import * as sinon from 'sinon';
@@ -18,11 +19,18 @@ describe('PassBallCommand', () => {
       const service = new BallPossessionService(ball, [sender, receiver]);
 
       sinon.stub(service, 'getPlayerInPossession').returns(sender);
-      const moveStub = sinon.stub(ball, 'moveTowards');
+
+      // Actual Test
+      const moveStub = sinon.stub(ball, 'moveTowards').callsFake(
+        (actual: ThreeDimensionalVector) => {
+          const expected = new ThreeDimensionalVector(5, 4, 0);
+          expect(expected.equals(actual));
+        });
+
       const command = new PassBallCommand(ball, service, [receiver]);
       command.execute(sender);
 
-      expect(moveStub).to.have.been.calledWith(5, 4);
+      expect(moveStub).to.have.been.called;
     });
 
     it('does not move the ball if the sender is not in possession', () => {

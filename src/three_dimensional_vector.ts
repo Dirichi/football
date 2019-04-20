@@ -19,12 +19,21 @@ export class ThreeDimensionalVector {
     return this.representation[2];
   }
 
+  public equals(other: ThreeDimensionalVector): boolean {
+    return this.x === other.x && this.y === other.y && this.z === other.z;
+  }
+
   public toArray(): number[] {
     return [...this.representation];
   }
 
   public copy(): ThreeDimensionalVector {
     return new ThreeDimensionalVector(this.x, this.y, this.z);
+  }
+
+  public unit(): ThreeDimensionalVector {
+    const magnitude = this.magnitude();
+    return this.scalarMultiply(1 / magnitude);
   }
 
   public scalarMultiply(scalar: number) {
