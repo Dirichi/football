@@ -1,3 +1,4 @@
+import { TestEventQueue } from '../helpers/test_event_queue';
 import { Player } from '../../src/game_objects/player';
 import { PlayerPhysics } from '../../src/physics/player_physics';
 import { IBoundary } from '../../src/interfaces/iboundary';
@@ -14,17 +15,27 @@ class TestBoundary implements IBoundary {
   }
 }
 
+let queue: TestEventQueue;
+let boundary: TestBoundary;
+
 describe('PlayerPhysics', () => {
   describe('`update`', () => {
+    beforeEach(() => {
+      queue = new TestEventQueue();
+      boundary = new TestBoundary();
+    });
+
+    afterEach(() => {
+      queue = null;
+      boundary = null;
+    });
+
     it('updates the player position with velocity if within the boundary', () => {
-      const boundary = new TestBoundary();
-      const containsCircleStub =
-        sinon.stub(boundary, 'containsCircle')
-          .withArgs(6, 11, 5).returns(true);
+      sinon.stub(boundary, 'containsCircle').withArgs(6, 11, 5).returns(true);
 
       const [x, y, vx, vy, diameter] = [2, 3, 4, 8, 5];
       const player = new Player(x, y, vx, vy, diameter);
-      const physics = new PlayerPhysics(boundary);
+      const physics = new PlayerPhysics(boundary, queue);
       player.setPhysics(physics);
 
       physics.update();
@@ -32,14 +43,11 @@ describe('PlayerPhysics', () => {
     });
 
     it('ensures that the player does not get outside of its boundary', () => {
-      const boundary = new TestBoundary();
-      const containsCircleStub =
-        sinon.stub(boundary, 'containsCircle')
-          .withArgs(6, 11, 5).returns(false);
+      sinon.stub(boundary, 'containsCircle').withArgs(6, 11, 5).returns(false);
 
       const [x, y, vx, vy, diameter] = [2, 3, 4, 8, 5];
       const player = new Player(x, y, vx, vy, diameter);
-      const physics = new PlayerPhysics(boundary);
+      const physics = new PlayerPhysics(boundary, queue);
       player.setPhysics(physics);
 
       physics.update();
@@ -47,12 +55,11 @@ describe('PlayerPhysics', () => {
     });
 
     it('stops the player when it hits a boundary', () => {
-      const boundary = new TestBoundary();
       sinon.stub(boundary, 'containsCircle').returns(false);
 
       const [x, y, vx, vy, diameter] = [2, 3, 4, 8, 5];
       const player = new Player(x, y, vx, vy, diameter);
-      const physics = new PlayerPhysics(boundary);
+      const physics = new PlayerPhysics(boundary, queue);
       player.setPhysics(physics);
 
       physics.update();
@@ -60,18 +67,42 @@ describe('PlayerPhysics', () => {
     });
 
     it('updates the velocity of the player based on friction', () => {
-      const boundary = new TestBoundary();
-      const containsCircleStub =
-        sinon.stub(boundary, 'containsCircle').returns(true);
+      sinon.stub(boundary, 'containsCircle').returns(true);
 
       const [x, y, vx, vy, diameter] = [2, 3, 4, 8, 5];
       const player = new Player(x, y, vx, vy, diameter);
-      const physics = new PlayerPhysics(boundary);
+      const physics = new PlayerPhysics(boundary, queue);
       physics.setFriction(0.1);
       player.setPhysics(physics);
 
       physics.update();
       expect([player.vx, player.vy]).to.eql([3.6, 7.2]);
+    });
+  });
+
+  describe('`setPlayer`', () => {
+    context('when the player collides with a ball', () => {
+      beforeEach(() => {
+        queue = new TestEventQueue();
+        boundary = new TestBoundary();
+      });
+
+      afterEach(() => {
+        queue = null;
+        boundary = null;
+      });
+
+      it('publishes a message to control the ball', () => {
+        const [x, y, vx, vy, diameter] = [2, 3, 4, 8, 5];
+        const player = new Player(x, y, vx, vy, diameter);
+        const physics = new PlayerPhysics(boundary, queue);
+        physics.setPlayer(player);
+
+        queue.trigger(`${player.getGameObjectId()}.collision`,
+          { colliderType: 'ball' });
+        const expected = { newX: 2, newY: 3, newVx: 4, newVy: 8 };
+        expect(queue.triggeredEvents.get('ball.control')).to.eql([expected]);
+      });
     });
   });
 });

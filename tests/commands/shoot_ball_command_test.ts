@@ -25,7 +25,7 @@ describe('ShootBallCommand', () => {
         (actual: ThreeDimensionalVector) => {
           const expected = new ThreeDimensionalVector(0.5, 0.5, 0);
           expect(expected.equals(actual));
-        });;
+        });
 
       const command = new ShootBallCommand(ball, service);
       command.execute(player);

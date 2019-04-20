@@ -13,7 +13,7 @@ export class TestCollidable implements ICollidable {
     return this.gameObjectId;
   }
 
-  public getShapeData(): Shape | null {
+  public getShape(): Shape | null {
     const shape = this.shapeData || null;
     return this.shapeData;
   }

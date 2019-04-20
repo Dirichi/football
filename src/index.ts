@@ -44,7 +44,7 @@ const [fieldx, fieldy, fieldxlength, fieldylength] = FIELD_INITIAL_COORDINATES;
 const field = new Field(fieldx, fieldy, fieldxlength, fieldylength);
 
 const [ballx, bally, ballvx, ballvy, balldiameter] = BALL_INITIAL_ARGS;
-const ballPhysics = new BallPhysics(field);
+const ballPhysics = new BallPhysics(field, queue);
 const ball = new Ball(ballx, bally, ballvx, ballvy, balldiameter);
 ball.setPhysics(ballPhysics);
 ball.setMaximumSpeed(constants.BALL_DEFAULT_SPEED);
@@ -74,7 +74,7 @@ const boxes = [box18A, box18B, box6A, box6B];
 
 const [playerx, playery, playervx, playervy, playerSpeed, playerdiameter]
   = PLAYER_INITIAL_ARGS;
-const playerPhysicsA = new PlayerPhysics(field);
+const playerPhysicsA = new PlayerPhysics(field, queue);
 playerPhysicsA.setFriction(constants.PLAYER_PHYSICS_DEFAULT_FRICTION);
 const playerA = new Player(playerx, playery, playervx, playervy, playerdiameter);
 playerA.setMaximumSpeed(playerSpeed);
@@ -83,7 +83,7 @@ playerA.setOpposingGoalPost(postA);
 
 const [playerbx, playerby, playerbvx, playerbvy, playerbSpeed, playerbdiameter]
   = PLAYER_INITIAL_ARGS;
-const playerPhysicsB = new PlayerPhysics(field);
+const playerPhysicsB = new PlayerPhysics(field, queue);
 const playerB = new Player(0.8, 0.3, playerbvx, playerbvy, playerbdiameter);
 playerA.setMaximumSpeed(playerbSpeed);
 playerB.setPhysics(playerPhysicsB);
@@ -112,6 +112,8 @@ interface IhashMapOfCommands {
   [key: string]: ICommand;
 }
 
+collisionNotificationService.registerCollisionGroup([ball, playerA, playerB]);
+
 const NAME_TO_COMMAND_MAPPING: IhashMapOfCommands = {
   [COMMANDS.MOVE_PLAYER_DOWN]: new MoveDownCommand(),
   [COMMANDS.MOVE_PLAYER_LEFT]: new MoveLeftCommand(),
@@ -133,6 +135,7 @@ io.on("connection", (socket) => {
   });
 
   setInterval(() => {
+    collisionNotificationService.update();
     ball.update();
     players.forEach((player) => player.update());
     const data = {

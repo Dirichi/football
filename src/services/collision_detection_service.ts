@@ -5,8 +5,8 @@ import { ThreeDimensionalVector } from "../three_dimensional_vector";
 
 export class CollisionDetectionService {
   public isColliding(collidableA: ICollidable, collidableB: ICollidable): boolean {
-    const shapeA = collidableA.getShapeData();
-    const shapeB = collidableB.getShapeData();
+    const shapeA = collidableA.getShape();
+    const shapeB = collidableB.getShape();
 
     if (shapeA.kind === "circle" && shapeB.kind === "circle") {
       return this.cicleCircleColliding(shapeA, shapeB);

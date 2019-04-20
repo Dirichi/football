@@ -20,6 +20,7 @@ export class ShootBallCommand implements ICommand {
     const owner = this.possessionService.getPlayerInPossession();
 
     if (owner === player) {
+      player.kickingBall = true;
       const post = player.getOpposingGoalPost();
       const midPoint = post.getMidPoint();
       const target = new ThreeDimensionalVector(midPoint.x, midPoint.y, 0);
