@@ -5,9 +5,11 @@ import { IBoundary } from "../interfaces/iboundary";
 export class PlayerPhysics {
   private boundary: IBoundary;
   private player?: Player;
+  private friction: number;
 
   constructor(boundary: IBoundary) {
     this.boundary = boundary;
+    this.friction = 0;
   }
 
   public update() {
@@ -16,10 +18,21 @@ export class PlayerPhysics {
     const withinBoundary =
       this.boundary.containsCircle(nextX, nextY, this.player.diameter);
     withinBoundary ? this.move() : this.stop();
+
+    this.applyFriction();
+  }
+
+  public applyFriction() {
+    this.player.vx *= (1 - this.friction);
+    this.player.vy *= (1 - this.friction);
   }
 
   public setPlayer(player: Player) {
     this.player = player;
+  }
+
+  public setFriction(friction: number) {
+    this.friction = friction;
   }
 
   private move() {

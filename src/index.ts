@@ -75,6 +75,7 @@ const boxes = [box18A, box18B, box6A, box6B];
 const [playerx, playery, playervx, playervy, playerSpeed, playerdiameter]
   = PLAYER_INITIAL_ARGS;
 const playerPhysicsA = new PlayerPhysics(field);
+playerPhysicsA.setFriction(constants.PLAYER_PHYSICS_DEFAULT_FRICTION);
 const playerA = new Player(playerx, playery, playervx, playervy, playerdiameter);
 playerA.setMaximumSpeed(playerSpeed);
 playerA.setPhysics(playerPhysicsA);
