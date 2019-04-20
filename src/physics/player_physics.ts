@@ -1,7 +1,9 @@
 import { constants, EVENTS } from "../constants";
 import { Player } from "../game_objects/player";
 import { IBoundary } from "../interfaces/iboundary";
+import { ICircle } from "../interfaces/icircle";
 import { IEventQueue } from "../interfaces/ievent_queue";
+import { ThreeDimensionalVector } from "../three_dimensional_vector";
 
 export class PlayerPhysics {
   private boundary: IBoundary;
@@ -55,23 +57,39 @@ export class PlayerPhysics {
 
   private listenForCollisions(): void {
     this.queue.when(`${this.player.getGameObjectId()}.collision`, (data) => {
-      const payload = data as { colliderType: string };
+      const payload = data as { colliderType: string, shape: ICircle };
       this.handleCollision(payload);
     });
   }
 
-  private handleCollision(collisionPayload: { colliderType: string }): void {
+  private handleCollision(
+    collisionPayload: { colliderType: string, shape: ICircle }): void {
     if (collisionPayload.colliderType === "ball" && !this.player.kickingBall) {
-      this.controlBall();
+      this.controlBall(collisionPayload.shape);
     }
   }
 
-  private controlBall(): void {
-    this.queue.trigger("ball.control", {
-      newVx: this.player.vx,
-      newVy: this.player.vy,
-      newX: this.player.x,
-      newY: this.player.y,
-    });
+  private controlBall(ball: ICircle): void {
+    const newBallPosition = this.calculateNewBallPosition(ball);
+    const payload = {
+      newVx: 0,
+      newVy: 0,
+      newX: newBallPosition.x,
+      newY: newBallPosition.y,
+    };
+    this.queue.trigger("ball.control", payload);
+  }
+
+  private calculateNewBallPosition(ball: ICircle): ThreeDimensionalVector {
+    const velocity = this.player.getVelocity();
+    if (velocity.isZero()) {
+      return ball.getCentre();
+    }
+
+    const desiredMargin = (this.player.diameter + ball.getDiameter()) / 2;
+    return velocity
+      .unit()
+      .scalarMultiply(desiredMargin)
+      .add(this.player.getPosition());
   }
 }

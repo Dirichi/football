@@ -41,11 +41,24 @@ export class ThreeDimensionalVector {
     return new ThreeDimensionalVector(result[0], result[1], result[2]);
   }
 
-  public minus(b: ThreeDimensionalVector): ThreeDimensionalVector {
+  public isZero() {
+    return this.magnitude() === 0;
+  }
+
+  public isNonZero() {
+    return !this.isZero();
+  }
+
+  public add(b: ThreeDimensionalVector): ThreeDimensionalVector {
     const bArray = b.toArray();
     const result =
-      this.representation.map((value, index) => value - bArray[index]);
+      this.representation.map((value, index) => value + bArray[index]);
     return new ThreeDimensionalVector(result[0], result[1], result[2]);
+  }
+
+  public minus(b: ThreeDimensionalVector): ThreeDimensionalVector {
+    const negativeB = b.scalarMultiply(-1);
+    return this.add(negativeB);
   }
 
   public squared(): ThreeDimensionalVector {

@@ -101,6 +101,14 @@ export class Player implements ICollidable {
     return this.id;
   }
 
+  public getVelocity() {
+    return new ThreeDimensionalVector(this.vx, this.vy, 0);
+  }
+
+  public getPosition() {
+    return new ThreeDimensionalVector(this.x, this.y, 0);
+  }
+
   public getShape(): ICircle {
     return {
       getCentre: () => new ThreeDimensionalVector(this.x, this.y, 0),

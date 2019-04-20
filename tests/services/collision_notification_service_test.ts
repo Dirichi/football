@@ -1,6 +1,8 @@
 import { CollisionNotificationService } from '../../src/services/collision_notification_service';
 import { CollisionDetectionService } from '../../src/services/collision_detection_service';
+import { ICircle } from '../../src/interfaces/icircle';
 import { EventQueue } from '../../src/event_queue';
+import { ThreeDimensionalVector } from '../../src/three_dimensional_vector';
 import { TestCollidable } from "../helpers/test_collidable";
 import * as chai from 'chai';
 import * as sinon from 'sinon';
@@ -41,9 +43,31 @@ describe('CollisionNotificationService', () => {
       const notificationService =
         new CollisionNotificationService(detectionService, queue);
 
+        const circleOne = {
+          kind: 'circle',
+          getCentre: () => new ThreeDimensionalVector(0, 0, 0),
+          getDiameter: () => 2,
+        } as ICircle;
+
+        const circleTwo = {
+          kind: 'circle',
+          getCentre: () => new ThreeDimensionalVector(2, 0, 0),
+          getDiameter: () => 2,
+        } as ICircle;
+
+        const circleThree = {
+          kind: 'circle',
+          getCentre: () => new ThreeDimensionalVector(4, 0, 0),
+          getDiameter: () => 2,
+        } as ICircle;
+
       const collidableA = new TestCollidable('collider.1');
       const collidableB = new TestCollidable('collider.2');
       const collidableC = new TestCollidable('collider.3');
+
+      collidableA.setShape(circleOne);
+      collidableB.setShape(circleTwo);
+      collidableC.setShape(circleThree);
 
       const isCollidingStub = sinon.stub(detectionService, 'isColliding');
       isCollidingStub.withArgs(collidableA, collidableB).returns(true);
@@ -63,10 +87,10 @@ describe('CollisionNotificationService', () => {
       notificationService.update();
 
       expect(eventMessageMap.get('collider.1.collision')).to.eql([
-        {colliderType: 'testcollidable'},
+        {colliderType: 'testcollidable', shape: circleTwo},
       ]);
       expect(eventMessageMap.get('collider.2.collision')).to.eql([
-        {colliderType: 'testcollidable'},
+        {colliderType: 'testcollidable', shape: circleOne},
       ]);
       expect(eventMessageMap.get('collider.3.collision')).to.be.undefined;
     });

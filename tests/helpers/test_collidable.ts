@@ -3,7 +3,7 @@ import { Shape } from "../../src/custom_types/shape";
 
 export class TestCollidable implements ICollidable {
   private gameObjectId: string;
-  private shapeData?: Shape;
+  private shape?: Shape;
 
   constructor(gameObjectId: string) {
     this.gameObjectId = gameObjectId;
@@ -14,11 +14,11 @@ export class TestCollidable implements ICollidable {
   }
 
   public getShape(): Shape | null {
-    const shape = this.shapeData || null;
-    return this.shapeData;
+    const shape = this.shape || null;
+    return this.shape;
   }
 
-  public setShapeData(shape: Shape) {
-    this.shapeData = shape;
+  public setShape(shape: Shape) {
+    this.shape = shape;
   }
 }
