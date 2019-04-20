@@ -10,6 +10,7 @@ export class Ball {
 
   private physics?: BallPhysics;
   private maximumSpeed?: number;
+  private mass?: number;
 
   constructor(x: number, y: number, vx: number, vy: number, diameter: number) {
     this.x = x;
@@ -20,11 +21,12 @@ export class Ball {
   }
 
   public update() {
-    this.physics.update(this);
+    this.physics.update();
   }
 
   public moveTowards(x: number, y: number) {
     // TODO: Test this method
+    // Should probably be the responsibility of physics
     const [dy, dx] = [y - this.y, x - this.x];
     const magnitude = Math.sqrt((dy * dy) + (dx * dx));
     const [unitDy, unitDx] = [dy / magnitude, dx / magnitude];
@@ -36,10 +38,15 @@ export class Ball {
 
   public setPhysics(physics: BallPhysics) {
     this.physics = physics;
+    this.physics.setBall(this);
   }
 
   public setMaximumSpeed(speed: number) {
     this.maximumSpeed = speed;
+  }
+
+  public setMass(mass: number) {
+    this.mass = mass;
   }
 
   public serialized(): IBallSchema {

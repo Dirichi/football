@@ -13,6 +13,7 @@ export class Player {
   private opposingGoalPost?: Post;
   private physics?: PlayerPhysics;
   private speed: number;
+  private mass?: number;
 
   constructor(x: number, y: number, vx: number, vy: number, speed: number,
               diameter: number) {
@@ -27,7 +28,7 @@ export class Player {
   }
 
   public update() {
-    this.physics.update(this);
+    this.physics.update();
   }
 
   public moveUp() {
@@ -52,6 +53,7 @@ export class Player {
 
   public moveTowards(x: number, y: number, margin: number) {
     // TODO: Test this method
+    // May need to move it to physics
     if (y - this.y > margin) {
       this.moveDown();
     } else if (this.y - y > margin) {
@@ -65,6 +67,11 @@ export class Player {
 
   public setPhysics(physics: PlayerPhysics) {
     this.physics = physics;
+    this.physics.setPlayer(this);
+  }
+
+  public setMass(mass: number) {
+    this.mass = mass;
   }
 
   public getOpposingGoalPost(): Post {

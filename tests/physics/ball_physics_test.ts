@@ -24,7 +24,8 @@ describe('BallPhysics', () => {
       const ballPhysics = new BallPhysics(boundary);
       const [x, y, vx, vy, diameter] = [2, 3, 4, 8, 5];
       const ball = new Ball(x, y, vx, vy, diameter);
-      ballPhysics.update(ball);
+      ballPhysics.setBall(ball);
+      ballPhysics.update();
       expect([ball.x, ball.y]).to.eql([6, 11]);
       // the boundary should validate that nextX and nextY
       // (not currentX and currentY) are contained
@@ -39,7 +40,8 @@ describe('BallPhysics', () => {
       const ballPhysics = new BallPhysics(boundary);
       const [x, y, vx, vy, diameter] = [2, 3, 4, 8, 5];
       const ball = new Ball(x, y, vx, vy, diameter);
-      ballPhysics.update(ball);
+      ballPhysics.setBall(ball);
+      ballPhysics.update();
       expect([ball.x, ball.y]).to.eql([2, 3]);
 
       // the boundary should validate that nextX and nextY
@@ -54,7 +56,8 @@ describe('BallPhysics', () => {
       const ballPhysics = new BallPhysics(boundary);
       const [x, y, vx, vy, diameter] = [2, 3, 4, 8, 5];
       const ball = new Ball(x, y, vx, vy, diameter);
-      ballPhysics.update(ball);
+      ballPhysics.setBall(ball);
+      ballPhysics.update();
       expect([ball.vx, ball.vy]).to.eql([0, 0]);
     });
   });

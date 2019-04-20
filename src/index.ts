@@ -26,12 +26,17 @@ import { ICommand } from "./interfaces/icommand";
 import { BallPhysics } from "./physics/ball_physics";
 import { PlayerPhysics } from "./physics/player_physics";
 import { BallPossessionService } from "./services/ball_possession_service";
+import { CollisionDetectionService } from "./services/collision_detection_service";
+import { CollisionNotificationService } from "./services/collision_notification_service";
 const app = express();
 const httpServer = http.createServer(app);
 const io = socketIo(httpServer);
 const port = 3000;
 
 const queue = new EventQueue();
+const collisionDetectionService = new CollisionDetectionService();
+const collisionNotificationService = new CollisionNotificationService(
+  collisionDetectionService, queue);
 
 // TODO: Perhaps if these game objects were initialized with hashes, this part
 // of the code would not look so messy.
@@ -69,18 +74,19 @@ const boxes = [box18A, box18B, box6A, box6B];
 
 const [playerx, playery, playervx, playervy, playerSpeed, playerdiameter]
   = PLAYER_INITIAL_ARGS;
-const playerPhysics = new PlayerPhysics(field);
+const playerPhysicsA = new PlayerPhysics(field);
 const playerA = new Player(playerx, playery, playervx, playervy, playerSpeed,
    playerdiameter);
-playerA.setPhysics(playerPhysics);
+playerA.setPhysics(playerPhysicsA);
 playerA.setOpposingGoalPost(postA);
 
 const [playerbx, playerby, playerbvx, playerbvy, playerbSpeed, playerbdiameter]
   = PLAYER_INITIAL_ARGS;
+const playerPhysicsB = new PlayerPhysics(field);
 const playerB = new Player(0.8, 0.3, playerbvx, playerbvy, playerbSpeed,
    playerbdiameter);
-playerB.setPhysics(playerPhysics);
-playerB.setOpposingGoalPost(postA);
+playerB.setPhysics(playerPhysicsB);
+playerB.setOpposingGoalPost(postB);
 
 const players = [playerA, playerB];
 const ballPossessionService = new BallPossessionService(ball, players);
