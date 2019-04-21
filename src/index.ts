@@ -20,6 +20,7 @@ import { EventQueue } from "./event_queue";
 import { Ball } from "./game_objects/ball";
 import { Box } from "./game_objects/box";
 import { Field } from "./game_objects/field";
+import { FieldRegion } from "./game_objects/field_region";
 import { Player } from "./game_objects/player";
 import { Post } from "./game_objects/post";
 import { Team } from "./game_objects/team";
@@ -118,6 +119,8 @@ teamB.setOpposingGoalPost(postA);
 teamA.setColors([0, 0, 225]);
 teamB.setColors([225, 0, 0]);
 
+const regions = FieldRegion.generate(field, 5, 5);
+
 // Configure Express to use EJS
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
@@ -168,6 +171,7 @@ io.on("connection", (socket) => {
       [EVENTS.BALL_DATA]: ball.serialized(),
       [EVENTS.BOXES_DATA]: boxes.map((box) => box.serialized()),
       [EVENTS.FIELD_DATA]: field.serialized(),
+      [EVENTS.FIELD_REGION_DATA]: regions.map((region) => region.serialized()),
       [EVENTS.PLAYER_DATA]: players.map((player) => player.serialized()),
       [EVENTS.POSTS_DATA]: posts.map((post) => post.serialized()),
     };
