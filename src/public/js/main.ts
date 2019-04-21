@@ -5,6 +5,7 @@ import { BallGraphics } from "../../graphics/ball_graphics";
 import { BoxGraphics } from "../../graphics/box_graphics";
 import { EventQueue } from '../../event_queue';
 import { FieldGraphics } from "../../graphics/field_graphics";
+import { FieldRegionGraphics } from "../../graphics/field_region_graphics";
 import { ManualInputHandler } from "../../client/manual_input_handler";
 import { P5AnimationEngine } from "../../client/p5_animation_engine";
 import { PlayerGraphics } from "../../graphics/player_graphics";
@@ -21,12 +22,15 @@ const sketch = (p: p5) => {
   const boxGraphics = new BoxGraphics(animationEngine, queue);
   const ballGraphics = new BallGraphics(animationEngine, queue);
   const playerGraphics = new PlayerGraphics(animationEngine, queue);
+  const fieldRegionGraphics = new FieldRegionGraphics(animationEngine, queue);
 
 // DO NOT REORDER THIS
 // Maybe there should be a way to specify the order in which animations
 // should be drawn, other than this list. But that may be over-engineering.
   const graphics = [
     fieldGraphics,
+    // TODO: Toggle display of field region graphics with a switch on the client
+    // fieldRegionGraphics,
     boxGraphics,
     postGraphics,
     playerGraphics,

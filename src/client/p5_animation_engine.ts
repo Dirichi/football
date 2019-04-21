@@ -5,6 +5,7 @@ import { Post } from "../game_objects/post";
 import { IAnimationEngine } from "../interfaces/ianimation_engine";
 import { IBallSchema } from "../interfaces/iball_schema";
 import { IBoxSchema } from "../interfaces/ibox_schema";
+import { IFieldRegionSchema } from "../interfaces/ifield_region_schema";
 import { IPlayerSchema } from "../interfaces/iplayer_schema";
 
 export class P5AnimationEngine implements IAnimationEngine {
@@ -15,19 +16,35 @@ export class P5AnimationEngine implements IAnimationEngine {
   }
 
   public drawField(field: IBoxSchema) {
-    // Don't push / pop on the field so that it can perpetually be drawn
-    // over hollow elements.
+    this.animator.push();
     this.animator.fill(0, 0, 0);
     this.animator.rect(field.x, field.y, field.xlength, field.ylength);
     this.drawCenterCircle(field);
     this.drawHalfWayLine(field);
+    this.animator.pop();
   }
 
   public drawBox(box: IBoxSchema) {
     this.animator.push();
     this.animator.stroke(255, 255, 255);
+    this.animator.noFill();
     this.animator.strokeWeight(4);
     this.animator.rect(box.x, box.y, box.xlength, box.ylength);
+    this.animator.pop();
+  }
+
+  public drawFieldRegion(region: IFieldRegionSchema) {
+    this.animator.push();
+    this.animator.stroke(200, 0, 200);
+    this.animator.noFill();
+    this.animator.strokeWeight(4);
+    this.animator.rect(region.x, region.y, region.xlength, region.ylength);
+    this.animator.textSize(20);
+    this.animator.noStroke();
+    this.animator.fill(255);
+    const midPointX = region.x + (region.xlength / 2);
+    const midPointY = region.y + (region.ylength / 2);
+    this.animator.text(region.id, midPointX, midPointY);
     this.animator.pop();
   }
 
@@ -56,6 +73,7 @@ export class P5AnimationEngine implements IAnimationEngine {
     this.animator.push();
     this.animator.stroke(255, 255, 255);
     this.animator.strokeWeight(4);
+    this.animator.noFill();
     const midPointX = field.x + (field.xlength / 2);
     const midPointY = field.y + (field.ylength / 2);
     const diameter =
@@ -68,6 +86,7 @@ export class P5AnimationEngine implements IAnimationEngine {
     this.animator.push();
     this.animator.stroke(255, 255, 255);
     this.animator.strokeWeight(4);
+    this.animator.noFill();
     const midPointX = field.x + (field.xlength / 2);
     this.animator.line(midPointX, field.y, midPointX, (field.y + field.ylength));
     this.animator.pop();
