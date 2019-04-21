@@ -13,26 +13,25 @@ export class PassBallCommand implements ICommand {
   // may need to be refactored so that they are instantiated on demand with the
   // arguments that are required for their execution.
 
-  // TODO: Update this class to pick from the options list of players
-  // intelligently
+  // TODO: Update this class so that it picks based on the directions
+  // that the user put in
   private ball: Ball;
   private possessionService: BallPossessionService;
-  private options: Player[];
 
-  constructor(ball: Ball, possessionService: BallPossessionService, options: Player[]) {
+  constructor(ball: Ball, possessionService: BallPossessionService) {
     this.ball = ball;
     this.possessionService = possessionService;
-    this.options = options;
   }
 
-  public execute(sender: Player) {
-    const receiver = this.options[0];
-    const owner = this.possessionService.getPlayerInPossession();
+  public execute(sender: Player): void {
+    if (sender !== this.possessionService.getPlayerInPossession()) {
+      return;
+    }
 
-    if (receiver && owner === sender) {
+    const receiver = sender.getNearestTeamMate();
+    if (receiver) {
       sender.kickingBall = true;
-      const target = new ThreeDimensionalVector(receiver.x, receiver.y, 0);
-      this.ball.moveTowards(target);
+      this.ball.moveTowards(receiver.getPosition());
     }
   }
 }

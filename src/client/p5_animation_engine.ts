@@ -47,7 +47,7 @@ export class P5AnimationEngine implements IAnimationEngine {
 
   public drawPlayer(player: IPlayerSchema) {
     this.animator.push();
-    this.animator.fill(0, 0, 255);
+    this.animator.fill(player.colors);
     this.animator.circle(player.x, player.y, player.diameter);
     this.animator.pop();
   }
