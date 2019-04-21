@@ -22,12 +22,14 @@ import { Box } from "./game_objects/box";
 import { Field } from "./game_objects/field";
 import { Player } from "./game_objects/player";
 import { Post } from "./game_objects/post";
+import { Team } from "./game_objects/team";
 import { ICommand } from "./interfaces/icommand";
 import { BallPhysics } from "./physics/ball_physics";
 import { PlayerPhysics } from "./physics/player_physics";
 import { BallPossessionService } from "./services/ball_possession_service";
 import { CollisionDetectionService } from "./services/collision_detection_service";
 import { CollisionNotificationService } from "./services/collision_notification_service";
+
 const app = express();
 const httpServer = http.createServer(app);
 const io = socketIo(httpServer);
@@ -79,18 +81,42 @@ playerPhysicsA.setFriction(constants.PLAYER_PHYSICS_DEFAULT_FRICTION);
 const playerA = new Player(playerx, playery, playervx, playervy, playerdiameter);
 playerA.setMaximumSpeed(playerSpeed);
 playerA.setPhysics(playerPhysicsA);
-playerA.setOpposingGoalPost(postA);
 
 const [playerbx, playerby, playerbvx, playerbvy, playerbSpeed, playerbdiameter]
   = PLAYER_INITIAL_ARGS;
 const playerPhysicsB = new PlayerPhysics(field, queue);
 const playerB = new Player(0.8, 0.3, playerbvx, playerbvy, playerbdiameter);
-playerA.setMaximumSpeed(playerbSpeed);
+playerB.setMaximumSpeed(playerbSpeed);
 playerB.setPhysics(playerPhysicsB);
-playerB.setOpposingGoalPost(postB);
 
-const players = [playerA, playerB];
+const [playercx, playercy, playercvx, playercvy, playercSpeed, playercdiameter]
+  = PLAYER_INITIAL_ARGS;
+const playerPhysicsC = new PlayerPhysics(field, queue);
+playerPhysicsC.setFriction(constants.PLAYER_PHYSICS_DEFAULT_FRICTION);
+const playerC = new Player(0.1, 0.2, playercvx, playercvy, playercdiameter);
+playerC.setMaximumSpeed(playercSpeed);
+playerC.setPhysics(playerPhysicsC);
+
+const [playerdx, playerdy, playerdvx, playerdvy, playerdSpeed, playerddiameter]
+  = PLAYER_INITIAL_ARGS;
+const playerPhysicsD = new PlayerPhysics(field, queue);
+const playerD = new Player(0.6, 0.5, playerdvx, playerdvy, playerddiameter);
+playerD.setMaximumSpeed(playerdSpeed);
+playerD.setPhysics(playerPhysicsD);
+
+const players = [playerA, playerB, playerC, playerD];
 const ballPossessionService = new BallPossessionService(ball, players);
+
+const teamA = new Team([playerA, playerC, playerD]);
+const teamB = new Team([playerB]);
+teamA.setOpposition(teamB);
+teamB.setOpposition(teamA);
+
+teamA.setOpposingGoalPost(postB);
+teamB.setOpposingGoalPost(postA);
+
+teamA.setColors([0, 0, 225]);
+teamB.setColors([225, 0, 0]);
 
 // Configure Express to use EJS
 app.set("views", path.join(__dirname, "views"));
@@ -112,7 +138,7 @@ interface IhashMapOfCommands {
   [key: string]: ICommand;
 }
 
-collisionNotificationService.registerCollisionGroup([ball, playerA, playerB]);
+collisionNotificationService.registerCollisionGroup([ball, ...players]);
 
 const NAME_TO_COMMAND_MAPPING: IhashMapOfCommands = {
   [COMMANDS.MOVE_PLAYER_DOWN]: new MoveDownCommand(),
@@ -120,7 +146,7 @@ const NAME_TO_COMMAND_MAPPING: IhashMapOfCommands = {
   [COMMANDS.MOVE_PLAYER_RIGHT]: new MoveRightCommand(),
   [COMMANDS.MOVE_PLAYER_UP]: new MoveUpCommand(),
   [COMMANDS.CHASE_BALL]: new ChaseBallCommand(ball),
-  [COMMANDS.PASS_BALL]: new PassBallCommand(ball, ballPossessionService, [playerB]),
+  [COMMANDS.PASS_BALL]: new PassBallCommand(ball, ballPossessionService),
   [COMMANDS.SHOOT_BALL]: new ShootBallCommand(ball, ballPossessionService),
   [COMMANDS.STOP]: new StopCommand(),
 };

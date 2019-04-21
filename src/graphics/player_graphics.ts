@@ -39,6 +39,7 @@ export class PlayerGraphics {
     const yrange = ymax - ymin;
 
     return {
+      colors: data.colors,
       diameter: (data.diameter * yrange),
       vx: data.vx * xrange,
       vy: data.vy * yrange,

@@ -6,6 +6,7 @@ import { IPlayerSchema } from "../interfaces/iplayer_schema";
 import { PlayerPhysics } from "../physics/player_physics";
 import { ThreeDimensionalVector } from "../three_dimensional_vector";
 import { Post } from "./post";
+import { Team } from "./team";
 
 export class Player implements ICollidable {
   public x: number;
@@ -20,6 +21,8 @@ export class Player implements ICollidable {
   private maximumSpeed?: number;
   private mass?: number;
   private id: string;
+  private colors: [number, number, number];
+  private team?: Team;
 
   constructor(x: number, y: number, vx: number, vy: number, diameter: number) {
       this.id = v4(); // Randomly generated id
@@ -28,6 +31,10 @@ export class Player implements ICollidable {
       this.vx = vx;
       this.vy = vy;
       this.diameter = diameter;
+      // TODO: Details like this should maybe be hidden away in another object
+      // Like a PhysicalRepresentation or something like that. So that we can
+      // swap representations out as we see fit.
+      this.colors = [0, 0, 225];
       // TODO: This is a temporary flag to ensure the ball moves when it's kicked
       // It will be changed to a state object
       this.kickingBall = false;
@@ -87,8 +94,13 @@ export class Player implements ICollidable {
     this.opposingGoalPost = post;
   }
 
+  public setColors(colors: [number, number, number]) {
+    this.colors = colors;
+  }
+
   public serialized(): IPlayerSchema {
     return {
+      colors: this.colors,
       diameter: this.diameter,
       vx: this.vx,
       vy: this.vy,
@@ -115,5 +127,27 @@ export class Player implements ICollidable {
       getDiameter: () => this.diameter,
       kind: "circle",
     } as ICircle;
+  }
+
+  public getNearestTeamMate(): Player | null {
+    const teammates = this.team.getPlayers().filter(
+      (player) => player !== this);
+    const position = this.getPosition();
+    let nearest: Player | null = null;
+    let nearestDistance: number | null = null;
+
+    teammates.forEach((player) => {
+      const distanceToPlayer = position.distanceTo(player.getPosition());
+      if (!nearest || distanceToPlayer < nearestDistance) {
+        nearest = player;
+        nearestDistance = distanceToPlayer;
+      }
+    });
+
+    return nearest;
+  }
+
+  public setTeam(team: Team) {
+    this.team = team;
   }
 }

@@ -20,7 +20,14 @@ describe('PlayerGraphics', () => {
         const drawPlayerStub = sinon.stub(engine, 'drawPlayer');
         const graphics = new PlayerGraphics(engine, queue);
 
-        const playerData = { x: 0.1, y: 0.2, vx: 0.3, vy: 0.4, diameter: 0.5};
+        const playerData = {
+          x: 0.1,
+          y: 0.2,
+          vx: 0.3,
+          vy: 0.4,
+          diameter: 0.5,
+          colors: [200, 0, 0],
+        };
         queue.trigger(EVENTS.PLAYER_DATA, [playerData]);
 
         graphics.animate();
@@ -33,7 +40,14 @@ describe('PlayerGraphics', () => {
           const queue = new EventQueue();
           const graphics = new PlayerGraphics(engine, queue);
           graphics.setScale([1, 2, 3, 5]);
-          const playerData = {x: 0.1, y: 0.2, vx: 0.3, vy: 0.4, diameter: 0.5};
+          const playerData = {
+            x: 0.1,
+            y: 0.2,
+            vx: 0.3,
+            vy: 0.4,
+            diameter: 0.5,
+            colors: [200, 0, 0],
+          };
           queue.trigger(EVENTS.PLAYER_DATA, [playerData]);
 
           sinon.stub(engine, 'drawPlayer').callsFake(
@@ -43,6 +57,7 @@ describe('PlayerGraphics', () => {
               assertApproximatelyEqual(playerArgument.vx, 0.6, 0.001);
               assertApproximatelyEqual(playerArgument.vy, 1.2, 0.001);
               assertApproximatelyEqual(playerArgument.diameter, 1.5, 0.001);
+              expect(playerArgument.colors).to.eql([200, 0, 0]);
           });
           graphics.animate();
         });
