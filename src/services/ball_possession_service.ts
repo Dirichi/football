@@ -13,13 +13,13 @@ export class BallPossessionService {
   }
 
   public update() {
-    const player =
+    const playerInPossession =
       this.players.find((player) => this.isPlayerInPossession(player)) || null;
 
-    if (player) {
-      this.lastPlayerInPossession = player;
+    if (playerInPossession) {
+      this.lastPlayerInPossession = playerInPossession;
     }
-    this.currentPlayerInPossession = player;
+    this.currentPlayerInPossession = playerInPossession;
   }
 
   public getLastPlayerInPossession(): Player | null {
@@ -29,7 +29,6 @@ export class BallPossessionService {
   public getCurrentPlayerInPossession(): Player | null {
     return this.currentPlayerInPossession;
   }
-
 
   private isPlayerInPossession(player: Player): boolean {
     const margin = (player.diameter + this.ball.diameter) / 2;

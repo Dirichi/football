@@ -1,16 +1,19 @@
 import { BallPossessionService } from "../services/ball_possession_service";
+import { Ball } from "./ball";
 import { Player } from "./player";
 import { Post } from "./post";
 
 export class Team {
   private players: Player[];
   private opposition: Team;
-  private possessionService: BallPossessionService;
+  private ballPossessionService: BallPossessionService;
+  private ball: Ball;
 
-  constructor(players: Player[], possessionService: BallPossessionService) {
+  constructor(players: Player[], ballPossessionService: BallPossessionService, ball: Ball) {
     this.players = players;
-    this.possessionService = possessionService;
+    this.ballPossessionService = ballPossessionService;
     this.players.forEach((player) =>  player.setTeam(this));
+    this.ball = ball;
   }
 
   public getPlayers(): Player[] {
@@ -30,7 +33,19 @@ export class Team {
   }
 
   public nearestPlayerToBall(): Player {
-    return this.players[0];
+    const position = this.ball.getPosition();
+    let nearest: Player | null = null;
+    let nearestDistance: number | null = null;
+
+    this.players.forEach((player) => {
+      const distanceToBall = position.distanceTo(player.getPosition());
+      if (!nearest || distanceToBall < nearestDistance) {
+        nearest = player;
+        nearestDistance = distanceToBall;
+      }
+    });
+
+    return nearest;
   }
 
   public hasBall(): boolean {

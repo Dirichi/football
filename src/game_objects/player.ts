@@ -1,10 +1,11 @@
 import v4 from "uuid/v4";
 import { constants, EVENTS } from "../constants";
-import { BallPossessionService } from "../services/ball_possession_service";
 import { ICircle } from "../interfaces/icircle";
 import { ICollidable } from "../interfaces/icollidable";
+import { IPlayerController } from "../interfaces/iplayer_controller";
 import { IPlayerSchema } from "../interfaces/iplayer_schema";
 import { PlayerPhysics } from "../physics/player_physics";
+import { BallPossessionService } from "../services/ball_possession_service";
 import { ThreeDimensionalVector } from "../three_dimensional_vector";
 import { Post } from "./post";
 import { Team } from "./team";
@@ -24,6 +25,7 @@ export class Player implements ICollidable {
   private colors: [number, number, number];
   private team?: Team;
   private ballPossessionService?: BallPossessionService;
+  private controller?: IPlayerController;
 
   // TODO: Flirting with the idea of moving these attributes to
   // a PlayerRole class
@@ -48,6 +50,7 @@ export class Player implements ICollidable {
 
   public update() {
     this.physics.update();
+    this.controller.update();
   }
 
   public moveUp() {
@@ -154,11 +157,21 @@ export class Player implements ICollidable {
   }
 
   public hasBall(): boolean {
-    return this.ballPossessionService.getPlayerInPossession() === this;
+    return this.ballPossessionService.getCurrentPlayerInPossession() === this;
   }
 
   public teamHasBall(): boolean {
     return this.team.hasBall();
+  }
+
+  public hasGoodPassingOptions(): boolean {
+    return !this.inGoodShootingPosition();
+  }
+
+  public inGoodShootingPosition(): boolean {
+    const position = this.getPosition();
+    const distanceToGoal = position.distanceTo(this.opposingGoalPost.getMidPoint());
+    return distanceToGoal < 0.25;
   }
 
   public setTeam(team: Team): void {
@@ -175,6 +188,10 @@ export class Player implements ICollidable {
 
   public setBallPossessionService(possessionService: BallPossessionService) {
     this.ballPossessionService = possessionService;
+  }
+
+  public setController(controller: IPlayerController) {
+    this.controller = controller;
   }
 
   public positionAtDefendingPosition(): void {

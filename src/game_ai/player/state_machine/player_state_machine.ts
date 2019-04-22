@@ -1,6 +1,6 @@
+import { Player } from "../../../game_objects/player";
 import { IPlayerController } from "../../../interfaces/iplayer_controller";
 import { IPlayerState } from "../../../interfaces/iplayer_state";
-import { Player } from "../../../game_objects/player";
 
 export class PlayerStateMachine implements IPlayerController {
   private states: IPlayerState[];
@@ -12,7 +12,7 @@ export class PlayerStateMachine implements IPlayerController {
   }
 
   public update() {
-    const state = this.states.find((state) => state.eligibleFor(player));
-    state.update(player);
+    const eligilbleState = this.states.find((state) => state.eligibleFor(this.player));
+    eligilbleState.update(this.player);
   }
 }

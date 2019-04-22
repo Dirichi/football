@@ -4,17 +4,9 @@ import { ICommand } from "../interfaces/icommand";
 import { ThreeDimensionalVector } from "../three_dimensional_vector";
 
 export class AutoDribbleCommand implements ICommand {
-  private ball: Ball;
-
-  constructor(ball: Ball) {
-    this.ball = ball;
-  }
-
   public execute(player: Player): void {
-    if(!player.hasBall()) {
+    if (!player.hasBall()) {
       return;
     }
-
-
   }
 }

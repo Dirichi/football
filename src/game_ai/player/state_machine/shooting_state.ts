@@ -1,9 +1,9 @@
 import { COMMANDS } from "../../../constants";
-import { IPlayerState } from "../../../interfaces/iplayer_state";
-import { ICommandFactory } from "../../../interfaces/icommand_factory";
 import { Player } from "../../../game_objects/player";
+import { ICommandFactory } from "../../../interfaces/icommand_factory";
+import { IPlayerState } from "../../../interfaces/iplayer_state";
 
-export class Passing implements IPlayerState {
+export class ShootingState implements IPlayerState {
   private commandFactory: ICommandFactory;
 
   constructor(commandFactory: ICommandFactory) {
