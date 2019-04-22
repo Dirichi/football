@@ -13,15 +13,13 @@ describe('FieldRegion', () => {
       const regions = FieldRegion.generate(fieldSchema, 2, 3);
       const representation = regions.map((region) => region.serialized());
       const expectedRepresentation = [
-        {x: 1, y: 2, xlength: 2, ylength: 1},
-        {x: 1, y: 3, xlength: 2, ylength: 1},
-        {x: 1, y: 4, xlength: 2, ylength: 1},
-        {x: 3, y: 2, xlength: 2, ylength: 1},
-        {x: 3, y: 3, xlength: 2, ylength: 1},
-        {x: 3, y: 4, xlength: 2, ylength: 1}
+        {id: 0, x: 1, y: 2, xlength: 2, ylength: 1},
+        {id: 1, x: 1, y: 3, xlength: 2, ylength: 1},
+        {id: 2, x: 1, y: 4, xlength: 2, ylength: 1},
+        {id: 3, x: 3, y: 2, xlength: 2, ylength: 1},
+        {id: 4, x: 3, y: 3, xlength: 2, ylength: 1},
+        {id: 5, x: 3, y: 4, xlength: 2, ylength: 1}
       ];
-
-      console.log(representation);
 
       expect(representation).to.eql(expectedRepresentation);
     });

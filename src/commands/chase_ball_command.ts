@@ -18,21 +18,13 @@ export class ChaseBallCommand implements ICommand {
   }
 
   public execute(player: Player) {
-    const distance = this.distance(player, this.ball);
+    const distance = player.getPosition().distanceTo(this.ball.getPosition());
     const margin = (player.diameter + this.ball.diameter) / 2;
 
     if (distance > margin) {
-      const target = new ThreeDimensionalVector(this.ball.x, this.ball.y, 0);
-      player.moveTowards(target);
+      player.moveTowards(this.ball.getPosition());
     } else {
       player.stop();
     }
-  }
-
-  private distance(player: Player, ball: Ball) {
-    const xdist = player.x - ball.x;
-    const ydist = player.y - ball.y;
-    const distance = Math.sqrt((xdist * xdist) + (ydist * ydist));
-    return distance;
   }
 }

@@ -16,15 +16,8 @@ export class BallPossessionService {
 
   private isPlayerInPossession(player: Player): boolean {
     const margin = (player.diameter + this.ball.diameter) / 2;
-    const distance = this.distance(player, this.ball);
+    const distance = player.getPosition().distanceTo(this.ball.getPosition());
 
     return distance <= margin;
-  }
-
-  private distance(player: Player, ball: Ball) {
-    const xdist = player.x - ball.x;
-    const ydist = player.y - ball.y;
-    const distance = Math.sqrt((xdist * xdist) + (ydist * ydist));
-    return distance;
   }
 }

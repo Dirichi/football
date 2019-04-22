@@ -14,7 +14,6 @@ export class Ball implements ICollidable {
 
   private physics?: BallPhysics;
   private maximumSpeed?: number;
-  private mass?: number;
   private id: string;
 
   constructor(x: number, y: number, vx: number, vy: number, diameter: number) {
@@ -48,10 +47,6 @@ export class Ball implements ICollidable {
     this.maximumSpeed = speed;
   }
 
-  public setMass(mass: number) {
-    this.mass = mass;
-  }
-
   public serialized(): IBallSchema {
     return {
       diameter: this.diameter,
@@ -60,6 +55,10 @@ export class Ball implements ICollidable {
       x: this.x,
       y: this.y,
     } as IBallSchema;
+  }
+
+  public getPosition(): ThreeDimensionalVector {
+    return new ThreeDimensionalVector(this.x, this.y, 0);
   }
 
   public getGameObjectId(): string {
