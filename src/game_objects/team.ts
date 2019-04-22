@@ -1,13 +1,16 @@
+import { BallPossessionService } from "../services/ball_possession_service";
 import { Player } from "./player";
 import { Post } from "./post";
 
 export class Team {
   private players: Player[];
   private opposition: Team;
+  private possessionService: BallPossessionService;
 
-  constructor(players: Player[]) {
+  constructor(players: Player[], possessionService: BallPossessionService) {
     this.players = players;
-    this.players.forEach((player) => player.setTeam(this));
+    this.possessionService = possessionService;
+    this.players.forEach((player) =>  player.setTeam(this));
   }
 
   public getPlayers(): Player[] {
@@ -22,7 +25,17 @@ export class Team {
     this.opposition = opposition;
   }
 
-  public setColors(colors: [number, number, number]) {
+  public setColors(colors: [number, number, number]): void {
     this.players.forEach((player) => player.setColors(colors));
+  }
+
+  public nearestPlayerToBall(): Player {
+    return this.players[0];
+  }
+
+  public hasBall(): boolean {
+    const lastPlayerInPossession =
+      this.ballPossessionService.getLastPlayerInPossession();
+    return this.players.includes(lastPlayerInPossession);
   }
 }

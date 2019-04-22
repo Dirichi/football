@@ -173,6 +173,7 @@ io.on("connection", (socket) => {
 
   setInterval(() => {
     collisionNotificationService.update();
+    ballPossessionService.update();
     ball.update();
     players.forEach((player) => player.update());
     const data = {

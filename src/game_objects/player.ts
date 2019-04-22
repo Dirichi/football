@@ -1,5 +1,6 @@
 import v4 from "uuid/v4";
 import { constants, EVENTS } from "../constants";
+import { BallPossessionService } from "../services/ball_possession_service";
 import { ICircle } from "../interfaces/icircle";
 import { ICollidable } from "../interfaces/icollidable";
 import { IPlayerSchema } from "../interfaces/iplayer_schema";
@@ -22,6 +23,7 @@ export class Player implements ICollidable {
   private id: string;
   private colors: [number, number, number];
   private team?: Team;
+  private ballPossessionService?: BallPossessionService;
 
   // TODO: Flirting with the idea of moving these attributes to
   // a PlayerRole class
@@ -147,28 +149,44 @@ export class Player implements ICollidable {
     return nearest;
   }
 
-  public setTeam(team: Team) {
+  public isNearestTeamMateToBall(): boolean {
+    return this === this.team.nearestPlayerToBall();
+  }
+
+  public hasBall(): boolean {
+    return this.ballPossessionService.getPlayerInPossession() === this;
+  }
+
+  public teamHasBall(): boolean {
+    return this.team.hasBall();
+  }
+
+  public setTeam(team: Team): void {
     this.team = team;
   }
 
-  public setAttackingPosition(position: ThreeDimensionalVector) {
+  public setAttackingPosition(position: ThreeDimensionalVector): void {
     this.attackingPosition = position;
   }
 
-  public setDefendingPosition(position: ThreeDimensionalVector) {
+  public setDefendingPosition(position: ThreeDimensionalVector): void {
     this.defendingPosition = position;
   }
 
-  public positionAtDefendingPosition() {
+  public setBallPossessionService(possessionService: BallPossessionService) {
+    this.ballPossessionService = possessionService;
+  }
+
+  public positionAtDefendingPosition(): void {
     this.x = this.defendingPosition.x;
     this.y = this.defendingPosition.y;
   }
 
-  public moveTowardsAttackingPosition() {
+  public moveTowardsAttackingPosition(): void {
     this.moveTowards(this.attackingPosition);
   }
 
-  public moveTowardsDefensivePosition() {
+  public moveTowardsDefensivePosition(): void {
     this.moveTowards(this.defendingPosition);
   }
 }
