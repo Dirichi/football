@@ -45,6 +45,7 @@ const collisionNotificationService = new CollisionNotificationService(
 // of the code would not look so messy.
 const [fieldx, fieldy, fieldxlength, fieldylength] = FIELD_INITIAL_COORDINATES;
 const field = new Field(fieldx, fieldy, fieldxlength, fieldylength);
+const regions = FieldRegion.generate(field, 5, 5);
 
 const [ballx, bally, ballvx, ballvy, balldiameter] = BALL_INITIAL_ARGS;
 const ballPhysics = new BallPhysics(field, queue);
@@ -82,6 +83,8 @@ playerPhysicsA.setFriction(constants.PLAYER_PHYSICS_DEFAULT_FRICTION);
 const playerA = new Player(playerx, playery, playervx, playervy, playerdiameter);
 playerA.setMaximumSpeed(playerSpeed);
 playerA.setPhysics(playerPhysicsA);
+playerA.setDefendingPosition(regions[6].getMidPoint());
+playerA.setAttackingPosition(regions[16].getMidPoint());
 
 const [playerbx, playerby, playerbvx, playerbvy, playerbSpeed, playerbdiameter]
   = PLAYER_INITIAL_ARGS;
@@ -89,6 +92,8 @@ const playerPhysicsB = new PlayerPhysics(field, queue);
 const playerB = new Player(0.8, 0.3, playerbvx, playerbvy, playerbdiameter);
 playerB.setMaximumSpeed(playerbSpeed);
 playerB.setPhysics(playerPhysicsB);
+playerB.setDefendingPosition(regions[8].getMidPoint());
+playerB.setAttackingPosition(regions[18].getMidPoint());
 
 const [playercx, playercy, playercvx, playercvy, playercSpeed, playercdiameter]
   = PLAYER_INITIAL_ARGS;
@@ -97,6 +102,8 @@ playerPhysicsC.setFriction(constants.PLAYER_PHYSICS_DEFAULT_FRICTION);
 const playerC = new Player(0.1, 0.2, playercvx, playercvy, playercdiameter);
 playerC.setMaximumSpeed(playercSpeed);
 playerC.setPhysics(playerPhysicsC);
+playerC.setDefendingPosition(regions[16].getMidPoint());
+playerC.setAttackingPosition(regions[6].getMidPoint());
 
 const [playerdx, playerdy, playerdvx, playerdvy, playerdSpeed, playerddiameter]
   = PLAYER_INITIAL_ARGS;
@@ -104,12 +111,15 @@ const playerPhysicsD = new PlayerPhysics(field, queue);
 const playerD = new Player(0.6, 0.5, playerdvx, playerdvy, playerddiameter);
 playerD.setMaximumSpeed(playerdSpeed);
 playerD.setPhysics(playerPhysicsD);
+playerD.setDefendingPosition(regions[18].getMidPoint());
+playerD.setAttackingPosition(regions[8].getMidPoint());
 
 const players = [playerA, playerB, playerC, playerD];
 const ballPossessionService = new BallPossessionService(ball, players);
 
-const teamA = new Team([playerA, playerC, playerD]);
-const teamB = new Team([playerB]);
+players.forEach((player) => player.positionAtDefendingPosition());
+const teamA = new Team([playerA, playerB]);
+const teamB = new Team([playerC, playerD]);
 teamA.setOpposition(teamB);
 teamB.setOpposition(teamA);
 
@@ -118,8 +128,6 @@ teamB.setOpposingGoalPost(postA);
 
 teamA.setColors([0, 0, 225]);
 teamB.setColors([225, 0, 0]);
-
-const regions = FieldRegion.generate(field, 5, 5);
 
 // Configure Express to use EJS
 app.set("views", path.join(__dirname, "views"));

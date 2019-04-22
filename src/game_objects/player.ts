@@ -19,10 +19,14 @@ export class Player implements ICollidable {
   private opposingGoalPost?: Post;
   private physics?: PlayerPhysics;
   private maximumSpeed?: number;
-  private mass?: number;
   private id: string;
   private colors: [number, number, number];
   private team?: Team;
+
+  // TODO: Flirting with the idea of moving these attributes to
+  // a PlayerRole class
+  private attackingPosition?: ThreeDimensionalVector;
+  private defendingPosition?: ThreeDimensionalVector;
 
   constructor(x: number, y: number, vx: number, vy: number, diameter: number) {
       this.id = v4(); // Randomly generated id
@@ -76,10 +80,6 @@ export class Player implements ICollidable {
   public setPhysics(physics: PlayerPhysics) {
     this.physics = physics;
     this.physics.setPlayer(this);
-  }
-
-  public setMass(mass: number) {
-    this.mass = mass;
   }
 
   public setMaximumSpeed(speed: number) {
@@ -149,5 +149,26 @@ export class Player implements ICollidable {
 
   public setTeam(team: Team) {
     this.team = team;
+  }
+
+  public setAttackingPosition(position: ThreeDimensionalVector) {
+    this.attackingPosition = position;
+  }
+
+  public setDefendingPosition(position: ThreeDimensionalVector) {
+    this.defendingPosition = position;
+  }
+
+  public positionAtDefendingPosition() {
+    this.x = this.defendingPosition.x;
+    this.y = this.defendingPosition.y;
+  }
+
+  public moveTowardsAttackingPosition() {
+    this.moveTowards(this.attackingPosition);
+  }
+
+  public moveTowardsDefensivePosition() {
+    this.moveTowards(this.defendingPosition);
   }
 }
