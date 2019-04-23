@@ -18,7 +18,7 @@ describe('PassBallCommand', () => {
       const ball = new Ball(0, 0, 0, 0, 2); // x, y, vx, vy, diameter
       const service = new BallPossessionService(ball, []);
 
-      sinon.stub(service, 'getPlayerInPossession').returns(sender);
+      sinon.stub(service, 'getCurrentPlayerInPossession').returns(sender);
       sinon.stub(sender, 'getNearestTeamMate').returns(receiver);
 
       // Actual Test
@@ -39,7 +39,7 @@ describe('PassBallCommand', () => {
       const ball = new Ball(0, 0, 0, 0, 2); // x, y, vx, vy, diameter
       const service = new BallPossessionService(ball, []);
 
-      sinon.stub(service, 'getPlayerInPossession')
+      sinon.stub(service, 'getCurrentPlayerInPossession')
         .returns(new Player(1, 1, 0, 0, 2));
       const moveStub = sinon.stub(ball, 'moveTowards');
 
@@ -54,7 +54,7 @@ describe('PassBallCommand', () => {
       const ball = new Ball(0, 0, 0, 0, 2); // x, y, vx, vy, diameter
       const service = new BallPossessionService(ball, []);
 
-      sinon.stub(service, 'getPlayerInPossession').returns(null);
+      sinon.stub(service, 'getCurrentPlayerInPossession').returns(null);
       const moveStub = sinon.stub(ball, 'moveTowards');
       const command = new PassBallCommand(ball, service);
       command.execute(sender);
@@ -67,7 +67,7 @@ describe('PassBallCommand', () => {
       const ball = new Ball(0, 0, 0, 0, 2); // x, y, vx, vy, diameter
       const service = new BallPossessionService(ball, []);
 
-      sinon.stub(service, 'getPlayerInPossession').returns(sender);
+      sinon.stub(service, 'getCurrentPlayerInPossession').returns(sender);
       sinon.stub(sender, 'getNearestTeamMate').returns(null);
       const moveStub = sinon.stub(ball, 'moveTowards');
       const command = new PassBallCommand(ball, service);

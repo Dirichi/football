@@ -1,5 +1,5 @@
 import { CommandFactory } from '../../../../src/commands/command_factory';
-import { ChasingBallState } from '../../../../src/game_ai/player/state_machine/chasing_ball_state';
+import { ShootingState } from '../../../../src/game_ai/player/state_machine/shooting_state';
 import { Player } from '../../../../src/game_objects/player';
 import * as chai from 'chai';
 import * as sinon from 'sinon';
@@ -12,7 +12,7 @@ chai.use(sinonChai);
 let commandFactory: CommandFactory;
 let player: Player;
 
-describe('ChasingBallState', () => {
+describe('ShootingState', () => {
   beforeEach(() => {
     player = new Player(0, 0, 0, 0, 5);
     commandFactory = new CommandFactory(new Map());
@@ -24,42 +24,42 @@ describe('ChasingBallState', () => {
   });
 
   describe('`update`', () => {
-    it('executes a ChaseBallCommand if eligilble', () => {
-        const state = new ChasingBallState(commandFactory);
-        sinon.stub(player, 'teamHasBall').returns(false);
-        sinon.stub(player, 'isNearestTeamMateToBall').returns(true);
+    it('executes a shoot command if eligilble', () => {
+        const state = new ShootingState(commandFactory);
+        sinon.stub(player, 'hasBall').returns(true);
+        sinon.stub(player, 'inGoodShootingPosition').returns(true);
 
         const command = { execute: sinon.spy() };
         sinon.stub(commandFactory, 'getCommand')
-          .withArgs(COMMANDS.CHASE_BALL)
+          .withArgs(COMMANDS.SHOOT_BALL)
           .returns(command);
 
         state.update(player);
         expect(command.execute).to.have.been.calledWith(player);
     });
 
-    it('does nothing if the team has the ball', () => {
-      const state = new ChasingBallState(commandFactory);
-      sinon.stub(player, 'teamHasBall').returns(true);
-      sinon.stub(player, 'isNearestTeamMateToBall').returns(false);
+    it('does nothing if the player does not have the ball', () => {
+      const state = new ShootingState(commandFactory);
+      sinon.stub(player, 'hasBall').returns(false);
+      sinon.stub(player, 'inGoodShootingPosition').returns(true);
 
       const command = { execute: sinon.spy() };
       sinon.stub(commandFactory, 'getCommand')
-        .withArgs(COMMANDS.CHASE_BALL)
+        .withArgs(COMMANDS.SHOOT_BALL)
         .returns(command);
 
       state.update(player);
       expect(command.execute).not.to.have.been.called;
     });
 
-    it('does nothing if the player is not the nearest to the ball', () => {
-      const state = new ChasingBallState(commandFactory);
-      sinon.stub(player, 'teamHasBall').returns(false);
-      sinon.stub(player, 'isNearestTeamMateToBall').returns(false);
+    it('does nothing if the player is not in a good shooting position', () => {
+      const state = new ShootingState(commandFactory);
+      sinon.stub(player, 'hasBall').returns(false);
+      sinon.stub(player, 'inGoodShootingPosition').returns(true);
 
       const command = { execute: sinon.spy() };
       sinon.stub(commandFactory, 'getCommand')
-        .withArgs(COMMANDS.CHASE_BALL)
+        .withArgs(COMMANDS.SHOOT_BALL)
         .returns(command);
 
       state.update(player);

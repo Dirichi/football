@@ -15,10 +15,8 @@ export class ChasingBallState implements IPlayerState {
   }
 
   public update(player: Player): void {
-    if (!this.eligibleFor(player)) {
-      return;
+    if (this.eligibleFor(player)) {
+      this.commandFactory.getCommand(COMMANDS.CHASE_BALL).execute(player);
     }
-
-    this.commandFactory.getCommand(COMMANDS.CHASE_BALL).execute(player);
   }
 }

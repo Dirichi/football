@@ -16,7 +16,7 @@ export class DribblingState implements IPlayerState {
 
   public update(player: Player): void {
     if (this.eligibleFor(player)) {
-      this.commandFactory.getCommand(COMMANDS.DRIBBLING).execute(player);
+      this.commandFactory.getCommand(COMMANDS.DRIBBLE).execute(player);
     }
   }
 }

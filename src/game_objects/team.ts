@@ -5,15 +5,13 @@ import { Post } from "./post";
 
 export class Team {
   private players: Player[];
-  private opposition: Team;
-  private ballPossessionService: BallPossessionService;
-  private ball: Ball;
+  private opposition?: Team;
+  private ballPossessionService?: BallPossessionService;
+  private ball?: Ball;
 
-  constructor(players: Player[], ballPossessionService: BallPossessionService, ball: Ball) {
+  constructor(players: Player[]) {
     this.players = players;
-    this.ballPossessionService = ballPossessionService;
     this.players.forEach((player) =>  player.setTeam(this));
-    this.ball = ball;
   }
 
   public getPlayers(): Player[] {
@@ -30,6 +28,14 @@ export class Team {
 
   public setColors(colors: [number, number, number]): void {
     this.players.forEach((player) => player.setColors(colors));
+  }
+
+  public setBallPossessionService(ballPossessionService: BallPossessionService) {
+    this.ballPossessionService = ballPossessionService;
+  }
+
+  public setBall(ball: Ball) {
+    this.ball = ball;
   }
 
   public nearestPlayerToBall(): Player {

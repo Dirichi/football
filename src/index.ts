@@ -188,7 +188,7 @@ const NAME_TO_COMMAND_MAPPING: Map<string, ICommand> = new Map([
   [COMMANDS.STOP, stopCommand],
   [COMMANDS.MOVE_TO_ATTACKING_POSITION, moveToAttackingPositionCommand],
   [COMMANDS.MOVE_TO_DEFENSIVE_POSITION, moveToDefensivePositionCommand],
-  [COMMANDS.DRIBBLING, autoDribbleCommand],
+  [COMMANDS.DRIBBLE, autoDribbleCommand],
 ]);
 
 const commandFactory = new CommandFactory(NAME_TO_COMMAND_MAPPING);

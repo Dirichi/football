@@ -15,7 +15,7 @@ let player: Player;
 describe('AttackingRunState', () => {
   beforeEach(() => {
     player = new Player(0, 0, 0, 0, 5);
-    commandFactory = new CommandFactory();
+    commandFactory = new CommandFactory(new Map());
   });
 
   afterEach(() => {

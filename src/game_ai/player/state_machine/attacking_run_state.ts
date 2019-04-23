@@ -15,11 +15,10 @@ export class AttackingRunState implements IPlayerState {
   }
 
   public update(player: Player): void {
-    if (!this.eligibleFor(player)) {
-      return;
+    if (this.eligibleFor(player)) {
+      this.commandFactory
+        .getCommand(COMMANDS.MOVE_TO_ATTACKING_POSITION)
+        .execute(player);
     }
-    this.commandFactory
-      .getCommand(COMMANDS.MOVE_TO_ATTACKING_POSITION)
-      .execute(player);
   }
 }

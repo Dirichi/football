@@ -37,7 +37,7 @@ export enum EVENTS {
 
 export enum COMMANDS {
   CHASE_BALL = "chase.ball",
-  DRIBBLING = "dribble.ball",
+  DRIBBLE= "dribble.ball",
   MOVE_PLAYER_LEFT = "move.player.left",
   MOVE_PLAYER_DOWN = "move.player.down",
   MOVE_PLAYER_RIGHT = "move.player.right",
