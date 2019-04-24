@@ -1,14 +1,14 @@
 import v4 from "uuid/v4";
-import { Ball } from "./ball";
-import { BallPossessionService } from "../services/ball_possession_service";
 import { constants, EVENTS } from "../constants";
 import { ICircle } from "../interfaces/icircle";
 import { ICollidable } from "../interfaces/icollidable";
 import { IPlayerController } from "../interfaces/iplayer_controller";
 import { IPlayerSchema } from "../interfaces/iplayer_schema";
-import { minimumBy } from "../utils/helper_functions";
 import { PlayerPhysics } from "../physics/player_physics";
+import { BallPossessionService } from "../services/ball_possession_service";
 import { ThreeDimensionalVector } from "../three_dimensional_vector";
+import { minimumBy } from "../utils/helper_functions";
+import { Ball } from "./ball";
 import { Post } from "./post";
 import { Team } from "./team";
 
@@ -143,7 +143,7 @@ export class Player implements ICollidable {
 
     return minimumBy(teammates, (teammate: Player): number => {
       return teammate.getPosition().distanceTo(position);
-    })
+    });
   }
 
   public isNearestTeamMateToBall(ball: Ball): boolean {
@@ -180,11 +180,11 @@ export class Player implements ICollidable {
     this.defendingPosition = position;
   }
 
-  public setBallPossessionService(possessionService: BallPossessionService) {
+  public setBallPossessionService(possessionService: BallPossessionService): void {
     this.ballPossessionService = possessionService;
   }
 
-  public setController(controller: IPlayerController) {
+  public setController(controller: IPlayerController): void {
     this.controller = controller;
   }
 

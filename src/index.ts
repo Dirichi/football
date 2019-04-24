@@ -131,9 +131,10 @@ const players = [playerA, playerB, playerC, playerD];
 const ballPossessionService = new BallPossessionService(ball, players);
 
 players.forEach((player) => player.positionAtDefendingPosition());
-players.forEach((player) => player.setBallPossessionService(ballPossessionService));
-const teamA = new Team([playerA, playerB], ballPossessionService, ball);
-const teamB = new Team([playerC, playerD], ballPossessionService, ball);
+const teamA = new Team([playerA, playerB]);
+const teamB = new Team([playerC, playerD]);
+const teams = [teamA, teamB];
+teams.forEach((team) => team.setBallPossessionService(ballPossessionService));
 teamA.setOpposition(teamB);
 teamB.setOpposition(teamA);
 
@@ -203,6 +204,7 @@ const PLAYER_STATES: IPlayerState[] = [
 ];
 
 players.forEach((player) => player.setController(new PlayerStateMachine(player, PLAYER_STATES)));
+
 io.on("connection", (socket) => {
   // socket.on("command", (data) => {
   //   const key = data as string;
@@ -225,6 +227,7 @@ setInterval(() => {
       [EVENTS.PLAYER_DATA]: players.map((player) => player.serialized()),
       [EVENTS.POSTS_DATA]: posts.map((post) => post.serialized()),
     };
+
     socket.emit(EVENTS.STATE_CHANGED, data);
   }, 20);
 });

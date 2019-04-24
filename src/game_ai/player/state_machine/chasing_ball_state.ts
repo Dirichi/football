@@ -1,5 +1,5 @@
-import { Ball } from "../../../game_objects/ball";
 import { COMMANDS } from "../../../constants";
+import { Ball } from "../../../game_objects/ball";
 import { Player } from "../../../game_objects/player";
 import { ICommandFactory } from "../../../interfaces/icommand_factory";
 import { IPlayerState } from "../../../interfaces/iplayer_state";
@@ -10,6 +10,7 @@ export class ChasingBallState implements IPlayerState {
 
   constructor(commandFactory: ICommandFactory, ball: Ball) {
     this.commandFactory = commandFactory;
+    this.ball = ball;
   }
 
   public eligibleFor(player: Player): boolean {

@@ -1,14 +1,13 @@
 import { BallPossessionService } from "../services/ball_possession_service";
+import { minimumBy } from "../utils/helper_functions";
 import { Ball } from "./ball";
 import { Player } from "./player";
 import { Post } from "./post";
-import { minimumBy } from "../utils/helper_functions"
 
 export class Team {
   private players: Player[];
   private opposition?: Team;
   private ballPossessionService?: BallPossessionService;
-  private ball?: Ball;
 
   constructor(players: Player[]) {
     this.players = players;
@@ -34,7 +33,7 @@ export class Team {
   public setBallPossessionService(ballPossessionService: BallPossessionService) {
     this.ballPossessionService = ballPossessionService;
     this.players.forEach((player) => {
-      player.setBallPossessionService(ballPossessionService) }
+      player.setBallPossessionService(ballPossessionService); }
     );
   }
 
