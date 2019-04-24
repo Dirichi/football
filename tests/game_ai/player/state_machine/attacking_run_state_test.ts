@@ -26,7 +26,7 @@ describe('AttackingRunState', () => {
   describe('`update`', () => {
     it('executes a moveTowardsAttackingPosition command if eligilble', () => {
         const state = new AttackingRunState(commandFactory);
-        sinon.stub(player, 'teamHasBall').returns(true);
+        sinon.stub(player, 'teamInControl').returns(true);
         sinon.stub(player, 'hasBall').returns(false);
 
         const command = { execute: sinon.spy() };
@@ -40,7 +40,7 @@ describe('AttackingRunState', () => {
 
     it('does nothing if the team does not have the ball', () => {
       const state = new AttackingRunState(commandFactory);
-      sinon.stub(player, 'teamHasBall').returns(false);
+      sinon.stub(player, 'teamInControl').returns(false);
       sinon.stub(player, 'hasBall').returns(false);
 
       const command = { execute: sinon.spy() };
@@ -54,7 +54,7 @@ describe('AttackingRunState', () => {
 
     it('does nothing if the player is with the ball', () => {
       const state = new AttackingRunState(commandFactory);
-      sinon.stub(player, 'teamHasBall').returns(true);
+      sinon.stub(player, 'teamInControl').returns(true);
       sinon.stub(player, 'hasBall').returns(true);
 
       const command = { execute: sinon.spy() };

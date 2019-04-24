@@ -195,8 +195,8 @@ const commandFactory = new CommandFactory(NAME_TO_COMMAND_MAPPING);
 
 const PLAYER_STATES: IPlayerState[] = [
   new AttackingRunState(commandFactory),
-  new DefensiveRunState(commandFactory),
-  new ChasingBallState(commandFactory),
+  new DefensiveRunState(commandFactory, ball),
+  new ChasingBallState(commandFactory, ball),
   new ShootingState(commandFactory),
   new PassingState(commandFactory),
   new DribblingState(commandFactory),

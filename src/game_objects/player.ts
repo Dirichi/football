@@ -1,11 +1,13 @@
 import v4 from "uuid/v4";
+import { Ball } from "./ball";
+import { BallPossessionService } from "../services/ball_possession_service";
 import { constants, EVENTS } from "../constants";
 import { ICircle } from "../interfaces/icircle";
 import { ICollidable } from "../interfaces/icollidable";
 import { IPlayerController } from "../interfaces/iplayer_controller";
 import { IPlayerSchema } from "../interfaces/iplayer_schema";
+import { minimumBy } from "../utils/helper_functions";
 import { PlayerPhysics } from "../physics/player_physics";
-import { BallPossessionService } from "../services/ball_possession_service";
 import { ThreeDimensionalVector } from "../three_dimensional_vector";
 import { Post } from "./post";
 import { Team } from "./team";
@@ -138,30 +140,22 @@ export class Player implements ICollidable {
     const teammates = this.team.getPlayers().filter(
       (player) => player !== this);
     const position = this.getPosition();
-    let nearest: Player | null = null;
-    let nearestDistance: number | null = null;
 
-    teammates.forEach((player) => {
-      const distanceToPlayer = position.distanceTo(player.getPosition());
-      if (!nearest || distanceToPlayer < nearestDistance) {
-        nearest = player;
-        nearestDistance = distanceToPlayer;
-      }
-    });
-
-    return nearest;
+    return minimumBy(teammates, (teammate: Player): number => {
+      return teammate.getPosition().distanceTo(position);
+    })
   }
 
-  public isNearestTeamMateToBall(): boolean {
-    return this === this.team.nearestPlayerToBall();
+  public isNearestTeamMateToBall(ball: Ball): boolean {
+    return this === this.team.nearestPlayerToBall(ball);
   }
 
   public hasBall(): boolean {
     return this.ballPossessionService.getCurrentPlayerInPossession() === this;
   }
 
-  public teamHasBall(): boolean {
-    return this.team.hasBall();
+  public teamInControl(): boolean {
+    return this.team.inControl();
   }
 
   public hasGoodPassingOptions(): boolean {

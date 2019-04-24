@@ -11,7 +11,7 @@ export class AttackingRunState implements IPlayerState {
   }
 
   public eligibleFor(player: Player): boolean {
-    return player.teamHasBall() && !player.hasBall();
+    return player.teamInControl() && !player.hasBall();
   }
 
   public update(player: Player): void {
