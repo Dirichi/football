@@ -9,14 +9,15 @@ const expect = chai.expect;
 chai.use(sinonChai);
 
 describe('BallPossessionService', () => {
-  describe('`getPlayerInPossession`', () => {
+  describe('`getCurrentPlayerInPossession`', () => {
     it('returns the player in possession of the ball', () => {
       const playerA = new Player(1, 1, 0, 0, 2); // x, y, vx, vy, diameter
       const playerB = new Player(5, 0, 0, 0, 2); // x, y, vx, vy, diameter
       const ball = new Ball(0, 0, 0, 0, 2); // x, y, vx, vy, diameter
 
       const service = new BallPossessionService(ball, [playerA, playerB]);
-      const player = service.getPlayerInPossession();
+      service.update();
+      const player = service.getCurrentPlayerInPossession();
       expect(player).to.equal(playerA);
     });
 
@@ -26,7 +27,8 @@ describe('BallPossessionService', () => {
       const ball = new Ball(0, 0, 0, 0, 2); // x, y, vx, vy, diameter
 
       const service = new BallPossessionService(ball, [playerA, playerB]);
-      const player = service.getPlayerInPossession();
+      service.update();
+      const player = service.getCurrentPlayerInPossession();
       expect(player).to.be.null;
     });
   });

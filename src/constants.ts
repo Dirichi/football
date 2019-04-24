@@ -1,6 +1,6 @@
 export enum constants {
   BALL_DIAMETER_TO_FIELD_YLENGTH = 0.01,
-  BALL_DEFAULT_SPEED = 0.002,
+  BALL_DEFAULT_SPEED = 0.004,
   BALL_INITIAL_VX = 0,
   BALL_INITIAL_VY = 0,
   BALL_INITIAL_X = 0.6,
@@ -19,7 +19,7 @@ export enum constants {
   PLAYER_INITIAL_VY = 0,
   PLAYER_INITIAL_X = 0.3,
   PLAYER_INITIAL_Y = 0.8,
-  PLAYER_DEFAULT_SPEED = 0.001,
+  PLAYER_DEFAULT_SPEED = 0.002,
   PLAYER_PHYSICS_DEFAULT_FRICTION = 0.05,
   POST_XLENGTH_TO_FIELD_XLENGTH = 0.01,
   POST_YLENGTH_TO_FIELD_YLENGTH = 0.15,
@@ -37,9 +37,12 @@ export enum EVENTS {
 
 export enum COMMANDS {
   CHASE_BALL = "chase.ball",
+  DRIBBLE = "dribble.ball",
   MOVE_PLAYER_LEFT = "move.player.left",
   MOVE_PLAYER_DOWN = "move.player.down",
   MOVE_PLAYER_RIGHT = "move.player.right",
+  MOVE_TO_ATTACKING_POSITION = "move.player.to.attacking.position",
+  MOVE_TO_DEFENSIVE_POSITION = "move.player.to.defensive.position",
   MOVE_PLAYER_UP = "move.player.up",
   PASS_BALL = "pass.ball",
   SHOOT_BALL = "shoot.ball",

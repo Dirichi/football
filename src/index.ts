@@ -2,10 +2,21 @@ import express from "express";
 import * as http from "http";
 import path from "path";
 import socketIo from "socket.io";
+import { AttackingRunState } from "./game_ai/player/state_machine/attacking_run_state";
+import { ChasingBallState } from "./game_ai/player/state_machine/chasing_ball_state";
+import { DefensiveRunState } from "./game_ai/player/state_machine/defensive_run_state";
+import { DribblingState } from "./game_ai/player/state_machine/dribbling_state";
+import { PassingState } from "./game_ai/player/state_machine/passing_state";
+import { ShootingState } from "./game_ai/player/state_machine/shooting_state";
+
+import { AutoDribbleCommand } from "./commands/auto_dribble_command";
 import { ChaseBallCommand } from "./commands/chase_ball_command";
+import { CommandFactory } from "./commands/command_factory";
 import { MoveDownCommand } from "./commands/move_down_command";
 import { MoveLeftCommand } from "./commands/move_left_command";
 import { MoveRightCommand } from "./commands/move_right_command";
+import { MoveToAttackingPositionCommand } from "./commands/move_to_attacking_position_command";
+import { MoveToDefensivePositionCommand } from "./commands/move_to_defensive_position_command";
 import { MoveUpCommand } from "./commands/move_up_command";
 import { PassBallCommand } from "./commands/pass_ball_command";
 import { ShootBallCommand } from "./commands/shoot_ball_command";
@@ -17,6 +28,7 @@ import { BALL_INITIAL_ARGS, BOX18A_INITIAL_COORDINATES,
   FIELD_INITIAL_COORDINATES, PLAYER_INITIAL_ARGS, POSTA_INITIAL_COORDINATES,
   POSTB_INITIAL_COORDINATES } from "./constants";
 import { EventQueue } from "./event_queue";
+import { PlayerStateMachine } from "./game_ai/player/state_machine/player_state_machine";
 import { Ball } from "./game_objects/ball";
 import { Box } from "./game_objects/box";
 import { Field } from "./game_objects/field";
@@ -25,6 +37,7 @@ import { Player } from "./game_objects/player";
 import { Post } from "./game_objects/post";
 import { Team } from "./game_objects/team";
 import { ICommand } from "./interfaces/icommand";
+import { IPlayerState } from "./interfaces/iplayer_state";
 import { BallPhysics } from "./physics/ball_physics";
 import { PlayerPhysics } from "./physics/player_physics";
 import { BallPossessionService } from "./services/ball_possession_service";
@@ -120,6 +133,8 @@ const ballPossessionService = new BallPossessionService(ball, players);
 players.forEach((player) => player.positionAtDefendingPosition());
 const teamA = new Team([playerA, playerB]);
 const teamB = new Team([playerC, playerD]);
+const teams = [teamA, teamB];
+teams.forEach((team) => team.setBallPossessionService(ballPossessionService));
 teamA.setOpposition(teamB);
 teamB.setOpposition(teamA);
 
@@ -151,28 +166,57 @@ interface IhashMapOfCommands {
 
 collisionNotificationService.registerCollisionGroup([ball, ...players]);
 
-const NAME_TO_COMMAND_MAPPING: IhashMapOfCommands = {
-  [COMMANDS.MOVE_PLAYER_DOWN]: new MoveDownCommand(),
-  [COMMANDS.MOVE_PLAYER_LEFT]: new MoveLeftCommand(),
-  [COMMANDS.MOVE_PLAYER_RIGHT]: new MoveRightCommand(),
-  [COMMANDS.MOVE_PLAYER_UP]: new MoveUpCommand(),
-  [COMMANDS.CHASE_BALL]: new ChaseBallCommand(ball),
-  [COMMANDS.PASS_BALL]: new PassBallCommand(ball, ballPossessionService),
-  [COMMANDS.SHOOT_BALL]: new ShootBallCommand(ball, ballPossessionService),
-  [COMMANDS.STOP]: new StopCommand(),
-};
+const moveDownCommand = new MoveDownCommand();
+const moveLeftCommand = new MoveLeftCommand();
+const moveRightCommand = new MoveRightCommand();
+const moveUpCommand = new MoveUpCommand();
+const chaseBallCommand = new ChaseBallCommand(ball);
+const passBallCommand = new PassBallCommand(ball, ballPossessionService);
+const stopCommand = new StopCommand();
+const shootBallCommand = new ShootBallCommand(ball, ballPossessionService);
+const moveToAttackingPositionCommand = new MoveToAttackingPositionCommand();
+const moveToDefensivePositionCommand = new MoveToDefensivePositionCommand();
+const autoDribbleCommand = new AutoDribbleCommand();
+
+const NAME_TO_COMMAND_MAPPING: Map<string, ICommand> = new Map([
+  [COMMANDS.MOVE_PLAYER_DOWN, moveDownCommand],
+  [COMMANDS.MOVE_PLAYER_LEFT, moveLeftCommand],
+  [COMMANDS.MOVE_PLAYER_RIGHT, moveRightCommand],
+  [COMMANDS.MOVE_PLAYER_UP, moveUpCommand],
+  [COMMANDS.CHASE_BALL, chaseBallCommand],
+  [COMMANDS.PASS_BALL, passBallCommand],
+  [COMMANDS.SHOOT_BALL, shootBallCommand],
+  [COMMANDS.STOP, stopCommand],
+  [COMMANDS.MOVE_TO_ATTACKING_POSITION, moveToAttackingPositionCommand],
+  [COMMANDS.MOVE_TO_DEFENSIVE_POSITION, moveToDefensivePositionCommand],
+  [COMMANDS.DRIBBLE, autoDribbleCommand],
+]);
+
+const commandFactory = new CommandFactory(NAME_TO_COMMAND_MAPPING);
+
+const PLAYER_STATES: IPlayerState[] = [
+  new AttackingRunState(commandFactory),
+  new DefensiveRunState(commandFactory, ball),
+  new ChasingBallState(commandFactory, ball),
+  new ShootingState(commandFactory),
+  new PassingState(commandFactory),
+  new DribblingState(commandFactory),
+];
+
+players.forEach((player) => player.setController(new PlayerStateMachine(player, PLAYER_STATES)));
 
 io.on("connection", (socket) => {
-  socket.on("command", (data) => {
-    const key = data as string;
-    const command = NAME_TO_COMMAND_MAPPING[key];
-    if (command) {
-      command.execute(playerA);
-    }
-  });
+  // socket.on("command", (data) => {
+  //   const key = data as string;
+  //   const command = NAME_TO_COMMAND_MAPPING[key];
+  //   if (command) {
+  //     command.execute(playerA);
+  //   }
+  // });
 
-  setInterval(() => {
+setInterval(() => {
     collisionNotificationService.update();
+    ballPossessionService.update();
     ball.update();
     players.forEach((player) => player.update());
     const data = {
@@ -183,6 +227,7 @@ io.on("connection", (socket) => {
       [EVENTS.PLAYER_DATA]: players.map((player) => player.serialized()),
       [EVENTS.POSTS_DATA]: posts.map((post) => post.serialized()),
     };
+
     socket.emit(EVENTS.STATE_CHANGED, data);
   }, 20);
 });

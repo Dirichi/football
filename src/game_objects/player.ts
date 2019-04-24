@@ -2,9 +2,13 @@ import v4 from "uuid/v4";
 import { constants, EVENTS } from "../constants";
 import { ICircle } from "../interfaces/icircle";
 import { ICollidable } from "../interfaces/icollidable";
+import { IPlayerController } from "../interfaces/iplayer_controller";
 import { IPlayerSchema } from "../interfaces/iplayer_schema";
 import { PlayerPhysics } from "../physics/player_physics";
+import { BallPossessionService } from "../services/ball_possession_service";
 import { ThreeDimensionalVector } from "../three_dimensional_vector";
+import { minimumBy } from "../utils/helper_functions";
+import { Ball } from "./ball";
 import { Post } from "./post";
 import { Team } from "./team";
 
@@ -22,6 +26,8 @@ export class Player implements ICollidable {
   private id: string;
   private colors: [number, number, number];
   private team?: Team;
+  private ballPossessionService?: BallPossessionService;
+  private controller?: IPlayerController;
 
   // TODO: Flirting with the idea of moving these attributes to
   // a PlayerRole class
@@ -46,6 +52,7 @@ export class Player implements ICollidable {
 
   public update() {
     this.physics.update();
+    this.controller.update();
   }
 
   public moveUp() {
@@ -133,42 +140,64 @@ export class Player implements ICollidable {
     const teammates = this.team.getPlayers().filter(
       (player) => player !== this);
     const position = this.getPosition();
-    let nearest: Player | null = null;
-    let nearestDistance: number | null = null;
 
-    teammates.forEach((player) => {
-      const distanceToPlayer = position.distanceTo(player.getPosition());
-      if (!nearest || distanceToPlayer < nearestDistance) {
-        nearest = player;
-        nearestDistance = distanceToPlayer;
-      }
+    return minimumBy(teammates, (teammate: Player): number => {
+      return teammate.getPosition().distanceTo(position);
     });
-
-    return nearest;
   }
 
-  public setTeam(team: Team) {
+  public isNearestTeamMateToBall(ball: Ball): boolean {
+    return this === this.team.nearestPlayerToBall(ball);
+  }
+
+  public hasBall(): boolean {
+    return this.ballPossessionService.getCurrentPlayerInPossession() === this;
+  }
+
+  public teamInControl(): boolean {
+    return this.team.inControl();
+  }
+
+  public hasGoodPassingOptions(): boolean {
+    return !this.inGoodShootingPosition();
+  }
+
+  public inGoodShootingPosition(): boolean {
+    const position = this.getPosition();
+    const distanceToGoal = position.distanceTo(this.opposingGoalPost.getMidPoint());
+    return distanceToGoal < 0.25;
+  }
+
+  public setTeam(team: Team): void {
     this.team = team;
   }
 
-  public setAttackingPosition(position: ThreeDimensionalVector) {
+  public setAttackingPosition(position: ThreeDimensionalVector): void {
     this.attackingPosition = position;
   }
 
-  public setDefendingPosition(position: ThreeDimensionalVector) {
+  public setDefendingPosition(position: ThreeDimensionalVector): void {
     this.defendingPosition = position;
   }
 
-  public positionAtDefendingPosition() {
+  public setBallPossessionService(possessionService: BallPossessionService): void {
+    this.ballPossessionService = possessionService;
+  }
+
+  public setController(controller: IPlayerController): void {
+    this.controller = controller;
+  }
+
+  public positionAtDefendingPosition(): void {
     this.x = this.defendingPosition.x;
     this.y = this.defendingPosition.y;
   }
 
-  public moveTowardsAttackingPosition() {
+  public moveTowardsAttackingPosition(): void {
     this.moveTowards(this.attackingPosition);
   }
 
-  public moveTowardsDefensivePosition() {
+  public moveTowardsDefensivePosition(): void {
     this.moveTowards(this.defendingPosition);
   }
 }

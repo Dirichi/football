@@ -4,14 +4,30 @@ import { Player } from "../game_objects/player";
 export class BallPossessionService {
   private ball: Ball;
   private players: Player[];
+  private lastPlayerInPossession?: Player;
+  private currentPlayerInPossession?: Player;
 
   constructor(ball: Ball, players: Player[]) {
     this.ball = ball;
     this.players = players;
   }
 
-  public getPlayerInPossession(): Player | null {
-    return this.players.find((player) => this.isPlayerInPossession(player)) || null;
+  public update() {
+    const playerInPossession =
+      this.players.find((player) => this.isPlayerInPossession(player)) || null;
+
+    if (playerInPossession) {
+      this.lastPlayerInPossession = playerInPossession;
+    }
+    this.currentPlayerInPossession = playerInPossession;
+  }
+
+  public getLastPlayerInPossession(): Player | null {
+    return this.lastPlayerInPossession;
+  }
+
+  public getCurrentPlayerInPossession(): Player | null {
+    return this.currentPlayerInPossession;
   }
 
   private isPlayerInPossession(player: Player): boolean {

@@ -24,7 +24,7 @@ export class PassBallCommand implements ICommand {
   }
 
   public execute(sender: Player): void {
-    if (sender !== this.possessionService.getPlayerInPossession()) {
+    if (sender !== this.possessionService.getCurrentPlayerInPossession()) {
       return;
     }
 
