@@ -27,6 +27,7 @@ export class Player implements ICollidable {
   private id: string;
   private colors: [number, number, number];
   private team?: Team;
+  // TODO: This should very likely not be here
   private ballPossessionService?: BallPossessionService;
   private controller?: IPlayerController;
   private messageQueue?: EventQueue;
