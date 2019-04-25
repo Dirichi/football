@@ -20,7 +20,7 @@ describe('ShootBallCommand', () => {
       const ball = new Ball(0, 0, 0, 0, 2); // x, y, vx, vy, diameter
       const service = new BallPossessionService(ball, [player]);
 
-      sinon.stub(service, 'getCurrentPlayerInPossession').returns(player);
+      sinon.stub(service, 'getCurrentPlayerInPossessionOrNull').returns(player);
       const moveStub = sinon.stub(ball, 'moveTowards').callsFake(
         (actual: ThreeDimensionalVector) => {
           const expected = new ThreeDimensionalVector(0.5, 0.5, 0);
@@ -41,7 +41,7 @@ describe('ShootBallCommand', () => {
       const ball = new Ball(0, 0, 0, 0, 2); // x, y, vx, vy, diameter
       const service = new BallPossessionService(ball, [playerA, playerB]);
 
-      sinon.stub(service, 'getCurrentPlayerInPossession').returns(playerB);
+      sinon.stub(service, 'getCurrentPlayerInPossessionOrNull').returns(playerB);
       const moveStub = sinon.stub(ball, 'moveTowards');
 
       const command = new ShootBallCommand(ball, service);
@@ -56,7 +56,7 @@ describe('ShootBallCommand', () => {
       const ball = new Ball(0, 0, 0, 0, 2); // x, y, vx, vy, diameter
       const service = new BallPossessionService(ball, [player]);
 
-      sinon.stub(service, 'getCurrentPlayerInPossession').returns(null);
+      sinon.stub(service, 'getCurrentPlayerInPossessionOrNull').returns(null);
       const moveStub = sinon.stub(ball, 'moveTowards');
 
       const command = new ShootBallCommand(ball, service);

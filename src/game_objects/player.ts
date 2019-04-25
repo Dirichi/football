@@ -155,7 +155,7 @@ export class Player implements ICollidable {
   }
 
   public hasBall(): boolean {
-    return this.ballPossessionService.getCurrentPlayerInPossession() === this;
+    return this.ballPossessionService.getCurrentPlayerInPossessionOrNull() === this;
   }
 
   public teamInControl(): boolean {

@@ -20,8 +20,6 @@ export class WaitingState implements IPlayerState {
     }
 
     if (this.waitingNoLongerValidFor(player)) {
-      // tslint:disable-next-line:no-console
-      console.log("WAITING NO LONGER VALID");
       player.clearWaitMessages();
     } else {
       this.commandFactory
