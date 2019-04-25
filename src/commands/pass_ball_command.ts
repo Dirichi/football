@@ -1,3 +1,4 @@
+import { COMMANDS } from "../constants";
 import { Ball } from "../game_objects/ball";
 import { Player } from "../game_objects/player";
 import { ICommand } from "../interfaces/icommand";
@@ -24,12 +25,15 @@ export class PassBallCommand implements ICommand {
   }
 
   public execute(sender: Player): void {
-    if (sender !== this.possessionService.getCurrentPlayerInPossession()) {
+    if (sender !== this.possessionService.getCurrentPlayerInPossessionOrNull()) {
       return;
     }
 
     const receiver = sender.getNearestTeamMate();
     if (receiver) {
+      // TODO: This message is only used by the state machine so it may have to
+      // be moved out of the command
+      sender.sendMessage(receiver, {details: COMMANDS.STOP});
       sender.kickingBall = true;
       this.ball.moveTowards(receiver.getPosition());
     }

@@ -15,4 +15,8 @@ export class PlayerStateMachine implements IPlayerController {
     const eligilbleState = this.states.find((state) => state.eligibleFor(this.player));
     eligilbleState.update(this.player);
   }
+
+  // TODO: Rather than having the data that each state object needs from the
+  // player bloat the player and team classes, consider implementing these
+  // methods in this class, and passing them as a hash into each class
 }

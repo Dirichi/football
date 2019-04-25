@@ -17,7 +17,7 @@ export class ShootBallCommand implements ICommand {
   }
 
   public execute(player: Player) {
-    const owner = this.possessionService.getCurrentPlayerInPossession();
+    const owner = this.possessionService.getCurrentPlayerInPossessionOrNull();
 
     if (owner === player) {
       player.kickingBall = true;

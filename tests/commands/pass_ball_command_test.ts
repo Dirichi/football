@@ -1,8 +1,9 @@
 import { Ball } from '../../src/game_objects/ball';
 import { BallPossessionService } from '../../src/services/ball_possession_service';
 import { PassBallCommand } from '../../src/commands/pass_ball_command';
-import { ThreeDimensionalVector } from '../../src/three_dimensional_vector';
+import { COMMANDS } from '../../src/constants';
 import { Player } from '../../src/game_objects/player';
+import { ThreeDimensionalVector } from '../../src/three_dimensional_vector';
 import * as chai from 'chai';
 import * as sinon from 'sinon';
 
@@ -18,7 +19,11 @@ describe('PassBallCommand', () => {
       const ball = new Ball(0, 0, 0, 0, 2); // x, y, vx, vy, diameter
       const service = new BallPossessionService(ball, []);
 
-      sinon.stub(service, 'getCurrentPlayerInPossession').returns(sender);
+      // HACK: Stub sendMessage to prevent methods being sent to a non-existent
+      // queue
+      sinon.stub(sender, 'sendMessage');
+
+      sinon.stub(service, 'getCurrentPlayerInPossessionOrNull').returns(sender);
       sinon.stub(sender, 'getNearestTeamMate').returns(receiver);
 
       // Actual Test
@@ -34,12 +39,29 @@ describe('PassBallCommand', () => {
       expect(moveStub).to.have.been.called;
     });
 
+    it('sends a stop message to the receiver', () => {
+      const sender = new Player(1, 1, 0, 0, 2); // x, y, vx, vy, diameter
+      const receiver = new Player(5, 4, 0, 0, 2); // x, y, vx, vy, diameter
+      const ball = new Ball(0, 0, 0, 0, 2); // x, y, vx, vy, diameter
+      const service = new BallPossessionService(ball, []);
+
+      const sendMessageStub = sinon.stub(sender, 'sendMessage');
+      sinon.stub(service, 'getCurrentPlayerInPossessionOrNull').returns(sender);
+      sinon.stub(sender, 'getNearestTeamMate').returns(receiver);
+
+      const command = new PassBallCommand(ball, service);
+      command.execute(sender);
+
+      expect(sendMessageStub).to.have.been.calledWith(
+        receiver, {details: COMMANDS.STOP});
+    });
+
     it('does not move the ball if the sender is not in possession', () => {
       const sender = new Player(1, 1, 0, 0, 2); // x, y, vx, vy, diameter
       const ball = new Ball(0, 0, 0, 0, 2); // x, y, vx, vy, diameter
       const service = new BallPossessionService(ball, []);
 
-      sinon.stub(service, 'getCurrentPlayerInPossession')
+      sinon.stub(service, 'getCurrentPlayerInPossessionOrNull')
         .returns(new Player(1, 1, 0, 0, 2));
       const moveStub = sinon.stub(ball, 'moveTowards');
 
@@ -54,7 +76,7 @@ describe('PassBallCommand', () => {
       const ball = new Ball(0, 0, 0, 0, 2); // x, y, vx, vy, diameter
       const service = new BallPossessionService(ball, []);
 
-      sinon.stub(service, 'getCurrentPlayerInPossession').returns(null);
+      sinon.stub(service, 'getCurrentPlayerInPossessionOrNull').returns(null);
       const moveStub = sinon.stub(ball, 'moveTowards');
       const command = new PassBallCommand(ball, service);
       command.execute(sender);
@@ -67,7 +89,7 @@ describe('PassBallCommand', () => {
       const ball = new Ball(0, 0, 0, 0, 2); // x, y, vx, vy, diameter
       const service = new BallPossessionService(ball, []);
 
-      sinon.stub(service, 'getCurrentPlayerInPossession').returns(sender);
+      sinon.stub(service, 'getCurrentPlayerInPossessionOrNull').returns(sender);
       sinon.stub(sender, 'getNearestTeamMate').returns(null);
       const moveStub = sinon.stub(ball, 'moveTowards');
       const command = new PassBallCommand(ball, service);

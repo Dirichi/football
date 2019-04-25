@@ -26,7 +26,7 @@ export class BallPossessionService {
     return this.lastPlayerInPossession;
   }
 
-  public getCurrentPlayerInPossession(): Player | null {
+  public getCurrentPlayerInPossessionOrNull(): Player | null {
     return this.currentPlayerInPossession;
   }
 
