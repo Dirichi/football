@@ -8,6 +8,7 @@ import { DefensiveRunState } from "./game_ai/player/state_machine/defensive_run_
 import { DribblingState } from "./game_ai/player/state_machine/dribbling_state";
 import { PassingState } from "./game_ai/player/state_machine/passing_state";
 import { ShootingState } from "./game_ai/player/state_machine/shooting_state";
+import { WaitingState } from "./game_ai/player/state_machine/waiting_state";
 
 import { AutoDribbleCommand } from "./commands/auto_dribble_command";
 import { ChaseBallCommand } from "./commands/chase_ball_command";
@@ -195,6 +196,7 @@ const NAME_TO_COMMAND_MAPPING: Map<string, ICommand> = new Map([
 const commandFactory = new CommandFactory(NAME_TO_COMMAND_MAPPING);
 
 const PLAYER_STATES: IPlayerState[] = [
+  new WaitingState(commandFactory),
   new AttackingRunState(commandFactory),
   new DefensiveRunState(commandFactory, ball),
   new ChasingBallState(commandFactory, ball),
@@ -204,6 +206,7 @@ const PLAYER_STATES: IPlayerState[] = [
 ];
 
 players.forEach((player) => player.setController(new PlayerStateMachine(player, PLAYER_STATES)));
+players.forEach((player) => player.setMessageQueue(queue));
 
 io.on("connection", (socket) => {
   // socket.on("command", (data) => {

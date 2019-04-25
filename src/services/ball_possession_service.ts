@@ -23,6 +23,7 @@ export class BallPossessionService {
   }
 
   public getLastPlayerInPossession(): Player | null {
+    // TODO: test this method
     return this.lastPlayerInPossession;
   }
 

@@ -1,3 +1,4 @@
+import { COMMANDS } from "../constants";
 import { Ball } from "../game_objects/ball";
 import { Player } from "../game_objects/player";
 import { ICommand } from "../interfaces/icommand";
@@ -30,6 +31,7 @@ export class PassBallCommand implements ICommand {
 
     const receiver = sender.getNearestTeamMate();
     if (receiver) {
+      sender.sendMessage(receiver, {details: COMMANDS.STOP});
       sender.kickingBall = true;
       this.ball.moveTowards(receiver.getPosition());
     }
