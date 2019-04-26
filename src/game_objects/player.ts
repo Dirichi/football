@@ -8,7 +8,6 @@ import { IPlayerSchema } from "../interfaces/iplayer_schema";
 import { PlayerPhysics } from "../physics/player_physics";
 import { ThreeDimensionalVector } from "../three_dimensional_vector";
 import { minimumBy } from "../utils/helper_functions";
-import { Ball } from "./ball";
 import { Post } from "./post";
 import { Team } from "./team";
 
@@ -143,16 +142,13 @@ export class Player implements ICollidable {
   public teamMates(): Player[] {
     return this.team.getPlayers().filter((player) => player !== this);
   }
+
   public getNearestTeamMate(): Player | null {
     const position = this.getPosition();
 
     return minimumBy(this.teamMates(), (teammate: Player): number => {
       return teammate.getPosition().distanceTo(position);
     });
-  }
-
-  public isNearestTeamMateToBall(ball: Ball): boolean {
-    return this === this.team.nearestPlayerToBall(ball);
   }
 
   public setTeam(team: Team): void {

@@ -1,5 +1,4 @@
 import { minimumBy } from "../utils/helper_functions";
-import { Ball } from "./ball";
 import { Player } from "./player";
 import { Post } from "./post";
 
@@ -26,12 +25,5 @@ export class Team {
 
   public setColors(colors: [number, number, number]): void {
     this.players.forEach((player) => player.setColors(colors));
-  }
-
-  public nearestPlayerToBall(ball: Ball): Player | null {
-    const ballPosition = ball.getPosition();
-    return minimumBy(this.players, (player: Player) => {
-      return player.getPosition().distanceTo(ballPosition);
-    });
   }
 }
