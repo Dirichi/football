@@ -1,7 +1,7 @@
 import { Ball } from '../../src/game_objects/ball';
 import { BallPossessionService } from '../../src/services/ball_possession_service';
 import { PassBallCommand } from '../../src/commands/pass_ball_command';
-import { COMMANDS } from '../../src/constants';
+import { STATE_MACHINE_COMMANDS } from '../../src/constants';
 import { Player } from '../../src/game_objects/player';
 import { ThreeDimensionalVector } from '../../src/three_dimensional_vector';
 import * as chai from 'chai';
@@ -53,7 +53,7 @@ describe('PassBallCommand', () => {
       command.execute(sender);
 
       expect(sendMessageStub).to.have.been.calledWith(
-        receiver, {details: COMMANDS.STOP});
+        receiver, {details: STATE_MACHINE_COMMANDS.WAIT});
     });
 
     it('does not move the ball if the sender is not in possession', () => {

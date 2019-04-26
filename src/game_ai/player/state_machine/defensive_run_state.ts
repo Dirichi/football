@@ -1,24 +1,22 @@
 import { COMMANDS } from "../../../constants";
-import { Ball } from "../../../game_objects/ball";
 import { Player } from "../../../game_objects/player";
 import { ICommandFactory } from "../../../interfaces/icommand_factory";
 import { IPlayerState } from "../../../interfaces/iplayer_state";
+import { IPlayerStateFeature } from "../../../interfaces/iplayer_state_feature";
 
 export class DefensiveRunState implements IPlayerState {
   private commandFactory: ICommandFactory;
-  private ball: Ball;
 
-  constructor(commandFactory: ICommandFactory, ball: Ball) {
+  constructor(commandFactory: ICommandFactory) {
     this.commandFactory = commandFactory;
-    this.ball = ball;
   }
 
-  public eligibleFor(player: Player): boolean {
-    return !player.teamInControl() && !player.isNearestTeamMateToBall(this.ball);
+  public eligibleFor(features: IPlayerStateFeature): boolean {
+    return !features.teamInControl && !features.isNearestTeamMateToBall;
   }
 
-  public update(player: Player): void {
-    if (this.eligibleFor(player)) {
+  public update(player: Player, features: IPlayerStateFeature): void {
+    if (this.eligibleFor(features)) {
       this.commandFactory
         .getCommand(COMMANDS.MOVE_TO_DEFENSIVE_POSITION)
         .execute(player);

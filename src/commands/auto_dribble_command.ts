@@ -5,8 +5,8 @@ import { ThreeDimensionalVector } from "../three_dimensional_vector";
 
 export class AutoDribbleCommand implements ICommand {
   public execute(player: Player): void {
-    if (!player.hasBall()) {
-      return;
-    }
+    // if (!player.hasBall()) {
+    //   return;
+    // }
   }
 }

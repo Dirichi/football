@@ -1,13 +1,10 @@
-import { BallPossessionService } from "../services/ball_possession_service";
 import { minimumBy } from "../utils/helper_functions";
-import { Ball } from "./ball";
 import { Player } from "./player";
 import { Post } from "./post";
 
 export class Team {
   private players: Player[];
   private opposition?: Team;
-  private ballPossessionService?: BallPossessionService;
 
   constructor(players: Player[]) {
     this.players = players;
@@ -28,25 +25,5 @@ export class Team {
 
   public setColors(colors: [number, number, number]): void {
     this.players.forEach((player) => player.setColors(colors));
-  }
-
-  public setBallPossessionService(ballPossessionService: BallPossessionService) {
-    this.ballPossessionService = ballPossessionService;
-    this.players.forEach((player) => {
-      player.setBallPossessionService(ballPossessionService); }
-    );
-  }
-
-  public nearestPlayerToBall(ball: Ball): Player | null {
-    const ballPosition = ball.getPosition();
-    return minimumBy(this.players, (player: Player) => {
-      return player.getPosition().distanceTo(ballPosition);
-    });
-  }
-
-  public inControl(): boolean {
-    const lastPlayerInPossession =
-      this.ballPossessionService.getLastPlayerInPossession();
-    return this.players.includes(lastPlayerInPossession);
   }
 }
