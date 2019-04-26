@@ -1,4 +1,4 @@
-import { Player } from "../../../game_objects/player";
+import { Player } from "../game_objects/player";
 
 export interface IPlayerStateFeatureExtractor {
   teamInControl(player: Player): boolean;

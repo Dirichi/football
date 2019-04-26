@@ -1,6 +1,6 @@
 import { Ball } from "../game_objects/ball";
-import { IBallPossessionService } from "../interfaces/iball_possession_service";
 import { Player } from "../game_objects/player";
+import { IBallPossessionService } from "../interfaces/iball_possession_service";
 
 export class BallPossessionService implements IBallPossessionService {
   private ball: Ball;
@@ -24,6 +24,7 @@ export class BallPossessionService implements IBallPossessionService {
   }
 
   public getLastPlayerInPossession(): Player | null {
+    // TODO: Better naming for this method
     return this.lastPlayerInPossession;
   }
 

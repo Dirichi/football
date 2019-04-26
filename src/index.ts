@@ -7,6 +7,7 @@ import { ChasingBallState } from "./game_ai/player/state_machine/chasing_ball_st
 import { DefensiveRunState } from "./game_ai/player/state_machine/defensive_run_state";
 import { DribblingState } from "./game_ai/player/state_machine/dribbling_state";
 import { PassingState } from "./game_ai/player/state_machine/passing_state";
+import { PlayerStateFeatureExtractor } from "./game_ai/player/state_machine/player_state_feature_extractor";
 import { ShootingState } from "./game_ai/player/state_machine/shooting_state";
 import { WaitingState } from "./game_ai/player/state_machine/waiting_state";
 
@@ -198,14 +199,20 @@ const commandFactory = new CommandFactory(NAME_TO_COMMAND_MAPPING);
 const PLAYER_STATES: IPlayerState[] = [
   new WaitingState(commandFactory),
   new AttackingRunState(commandFactory),
-  new DefensiveRunState(commandFactory, ball),
-  new ChasingBallState(commandFactory, ball),
+  new DefensiveRunState(commandFactory),
+  new ChasingBallState(commandFactory),
   new ShootingState(commandFactory),
   new PassingState(commandFactory),
   new DribblingState(commandFactory),
 ];
 
-players.forEach((player) => player.setController(new PlayerStateMachine(player, PLAYER_STATES)));
+const featureExtractor = new PlayerStateFeatureExtractor(ball, ballPossessionService);
+const buildStateMachine = (player: Player) => {
+  const machine = new PlayerStateMachine(player, PLAYER_STATES);
+  machine.setFeatureExtractor(featureExtractor);
+  return machine;
+};
+players.forEach((player) => player.setController(buildStateMachine(player)));
 players.forEach((player) => player.setMessageQueue(queue));
 
 io.on("connection", (socket) => {

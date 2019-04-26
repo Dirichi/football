@@ -1,8 +1,8 @@
 import { Ball } from "../../../game_objects/ball";
+import { Player } from "../../../game_objects/player";
 import { IBallPossessionService } from "../../../interfaces/iball_possession_service";
 import { IPlayerStateFeatureExtractor } from "../../../interfaces/iplayer_state_feature_extractor";
 import { minimumBy } from "../../../utils/helper_functions";
-import { Player } from "../../../game_objects/player";
 
 export class PlayerStateFeatureExtractor implements IPlayerStateFeatureExtractor {
   private ball: Ball;
@@ -16,6 +16,11 @@ export class PlayerStateFeatureExtractor implements IPlayerStateFeatureExtractor
   public teamInControl(player: Player): boolean {
     const lastPlayerInPossession =
       this.ballPossessionService.getLastPlayerInPossession();
+
+    if (!lastPlayerInPossession) {
+      // TODO: Test this behavior
+      return false;
+    }
     return lastPlayerInPossession.getTeam() === player.getTeam();
   }
 
