@@ -1,7 +1,8 @@
 import { Ball } from "../game_objects/ball";
+import { IBallPossessionService } from "../interfaces/iball_possession_service";
 import { Player } from "../game_objects/player";
 
-export class BallPossessionService {
+export class BallPossessionService implements IBallPossessionService {
   private ball: Ball;
   private players: Player[];
   private lastPlayerInPossession?: Player;
@@ -12,7 +13,7 @@ export class BallPossessionService {
     this.players = players;
   }
 
-  public update() {
+  public update(): void {
     const playerInPossession =
       this.players.find((player) => this.isPlayerInPossession(player)) || null;
 
