@@ -1,5 +1,5 @@
 import v4 from "uuid/v4";
-import { COMMANDS, constants, EVENTS } from "../constants";
+import { constants, EVENTS } from "../constants";
 import { EventQueue } from "../event_queue";
 import { ICircle } from "../interfaces/icircle";
 import { ICollidable } from "../interfaces/icollidable";
@@ -31,7 +31,6 @@ export class Player implements ICollidable {
   private ballPossessionService?: BallPossessionService;
   private controller?: IPlayerController;
   private messageQueue?: EventQueue;
-  private messages: Array<{details: string}>;
 
   // TODO: Flirting with the idea of moving these attributes to
   // a PlayerRole class
@@ -52,7 +51,6 @@ export class Player implements ICollidable {
       // TODO: This is a temporary flag to ensure the ball moves when it's kicked
       // It will be changed to a state object
       this.kickingBall = false;
-      this.messages = [];
   }
 
   public update() {
@@ -141,36 +139,23 @@ export class Player implements ICollidable {
     } as ICircle;
   }
 
+  public getTeam(): Team {
+    return this.team;
+  }
+
+  public teamMates(): Player[] {
+    return this.team.getPlayers().filter((player) => player !== this);
+  }
   public getNearestTeamMate(): Player | null {
-    const teammates = this.team.getPlayers().filter(
-      (player) => player !== this);
     const position = this.getPosition();
 
-    return minimumBy(teammates, (teammate: Player): number => {
+    return minimumBy(this.teamMates(), (teammate: Player): number => {
       return teammate.getPosition().distanceTo(position);
     });
   }
 
   public isNearestTeamMateToBall(ball: Ball): boolean {
     return this === this.team.nearestPlayerToBall(ball);
-  }
-
-  public hasBall(): boolean {
-    return this.ballPossessionService.getCurrentPlayerInPossessionOrNull() === this;
-  }
-
-  public teamInControl(): boolean {
-    return this.team.inControl();
-  }
-
-  public hasGoodPassingOptions(): boolean {
-    return !this.inGoodShootingPosition();
-  }
-
-  public inGoodShootingPosition(): boolean {
-    const position = this.getPosition();
-    const distanceToGoal = position.distanceTo(this.opposingGoalPost.getMidPoint());
-    return distanceToGoal < 0.25;
   }
 
   public setTeam(team: Team): void {
@@ -198,15 +183,6 @@ export class Player implements ICollidable {
     this.listenForMessages();
   }
 
-  public hasWaitMessages() {
-    return this.messages.some((message) => message.details === COMMANDS.STOP);
-  }
-
-  public clearWaitMessages() {
-    this.messages =
-      this.messages.filter((message) => message.details !== COMMANDS.STOP);
-  }
-
   public positionAtDefendingPosition(): void {
     this.x = this.defendingPosition.x;
     this.y = this.defendingPosition.y;
@@ -226,11 +202,7 @@ export class Player implements ICollidable {
 
   private listenForMessages() {
     this.messageQueue.when(`player.${this.id}.messaged`, (message: {details: string}) => {
-      this.storeMessage(message);
+      this.controller.handleMessage(message);
     });
-  }
-
-  private storeMessage(message: {details: string}) {
-    this.messages.push(message);
   }
 }
