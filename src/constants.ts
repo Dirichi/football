@@ -54,7 +54,6 @@ export enum STATE_MACHINE_COMMANDS {
   NO_NEED_TO_WAIT = "no.need.to.wait",
 }
 
-
 export const BALL_INITIAL_ARGS = [
   constants.BALL_INITIAL_X as number,
   constants.BALL_INITIAL_Y as number,

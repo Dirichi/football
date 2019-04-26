@@ -6,7 +6,6 @@ import { ICollidable } from "../interfaces/icollidable";
 import { IPlayerController } from "../interfaces/iplayer_controller";
 import { IPlayerSchema } from "../interfaces/iplayer_schema";
 import { PlayerPhysics } from "../physics/player_physics";
-import { BallPossessionService } from "../services/ball_possession_service";
 import { ThreeDimensionalVector } from "../three_dimensional_vector";
 import { minimumBy } from "../utils/helper_functions";
 import { Ball } from "./ball";
@@ -27,8 +26,6 @@ export class Player implements ICollidable {
   private id: string;
   private colors: [number, number, number];
   private team?: Team;
-  // TODO: This should very likely not be here
-  private ballPossessionService?: BallPossessionService;
   private controller?: IPlayerController;
   private messageQueue?: EventQueue;
 
@@ -168,10 +165,6 @@ export class Player implements ICollidable {
 
   public setDefendingPosition(position: ThreeDimensionalVector): void {
     this.defendingPosition = position;
-  }
-
-  public setBallPossessionService(possessionService: BallPossessionService): void {
-    this.ballPossessionService = possessionService;
   }
 
   public setController(controller: IPlayerController): void {

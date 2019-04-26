@@ -135,7 +135,7 @@ players.forEach((player) => player.positionAtDefendingPosition());
 const teamA = new Team([playerA, playerB]);
 const teamB = new Team([playerC, playerD]);
 const teams = [teamA, teamB];
-teams.forEach((team) => team.setBallPossessionService(ballPossessionService));
+
 teamA.setOpposition(teamB);
 teamB.setOpposition(teamA);
 
