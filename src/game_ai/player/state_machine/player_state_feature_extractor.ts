@@ -5,7 +5,6 @@ import { minimumBy } from "../../../utils/helper_functions";
 import { Player } from "../../../game_objects/player";
 
 export class PlayerStateFeatureExtractor implements IPlayerStateFeatureExtractor {
-  // TODO: Test this class
   private ball: Ball;
   private ballPossessionService: IBallPossessionService;
 
