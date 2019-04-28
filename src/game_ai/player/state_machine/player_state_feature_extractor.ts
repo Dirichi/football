@@ -5,8 +5,6 @@ import { IPlayerStateFeatureExtractor } from "../../../interfaces/iplayer_state_
 import { IPassValueCalculator } from "../../../interfaces/ipass_value_calculator";
 import { IShotValueCalculator } from "../../../interfaces/ishot_value_calculator";
 import { maximumBy, minimumBy } from "../../../utils/helper_functions";
-import { PassValueCalculator } from "./calculators/pass_value_calculator";
-import { ShotValueCalculator } from "./calculators/shot_value_calculator";
 
 export class PlayerStateFeatureExtractor implements IPlayerStateFeatureExtractor {
   private ball: Ball;
