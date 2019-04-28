@@ -1,3 +1,4 @@
+// TODO: This should not be an enum;
 export enum constants {
   BALL_DIAMETER_TO_FIELD_YLENGTH = 0.01,
   BALL_DEFAULT_SPEED = 0.004,
@@ -12,6 +13,9 @@ export enum constants {
   CENTER_CIRCLE_DIAMETER_TO_FIELD_XLENGTH = 0.175,
   FIELD_INITIAL_X = 0,
   FIELD_INITIAL_Y = 0,
+  // This is a bug. Field X length and Field Y length should not be the same
+  // TODO: Fix this, choose one dimension to base all the others on and go
+  // from there
   FIELD_INITIAL_XLENGTH = 1,
   FIELD_INITIAL_YLENGTH = 1,
   PLAYER_DIAMETER_TO_FIELD_YLENGTH = 0.03,
@@ -129,3 +133,8 @@ export const POSTB_INITIAL_COORDINATES = [
   constants.POST_XLENGTH_TO_FIELD_XLENGTH as number,
   constants.POST_YLENGTH_TO_FIELD_YLENGTH as number,
 ];
+
+export enum TEAM_SIDES {
+  LEFT = "left",
+  RIGHT = "right",
+}

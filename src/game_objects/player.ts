@@ -92,6 +92,10 @@ export class Player implements ICollidable {
     this.maximumSpeed = speed;
   }
 
+  public getMaximumSpeed(): number {
+    return this.maximumSpeed;
+  }
+
   public getOpposingGoalPost(): Post {
     return this.opposingGoalPost;
   }
@@ -119,11 +123,11 @@ export class Player implements ICollidable {
     return this.id;
   }
 
-  public getVelocity() {
+  public getVelocity(): ThreeDimensionalVector {
     return new ThreeDimensionalVector(this.vx, this.vy, 0);
   }
 
-  public getPosition() {
+  public getPosition(): ThreeDimensionalVector {
     return new ThreeDimensionalVector(this.x, this.y, 0);
   }
 
@@ -167,7 +171,7 @@ export class Player implements ICollidable {
     this.controller = controller;
   }
 
-  public setMessageQueue(queue: EventQueue) {
+  public setMessageQueue(queue: EventQueue): void {
     this.messageQueue = queue;
     this.listenForMessages();
   }
@@ -185,11 +189,11 @@ export class Player implements ICollidable {
     this.moveTowards(this.defendingPosition);
   }
 
-  public sendMessage(player: Player, message: {details: string}) {
+  public sendMessage(player: Player, message: {details: string}): void {
     this.messageQueue.trigger(`player.${player.getGameObjectId()}.messaged`, message);
   }
 
-  private listenForMessages() {
+  private listenForMessages(): void {
     this.messageQueue.when(`player.${this.id}.messaged`, (message: {details: string}) => {
       this.controller.handleMessage(message);
     });

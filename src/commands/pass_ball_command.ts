@@ -24,18 +24,16 @@ export class PassBallCommand implements ICommand {
     this.possessionService = possessionService;
   }
 
-  public execute(sender: Player): void {
-    if (sender !== this.possessionService.getCurrentPlayerInPossessionOrNull()) {
-      return;
+  public execute(sender: Player, receiver: Player): void {
+    if (
+      sender !== this.possessionService.getCurrentPlayerInPossessionOrNull()) {
+        return;
     }
 
-    const receiver = sender.getNearestTeamMate();
-    if (receiver) {
-      // TODO: This message is only used by the state machine so it may have to
-      // be moved out of the command
-      sender.sendMessage(receiver, {details: STATE_MACHINE_COMMANDS.WAIT});
-      sender.kickingBall = true;
-      this.ball.moveTowards(receiver.getPosition());
-    }
+    // TODO: This message is only used by the state machine so it may have to
+    // be moved out of the command
+    sender.sendMessage(receiver, {details: STATE_MACHINE_COMMANDS.WAIT});
+    sender.kickingBall = true;
+    this.ball.moveTowards(receiver.getPosition());
   }
 }

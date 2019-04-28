@@ -3,6 +3,9 @@ import * as http from "http";
 import path from "path";
 import socketIo from "socket.io";
 import { AttackingRunState } from "./game_ai/player/state_machine/attacking_run_state";
+import { InterceptionCalculator } from "./game_ai/player/state_machine/calculators/interception_calculator";
+import { PassValueCalculator } from "./game_ai/player/state_machine/calculators/pass_value_calculator";
+import { ShotValueCalculator } from "./game_ai/player/state_machine/calculators/shot_value_calculator";
 import { ChasingBallState } from "./game_ai/player/state_machine/chasing_ball_state";
 import { DefensiveRunState } from "./game_ai/player/state_machine/defensive_run_state";
 import { DribblingState } from "./game_ai/player/state_machine/dribbling_state";
@@ -28,7 +31,7 @@ import { BALL_INITIAL_ARGS, BOX18A_INITIAL_COORDINATES,
   BOX18B_INITIAL_COORDINATES, BOX6A_INITIAL_COORDINATES,
   BOX6B_INITIAL_COORDINATES, COMMANDS, constants, EVENTS,
   FIELD_INITIAL_COORDINATES, PLAYER_INITIAL_ARGS, POSTA_INITIAL_COORDINATES,
-  POSTB_INITIAL_COORDINATES } from "./constants";
+  POSTB_INITIAL_COORDINATES, TEAM_SIDES } from "./constants";
 import { EventQueue } from "./event_queue";
 import { PlayerStateMachine } from "./game_ai/player/state_machine/player_state_machine";
 import { Ball } from "./game_objects/ball";
@@ -60,7 +63,7 @@ const collisionNotificationService = new CollisionNotificationService(
 // of the code would not look so messy.
 const [fieldx, fieldy, fieldxlength, fieldylength] = FIELD_INITIAL_COORDINATES;
 const field = new Field(fieldx, fieldy, fieldxlength, fieldylength);
-const regions = FieldRegion.generate(field, 5, 5);
+const regions = FieldRegion.generate(field, 10, 5);
 
 const [ballx, bally, ballvx, ballvy, balldiameter] = BALL_INITIAL_ARGS;
 const ballPhysics = new BallPhysics(field, queue);
@@ -91,51 +94,50 @@ const box18B = new Box(box18BX, box18BY, box18BXlength, box18BYlength);
 
 const boxes = [box18A, box18B, box6A, box6B];
 
-const [playerx, playery, playervx, playervy, playerSpeed, playerdiameter]
+const [playerx, playery, playervx, playervy, playerSpeed, playerDiameter]
   = PLAYER_INITIAL_ARGS;
-const playerPhysicsA = new PlayerPhysics(field, queue);
-playerPhysicsA.setFriction(constants.PLAYER_PHYSICS_DEFAULT_FRICTION);
-const playerA = new Player(playerx, playery, playervx, playervy, playerdiameter);
-playerA.setMaximumSpeed(playerSpeed);
-playerA.setPhysics(playerPhysicsA);
-playerA.setDefendingPosition(regions[6].getMidPoint());
-playerA.setAttackingPosition(regions[16].getMidPoint());
 
-const [playerbx, playerby, playerbvx, playerbvy, playerbSpeed, playerbdiameter]
-  = PLAYER_INITIAL_ARGS;
-const playerPhysicsB = new PlayerPhysics(field, queue);
-const playerB = new Player(0.8, 0.3, playerbvx, playerbvy, playerbdiameter);
-playerB.setMaximumSpeed(playerbSpeed);
-playerB.setPhysics(playerPhysicsB);
-playerB.setDefendingPosition(regions[8].getMidPoint());
-playerB.setAttackingPosition(regions[18].getMidPoint());
+const playerA = new Player(0, 0, 0, 0, playerDiameter);
+playerA.setDefendingPosition(regions[5].getMidPoint());
+playerA.setAttackingPosition(regions[35].getMidPoint());
 
-const [playercx, playercy, playercvx, playercvy, playercSpeed, playercdiameter]
-  = PLAYER_INITIAL_ARGS;
-const playerPhysicsC = new PlayerPhysics(field, queue);
-playerPhysicsC.setFriction(constants.PLAYER_PHYSICS_DEFAULT_FRICTION);
-const playerC = new Player(0.1, 0.2, playercvx, playercvy, playercdiameter);
-playerC.setMaximumSpeed(playercSpeed);
-playerC.setPhysics(playerPhysicsC);
-playerC.setDefendingPosition(regions[16].getMidPoint());
-playerC.setAttackingPosition(regions[6].getMidPoint());
+const playerB = new Player(0, 0, 0, 0, playerDiameter);
+playerB.setDefendingPosition(regions[7].getMidPoint());
+playerB.setAttackingPosition(regions[37].getMidPoint());
 
-const [playerdx, playerdy, playerdvx, playerdvy, playerdSpeed, playerddiameter]
-  = PLAYER_INITIAL_ARGS;
-const playerPhysicsD = new PlayerPhysics(field, queue);
-const playerD = new Player(0.6, 0.5, playerdvx, playerdvy, playerddiameter);
-playerD.setMaximumSpeed(playerdSpeed);
-playerD.setPhysics(playerPhysicsD);
-playerD.setDefendingPosition(regions[18].getMidPoint());
-playerD.setAttackingPosition(regions[8].getMidPoint());
+const playerC = new Player(0, 0, 0, 0, playerDiameter);
+playerC.setDefendingPosition(regions[9].getMidPoint());
+playerC.setAttackingPosition(regions[39].getMidPoint());
 
-const players = [playerA, playerB, playerC, playerD];
-const ballPossessionService = new BallPossessionService(ball, players);
+const playerD = new Player(0, 0, 0, 0, playerDiameter);
+playerD.setDefendingPosition(regions[40].getMidPoint());
+playerD.setAttackingPosition(regions[10].getMidPoint());
 
-players.forEach((player) => player.positionAtDefendingPosition());
-const teamA = new Team([playerA, playerB]);
-const teamB = new Team([playerC, playerD]);
+const playerE = new Player(0, 0, 0, 0, playerDiameter);
+playerE.setDefendingPosition(regions[42].getMidPoint());
+playerE.setAttackingPosition(regions[12].getMidPoint());
+
+const playerF = new Player(0, 0, 0, 0, playerDiameter);
+playerF.setDefendingPosition(regions[44].getMidPoint());
+playerF.setAttackingPosition(regions[14].getMidPoint());
+
+const players = [playerA, playerB, playerC, playerD, playerE, playerF];
+
+players.forEach((player) => {
+  const physics = new PlayerPhysics(field, queue);
+  physics.setFriction(constants.PLAYER_PHYSICS_DEFAULT_FRICTION);
+  player.setPhysics(physics);
+  player.positionAtDefendingPosition();
+  player.setMaximumSpeed(playerSpeed);
+});
+
+const teamA = new Team([playerA, playerB, playerC]);
+teamA.setSide(TEAM_SIDES.LEFT);
+const teamB = new Team([playerD, playerE, playerF]);
+teamB.setSide(TEAM_SIDES.RIGHT);
+
 const teams = [teamA, teamB];
+const ballPossessionService = new BallPossessionService(ball, players);
 
 teamA.setOpposition(teamB);
 teamB.setOpposition(teamA);
@@ -162,10 +164,6 @@ httpServer.listen(port, () => {
   console.log(`server started at http://localhost:${port}`);
 });
 
-interface IhashMapOfCommands {
-  [key: string]: ICommand;
-}
-
 collisionNotificationService.registerCollisionGroup([ball, ...players]);
 
 const moveDownCommand = new MoveDownCommand();
@@ -180,14 +178,14 @@ const moveToAttackingPositionCommand = new MoveToAttackingPositionCommand();
 const moveToDefensivePositionCommand = new MoveToDefensivePositionCommand();
 const autoDribbleCommand = new AutoDribbleCommand();
 
-const NAME_TO_COMMAND_MAPPING: Map<string, ICommand> = new Map([
+const NAME_TO_COMMAND_MAPPING = new Map<COMMANDS, ICommand>([
   [COMMANDS.MOVE_PLAYER_DOWN, moveDownCommand],
   [COMMANDS.MOVE_PLAYER_LEFT, moveLeftCommand],
   [COMMANDS.MOVE_PLAYER_RIGHT, moveRightCommand],
   [COMMANDS.MOVE_PLAYER_UP, moveUpCommand],
   [COMMANDS.CHASE_BALL, chaseBallCommand],
-  [COMMANDS.PASS_BALL, passBallCommand],
   [COMMANDS.SHOOT_BALL, shootBallCommand],
+  [COMMANDS.PASS_BALL, passBallCommand],
   [COMMANDS.STOP, stopCommand],
   [COMMANDS.MOVE_TO_ATTACKING_POSITION, moveToAttackingPositionCommand],
   [COMMANDS.MOVE_TO_DEFENSIVE_POSITION, moveToDefensivePositionCommand],
@@ -205,8 +203,13 @@ const PLAYER_STATES: IPlayerState[] = [
   new PassingState(commandFactory),
   new DribblingState(commandFactory),
 ];
+const interceptionCalculator = new InterceptionCalculator();
+const passValueCalculator = new PassValueCalculator(ball, interceptionCalculator);
+const shotValueCalculator = new ShotValueCalculator(ball, interceptionCalculator);
 
-const featureExtractor = new PlayerStateFeatureExtractor(ball, ballPossessionService);
+const featureExtractor = new PlayerStateFeatureExtractor(
+  ball, ballPossessionService, passValueCalculator, shotValueCalculator);
+
 const buildStateMachine = (player: Player) => {
   const machine = new PlayerStateMachine(player, PLAYER_STATES);
   machine.setFeatureExtractor(featureExtractor);

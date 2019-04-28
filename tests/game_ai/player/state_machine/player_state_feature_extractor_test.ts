@@ -1,5 +1,7 @@
 import { Ball } from '../../../../src/game_objects/ball';
 import { IBallPossessionService } from '../../../../src/interfaces/iball_possession_service';
+import { IPassValueCalculator } from '../../../../src/interfaces/ipass_value_calculator';
+import { IShotValueCalculator } from '../../../../src/interfaces/ishot_value_calculator';
 import { Player } from '../../../../src/game_objects/player';
 import { PlayerStateFeatureExtractor } from '../../../../src/game_ai/player/state_machine/player_state_feature_extractor';
 import { Team } from '../../../../src/game_objects/team';
@@ -77,19 +79,19 @@ describe('PlayerStateMachine', () => {
     });
   });
 
-  describe('`hasGoodPassingOptions`', () => {
+  describe('`hasOpenPassingOptions`', () => {
     it('returns true', () => {
       const possessionService = new TestPossessionService(null, null);
       const extractor = new PlayerStateFeatureExtractor(ball, possessionService);
-      expect(extractor.hasGoodPassingOptions(player)).to.be.true;
+      expect(extractor.hasOpenPassingOptions(player)).to.be.true;
     });
   });
 
-  describe('`isInGoodShootingPosition`', () => {
+  describe('`bestPassingOption`', () => {
     it('returns true', () => {
       const possessionService = new TestPossessionService(null, null);
       const extractor = new PlayerStateFeatureExtractor(ball, possessionService);
-      expect(extractor.isInGoodShootingPosition(player)).to.be.false;
+      expect(extractor.bestPassingOption(player)).to.be.false;
     });
   });
 

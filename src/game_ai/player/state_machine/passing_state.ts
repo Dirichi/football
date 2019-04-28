@@ -12,14 +12,16 @@ export class PassingState implements IPlayerState {
   }
 
   public eligibleFor(features: IPlayerStateFeature): boolean {
-    // address duplication between command and state by reusing the command's
+    // TODO: address duplication between command and state by reusing the command's
     // validation in the state
-    return features.hasBall && features.hasGoodPassingOptions;
+    return features.hasBall && features.hasOpenPassingOptions;
   }
 
   public update(player: Player, features: IPlayerStateFeature): void {
     if (this.eligibleFor(features)) {
-      this.commandFactory.getCommand(COMMANDS.PASS_BALL).execute(player);
+      this.commandFactory
+        .getCommand(COMMANDS.PASS_BALL)
+        .execute(player, features.bestPassingOption);
     }
   }
 }

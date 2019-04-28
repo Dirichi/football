@@ -13,11 +13,12 @@ chai.use(sinonChai);
 let commandFactory: CommandFactory;
 let getNewFeatures = () => {
   return {
+    bestPassingOption: new Player(0, 0, 0, 0, 5),
     hasBall: false,
-    hasGoodPassingOptions: false,
+    hasOpenPassingOptions: false,
     hasWaitMessages: false,
     isNearestTeamMateToBall: false,
-    isInGoodShootingPosition: false,
+    shotValue: 0,
     teamInControl: false,
   } as IPlayerStateFeature;
 };
@@ -39,7 +40,7 @@ describe('PassingState', () => {
         const state = new PassingState(commandFactory);
         const features = getNewFeatures();
         features.hasBall = true;
-        features.hasGoodPassingOptions = true;
+        features.hasOpenPassingOptions = true;
 
         const command = { execute: sinon.spy() };
         sinon.stub(commandFactory, 'getCommand')
@@ -47,14 +48,15 @@ describe('PassingState', () => {
           .returns(command);
 
         state.update(player, features);
-        expect(command.execute).to.have.been.calledWith(player);
+        expect(command.execute).to.have.been.calledWith(
+          player, features.bestPassingOption);
     });
 
     it('does nothing if the player does not have the ball', () => {
       const state = new PassingState(commandFactory);
       const features = getNewFeatures();
       features.hasBall = false;
-      features.hasGoodPassingOptions = true;
+      features.hasOpenPassingOptions = true;
 
       const command = { execute: sinon.spy() };
       sinon.stub(commandFactory, 'getCommand')
@@ -69,7 +71,7 @@ describe('PassingState', () => {
       const state = new PassingState(commandFactory);
       const features = getNewFeatures();
       features.hasBall = false;
-      features.hasGoodPassingOptions = true;
+      features.hasOpenPassingOptions = true;
 
       const command = { execute: sinon.spy() };
       sinon.stub(commandFactory, 'getCommand')

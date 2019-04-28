@@ -1,9 +1,10 @@
 import { Player } from "../game_objects/player";
 
 export interface IPlayerStateFeatureExtractor {
-  teamInControl(player: Player): boolean;
+  bestPassingOption(player: Player): Player;
   hasBall(player: Player): boolean;
-  hasGoodPassingOptions(player: Player): boolean;
-  isInGoodShootingPosition(player: Player): boolean;
+  hasOpenPassingOptions(player: Player): boolean;
   isNearestTeamMateToBall(player: Player): boolean;
+  shotValue(player: Player): number;
+  teamInControl(player: Player): boolean;
 }

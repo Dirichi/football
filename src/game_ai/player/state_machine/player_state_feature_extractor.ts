@@ -2,15 +2,27 @@ import { Ball } from "../../../game_objects/ball";
 import { Player } from "../../../game_objects/player";
 import { IBallPossessionService } from "../../../interfaces/iball_possession_service";
 import { IPlayerStateFeatureExtractor } from "../../../interfaces/iplayer_state_feature_extractor";
-import { minimumBy } from "../../../utils/helper_functions";
+import { IPassValueCalculator } from "../../../interfaces/ipass_value_calculator";
+import { IShotValueCalculator } from "../../../interfaces/ishot_value_calculator";
+import { maximumBy, minimumBy } from "../../../utils/helper_functions";
+import { PassValueCalculator } from "./calculators/pass_value_calculator";
+import { ShotValueCalculator } from "./calculators/shot_value_calculator";
 
 export class PlayerStateFeatureExtractor implements IPlayerStateFeatureExtractor {
   private ball: Ball;
   private ballPossessionService: IBallPossessionService;
+  private passValueCalculator: IPassValueCalculator;
+  private shotValueCalculator: IShotValueCalculator;
 
-  constructor(ball: Ball, ballPossessionService: IBallPossessionService) {
-    this.ball = ball;
-    this.ballPossessionService = ballPossessionService;
+  constructor(
+    ball: Ball,
+    ballPossessionService: IBallPossessionService,
+    passValueCalculator: IPassValueCalculator,
+    shotValueCalculator: IShotValueCalculator) {
+      this.ball = ball;
+      this.ballPossessionService = ballPossessionService;
+      this.passValueCalculator = passValueCalculator;
+      this.shotValueCalculator = shotValueCalculator;
   }
 
   public teamInControl(player: Player): boolean {
@@ -30,12 +42,21 @@ export class PlayerStateFeatureExtractor implements IPlayerStateFeatureExtractor
     return currentPlayerInPossession === player;
   }
 
-  public hasGoodPassingOptions(player: Player): boolean {
-    return true;
+  public hasOpenPassingOptions(player: Player): boolean {
+    const best = this.bestPassingOption(player);
+    // feature extractor shouldn't know that 0 means that the player can't be
+    // passed to.
+    return this.passValueCalculator.valueFor(best) > 0;
   }
 
-  public isInGoodShootingPosition(player: Player): boolean {
-    return false;
+  public bestPassingOption(player: Player): Player {
+    return maximumBy(player.teamMates(), (teamMate: Player) => {
+      return this.passValueCalculator.valueFor(teamMate);
+    });
+  }
+
+  public shotValue(player: Player): number {
+    return this.shotValueCalculator.valueFor(player);
   }
 
   public isNearestTeamMateToBall(player: Player): boolean {
