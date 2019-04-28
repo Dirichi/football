@@ -1,7 +1,7 @@
 import { Ball } from "../../../../game_objects/ball";
 import { Player } from "../../../../game_objects/player";
+import { IShotValueCalculator } from "../../../../interfaces/ishot_value_calculator";
 import { InterceptionCalculator } from "./interception_calculator";
-import { IShotValueCalculator } from '../../../../src/interfaces/ishot_value_calculator';
 
 export class ShotValueCalculator implements IShotValueCalculator {
   private ball: Ball;

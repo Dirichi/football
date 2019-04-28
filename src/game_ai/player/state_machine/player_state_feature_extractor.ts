@@ -1,8 +1,8 @@
 import { Ball } from "../../../game_objects/ball";
 import { Player } from "../../../game_objects/player";
 import { IBallPossessionService } from "../../../interfaces/iball_possession_service";
-import { IPlayerStateFeatureExtractor } from "../../../interfaces/iplayer_state_feature_extractor";
 import { IPassValueCalculator } from "../../../interfaces/ipass_value_calculator";
+import { IPlayerStateFeatureExtractor } from "../../../interfaces/iplayer_state_feature_extractor";
 import { IShotValueCalculator } from "../../../interfaces/ishot_value_calculator";
 import { maximumBy, minimumBy } from "../../../utils/helper_functions";
 

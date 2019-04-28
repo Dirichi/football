@@ -1,8 +1,8 @@
 import { TEAM_SIDES } from "../../../../constants";
 import { Ball } from "../../../../game_objects/ball";
 import { Player } from "../../../../game_objects/player";
+import { IPassValueCalculator } from "../../../../interfaces/ipass_value_calculator";
 import { InterceptionCalculator } from "./interception_calculator";
-import { IPassValueCalculator } from '../../../../src/interfaces/ipass_value_calculator';
 
 export class PassValueCalculator implements IPassValueCalculator {
   private ball: Ball;
