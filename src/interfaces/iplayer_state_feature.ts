@@ -1,8 +1,11 @@
+import { Player } from "../game_objects/player";
+
 export interface IPlayerStateFeature {
+  bestPassingOption: Player;
   hasBall: boolean;
-  hasGoodPassingOptions: boolean;
+  hasOpenPassingOptions: boolean;
   hasWaitMessages: boolean;
   isNearestTeamMateToBall: boolean;
-  isInGoodShootingPosition: boolean;
+  shotValue: number;
   teamInControl: boolean;
 }

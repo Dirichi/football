@@ -12,7 +12,8 @@ export class ShootingState implements IPlayerState {
   }
 
   public eligibleFor(features: IPlayerStateFeature): boolean {
-    return features.hasBall && features.isInGoodShootingPosition;
+    // TODO: Better eligibility function
+    return features.hasBall && !features.hasOpenPassingOptions;
   }
 
   public update(player: Player, features: IPlayerStateFeature): void {

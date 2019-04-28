@@ -65,6 +65,10 @@ export class Ball implements ICollidable {
     return this.id;
   }
 
+  public getMaximumSpeed(): number {
+    return this.maximumSpeed;
+  }
+
   public getShape(): ICircle {
     return {
       getCentre: () => new ThreeDimensionalVector(this.x, this.y, 0),

@@ -19,13 +19,13 @@ export class PlayerStateMachine implements IPlayerController {
   }
 
   public update() {
-    const features = this.stateFeatures();
+    const features = this.getFeatures();
     const eligibleState = this.states.find(
         (state) => state.eligibleFor(features));
     eligibleState.update(this.player, features);
   }
 
-  public handleMessage(message: {details: string}) {
+  public handleMessage(message: {details: string}): void {
     const instruction = message.details;
 
     if (instruction === STATE_MACHINE_COMMANDS.WAIT) {
@@ -47,13 +47,14 @@ export class PlayerStateMachine implements IPlayerController {
     this.extractor = extractor;
   }
 
-  private stateFeatures(): IPlayerStateFeature {
+  private getFeatures(): IPlayerStateFeature {
     return {
+      bestPassingOption: this.extractor.bestPassingOption(this.player),
       hasBall: this.extractor.hasBall(this.player),
-      hasGoodPassingOptions: this.extractor.hasGoodPassingOptions(this.player),
+      hasOpenPassingOptions: this.extractor.hasOpenPassingOptions(this.player),
       hasWaitMessages: this.hasWaitMessages(),
-      isInGoodShootingPosition: this.extractor.isInGoodShootingPosition(this.player),
       isNearestTeamMateToBall: this.extractor.isNearestTeamMateToBall(this.player),
+      shotValue: this.extractor.shotValue(this.player),
       teamInControl: this.extractor.teamInControl(this.player),
     };
   }

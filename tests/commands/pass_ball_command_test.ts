@@ -24,7 +24,6 @@ describe('PassBallCommand', () => {
       sinon.stub(sender, 'sendMessage');
 
       sinon.stub(service, 'getCurrentPlayerInPossessionOrNull').returns(sender);
-      sinon.stub(sender, 'getNearestTeamMate').returns(receiver);
 
       // Actual Test
       const moveStub = sinon.stub(ball, 'moveTowards').callsFake(
@@ -34,7 +33,7 @@ describe('PassBallCommand', () => {
         });
 
       const command = new PassBallCommand(ball, service);
-      command.execute(sender);
+      command.execute(sender, receiver);
 
       expect(moveStub).to.have.been.called;
     });
@@ -47,10 +46,9 @@ describe('PassBallCommand', () => {
 
       const sendMessageStub = sinon.stub(sender, 'sendMessage');
       sinon.stub(service, 'getCurrentPlayerInPossessionOrNull').returns(sender);
-      sinon.stub(sender, 'getNearestTeamMate').returns(receiver);
 
       const command = new PassBallCommand(ball, service);
-      command.execute(sender);
+      command.execute(sender, receiver);
 
       expect(sendMessageStub).to.have.been.calledWith(
         receiver, {details: STATE_MACHINE_COMMANDS.WAIT});
@@ -58,6 +56,7 @@ describe('PassBallCommand', () => {
 
     it('does not move the ball if the sender is not in possession', () => {
       const sender = new Player(1, 1, 0, 0, 2); // x, y, vx, vy, diameter
+      const receiver = new Player(5, 4, 0, 0, 2); // x, y, vx, vy, diameter
       const ball = new Ball(0, 0, 0, 0, 2); // x, y, vx, vy, diameter
       const service = new BallPossessionService(ball, []);
 
@@ -66,34 +65,21 @@ describe('PassBallCommand', () => {
       const moveStub = sinon.stub(ball, 'moveTowards');
 
       const command = new PassBallCommand(ball, service);
-      command.execute(sender);
+      command.execute(sender, receiver);
 
       expect(moveStub).not.to.have.been.called;
     });
 
     it('does not move the ball if there is no player in possession', () => {
       const sender = new Player(1, 1, 0, 0, 2); // x, y, vx, vy, diameter
+      const receiver = new Player(5, 4, 0, 0, 2); // x, y, vx, vy, diameter
       const ball = new Ball(0, 0, 0, 0, 2); // x, y, vx, vy, diameter
       const service = new BallPossessionService(ball, []);
 
       sinon.stub(service, 'getCurrentPlayerInPossessionOrNull').returns(null);
       const moveStub = sinon.stub(ball, 'moveTowards');
       const command = new PassBallCommand(ball, service);
-      command.execute(sender);
-
-      expect(moveStub).not.to.have.been.called;
-    });
-
-    it('does not move the ball if there is no available teammate', () => {
-      const sender = new Player(1, 1, 0, 0, 2); // x, y, vx, vy, diameter
-      const ball = new Ball(0, 0, 0, 0, 2); // x, y, vx, vy, diameter
-      const service = new BallPossessionService(ball, []);
-
-      sinon.stub(service, 'getCurrentPlayerInPossessionOrNull').returns(sender);
-      sinon.stub(sender, 'getNearestTeamMate').returns(null);
-      const moveStub = sinon.stub(ball, 'moveTowards');
-      const command = new PassBallCommand(ball, service);
-      command.execute(sender);
+      command.execute(sender, receiver);
 
       expect(moveStub).not.to.have.been.called;
     });

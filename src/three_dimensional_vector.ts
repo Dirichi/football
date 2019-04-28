@@ -71,8 +71,26 @@ export class ThreeDimensionalVector {
     return Math.sqrt(squared.x + squared.y + squared.z);
   }
 
-  public distanceTo(b: ThreeDimensionalVector) {
+  public distanceTo(b: ThreeDimensionalVector): number {
     const diff = this.minus(b);
     return diff.magnitude();
+  }
+
+  public dotProduct(b: ThreeDimensionalVector): number {
+    return (this.x * b.x) + (this.y * b.y) + (this.z * b.z);
+  }
+
+  public cosineOfAngleTo(b: ThreeDimensionalVector): number {
+    return this.dotProduct(b) / (this.magnitude() * b.magnitude());
+  }
+
+  public scalarProjectionOnTo(b: ThreeDimensionalVector): number {
+    return this.magnitude() * this.cosineOfAngleTo(b);
+  }
+
+  public perpendicularDistanceTo(b: ThreeDimensionalVector): number {
+    const squaredDistance =
+      Math.pow(this.magnitude(), 2) - Math.pow(this.scalarProjectionOnTo(b), 2);
+    return Math.sqrt(squaredDistance);
   }
 }

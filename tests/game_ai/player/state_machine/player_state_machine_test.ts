@@ -10,11 +10,14 @@ const expect = chai.expect;
 chai.use(sinonChai);
 
 let player: Player;
+const option = new Player(0, 0, 0, 0, 5);
+
 let extractor = {
+  bestPassingOption: (player: Player) => option,
   hasBall: (player: Player) => false,
-  hasGoodPassingOptions: (player: Player) => false,
-  isInGoodShootingPosition: (player: Player) => false,
   isNearestTeamMateToBall: (player: Player) => false,
+  hasOpenPassingOptions: (player: Player) => false,
+  shotValue: (player: Player) => 0,
   teamInControl: (player: Player) => false,
 };
 
@@ -51,11 +54,12 @@ describe('PlayerStateMachine', () => {
       machine.update();
 
       const features = {
+        bestPassingOption: option,
         hasBall: false,
-        hasGoodPassingOptions: false,
-        hasWaitMessages: false,
-        isInGoodShootingPosition: false,
+        hasOpenPassingOptions: false,
         isNearestTeamMateToBall: false,
+        hasWaitMessages: false,
+        shotValue: 0,
         teamInControl: false,
       }
       expect(ineligibleStateSpy).not.to.have.been.called;

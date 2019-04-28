@@ -8,5 +8,6 @@ export class AutoDribbleCommand implements ICommand {
     // if (!player.hasBall()) {
     //   return;
     // }
+    // player.moveTowardsAttackingPosition();
   }
 }

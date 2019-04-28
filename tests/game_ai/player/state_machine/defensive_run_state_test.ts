@@ -13,14 +13,16 @@ chai.use(sinonChai);
 let commandFactory: CommandFactory;
 let getNewFeatures = () => {
   return {
+    bestPassingOption: new Player(0, 0, 0, 0, 5),
     hasBall: false,
-    hasGoodPassingOptions: false,
+    hasOpenPassingOptions: false,
     hasWaitMessages: false,
     isNearestTeamMateToBall: false,
-    isInGoodShootingPosition: false,
+    shotValue: 0,
     teamInControl: false,
   } as IPlayerStateFeature;
 };
+
 let player: Player;
 
 describe('DefensiveRunState', () => {
