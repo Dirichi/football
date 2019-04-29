@@ -216,22 +216,13 @@ const buildStateMachine = (player: Player) => {
   machine.setFeatureExtractor(featureExtractor);
   return machine;
 };
-players.forEach((player) => player.setController(buildStateMachine(player)));
+[playerB, playerC, playerD, playerE, playerF].forEach((player) => player.setController(buildStateMachine(player)));
 players.forEach((player) => player.setMessageQueue(queue));
 ballPossessionService.enable();
 collisionDetectionService.setCollisionMarginFactor(COLLISION_MARGIN_FACTOR);
 
 io.on("connection", (socket) => {
-  // socket.on("command", (data) => {
-  //   const key = data as string;
-  //   const command = NAME_TO_COMMAND_MAPPING[key];
-  //   if (command) {
-  //     command.execute(playerA);
-  //   }
-  // });
-
-setInterval(() => {
-    collisionNotificationService.update();
+  setInterval(() => {
     ballPossessionService.update();
     collisionNotificationService.update();
     ball.update();
