@@ -116,7 +116,6 @@ describe('PlayerPhysics', () => {
           newY: newY,
           newVx: 0,
           newVy: 0,
-          playerId: player.getGameObjectId(),
         };
         expect(queue.triggeredEvents.get('ball.control')).to.eql([expected]);
       });
@@ -143,7 +142,6 @@ describe('PlayerPhysics', () => {
           newY: 5,
           newVx: 0,
           newVy: 0,
-          playerId: player.getGameObjectId(),
         };
         expect(queue.triggeredEvents.get('ball.control')).to.eql([expected]);
       });

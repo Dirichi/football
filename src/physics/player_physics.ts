@@ -77,7 +77,6 @@ export class PlayerPhysics {
       newVy: 0,
       newX: newBallPosition.x,
       newY: newBallPosition.y,
-      playerId: this.player.getGameObjectId(),
     };
     this.queue.trigger("ball.control", payload);
   }

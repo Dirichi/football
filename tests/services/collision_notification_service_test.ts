@@ -87,10 +87,18 @@ describe('CollisionNotificationService', () => {
       notificationService.update();
 
       expect(eventMessageMap.get('collider.1.collision')).to.eql([
-        {colliderType: 'testcollidable', shape: circleTwo},
+        {
+          colliderId: 'collider.2',
+          colliderType: 'testcollidable',
+          shape: circleTwo
+        },
       ]);
       expect(eventMessageMap.get('collider.2.collision')).to.eql([
-        {colliderType: 'testcollidable', shape: circleOne},
+        {
+          colliderId: 'collider.1',
+          colliderType: 'testcollidable',
+          shape: circleOne
+        },
       ]);
       expect(eventMessageMap.get('collider.3.collision')).to.be.undefined;
     });

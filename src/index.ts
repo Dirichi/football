@@ -137,7 +137,7 @@ const teamB = new Team([playerD, playerE, playerF]);
 teamB.setSide(TEAM_SIDES.RIGHT);
 
 const teams = [teamA, teamB];
-const ballPossessionService = new BallPossessionService(ball, players);
+const ballPossessionService = new BallPossessionService(ball, players, queue);
 
 teamA.setOpposition(teamB);
 teamB.setOpposition(teamA);
@@ -217,6 +217,7 @@ const buildStateMachine = (player: Player) => {
 };
 players.forEach((player) => player.setController(buildStateMachine(player)));
 players.forEach((player) => player.setMessageQueue(queue));
+ballPossessionService.enable();
 
 io.on("connection", (socket) => {
   // socket.on("command", (data) => {
@@ -230,6 +231,7 @@ io.on("connection", (socket) => {
 setInterval(() => {
     collisionNotificationService.update();
     ballPossessionService.update();
+    collisionNotificationService.update();
     ball.update();
     players.forEach((player) => player.update());
     const data = {

@@ -1,10 +1,10 @@
 import { Ball } from '../../../../src/game_objects/ball';
-import { IBallPossessionService } from '../../../../src/interfaces/iball_possession_service';
 import { IPassValueCalculator } from '../../../../src/interfaces/ipass_value_calculator';
 import { IShotValueCalculator } from '../../../../src/interfaces/ishot_value_calculator';
 import { Player } from '../../../../src/game_objects/player';
 import { PlayerStateFeatureExtractor } from '../../../../src/game_ai/player/state_machine/player_state_feature_extractor';
 import { Team } from '../../../../src/game_objects/team';
+import { TestBallPossessionService } from '../../../helpers/test_ball_possession_service';
 import * as chai from 'chai';
 import * as sinon from 'sinon';
 import { COMMANDS } from '../../../../src/constants';
@@ -17,24 +17,6 @@ let player: Player;
 let ball: Ball;
 let passValueCalculator: IPassValueCalculator;
 let shotValueCalculator: IShotValueCalculator;
-
-class TestPossessionService implements IBallPossessionService {
-  private current: Player;
-  private last: Player;
-
-  constructor(current: Player | null = null, last: Player | null = null) {
-    this.current = current;
-    this.last = last;
-  }
-
-  public getCurrentPlayerInPossessionOrNull() {
-    return this.current;
-  }
-
-  public getLastPlayerInPossession() {
-    return this.last;
-  }
-}
 
 describe('PlayerStateMachine', () => {
   beforeEach(() => {
@@ -57,7 +39,7 @@ describe('PlayerStateMachine', () => {
 
   describe('`hasBall`', () => {
     it('returns true if the currentplayerinpossession is the player', () => {
-      const possessionService = new TestPossessionService(player, null);
+      const possessionService = new TestBallPossessionService(player, null);
       const extractor =
         new PlayerStateFeatureExtractor(
           ball, possessionService, passValueCalculator, shotValueCalculator);
@@ -67,7 +49,7 @@ describe('PlayerStateMachine', () => {
     it('returns false if the currentplayerinpossession is not the player',
         () => {
         const otherPlayer = new Player(0, 0, 0, 0, 5);
-        const possessionService = new TestPossessionService(otherPlayer, null);
+        const possessionService = new TestBallPossessionService(otherPlayer, null);
         const extractor =
           new PlayerStateFeatureExtractor(
             ball, possessionService, passValueCalculator, shotValueCalculator);
@@ -81,7 +63,7 @@ describe('PlayerStateMachine', () => {
         const otherPlayer = new Player(0, 0, 0, 0, 5);
         const team = new Team([]);
         [player, otherPlayer].forEach((element) => element.setTeam(team));
-        const possessionService = new TestPossessionService(player, player);
+        const possessionService = new TestBallPossessionService(player, player);
         const extractor =
           new PlayerStateFeatureExtractor
           (ball, possessionService, passValueCalculator, shotValueCalculator);
@@ -94,7 +76,7 @@ describe('PlayerStateMachine', () => {
         [player, otherPlayer].forEach((element) => {
           element.setTeam(new Team([]))
         });
-        const possessionService = new TestPossessionService(
+        const possessionService = new TestBallPossessionService(
           otherPlayer, otherPlayer);
         const extractor =
           new PlayerStateFeatureExtractor(
@@ -114,7 +96,7 @@ describe('PlayerStateMachine', () => {
           passValueStub.withArgs(mateOne).returns(0);
           passValueStub.withArgs(mateTwo).returns(0.5);
 
-          const possessionService = new TestPossessionService();
+          const possessionService = new TestBallPossessionService();
           const extractor =
             new PlayerStateFeatureExtractor(
               ball, possessionService, passValueCalculator,
@@ -132,7 +114,7 @@ describe('PlayerStateMachine', () => {
           passValueStub.withArgs(mateOne).returns(0);
           passValueStub.withArgs(mateTwo).returns(0);
 
-          const possessionService = new TestPossessionService();
+          const possessionService = new TestBallPossessionService();
           const extractor =
             new PlayerStateFeatureExtractor(
               ball, possessionService, passValueCalculator,
@@ -151,7 +133,7 @@ describe('PlayerStateMachine', () => {
       passValueStub.withArgs(mateOne).returns(0);
       passValueStub.withArgs(mateTwo).returns(0.5);
 
-      const possessionService = new TestPossessionService();
+      const possessionService = new TestBallPossessionService();
       const extractor =
         new PlayerStateFeatureExtractor(
           ball, possessionService, passValueCalculator,
@@ -165,7 +147,7 @@ describe('PlayerStateMachine', () => {
       const otherPlayer = new Player(5, 5, 0, 0, 5);
       // create team and setTeam in one line
       const team = new Team([player, otherPlayer]);
-      const possessionService = new TestPossessionService();
+      const possessionService = new TestBallPossessionService();
       const extractor =
         new PlayerStateFeatureExtractor(
           ball, possessionService, passValueCalculator, shotValueCalculator);
@@ -178,7 +160,7 @@ describe('PlayerStateMachine', () => {
         const otherPlayer = new Player(5, 5, 0, 0, 5);
         // create team and setTeam in one line
         const team = new Team([player, otherPlayer]);
-        const possessionService = new TestPossessionService();
+        const possessionService = new TestBallPossessionService();
         const extractor =
           new PlayerStateFeatureExtractor(
             ball, possessionService, passValueCalculator, shotValueCalculator);

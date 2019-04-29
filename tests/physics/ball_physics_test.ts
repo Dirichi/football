@@ -101,7 +101,8 @@ describe('BallPhysics', () => {
         const physics = new BallPhysics(boundary, queue);
         physics.setBall(ball);
 
-        queue.trigger(`ball.control`, { newX: 2, newY: 3, newVx: 4, newVy: 8 });
+        const payload = {newX: 2, newY: 3, newVx: 4, newVy: 8};
+        queue.trigger(`ball.control`, payload);
         expect([ball.x, ball.y, ball.vx, ball.vy]).to.eql([2, 3, 4, 8]);
       });
     });

@@ -3,5 +3,4 @@ export interface IBallControlPayload {
   newY: number;
   newVx: number;
   newVy: number;
-  playerId: string;
 }

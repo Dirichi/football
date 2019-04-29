@@ -1,5 +1,6 @@
 import { EventQueue } from "../event_queue";
 import { ICollidable } from "../interfaces/icollidable";
+import { ICollisionPayload } from "../interfaces/icollision_payload";
 import { CollisionDetectionService } from "./collision_detection_service";
 
 export class CollisionNotificationService {
@@ -35,14 +36,16 @@ export class CollisionNotificationService {
   private notifyCollision(collisionPair: [ICollidable, ICollidable]): void {
     const [collidableA, collidableB] = collisionPair;
     this.queue.trigger(`${collidableA.getGameObjectId()}.collision`, {
+      colliderId: collidableB.getGameObjectId(),
       colliderType: collidableB.constructor.name.toLowerCase(),
       shape: collidableB.getShape(),
-    });
+    } as ICollisionPayload);
 
     this.queue.trigger(`${collidableB.getGameObjectId()}.collision`, {
+      colliderId: collidableA.getGameObjectId(),
       colliderType: collidableA.constructor.name.toLowerCase(),
       shape: collidableA.getShape(),
-    });
+    } as ICollisionPayload);
   }
 
   private getAllPairs(): Array<[ICollidable, ICollidable]> {
