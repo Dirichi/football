@@ -29,9 +29,10 @@ import { StopCommand } from "./commands/stop_command";
 // TODO: This is starting to look ugly
 import { BALL_INITIAL_ARGS, BOX18A_INITIAL_COORDINATES,
   BOX18B_INITIAL_COORDINATES, BOX6A_INITIAL_COORDINATES,
-  BOX6B_INITIAL_COORDINATES, COMMANDS, constants, EVENTS,
-  FIELD_INITIAL_COORDINATES, PLAYER_INITIAL_ARGS, POSTA_INITIAL_COORDINATES,
-  POSTB_INITIAL_COORDINATES, TEAM_SIDES } from "./constants";
+  BOX6B_INITIAL_COORDINATES, COLLISION_MARGIN_FACTOR, COMMANDS, constants,
+  EVENTS, FIELD_INITIAL_COORDINATES, PLAYER_INITIAL_ARGS,
+  POSTA_INITIAL_COORDINATES, POSTB_INITIAL_COORDINATES, TEAM_SIDES
+  } from "./constants";
 import { EventQueue } from "./event_queue";
 import { PlayerStateMachine } from "./game_ai/player/state_machine/player_state_machine";
 import { Ball } from "./game_objects/ball";
@@ -218,6 +219,7 @@ const buildStateMachine = (player: Player) => {
 players.forEach((player) => player.setController(buildStateMachine(player)));
 players.forEach((player) => player.setMessageQueue(queue));
 ballPossessionService.enable();
+collisionDetectionService.setCollisionMarginFactor(COLLISION_MARGIN_FACTOR);
 
 io.on("connection", (socket) => {
   // socket.on("command", (data) => {
