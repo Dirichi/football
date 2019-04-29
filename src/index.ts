@@ -216,7 +216,8 @@ const buildStateMachine = (player: Player) => {
   machine.setFeatureExtractor(featureExtractor);
   return machine;
 };
-[playerB, playerC, playerD, playerE, playerF].forEach((player) => player.setController(buildStateMachine(player)));
+
+players.forEach((player) => player.setController(buildStateMachine(player)));
 players.forEach((player) => player.setMessageQueue(queue));
 ballPossessionService.enable();
 collisionDetectionService.setCollisionMarginFactor(COLLISION_MARGIN_FACTOR);
