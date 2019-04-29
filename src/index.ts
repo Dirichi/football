@@ -29,9 +29,10 @@ import { StopCommand } from "./commands/stop_command";
 // TODO: This is starting to look ugly
 import { BALL_INITIAL_ARGS, BOX18A_INITIAL_COORDINATES,
   BOX18B_INITIAL_COORDINATES, BOX6A_INITIAL_COORDINATES,
-  BOX6B_INITIAL_COORDINATES, COMMANDS, constants, EVENTS,
-  FIELD_INITIAL_COORDINATES, PLAYER_INITIAL_ARGS, POSTA_INITIAL_COORDINATES,
-  POSTB_INITIAL_COORDINATES, TEAM_SIDES } from "./constants";
+  BOX6B_INITIAL_COORDINATES, COLLISION_MARGIN_FACTOR, COMMANDS, constants,
+  EVENTS, FIELD_INITIAL_COORDINATES, PLAYER_INITIAL_ARGS,
+  POSTA_INITIAL_COORDINATES, POSTB_INITIAL_COORDINATES, TEAM_SIDES
+  } from "./constants";
 import { EventQueue } from "./event_queue";
 import { PlayerStateMachine } from "./game_ai/player/state_machine/player_state_machine";
 import { Ball } from "./game_objects/ball";
@@ -137,7 +138,7 @@ const teamB = new Team([playerD, playerE, playerF]);
 teamB.setSide(TEAM_SIDES.RIGHT);
 
 const teams = [teamA, teamB];
-const ballPossessionService = new BallPossessionService(ball, players);
+const ballPossessionService = new BallPossessionService(ball, players, queue);
 
 teamA.setOpposition(teamB);
 teamB.setOpposition(teamA);
@@ -215,21 +216,16 @@ const buildStateMachine = (player: Player) => {
   machine.setFeatureExtractor(featureExtractor);
   return machine;
 };
+
 players.forEach((player) => player.setController(buildStateMachine(player)));
 players.forEach((player) => player.setMessageQueue(queue));
+ballPossessionService.enable();
+collisionDetectionService.setCollisionMarginFactor(COLLISION_MARGIN_FACTOR);
 
 io.on("connection", (socket) => {
-  // socket.on("command", (data) => {
-  //   const key = data as string;
-  //   const command = NAME_TO_COMMAND_MAPPING[key];
-  //   if (command) {
-  //     command.execute(playerA);
-  //   }
-  // });
-
-setInterval(() => {
-    collisionNotificationService.update();
+  setInterval(() => {
     ballPossessionService.update();
+    collisionNotificationService.update();
     ball.update();
     players.forEach((player) => player.update());
     const data = {

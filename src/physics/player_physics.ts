@@ -1,5 +1,6 @@
 import { constants, EVENTS } from "../constants";
 import { Player } from "../game_objects/player";
+import { IBallControlPayload } from "../interfaces/iball_control_payload";
 import { IBoundary } from "../interfaces/iboundary";
 import { ICircle } from "../interfaces/icircle";
 import { IEventQueue } from "../interfaces/ievent_queue";
@@ -71,7 +72,7 @@ export class PlayerPhysics {
 
   private controlBall(ball: ICircle): void {
     const newBallPosition = this.calculateNewBallPosition(ball);
-    const payload = {
+    const payload: IBallControlPayload = {
       newVx: 0,
       newVy: 0,
       newX: newBallPosition.x,

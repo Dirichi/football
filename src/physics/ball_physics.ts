@@ -1,4 +1,5 @@
 import { Ball } from "../game_objects/ball";
+import { IBallControlPayload } from "../interfaces/iball_control_payload";
 import { IBoundary } from "../interfaces/iboundary";
 import { IEventQueue } from "../interfaces/ievent_queue";
 
@@ -51,14 +52,12 @@ export class BallPhysics {
   private listenForControl() {
     // TODO: Listen for the specific ball by id
     this.queue.when("ball.control", (data) => {
-      const controlPayload =
-        data as { newX: number, newY: number, newVx: number, newVy: number };
+      const controlPayload = data as IBallControlPayload;
       this.adjustBall(controlPayload);
     });
   }
 
-  private adjustBall(controlPayload:
-      { newX: number, newY: number, newVx: number, newVy: number }) {
+  private adjustBall(controlPayload: IBallControlPayload) {
     this.ball.x = controlPayload.newX;
     this.ball.y = controlPayload.newY;
     this.ball.vx = controlPayload.newVx;
