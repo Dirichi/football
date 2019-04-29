@@ -111,7 +111,13 @@ describe('PlayerPhysics', () => {
 
         const newX = (4 / Math.sqrt(5)) + 2;
         const newY = (8 / Math.sqrt(5)) + 3;
-        const expected = { newX: newX, newY: newY, newVx: 0, newVy: 0 };
+        const expected = {
+          newX: newX,
+          newY: newY,
+          newVx: 0,
+          newVy: 0,
+          playerId: player.getGameObjectId(),
+        };
         expect(queue.triggeredEvents.get('ball.control')).to.eql([expected]);
       });
 
@@ -132,7 +138,13 @@ describe('PlayerPhysics', () => {
 
         const newX = (4 / Math.sqrt(5)) + 2;
         const newY = (8 / Math.sqrt(5)) + 3;
-        const expected = { newX: 2, newY: 5, newVx: 0, newVy: 0 };
+        const expected = {
+          newX: 2,
+          newY: 5,
+          newVx: 0,
+          newVy: 0,
+          playerId: player.getGameObjectId(),
+        };
         expect(queue.triggeredEvents.get('ball.control')).to.eql([expected]);
       });
     });

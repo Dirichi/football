@@ -5,9 +5,6 @@ import { BallPossessionService } from "../services/ball_possession_service";
 import { ThreeDimensionalVector } from "../three_dimensional_vector";
 
 export class ShootBallCommand implements ICommand {
-  // should this command be able to access the ball directly?
-  // or should we listen to it through the event_queue, or have what we
-  // need from the ball provided by a service?
   private ball: Ball;
   private possessionService: BallPossessionService;
 
