@@ -1,5 +1,5 @@
 import v4 from "uuid/v4";
-import { constants, EVENTS, KICK_BALL_REFRESH_TIME } from "../constants";
+import { BALL_CONTROL_REFRESH_TIME, constants, EVENTS } from "../constants";
 import { EventQueue } from "../event_queue";
 import { ICircle } from "../interfaces/icircle";
 import { ICollidable } from "../interfaces/icollidable";
@@ -19,7 +19,6 @@ export class Player implements ICollidable {
   public diameter: number;
 
   private ballControlEnabled: boolean;
-  private recentlyKickedBall: boolean;
   private opposingGoalPost?: Post;
   private physics?: PlayerPhysics;
   private maximumSpeed?: number;
@@ -46,7 +45,6 @@ export class Player implements ICollidable {
       // swap representations out as we see fit.
       this.colors = [0, 0, 225];
       this.ballControlEnabled = true;
-      this.recentlyKickedBall = false;
   }
 
   public update() {
@@ -155,22 +153,20 @@ export class Player implements ICollidable {
     });
   }
 
-  public hasRecentlyKickedBall() {
-    return this.recentlyKickedBall;
-  }
-
-  public kickBall() {
-    this.recentlyKickedBall = true;
+  public temporarilyDisableBallControl() {
     this.ballControlEnabled = false;
 
     setTimeout(() => {
-      this.recentlyKickedBall = false;
       this.ballControlEnabled = true;
-    }, KICK_BALL_REFRESH_TIME);
+    }, BALL_CONTROL_REFRESH_TIME);
   }
 
   public ballControlIsEnabled() {
     return this.ballControlEnabled;
+  }
+
+  public ballControlIsDisabled() {
+    return !this.ballControlEnabled;
   }
 
   public setTeam(team: Team): void {

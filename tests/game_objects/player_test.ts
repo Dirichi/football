@@ -1,5 +1,6 @@
 import { Player } from '../../src/game_objects/player';
 import { Team } from '../../src/game_objects/team';
+import { BALL_CONTROL_REFRESH_TIME } from "../../src/constants";
 import * as chai from 'chai';
 import * as sinon from 'sinon';
 
@@ -24,6 +25,33 @@ describe('Player', () => {
       const team = new Team([playerA]);
 
       expect(playerA.getNearestTeamMate()).to.be.null;
+    });
+  });
+
+  describe('`temporarilyDisableBallControl`', () => {
+    beforeEach(() => {
+      this.clock = sinon.useFakeTimers();
+    });
+
+    afterEach(() => {
+      this.clock.restore();
+    });
+
+    it('sets ballControlEnabled to false', () => {
+      const player = new Player(0, 0, 0, 0, 5);
+      expect(player.ballControlIsDisabled()).to.be.false;
+      player.temporarilyDisableBallControl();
+
+      expect(player.ballControlIsDisabled()).to.be.true;
+    });
+
+    it('re-enables ball control after a delay', () => {
+      const player = new Player(0, 0, 0, 0, 5);
+      player.temporarilyDisableBallControl();
+      expect(player.ballControlIsDisabled()).to.be.true;
+
+      this.clock.tick(BALL_CONTROL_REFRESH_TIME);
+      expect(player.ballControlIsDisabled()).to.be.false;
     });
   });
 });

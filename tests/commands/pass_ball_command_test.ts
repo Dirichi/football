@@ -38,6 +38,25 @@ describe('PassBallCommand', () => {
       expect(moveStub).to.have.been.called;
     });
 
+    it('disables ball control for the sender', () => {
+      const sender = new Player(1, 1, 0, 0, 2); // x, y, vx, vy, diameter
+      const receiver = new Player(5, 4, 0, 0, 2); // x, y, vx, vy, diameter
+      const ball = new Ball(0, 0, 0, 0, 2); // x, y, vx, vy, diameter
+
+      // HACK: Stub sendMessage to prevent methods being sent to a non-existent
+      // queue
+      sinon.stub(sender, 'sendMessage');
+
+      sinon.stub(sender, 'temporarilyDisableBallControl');
+
+      // stub the current player in possession of the ball as the sender
+      const service = new TestBallPossessionService(sender);
+      const command = new PassBallCommand(ball, service);
+      command.execute(sender, receiver);
+
+      expect(sender.temporarilyDisableBallControl).to.have.been.called;
+    });
+
     it('sends a stop message to the receiver', () => {
       const sender = new Player(1, 1, 0, 0, 2); // x, y, vx, vy, diameter
       const receiver = new Player(5, 4, 0, 0, 2); // x, y, vx, vy, diameter
@@ -82,6 +101,26 @@ describe('PassBallCommand', () => {
       command.execute(sender, receiver);
 
       expect(moveStub).not.to.have.been.called;
+    });
+
+    it('does not move the ball is the player has ball control disabled', () => {
+      const sender = new Player(1, 1, 0, 0, 2); // x, y, vx, vy, diameter
+      const receiver = new Player(5, 4, 0, 0, 2); // x, y, vx, vy, diameter
+      const ball = new Ball(0, 0, 0, 0, 2); // x, y, vx, vy, diameter
+
+      // HACK: Stub sendMessage to prevent methods being sent to a non-existent
+      // queue
+      sinon.stub(sender, 'sendMessage');
+
+      sinon.stub(sender, 'ballControlIsDisabled').returns(true);
+      sinon.stub(ball, 'moveTowards');
+
+      // stub the current player in possession of the ball as the sender
+      const service = new TestBallPossessionService(sender);
+      const command = new PassBallCommand(ball, service);
+      command.execute(sender, receiver);
+
+      expect(ball.moveTowards).not.to.have.been.called;
     });
   });
 });

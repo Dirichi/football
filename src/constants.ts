@@ -1,3 +1,5 @@
+export const BALL_CONTROL_REFRESH_TIME = 200;
+
 // TODO: This should not be an enum;
 export enum constants {
   BALL_DIAMETER_TO_FIELD_YLENGTH = 0.01,
@@ -107,8 +109,6 @@ export const KEY_DOWN_EVENT_TO_COMMAND_MAP: Map<string, COMMANDS> = new Map([
   ["KeyF", COMMANDS.CHASE_BALL],
   ["KeyS", COMMANDS.PASS_BALL],
 ]);
-
-export const KICK_BALL_REFRESH_TIME = 200;
 
 export const PLAYER_INITIAL_ARGS = [
   constants.PLAYER_INITIAL_X as number,

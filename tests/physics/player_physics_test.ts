@@ -120,6 +120,27 @@ describe('PlayerPhysics', () => {
         expect(queue.triggeredEvents.get('ball.control')).to.eql([expected]);
       });
 
+      it('does not control the ball if the player has ball control disabled',
+        () => {
+          const [x, y, vx, vy, diameter] = [2, 3, 4, 8, 6];
+          const player = new Player(x, y, vx, vy, diameter);
+          const physics = new PlayerPhysics(boundary, queue);
+          physics.setPlayer(player);
+
+          sinon.stub(player, 'ballControlIsEnabled').returns(false);
+
+          const circle = {
+            kind: 'circle',
+            getCentre: () => new ThreeDimensionalVector(2, 5, 0),
+            getDiameter: () => 2,
+          } as ICircle;
+
+          queue.trigger(`${player.getGameObjectId()}.collision`,
+            { colliderType: 'ball', shape: circle });
+
+          expect(queue.triggeredEvents.get('ball.control')).to.be.undefined;
+      });
+
       it('does not reposition the ball if the player is stationary', () => {
         const [x, y, vx, vy, diameter] = [2, 3, 0, 0, 6];
         const player = new Player(x, y, vx, vy, diameter);
