@@ -1,3 +1,5 @@
+export const BALL_CONTROL_REFRESH_TIME = 200;
+
 // TODO: This should not be an enum;
 export enum constants {
   BALL_DIAMETER_TO_FIELD_YLENGTH = 0.01,
@@ -51,11 +53,6 @@ export enum COMMANDS {
   PASS_BALL = "pass.ball",
   SHOOT_BALL = "shoot.ball",
   STOP = "player.stop",
-}
-
-export enum STATE_MACHINE_COMMANDS {
-  WAIT = "wait",
-  NO_NEED_TO_WAIT = "no.need.to.wait",
 }
 
 export const BALL_INITIAL_ARGS = [
@@ -135,6 +132,11 @@ export const POSTB_INITIAL_COORDINATES = [
   constants.POST_XLENGTH_TO_FIELD_XLENGTH as number,
   constants.POST_YLENGTH_TO_FIELD_YLENGTH as number,
 ];
+
+export enum STATE_MACHINE_COMMANDS {
+  WAIT = "wait",
+  NO_NEED_TO_WAIT = "no.need.to.wait",
+}
 
 export enum TEAM_SIDES {
   LEFT = "left",

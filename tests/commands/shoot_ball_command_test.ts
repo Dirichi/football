@@ -32,6 +32,21 @@ describe('ShootBallCommand', () => {
       expect(moveStub).to.have.been.called;
     });
 
+    it('disbales ball control temporarily', () => {
+      const post = new Post(0, 0, 1, 1);
+      const player = new Player(1, 1, 0, 0, 2); // x, y, vx, vy, diameter
+      player.setOpposingGoalPost(post);
+      const ball = new Ball(0, 0, 0, 0, 2); // x, y, vx, vy, diameter
+
+      sinon.stub(player, 'temporarilyDisableBallControl');
+      // player in possession
+      const service = new TestBallPossessionService(player);
+      const command = new ShootBallCommand(ball, service);
+      command.execute(player);
+
+      expect(player.temporarilyDisableBallControl).to.have.been.called;
+    });
+
     it('does not move the ball if the player is not in possession', () => {
       const post = new Post(0, 0, 1, 1);
       const playerA = new Player(1, 1, 0, 0, 2); // x, y, vx, vy, diameter
@@ -60,6 +75,24 @@ describe('ShootBallCommand', () => {
 
       // null player in possession
       const service = new TestBallPossessionService();
+      const command = new ShootBallCommand(ball, service);
+      command.execute(player);
+
+      expect(moveStub).not.to.have.been.called;
+    });
+
+    it('does not move the ball if the player has ball control disabled', () => {
+      const post = new Post(0, 0, 1, 1);
+      const player = new Player(1, 1, 0, 0, 2); // x, y, vx, vy, diameter
+      player.setOpposingGoalPost(post);
+      const ball = new Ball(0, 0, 0, 0, 2); // x, y, vx, vy, diameter
+
+      sinon.stub(player, 'ballControlIsDisabled').returns(true);
+
+      const moveStub = sinon.stub(ball, 'moveTowards');
+
+      // player in possession
+      const service = new TestBallPossessionService(player);
       const command = new ShootBallCommand(ball, service);
       command.execute(player);
 

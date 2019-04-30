@@ -1,5 +1,5 @@
 import v4 from "uuid/v4";
-import { constants, EVENTS } from "../constants";
+import { BALL_CONTROL_REFRESH_TIME, constants, EVENTS } from "../constants";
 import { EventQueue } from "../event_queue";
 import { ICircle } from "../interfaces/icircle";
 import { ICollidable } from "../interfaces/icollidable";
@@ -17,8 +17,8 @@ export class Player implements ICollidable {
   public vx: number;
   public vy: number;
   public diameter: number;
-  public kickingBall: boolean;
 
+  private ballControlEnabled: boolean;
   private opposingGoalPost?: Post;
   private physics?: PlayerPhysics;
   private maximumSpeed?: number;
@@ -44,9 +44,7 @@ export class Player implements ICollidable {
       // Like a PhysicalRepresentation or something like that. So that we can
       // swap representations out as we see fit.
       this.colors = [0, 0, 225];
-      // TODO: This is a temporary flag to ensure the ball moves when it's kicked
-      // It will be changed to a state object
-      this.kickingBall = false;
+      this.ballControlEnabled = true;
   }
 
   public update() {
@@ -153,6 +151,22 @@ export class Player implements ICollidable {
     return minimumBy(this.teamMates(), (teammate: Player): number => {
       return teammate.getPosition().distanceTo(position);
     });
+  }
+
+  public temporarilyDisableBallControl() {
+    this.ballControlEnabled = false;
+
+    setTimeout(() => {
+      this.ballControlEnabled = true;
+    }, BALL_CONTROL_REFRESH_TIME);
+  }
+
+  public ballControlIsEnabled() {
+    return this.ballControlEnabled;
+  }
+
+  public ballControlIsDisabled() {
+    return !this.ballControlEnabled;
   }
 
   public setTeam(team: Team): void {
