@@ -21,15 +21,17 @@ export class PassBallCommand implements ICommand {
   }
 
   public execute(sender: Player, receiver: Player): void {
-    if (
-      sender !== this.possessionService.getCurrentPlayerInPossessionOrNull()) {
-        return;
+    const playerInPossession =
+      this.possessionService.getCurrentPlayerInPossessionOrNull();
+
+    if (sender !== playerInPossession || sender.hasRecentlyKickedBall()) {
+      return;
     }
 
     // TODO: This message is only used by the state machine so it may have to
     // be moved out of the command
     sender.sendMessage(receiver, {details: STATE_MACHINE_COMMANDS.WAIT});
-    sender.kickingBall = true;
+    sender.kickBall();
     this.ball.moveTowards(receiver.getPosition());
   }
 }

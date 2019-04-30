@@ -3,6 +3,7 @@ import { Player } from "../game_objects/player";
 import { IBallControlPayload } from "../interfaces/iball_control_payload";
 import { IBoundary } from "../interfaces/iboundary";
 import { ICircle } from "../interfaces/icircle";
+import { ICollisionPayload } from "../interfaces/icollision_payload";
 import { IEventQueue } from "../interfaces/ievent_queue";
 import { ThreeDimensionalVector } from "../three_dimensional_vector";
 
@@ -58,16 +59,16 @@ export class PlayerPhysics {
 
   private listenForCollisions(): void {
     this.queue.when(`${this.player.getGameObjectId()}.collision`, (data) => {
-      const payload = data as { colliderType: string, shape: ICircle };
+      const payload = data as ICollisionPayload;
       this.handleCollision(payload);
     });
   }
 
-  private handleCollision(
-    collisionPayload: { colliderType: string, shape: ICircle }): void {
-    if (collisionPayload.colliderType === "ball" && !this.player.kickingBall) {
-      this.controlBall(collisionPayload.shape);
-    }
+  private handleCollision(collisionPayload: ICollisionPayload): void {
+    if (collisionPayload.colliderType === "ball"
+        && this.player.ballControlIsEnabled()) {
+          this.controlBall(collisionPayload.shape);
+      }
   }
 
   private controlBall(ball: ICircle): void {

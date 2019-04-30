@@ -15,11 +15,12 @@ export class ShootBallCommand implements ICommand {
 
   public execute(player: Player) {
     const owner = this.possessionService.getCurrentPlayerInPossessionOrNull();
-
-    if (owner === player) {
-      player.kickingBall = true;
-      const postMidPoint = player.getOpposingGoalPost().getMidPoint();
-      this.ball.moveTowards(postMidPoint);
+    if (player.hasRecentlyKickedBall() || owner !== player) {
+      return;
     }
+
+    const postMidPoint = player.getOpposingGoalPost().getMidPoint();
+    player.kickBall();
+    this.ball.moveTowards(postMidPoint);
   }
 }

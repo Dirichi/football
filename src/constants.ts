@@ -53,11 +53,6 @@ export enum COMMANDS {
   STOP = "player.stop",
 }
 
-export enum STATE_MACHINE_COMMANDS {
-  WAIT = "wait",
-  NO_NEED_TO_WAIT = "no.need.to.wait",
-}
-
 export const BALL_INITIAL_ARGS = [
   constants.BALL_INITIAL_X as number,
   constants.BALL_INITIAL_Y as number,
@@ -113,6 +108,8 @@ export const KEY_DOWN_EVENT_TO_COMMAND_MAP: Map<string, COMMANDS> = new Map([
   ["KeyS", COMMANDS.PASS_BALL],
 ]);
 
+export const KICK_BALL_REFRESH_TIME = 200;
+
 export const PLAYER_INITIAL_ARGS = [
   constants.PLAYER_INITIAL_X as number,
   constants.PLAYER_INITIAL_Y as number,
@@ -135,6 +132,11 @@ export const POSTB_INITIAL_COORDINATES = [
   constants.POST_XLENGTH_TO_FIELD_XLENGTH as number,
   constants.POST_YLENGTH_TO_FIELD_YLENGTH as number,
 ];
+
+export enum STATE_MACHINE_COMMANDS {
+  WAIT = "wait",
+  NO_NEED_TO_WAIT = "no.need.to.wait",
+}
 
 export enum TEAM_SIDES {
   LEFT = "left",
