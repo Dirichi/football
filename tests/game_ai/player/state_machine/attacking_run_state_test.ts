@@ -4,7 +4,7 @@ import { IPlayerStateFeature } from '../../../../src/interfaces/iplayer_state_fe
 import { Player } from '../../../../src/game_objects/player';
 import * as chai from 'chai';
 import * as sinon from 'sinon';
-import { COMMANDS } from '../../../../src/constants';
+import { COMMAND_ID } from '../../../../src/constants';
 
 const sinonChai = require('sinon-chai');
 const expect = chai.expect;
@@ -44,7 +44,7 @@ describe('AttackingRunState', () => {
 
         const command = { execute: sinon.spy() };
         sinon.stub(commandFactory, 'getCommand')
-          .withArgs(COMMANDS.MOVE_TO_ATTACKING_POSITION)
+          .withArgs(COMMAND_ID.MOVE_TO_ATTACKING_POSITION)
           .returns(command);
 
         state.update(player, features);
@@ -60,7 +60,7 @@ describe('AttackingRunState', () => {
 
       const command = { execute: sinon.spy() };
       sinon.stub(commandFactory, 'getCommand')
-        .withArgs(COMMANDS.MOVE_TO_ATTACKING_POSITION)
+        .withArgs(COMMAND_ID.MOVE_TO_ATTACKING_POSITION)
         .returns(command);
 
       state.update(player, features);
@@ -76,7 +76,7 @@ describe('AttackingRunState', () => {
 
       const command = { execute: sinon.spy() };
       sinon.stub(commandFactory, 'getCommand')
-        .withArgs(COMMANDS.MOVE_TO_ATTACKING_POSITION)
+        .withArgs(COMMAND_ID.MOVE_TO_ATTACKING_POSITION)
         .returns(command);
 
       state.update(player, features);

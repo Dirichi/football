@@ -1,5 +1,5 @@
 import { CommandFactory } from '../../../../src/commands/command_factory';
-import { COMMANDS, STATE_MACHINE_COMMANDS } from '../../../../src/constants';
+import { COMMAND_ID, STATE_MACHINE_COMMANDS } from '../../../../src/constants';
 import { IPlayerStateFeature } from '../../../../src/interfaces/iplayer_state_feature';
 import { WaitingState } from '../../../../src/game_ai/player/state_machine/waiting_state';
 import { Player } from '../../../../src/game_objects/player';
@@ -45,7 +45,7 @@ describe('WaitingState', () => {
 
         const command = { execute: sinon.spy() };
         sinon.stub(commandFactory, 'getCommand')
-          .withArgs(COMMANDS.STOP)
+          .withArgs(COMMAND_ID.STOP)
           .returns(command);
 
         state.update(player, features);
@@ -121,7 +121,7 @@ describe('WaitingState', () => {
 
       const command = { execute: sinon.spy() };
       sinon.stub(commandFactory, 'getCommand')
-        .withArgs(COMMANDS.STOP)
+        .withArgs(COMMAND_ID.STOP)
         .returns(command);
 
       state.update(player, features);

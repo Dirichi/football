@@ -48,6 +48,7 @@ const sketch = (p: p5) => {
   };
 
   p.draw = () => {
+    manualInputHandler.sendInput();
     graphics.forEach((graphic) => graphic.animate());
   };
 };
@@ -61,7 +62,11 @@ socket.on(EVENTS.STATE_CHANGED, (data) => {
 });
 
 document.onkeydown = (event: KeyboardEvent) => {
-  manualInputHandler.handleInput(event);
-});
+  manualInputHandler.handleKeyDown(event);
+};
+
+document.onkeyup = (event: KeyboardEvent) => {
+  manualInputHandler.handleKeyUp(event);
+};
 
 const psketch = new p5(sketch);

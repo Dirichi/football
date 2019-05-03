@@ -1,4 +1,4 @@
-import { COMMANDS } from "../../../constants";
+import { COMMAND_ID } from "../../../constants";
 import { Player } from "../../../game_objects/player";
 import { ICommandFactory } from "../../../interfaces/icommand_factory";
 import { IPlayerState } from "../../../interfaces/iplayer_state";
@@ -17,7 +17,7 @@ export class ChasingBallState implements IPlayerState {
 
   public update(player: Player, features: IPlayerStateFeature): void {
     if (this.eligibleFor(features)) {
-      this.commandFactory.getCommand(COMMANDS.CHASE_BALL).execute(player);
+      this.commandFactory.getCommand(COMMAND_ID.CHASE_BALL).execute(player);
     }
   }
 }

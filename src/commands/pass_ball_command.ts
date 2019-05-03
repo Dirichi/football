@@ -13,16 +13,16 @@ export class PassBallCommand implements ICommand {
   // TODO: Update this class so that it picks based on the directions
   // that the user put in
   private ball: Ball;
-  private possessionService: IBallPossessionService;
+  private ballPossessionService: IBallPossessionService;
 
-  constructor(ball: Ball, possessionService: IBallPossessionService) {
+  constructor(ball: Ball, ballPossessionService: IBallPossessionService) {
     this.ball = ball;
-    this.possessionService = possessionService;
+    this.ballPossessionService = ballPossessionService;
   }
 
   public execute(sender: Player, receiver: Player): void {
     const playerInPossession =
-      this.possessionService.getCurrentPlayerInPossessionOrNull();
+      this.ballPossessionService.getCurrentPlayerInPossessionOrNull();
 
     if (sender !== playerInPossession || sender.ballControlIsDisabled()) {
       return;

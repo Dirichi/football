@@ -1,4 +1,4 @@
-import { COMMANDS } from "../../../constants";
+import { COMMAND_ID } from "../../../constants";
 import { Player } from "../../../game_objects/player";
 import { ICommandFactory } from "../../../interfaces/icommand_factory";
 import { IPlayerState } from "../../../interfaces/iplayer_state";
@@ -18,7 +18,7 @@ export class AttackingRunState implements IPlayerState {
   public update(player: Player, features: IPlayerStateFeature): void {
     if (this.eligibleFor(features)) {
       this.commandFactory
-        .getCommand(COMMANDS.MOVE_TO_ATTACKING_POSITION)
+        .getCommand(COMMAND_ID.MOVE_TO_ATTACKING_POSITION)
         .execute(player);
     }
   }

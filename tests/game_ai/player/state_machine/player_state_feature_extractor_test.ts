@@ -7,7 +7,7 @@ import { Team } from '../../../../src/game_objects/team';
 import { TestBallPossessionService } from '../../../helpers/test_ball_possession_service';
 import * as chai from 'chai';
 import * as sinon from 'sinon';
-import { COMMANDS } from '../../../../src/constants';
+import { COMMAND_ID } from '../../../../src/constants';
 
 const sinonChai = require('sinon-chai');
 const expect = chai.expect;
