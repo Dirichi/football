@@ -4,7 +4,7 @@ import { Player } from '../../../../src/game_objects/player';
 import { IPlayerStateFeature } from '../../../../src/interfaces/iplayer_state_feature';
 import * as chai from 'chai';
 import * as sinon from 'sinon';
-import { COMMANDS } from '../../../../src/constants';
+import { COMMAND_ID } from '../../../../src/constants';
 
 const sinonChai = require('sinon-chai');
 const expect = chai.expect;
@@ -44,7 +44,7 @@ describe('ShootingState', () => {
 
         const command = { execute: sinon.spy() };
         sinon.stub(commandFactory, 'getCommand')
-          .withArgs(COMMANDS.SHOOT_BALL)
+          .withArgs(COMMAND_ID.SHOOT_BALL)
           .returns(command);
 
         state.update(player, features);
@@ -59,7 +59,7 @@ describe('ShootingState', () => {
 
       const command = { execute: sinon.spy() };
       sinon.stub(commandFactory, 'getCommand')
-        .withArgs(COMMANDS.SHOOT_BALL)
+        .withArgs(COMMAND_ID.SHOOT_BALL)
         .returns(command);
 
       state.update(player, features);
@@ -74,7 +74,7 @@ describe('ShootingState', () => {
 
       const command = { execute: sinon.spy() };
       sinon.stub(commandFactory, 'getCommand')
-        .withArgs(COMMANDS.SHOOT_BALL)
+        .withArgs(COMMAND_ID.SHOOT_BALL)
         .returns(command);
 
       state.update(player, features);

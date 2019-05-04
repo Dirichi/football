@@ -4,7 +4,7 @@ import { PassingState } from '../../../../src/game_ai/player/state_machine/passi
 import { Player } from '../../../../src/game_objects/player';
 import * as chai from 'chai';
 import * as sinon from 'sinon';
-import { COMMANDS } from '../../../../src/constants';
+import { COMMAND_ID } from '../../../../src/constants';
 
 const sinonChai = require('sinon-chai');
 const expect = chai.expect;
@@ -44,7 +44,7 @@ describe('PassingState', () => {
 
         const command = { execute: sinon.spy() };
         sinon.stub(commandFactory, 'getCommand')
-          .withArgs(COMMANDS.PASS_BALL)
+          .withArgs(COMMAND_ID.PASS_BALL)
           .returns(command);
 
         state.update(player, features);
@@ -60,7 +60,7 @@ describe('PassingState', () => {
 
       const command = { execute: sinon.spy() };
       sinon.stub(commandFactory, 'getCommand')
-        .withArgs(COMMANDS.PASS_BALL)
+        .withArgs(COMMAND_ID.PASS_BALL)
         .returns(command);
 
       state.update(player, features);
@@ -75,7 +75,7 @@ describe('PassingState', () => {
 
       const command = { execute: sinon.spy() };
       sinon.stub(commandFactory, 'getCommand')
-        .withArgs(COMMANDS.PASS_BALL)
+        .withArgs(COMMAND_ID.PASS_BALL)
         .returns(command);
 
       state.update(player, features);

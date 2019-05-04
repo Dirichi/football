@@ -41,16 +41,20 @@ export enum EVENTS {
   STATE_CHANGED = "state.changed",
 }
 
-export enum COMMANDS {
+export enum COMMAND_ID {
   CHASE_BALL = "chase.ball",
   DRIBBLE = "dribble.ball",
-  MOVE_PLAYER_LEFT = "move.player.left",
   MOVE_PLAYER_DOWN = "move.player.down",
+  MOVE_PLAYER_LEFT = "move.player.left",
   MOVE_PLAYER_RIGHT = "move.player.right",
   MOVE_TO_ATTACKING_POSITION = "move.player.to.attacking.position",
   MOVE_TO_DEFENSIVE_POSITION = "move.player.to.defensive.position",
   MOVE_PLAYER_UP = "move.player.up",
   PASS_BALL = "pass.ball",
+  PASS_BALL_DOWN = "pass.ball.down",
+  PASS_BALL_LEFT = "pass.ball.left",
+  PASS_BALL_RIGHT = "pass.ball.right",
+  PASS_BALL_UP = "pass.ball.up",
   SHOOT_BALL = "shoot.ball",
   STOP = "player.stop",
 }
@@ -100,15 +104,40 @@ export const FIELD_INITIAL_COORDINATES = [
   constants.FIELD_INITIAL_YLENGTH as number,
 ];
 
-export const KEY_DOWN_EVENT_TO_COMMAND_MAP: Map<string, COMMANDS> = new Map([
-  ["ArrowDown", COMMANDS.MOVE_PLAYER_DOWN],
-  ["ArrowLeft", COMMANDS.MOVE_PLAYER_LEFT],
-  ["ArrowRight", COMMANDS.MOVE_PLAYER_RIGHT],
-  ["ArrowUp", COMMANDS.MOVE_PLAYER_UP],
-  ["KeyA", COMMANDS.SHOOT_BALL],
-  ["KeyF", COMMANDS.CHASE_BALL],
-  ["KeyS", COMMANDS.PASS_BALL],
+export const KEY_DOWN_EVENT_TO_COMMAND_MAP: Map<string, COMMAND_ID> = new Map([
+  ["ArrowDown", COMMAND_ID.MOVE_PLAYER_DOWN],
+  ["ArrowLeft", COMMAND_ID.MOVE_PLAYER_LEFT],
+  ["ArrowRight", COMMAND_ID.MOVE_PLAYER_RIGHT],
+  ["ArrowUp", COMMAND_ID.MOVE_PLAYER_UP],
+  ["KeyA", COMMAND_ID.SHOOT_BALL],
+  ["KeyF", COMMAND_ID.CHASE_BALL],
+  ["KeyS", COMMAND_ID.PASS_BALL],
 ]);
+
+export enum INPUT_KEY {
+  ARROW_DOWN = "ArrowDown",
+  ARROW_LEFT = "ArrowLeft",
+  ARROW_RIGHT = "ArrowRight",
+  ARROW_UP = "ArrowUp",
+  KEY_A = "KeyA",
+  KEY_F = "KeyF",
+  KEY_S = "KeyS",
+}
+
+export const COMMAND_ID_TO_KEY_COMBINATION: Map<COMMAND_ID, INPUT_KEY[]> =
+  new Map([
+    [COMMAND_ID.MOVE_PLAYER_DOWN, [INPUT_KEY.ARROW_DOWN]],
+    [COMMAND_ID.MOVE_PLAYER_LEFT, [INPUT_KEY.ARROW_LEFT]],
+    [COMMAND_ID.MOVE_PLAYER_RIGHT, [INPUT_KEY.ARROW_RIGHT]],
+    [COMMAND_ID.MOVE_PLAYER_UP, [INPUT_KEY.ARROW_UP]],
+    [COMMAND_ID.SHOOT_BALL, [INPUT_KEY.KEY_A]],
+    [COMMAND_ID.CHASE_BALL, [INPUT_KEY.KEY_F]],
+    [COMMAND_ID.PASS_BALL_LEFT, [INPUT_KEY.ARROW_LEFT, INPUT_KEY.KEY_S]],
+    [COMMAND_ID.PASS_BALL_RIGHT, [INPUT_KEY.ARROW_RIGHT, INPUT_KEY.KEY_S]],
+    [COMMAND_ID.PASS_BALL_UP, [INPUT_KEY.ARROW_UP, INPUT_KEY.KEY_S]],
+    [COMMAND_ID.PASS_BALL_DOWN, [INPUT_KEY.ARROW_DOWN,  INPUT_KEY.KEY_S]],
+    [COMMAND_ID.PASS_BALL, [INPUT_KEY.KEY_S]],
+  ]);
 
 export const PLAYER_INITIAL_ARGS = [
   constants.PLAYER_INITIAL_X as number,

@@ -14,7 +14,6 @@ import { PlayerStateFeatureExtractor } from "./game_ai/player/state_machine/play
 import { ShootingState } from "./game_ai/player/state_machine/shooting_state";
 import { WaitingState } from "./game_ai/player/state_machine/waiting_state";
 
-import { AutoDribbleCommand } from "./commands/auto_dribble_command";
 import { ChaseBallCommand } from "./commands/chase_ball_command";
 import { CommandFactory } from "./commands/command_factory";
 import { MoveDownCommand } from "./commands/move_down_command";
@@ -29,11 +28,12 @@ import { StopCommand } from "./commands/stop_command";
 // TODO: This is starting to look ugly
 import { BALL_INITIAL_ARGS, BOX18A_INITIAL_COORDINATES,
   BOX18B_INITIAL_COORDINATES, BOX6A_INITIAL_COORDINATES,
-  BOX6B_INITIAL_COORDINATES, COLLISION_MARGIN_FACTOR, COMMANDS, constants,
+  BOX6B_INITIAL_COORDINATES, COLLISION_MARGIN_FACTOR, COMMAND_ID, constants,
   EVENTS, FIELD_INITIAL_COORDINATES, PLAYER_INITIAL_ARGS,
   POSTA_INITIAL_COORDINATES, POSTB_INITIAL_COORDINATES, TEAM_SIDES
   } from "./constants";
 import { EventQueue } from "./event_queue";
+import { PlayerNullController } from "./game_ai/player/null_controller/player_null_controller";
 import { PlayerStateMachine } from "./game_ai/player/state_machine/player_state_machine";
 import { Ball } from "./game_objects/ball";
 import { Box } from "./game_objects/box";
@@ -43,6 +43,7 @@ import { Player } from "./game_objects/player";
 import { Post } from "./game_objects/post";
 import { Team } from "./game_objects/team";
 import { ICommand } from "./interfaces/icommand";
+import { ICommandRequest } from "./interfaces/icommand_request";
 import { IPlayerState } from "./interfaces/iplayer_state";
 import { BallPhysics } from "./physics/ball_physics";
 import { PlayerPhysics } from "./physics/player_physics";
@@ -123,6 +124,7 @@ playerF.setDefendingPosition(regions[44].getMidPoint());
 playerF.setAttackingPosition(regions[14].getMidPoint());
 
 const players = [playerA, playerB, playerC, playerD, playerE, playerF];
+const aiPlayers = [playerB, playerC, playerD, playerE, playerF];
 
 players.forEach((player) => {
   const physics = new PlayerPhysics(field, queue);
@@ -177,23 +179,21 @@ const stopCommand = new StopCommand();
 const shootBallCommand = new ShootBallCommand(ball, ballPossessionService);
 const moveToAttackingPositionCommand = new MoveToAttackingPositionCommand();
 const moveToDefensivePositionCommand = new MoveToDefensivePositionCommand();
-const autoDribbleCommand = new AutoDribbleCommand();
 
-const NAME_TO_COMMAND_MAPPING = new Map<COMMANDS, ICommand>([
-  [COMMANDS.MOVE_PLAYER_DOWN, moveDownCommand],
-  [COMMANDS.MOVE_PLAYER_LEFT, moveLeftCommand],
-  [COMMANDS.MOVE_PLAYER_RIGHT, moveRightCommand],
-  [COMMANDS.MOVE_PLAYER_UP, moveUpCommand],
-  [COMMANDS.CHASE_BALL, chaseBallCommand],
-  [COMMANDS.SHOOT_BALL, shootBallCommand],
-  [COMMANDS.PASS_BALL, passBallCommand],
-  [COMMANDS.STOP, stopCommand],
-  [COMMANDS.MOVE_TO_ATTACKING_POSITION, moveToAttackingPositionCommand],
-  [COMMANDS.MOVE_TO_DEFENSIVE_POSITION, moveToDefensivePositionCommand],
-  [COMMANDS.DRIBBLE, autoDribbleCommand],
+const COMMAND_ID_TO_COMMAND_MAPPING = new Map<COMMAND_ID, ICommand>([
+  [COMMAND_ID.MOVE_PLAYER_DOWN, moveDownCommand],
+  [COMMAND_ID.MOVE_PLAYER_LEFT, moveLeftCommand],
+  [COMMAND_ID.MOVE_PLAYER_RIGHT, moveRightCommand],
+  [COMMAND_ID.MOVE_PLAYER_UP, moveUpCommand],
+  [COMMAND_ID.CHASE_BALL, chaseBallCommand],
+  [COMMAND_ID.SHOOT_BALL, shootBallCommand],
+  [COMMAND_ID.PASS_BALL, passBallCommand],
+  [COMMAND_ID.STOP, stopCommand],
+  [COMMAND_ID.MOVE_TO_ATTACKING_POSITION, moveToAttackingPositionCommand],
+  [COMMAND_ID.MOVE_TO_DEFENSIVE_POSITION, moveToDefensivePositionCommand],
 ]);
 
-const commandFactory = new CommandFactory(NAME_TO_COMMAND_MAPPING);
+const commandFactory = new CommandFactory(COMMAND_ID_TO_COMMAND_MAPPING);
 
 const PLAYER_STATES: IPlayerState[] = [
   new WaitingState(commandFactory),
@@ -217,12 +217,18 @@ const buildStateMachine = (player: Player) => {
   return machine;
 };
 
-players.forEach((player) => player.setController(buildStateMachine(player)));
+aiPlayers.forEach((player) => player.setController(buildStateMachine(player)));
+playerA.setController(new PlayerNullController(playerA));
+
 players.forEach((player) => player.setMessageQueue(queue));
 ballPossessionService.enable();
 collisionDetectionService.setCollisionMarginFactor(COLLISION_MARGIN_FACTOR);
 
 io.on("connection", (socket) => {
+  socket.on("command", (request: ICommandRequest) => {
+    COMMAND_ID_TO_COMMAND_MAPPING.get(request.commandId).execute(playerA);
+  });
+
   setInterval(() => {
     ballPossessionService.update();
     collisionNotificationService.update();

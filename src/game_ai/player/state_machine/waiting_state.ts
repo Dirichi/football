@@ -1,4 +1,4 @@
-import { COMMANDS } from "../../../constants";
+import { COMMAND_ID } from "../../../constants";
 import { STATE_MACHINE_COMMANDS } from "../../../constants";
 import { Player } from "../../../game_objects/player";
 import { ICommandFactory } from "../../../interfaces/icommand_factory";
@@ -27,7 +27,7 @@ export class WaitingState implements IPlayerState {
       return;
     }
 
-    this.commandFactory.getCommand(COMMANDS.STOP).execute(player);
+    this.commandFactory.getCommand(COMMAND_ID.STOP).execute(player);
   }
 
   private waitingNoLongerValidFor(features: IPlayerStateFeature): boolean {
