@@ -41,6 +41,20 @@ export enum EVENTS {
   STATE_CHANGED = "state.changed",
 }
 
+export enum DIRECTION {
+  UP = "up",
+  DOWN = "down",
+  LEFT = "left",
+  RIGHT = "right"
+}
+
+export const ALL_DIRECTIONS = [
+  DIRECTION.UP,
+  DIRECTION.DOWN,
+  DIRECTION.LEFT,
+  DIRECTION.RIGHT,
+];
+
 export enum COMMAND_ID {
   CHASE_BALL = "chase.ball",
   DRIBBLE = "dribble.ball",

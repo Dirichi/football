@@ -16,6 +16,7 @@ import { WaitingState } from "./game_ai/player/state_machine/waiting_state";
 
 import { ChaseBallCommand } from "./commands/chase_ball_command";
 import { CommandFactory } from "./commands/command_factory";
+import { GenericCommandHandler } from "./commands/generic_command_handler";
 import { MoveDownCommand } from "./commands/move_down_command";
 import { MoveLeftCommand } from "./commands/move_left_command";
 import { MoveRightCommand } from "./commands/move_right_command";
@@ -23,6 +24,7 @@ import { MoveToAttackingPositionCommand } from "./commands/move_to_attacking_pos
 import { MoveToDefensivePositionCommand } from "./commands/move_to_defensive_position_command";
 import { MoveUpCommand } from "./commands/move_up_command";
 import { PassBallCommand } from "./commands/pass_ball_command";
+import { PassBallCommandHandler } from "./commands/pass_ball_command_handler";
 import { ShootBallCommand } from "./commands/shoot_ball_command";
 import { StopCommand } from "./commands/stop_command";
 // TODO: This is starting to look ugly
@@ -43,6 +45,7 @@ import { Player } from "./game_objects/player";
 import { Post } from "./game_objects/post";
 import { Team } from "./game_objects/team";
 import { ICommand } from "./interfaces/icommand";
+import { ICommandHandler } from "./interfaces/icommand_handler";
 import { ICommandRequest } from "./interfaces/icommand_request";
 import { IPlayerState } from "./interfaces/iplayer_state";
 import { BallPhysics } from "./physics/ball_physics";
@@ -224,9 +227,25 @@ players.forEach((player) => player.setMessageQueue(queue));
 ballPossessionService.enable();
 collisionDetectionService.setCollisionMarginFactor(COLLISION_MARGIN_FACTOR);
 
+const genericHandler = new GenericCommandHandler(playerA, commandFactory);
+const passHandler = new PassBallCommandHandler(playerA, commandFactory);
+
+const commandHandlerRouter = new Map<string, ICommandHandler>([
+  [COMMAND_ID.PASS_BALL as string, passHandler],
+  [".*", genericHandler],
+]);
+
 io.on("connection", (socket) => {
-  socket.on("command", (request: ICommandRequest) => {
-    COMMAND_ID_TO_COMMAND_MAPPING.get(request.commandId).execute(playerA);
+  socket.on("command", (commandRequest: ICommandRequest) => {
+    const commandId = commandRequest.commandId as string;
+    const commandPaths = [...commandHandlerRouter.keys()];
+    const matchingCommandPath = commandPaths.find((commandPath) => {
+      return commandId.match(commandPath) !== null;
+    });
+
+    if (matchingCommandPath) {
+      commandHandlerRouter.get(matchingCommandPath).handle(commandRequest);
+    }
   });
 
   setInterval(() => {
