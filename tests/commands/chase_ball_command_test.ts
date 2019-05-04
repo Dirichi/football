@@ -1,6 +1,7 @@
 import { Ball } from '../../src/game_objects/ball';
 import { ChaseBallCommand } from '../../src/commands/chase_ball_command';
 import { Player } from '../../src/game_objects/player';
+import { TestBallPossessionService } from '../helpers/test_ball_possession_service';
 import { ThreeDimensionalVector } from '../../src/three_dimensional_vector';
 import * as chai from 'chai';
 import * as sinon from 'sinon';
@@ -11,27 +12,33 @@ chai.use(sinonChai);
 
 describe('ChaseBallCommand', () => {
   describe('`execute`', () => {
-    it('moves the player closer to the ball if not within a margin', () => {
-      const ball = new Ball(0, 0, 0, 0, 0.5); // x, y, vx, vy, diameter
-      const command = new ChaseBallCommand(ball);
+    it('moves the player to the ball if the player does not have the ball',
+      () => {
+        const ball = new Ball(0, 0, 0, 0, 0.5);
+        const player = new Player(0, 0, 0, 0, 1);
+        // no player in possession of the ball
+        const possessionService = new TestBallPossessionService(null);
 
-      const player = new Player(0, 1, 0, 0, 1); // x, y, vx, vy, diameter
+        const command = new ChaseBallCommand(ball, possessionService);
 
-      const moveStub = sinon.stub(player, 'moveTowards').callsFake(
-        (actual: ThreeDimensionalVector) => {
-          const expected = new ThreeDimensionalVector(ball.x, ball.y, 0);
-          expect(expected.equals(actual));
-        });
+        sinon.stub(player, 'moveTowards').callsFake(
+          (actual: ThreeDimensionalVector) => {
+            const expected = new ThreeDimensionalVector(ball.x, ball.y, 0);
+            expect(expected.equals(actual));
+          });
 
-      command.execute(player);
-      expect(moveStub).to.have.been.called;
+        command.execute(player);
+        expect(player.moveTowards).to.have.been.called;
     });
 
     it('stops the player if already within the margin', () => {
       const ball = new Ball(0, 0, 0, 0, 0.5); // x, y, vx, vy, diameter
-      const command = new ChaseBallCommand(ball);
+      const player = new Player(0, 0, 0, 0, 1); // x, y, vx, vy, diameter
+      // set player as in possession of the ball
+      const possessionService = new TestBallPossessionService(player);
 
-      const player = new Player(0, 0.7, 0, 0, 1); // x, y, vx, vy, diameter
+      const command = new ChaseBallCommand(ball, possessionService);
+
       const stopStub = sinon.stub(player, 'stop');
       const moveStub = sinon.stub(player, 'moveTowards');
       command.execute(player);
