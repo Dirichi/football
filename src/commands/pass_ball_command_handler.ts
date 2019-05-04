@@ -8,6 +8,7 @@ export class PassBallCommandHandler {
   private factory: ICommandFactory;
 
   constructor(sender: Player, factory: ICommandFactory) {
+    // TODO: Find a way to extract the sender from the request payload
     this.sender = sender;
     this.factory = factory;
   }
@@ -29,6 +30,7 @@ export class PassBallCommandHandler {
   }
 
   private findReceiver(direction: DIRECTION | null): Player {
+    // TODO: Calculate the nearest teammate in the provided direction
     return this.sender.getNearestTeamMate();
   }
 }
