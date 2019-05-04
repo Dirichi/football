@@ -20,13 +20,18 @@ export class ManualInputHandler {
   }
 
   public sendInput(): void {
-    const matchedCommandId = [...this.settings.keys()].find((commandId) => {
+    const commandIds = [...this.settings.keys()];
+    const matchedCommandId = commandIds.find((commandId) => {
       return this.commandIsActivated(commandId);
     });
 
     if (matchedCommandId) {
       this.sendCommand(matchedCommandId);
     }
+  }
+
+  public getInputKeys(): INPUT_KEY[] {
+    return [...this.inputKeysSet];
   }
 
   public handleKeyDown(event: KeyboardEvent): void {
@@ -64,7 +69,7 @@ export class ManualInputHandler {
   }
 
   private sendCommand(commandId: COMMAND_ID) {
-    const commandRequest = { commandId: commandId} as ICommandRequest;
+    const commandRequest = { commandId } as ICommandRequest;
     this.socket.emit("command", commandRequest);
   }
 }
