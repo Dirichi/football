@@ -1,0 +1,34 @@
+import { ALL_DIRECTIONS, COMMAND_ID, DIRECTION } from "../constants";
+import { Player } from "../game_objects/player";
+import { ICommandFactory } from "../interfaces/icommand_factory";
+import { ICommandRequest } from "../interfaces/icommand_request";
+
+export class PassBallCommandHandler {
+  private sender: Player;
+  private factory: ICommandFactory;
+
+  constructor(sender: Player, factory: ICommandFactory) {
+    this.sender = sender;
+    this.factory = factory;
+  }
+
+  public handle(request: ICommandRequest): void {
+    const direction = this.getDirectionFrom(request.commandId);
+    const receiver = this.findReceiver(direction);
+    const command = this.factory.getCommand(COMMAND_ID.PASS_BALL);
+    command.execute(this.sender, receiver);
+  }
+
+  private getDirectionFrom(commandId: COMMAND_ID): DIRECTION | null {
+    const commandString = commandId as string;
+    const directionMatcher = commandString.match(ALL_DIRECTIONS.join("|"));
+    if (directionMatcher) {
+      return directionMatcher[0] as DIRECTION;
+    }
+    return null;
+  }
+
+  private findReceiver(direction: DIRECTION | null): Player {
+    return this.sender.getNearestTeamMate();
+  }
+}
