@@ -155,13 +155,21 @@ teamA.setColors([0, 0, 225]);
 teamB.setColors([225, 0, 0]);
 
 // Configure Express to use EJS
-app.set("views", path.join(__dirname, "views"));
+app.set("views", path.join(__dirname, "/views"));
 app.set("view engine", "ejs");
 
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "/public")));
 
 app.get("/", (req, res) => {
   res.render("index");
+});
+
+app.post("/games/create", (req, res) => {
+  res.send({err: 0, redirectUrl: "/game"});
+});
+
+app.get("/game", (req, res) => {
+  res.render("game");
 });
 
 // start the Express server

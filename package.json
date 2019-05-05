@@ -45,8 +45,8 @@
     "lint": "tslint -c tslint.json -p tsconfig.json --fix",
     "build": "npm-run-all clean lint tsc copy-assets parcel",
     "dev:start": "npm-run-all build start",
-    "dev": "nodemon --watch src -e ts,ejs --exec npm run dev:start",
-    "parcel": "parcel build src/public/js/main.ts -d dist/public/js",
+    "dev": "nodemon --watch src -e ts,ejs,css --exec npm run dev:start",
+    "parcel": "parcel build src/public/**/* -d dist/public/",
     "start": "node .",
     "test": "mocha -r ts-node/register 'tests/**/*_test.ts'",
     "tsc": "tsc"

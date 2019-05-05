@@ -1,0 +1,9 @@
+.new-game-button {
+  top: 50%;
+  left: 40%;
+  width: 20%;
+  height: 10%;
+  position: absolute;
+  font-size: large;
+  border: 5px solid #000;
+}
