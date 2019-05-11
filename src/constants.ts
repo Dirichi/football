@@ -188,3 +188,10 @@ export enum TEAM_SIDES {
   LEFT = "left",
   RIGHT = "right",
 }
+
+export enum IO_MESSAGE_TYPE {
+  PING = "custom.ping",
+  COMMAND = "command",
+}
+
+export const GAME_EXECUTABLE_FILE = "test_executable.js";

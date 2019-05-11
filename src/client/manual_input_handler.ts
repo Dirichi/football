@@ -39,9 +39,7 @@ export class ManualInputHandler {
       return;
     }
     const key = event.code as INPUT_KEY;
-    if (!this.inputKeysSet.has(key)) {
-      this.inputKeysSet.add(key);
-    }
+    this.inputKeysSet.add(key);
   }
 
   public handleKeyUp(event: KeyboardEvent): void {
@@ -49,9 +47,7 @@ export class ManualInputHandler {
       return;
     }
     const key = event.code as INPUT_KEY;
-    if (this.inputKeysSet.has(key)) {
-      this.inputKeysSet.delete(key);
-    }
+    this.inputKeysSet.delete(key);
   }
 
   private commandIsActivated(commandId: COMMAND_ID): boolean {
