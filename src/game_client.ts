@@ -1,10 +1,10 @@
 import { Socket } from "socket.io";
 import { IO_MESSAGE_TYPE } from "./constants";
-import { GameRoom } from "./game_room";
+import { ICommandRequest } from "./interfaces/icommand_request";
+import { IGameClient } from "./interfaces/igame_client";
 
-export class GameClient {
+export class GameClient implements IGameClient {
   private socket: Socket;
-  private room?: GameRoom;
 
   constructor(socket: Socket) {
     this.socket = socket;
@@ -18,18 +18,7 @@ export class GameClient {
     return this.socket.id;
   }
 
-  public getRoom(): GameRoom | null {
-    return this.room || null;
-  }
-
-  public setRoom(room: GameRoom): void {
-    this.room = room;
-  }
-
-  public configureListeners(): void {
-    this.socket.on(IO_MESSAGE_TYPE.COMMAND, (message: any) => {
-      // tslint:disable-next-line:no-console
-      console.log(`message: ${message}`);
-    });
+  public when(event: IO_MESSAGE_TYPE, callback: (payload: object) => void) {
+    this.socket.on(event, callback);
   }
 }

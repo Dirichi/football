@@ -2,17 +2,23 @@ import express from "express";
 import * as http from "http";
 import path from "path";
 import socketIo from "socket.io";
+import { GAME_EXECUTABLE_FILE } from "./constants";
+import { EventQueue } from "./event_queue";
 import { GameClient } from "./game_client";
-import { GameProcessManager } from "./game_process";
 import { GameRoom } from "./game_room";
+import { WrappedProcessForker } from "./wrapped_process_forker";
 
 const app = express();
 const httpServer = http.createServer(app);
 const io = socketIo(httpServer);
 const port = 3000;
 // TODO: Create a game room on authenticated user request;
+
+const forker = new WrappedProcessForker();
+
 const room = new GameRoom();
-const processManager = new GameProcessManager();
+room.setProcessForker(forker);
+room.setGameExecutablePath(path.join(__dirname, GAME_EXECUTABLE_FILE));
 room.save();
 
 // Configure Express to use EJS
@@ -32,10 +38,7 @@ httpServer.listen(port, () => {
 });
 
 io.on("connection", (socket) => {
-
   const client = new GameClient(socket);
-  client.configureListeners();
   room.addClient(client);
-
-  processManager.manageProcessesFor(room);
+  room.startGame();
 });

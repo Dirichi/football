@@ -1,19 +1,28 @@
+import { EventQueue } from "../../src/event_queue";
 import { IGameClient } from "../../src/interfaces/igame_client";
 import { IO_MESSAGE_TYPE } from "../../src/constants";
-import { GameRoom } from "../../src/game_room";
 
 export class TestGameClient implements IGameClient {
-  private room?: GameRoom;
+  private id: string;
+  private queue: EventQueue;
 
+  constructor(id: string) {
+    this.id = id;
+    this.queue = new EventQueue();
+  }
   public send(messageType: IO_MESSAGE_TYPE, message: any): void {
     return;
   }
 
-  public setRoom(room: GameRoom): void {
-    this.room = room;
+  public when(event: string, callback: (payload: object) => void): void {
+    this.queue.when(event, callback);
   }
 
-  public getRoom(): GameRoom | null {
-    return this.room || null;
+  public simulateEvent(event: string, payload: object): void {
+    this.queue.trigger(event, payload);
+  }
+
+  public getId(): string {
+    return this.id;
   }
 }

@@ -28,7 +28,8 @@ import { BALL_INITIAL_ARGS, BOX18A_INITIAL_COORDINATES,
   BOX18B_INITIAL_COORDINATES, BOX6A_INITIAL_COORDINATES,
   BOX6B_INITIAL_COORDINATES, COLLISION_MARGIN_FACTOR, COMMAND_ID, constants,
   EVENTS, FIELD_INITIAL_COORDINATES, PLAYER_INITIAL_ARGS,
-  POSTA_INITIAL_COORDINATES, POSTB_INITIAL_COORDINATES, TEAM_SIDES
+  POSTA_INITIAL_COORDINATES, POSTB_INITIAL_COORDINATES, PROCESS_MESSAGE_TYPE,
+  TEAM_SIDES
   } from "./constants";
 import { EventQueue } from "./event_queue";
 import { PlayerNullController } from "./game_ai/player/null_controller/player_null_controller";
@@ -49,6 +50,10 @@ import { PlayerPhysics } from "./physics/player_physics";
 import { BallPossessionService } from "./services/ball_possession_service";
 import { CollisionDetectionService } from "./services/collision_detection_service";
 import { CollisionNotificationService } from "./services/collision_notification_service";
+
+// TODO: Alright we need to introduce proper logging.
+// tslint:disable-next-line:no-console
+console.log("started a new game process");
 
 const queue = new EventQueue();
 const collisionDetectionService = new CollisionDetectionService();
@@ -210,33 +215,31 @@ const commandHandlerRouter = new Map<string, ICommandHandler>([
   [".*", genericHandler],
 ]);
 
-// io.on("connection", (socket) => {
-//   socket.on("command", (commandRequest: ICommandRequest) => {
-//     const commandId = commandRequest.commandId as string;
-//     const commandPaths = [...commandHandlerRouter.keys()];
-//     const matchingCommandPath = commandPaths.find((commandPath) => {
-//       return commandId.match(commandPath) !== null;
-//     });
-//
-//     if (matchingCommandPath) {
-//       commandHandlerRouter.get(matchingCommandPath).handle(commandRequest);
-//     }
-//   });
-//
-//   setInterval(() => {
-//     ballPossessionService.update();
-//     collisionNotificationService.update();
-//     ball.update();
-//     players.forEach((player) => player.update());
-//     const data = {
-//       [EVENTS.BALL_DATA]: ball.serialized(),
-//       [EVENTS.BOXES_DATA]: boxes.map((box) => box.serialized()),
-//       [EVENTS.FIELD_DATA]: field.serialized(),
-//       [EVENTS.FIELD_REGION_DATA]: regions.map((region) => region.serialized()),
-//       [EVENTS.PLAYER_DATA]: players.map((player) => player.serialized()),
-//       [EVENTS.POSTS_DATA]: posts.map((post) => post.serialized()),
-//     };
-//
-//     socket.emit(EVENTS.STATE_CHANGED, data);
-//   }, 20);
-// });
+setInterval(() => {
+  ballPossessionService.update();
+  collisionNotificationService.update();
+  ball.update();
+  players.forEach((player) => player.update());
+  const data = {
+    [EVENTS.BALL_DATA]: ball.serialized(),
+    [EVENTS.BOXES_DATA]: boxes.map((box) => box.serialized()),
+    [EVENTS.FIELD_DATA]: field.serialized(),
+    [EVENTS.FIELD_REGION_DATA]: regions.map((region) => region.serialized()),
+    [EVENTS.PLAYER_DATA]: players.map((player) => player.serialized()),
+    [EVENTS.POSTS_DATA]: posts.map((post) => post.serialized()),
+  };
+
+  process.send({messageType: PROCESS_MESSAGE_TYPE.GAME_STATE, data});
+}, 20);
+
+process.on("message", (commandRequest: ICommandRequest) => {
+  const commandId = commandRequest.commandId as string;
+  const commandPaths = [...commandHandlerRouter.keys()];
+  const matchingCommandPath = commandPaths.find((commandPath) => {
+    return commandId.match(commandPath) !== null;
+  });
+
+  if (matchingCommandPath) {
+    commandHandlerRouter.get(matchingCommandPath).handle(commandRequest);
+  }
+});
