@@ -32,6 +32,7 @@ import { BALL_INITIAL_ARGS, BOX18A_INITIAL_COORDINATES,
   TEAM_SIDES
   } from "./constants";
 import { EventQueue } from "./event_queue";
+import { Game } from "./game";
 import { PlayerNullController } from "./game_ai/player/null_controller/player_null_controller";
 import { PlayerStateMachine } from "./game_ai/player/state_machine/player_state_machine";
 import { Ball } from "./game_objects/ball";
@@ -188,8 +189,10 @@ const PLAYER_STATES: IPlayerState[] = [
   new DribblingState(commandFactory),
 ];
 const interceptionCalculator = new InterceptionCalculator();
-const passValueCalculator = new PassValueCalculator(ball, interceptionCalculator);
-const shotValueCalculator = new ShotValueCalculator(ball, interceptionCalculator);
+const passValueCalculator =
+  new PassValueCalculator(ball, interceptionCalculator);
+const shotValueCalculator =
+  new ShotValueCalculator(ball, interceptionCalculator);
 
 const featureExtractor = new PlayerStateFeatureExtractor(
   ball, ballPossessionService, passValueCalculator, shotValueCalculator);
@@ -215,21 +218,24 @@ const commandHandlerRouter = new Map<string, ICommandHandler>([
   [".*", genericHandler],
 ]);
 
+const game = new Game();
+game.setBall(ball)
+  .setTeamA(teamA)
+  .setTeamB(teamB)
+  .setBoxes(boxes)
+  .setField(field)
+  .setRegions(regions)
+  .setPosts(posts);
+
 setInterval(() => {
   ballPossessionService.update();
   collisionNotificationService.update();
-  ball.update();
-  players.forEach((player) => player.update());
-  const data = {
-    [EVENTS.BALL_DATA]: ball.serialized(),
-    [EVENTS.BOXES_DATA]: boxes.map((box) => box.serialized()),
-    [EVENTS.FIELD_DATA]: field.serialized(),
-    [EVENTS.FIELD_REGION_DATA]: regions.map((region) => region.serialized()),
-    [EVENTS.PLAYER_DATA]: players.map((player) => player.serialized()),
-    [EVENTS.POSTS_DATA]: posts.map((post) => post.serialized()),
-  };
+  game.update();
 
-  process.send({messageType: PROCESS_MESSAGE_TYPE.GAME_STATE, data});
+  process.send({
+    data: game.getState(),
+    messageType: PROCESS_MESSAGE_TYPE.GAME_STATE,
+  });
 }, 20);
 
 process.on("message", (commandRequest: ICommandRequest) => {

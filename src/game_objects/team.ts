@@ -40,4 +40,8 @@ export class Team {
   public setColors(colors: [number, number, number]): void {
     this.players.forEach((player) => player.setColors(colors));
   }
+
+  public update(): void {
+    this.players.forEach((player) => player.update());
+  }
 }

@@ -109,7 +109,7 @@ export const BOX18B_INITIAL_COORDINATES = [
   constants.BOX18_YLENGTH_TO_FIELD_YLENGTH as number,
 ];
 
-export const COLLISION_MARGIN_FACTOR = 1.1;
+export const COLLISION_MARGIN_FACTOR = 1.2;
 
 export const FIELD_INITIAL_COORDINATES = [
   constants.FIELD_INITIAL_X as number,
