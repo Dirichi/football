@@ -1,17 +1,30 @@
+import { Game } from "./game";
+import { IGameState } from "./interfaces/igame_state";
+import { PlayState } from "./play_state";
+import { KICKOFF_ANIMATION_TIME } from "./constants";
+
 export class KickOffState implements IGameState {
-  public enter(game: Game) {
+  private animationTimer: number;
+
+  public constructor() {
+    this.animationTimer = 0;
+  }
+
+  public enter(game: Game): void {
+    this.animationTimer = KICK_OFF_ANIMATION_TIME;
     game.disableControls();
+    game.prepareForKickOff();
   }
 
   public update(game: Game): IGameState | null {
-    if (game.readyForKickOff()) {
+    if (this.animationTimer === 0) {
       return new PlayState();
     }
-    game.prepareForKickOff();
-    return null;
+    game.runKickOffAnimation();
+    this.animationTimer -= 1;
   }
 
-  public exit(game: Game) {
+  public exit(game: Game): void {
     game.enableControls();
   }
 }

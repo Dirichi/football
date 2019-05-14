@@ -1,24 +1,29 @@
+import { Game } from "./game";
+import { IGameState } from "./interfaces/igame_state";
+import { KickOffState } from "./kickoff_state";
+import { GOAL_ANIMATION_TIME } from "./constants";
+
 export class GoalState implements IGameState {
-  private goalCelebrationTimer: number;
+  private animationTimer: number;
 
   constructor() {
-    this.goalCelebrationTimer = 0;
+    this.animationTimer = 0;
   }
 
   public enter(game: Game): void {
     game.disableControls();
-    this.goalCelebrationTimer = 5000;
+    this.animationTimer = GOAL_ANIMATION_TIME;
   }
 
-  public update(game: Game): Game | null {
-    if (this.goalCelebrationTimer === 0) {
+  public update(game: Game): IGameState | null {
+    if (this.animationTimer === 0) {
       return new KickOffState();
     }
-    game.displayGoalCelebrationAnimation();
-    this.goalCelebrationTimer -= 1;
+    game.runGoalAnimation();
+    this.animationTimer -= 1;
   }
 
-  public exit(game: Game) {
+  public exit(game: Game): void {
     game.enableControls();
   }
 }

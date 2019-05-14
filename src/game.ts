@@ -5,22 +5,21 @@ import { Field } from "./game_objects/field";
 import { FieldRegion } from "./game_objects/field_region";
 import { Post } from "./game_objects/post";
 import { Team } from "./game_objects/team";
+import { IGameStateMachine } from "./interfaces/igame_state_machine";
 
 export class Game {
   private ball: Ball;
   private field: Field;
-  private teamA: Team;
-  private teamB: Team;
   private boxes: Box[];
   private regions: FieldRegion[];
   private posts: Post[];
   private stateMachine: IGameStateMachine;
+  private teams: Team[];
 
   public update(): void {
-    this.ball.update();
-    this.teamA.update();
-    this.teamB.update();
     this.stateMachine.update(this);
+    this.ball.update();
+    this.teams.forEach((team) => team.update());
   }
 
   public setBall(ball: Ball): Game {
@@ -33,13 +32,9 @@ export class Game {
     return this;
   }
 
-  public setTeamA(teamA: Team): Game {
-    this.teamA = teamA;
-    return this;
-  }
-
-  public setTeamB(teamB: Team): Game {
-    this.teamB = teamB;
+  public setTeams(teams: Team[]): Game {
+    // TODO: Leaving out a check for whether the size of teams == 2
+    this.teams = teams;
     return this;
   }
 
@@ -64,16 +59,34 @@ export class Game {
   }
 
   public disableControls(): void {
-    [this.teamA, this.teamB].forEach((team) => team.disableControls());
+    this.teams.forEach((team) => team.disableControls());
   }
 
   public enableControls(): void {
-    [this.teamA, this.teamB].forEach((team) => team.enableControls());
+    this.teams.forEach((team) => team.enableControls());
+  }
+
+  public runGoalAnimation(): void {
+    // tslint:disable-next-line:no-console
+    console.log("goal scored");
+  }
+
+  public runKickOffAnimation(): void {
+    // tslint:disable-next-line:no-console
+    console.log("kicking off");
+  }
+
+  public goalScored(): boolean {
+    return this.posts.some((post) => post.containsBall(this.ball));
+  }
+
+  public prepareForKickOff(): void {
+    this.ball.prepareForKickOff();
+    this.teams.forEach((team) => team.prepareForKickOff());
   }
 
   public getState() {
-    const players = [this.teamA, this.teamB].map(
-      (team) => team.getPlayers()).flat();
+    const players = this.teams.map((team) => team.getPlayers()).flat();
     return {
       [EVENTS.BALL_DATA]: this.ball.serialized(),
       [EVENTS.BOXES_DATA]: this.boxes.map((box) => box.serialized()),

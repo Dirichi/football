@@ -1,9 +1,11 @@
-import { IGameState } from "../interfaces/igame_state";
+import { Game } from "./game";
+import { IGameState } from "./interfaces/igame_state";
+import { IGameStateMachine } from "./interfaces/igame_state_machine";
 
-export class GameStateMachine {
+export class GameStateMachine implements IGameStateMachine {
   private state: IGameState;
 
-  private constructor(initialState: IGameState) {
+  constructor(initialState: IGameState) {
     this.state = initialState;
   }
 

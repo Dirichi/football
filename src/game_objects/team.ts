@@ -44,4 +44,15 @@ export class Team {
   public update(): void {
     this.players.forEach((player) => player.update());
   }
+
+  public enableControls(): void {
+    this.players.forEach((player) => player.enableControls());
+  }
+  public disableControls(): void {
+    this.players.forEach((player) => player.disableControls());
+  }
+
+  public prepareForKickOff(): void {
+    this.players.forEach((player) => player.prepareForKickOff());
+  }
 }

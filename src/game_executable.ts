@@ -9,6 +9,8 @@ import { PassingState } from "./game_ai/player/state_machine/passing_state";
 import { PlayerStateFeatureExtractor } from "./game_ai/player/state_machine/player_state_feature_extractor";
 import { ShootingState } from "./game_ai/player/state_machine/shooting_state";
 import { WaitingState } from "./game_ai/player/state_machine/waiting_state";
+import { GameStateMachine } from "./game_state_machine";
+import { KickOffState } from "./kickoff_state";
 
 import { ChaseBallCommand } from "./commands/chase_ball_command";
 import { CommandFactory } from "./commands/command_factory";
@@ -72,6 +74,7 @@ const ballPhysics = new BallPhysics(field, queue);
 const ball = new Ball(ballx, bally, ballvx, ballvy, balldiameter);
 ball.setPhysics(ballPhysics);
 ball.setMaximumSpeed(constants.BALL_DEFAULT_SPEED);
+ball.setKickOffPosition(field.getMidPoint());
 
 const [postAX, postAY, postAXlength, postAYlength] = POSTA_INITIAL_COORDINATES;
 const postA = new Post(postAX, postAY, postAXlength, postAYlength);
@@ -218,14 +221,16 @@ const commandHandlerRouter = new Map<string, ICommandHandler>([
   [".*", genericHandler],
 ]);
 
+const initialState = new KickOffState();
+const gameStateMachine = new GameStateMachine(initialState);
 const game = new Game();
 game.setBall(ball)
-  .setTeamA(teamA)
-  .setTeamB(teamB)
+  .setTeams(teams)
   .setBoxes(boxes)
   .setField(field)
   .setRegions(regions)
-  .setPosts(posts);
+  .setPosts(posts)
+  .setStateMachine(gameStateMachine);
 
 setInterval(() => {
   ballPossessionService.update();

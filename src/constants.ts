@@ -1,6 +1,8 @@
 export const BALL_CONTROL_REFRESH_TIME = 200;
 
 // TODO: This should not be an enum;
+// The fact that it is one also limits my ability to
+// express these ratios as mathematical relationsips
 export enum constants {
   BALL_DIAMETER_TO_FIELD_YLENGTH = 0.01,
   BALL_DEFAULT_SPEED = 0.004,
@@ -26,7 +28,7 @@ export enum constants {
   PLAYER_INITIAL_X = 0.3,
   PLAYER_INITIAL_Y = 0.8,
   PLAYER_DEFAULT_SPEED = 0.002,
-  PLAYER_PHYSICS_DEFAULT_FRICTION = 0.05,
+  PLAYER_PHYSICS_DEFAULT_FRICTION = 0.1,
   POST_XLENGTH_TO_FIELD_XLENGTH = 0.01,
   POST_YLENGTH_TO_FIELD_YLENGTH = 0.15,
 }
@@ -110,6 +112,9 @@ export const BOX18B_INITIAL_COORDINATES = [
 ];
 
 export const COLLISION_MARGIN_FACTOR = 1.2;
+
+export const GOAL_ANIMATION_TIME = 300; // in number of `update` calls
+export const KICKOFF_ANIMATION_TIME = 300; // in number of `update` calls
 
 export const FIELD_INITIAL_COORDINATES = [
   constants.FIELD_INITIAL_X as number,
