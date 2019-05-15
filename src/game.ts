@@ -6,6 +6,7 @@ import { FieldRegion } from "./game_objects/field_region";
 import { Post } from "./game_objects/post";
 import { Team } from "./game_objects/team";
 import { IGameStateMachine } from "./interfaces/igame_state_machine";
+import { ITextSchema } from "./interfaces/itext_schema";
 
 export class Game {
   private ball: Ball;
@@ -15,6 +16,7 @@ export class Game {
   private posts: Post[];
   private stateMachine: IGameStateMachine;
   private teams: Team[];
+  private stateText: string = "";
 
   public update(): void {
     this.stateMachine.update(this);
@@ -67,13 +69,15 @@ export class Game {
   }
 
   public runGoalAnimation(): void {
-    // TODO: Implement animation
-    return;
+    this.stateText = "GOAL";
   }
 
   public runKickOffAnimation(): void {
-    // TODO: Implement animation
-    return;
+    this.stateText = "KICK OFF";
+  }
+
+  public runPlayAnimation(): void {
+    this.stateText = "";
   }
 
   public goalScored(): boolean {
@@ -88,6 +92,7 @@ export class Game {
   public getState() {
     const players = this.teams.map((team) => team.getPlayers()).flat();
     return {
+      [EVENTS.GAME_STATE_TEXT_DATA]: this.buildStateText(),
       [EVENTS.BALL_DATA]: this.ball.serialized(),
       [EVENTS.BOXES_DATA]: this.boxes.map((box) => box.serialized()),
       [EVENTS.FIELD_DATA]: this.field.serialized(),
@@ -95,6 +100,15 @@ export class Game {
         (region) => region.serialized()),
       [EVENTS.PLAYER_DATA]: players.map((player) => player.serialized()),
       [EVENTS.POSTS_DATA]: this.posts.map((post) => post.serialized()),
+    };
+  }
+
+  private buildStateText(): ITextSchema {
+    const midPoint = this.field.getMidPoint();
+    return {
+      value: this.stateText,
+      x: midPoint.x,
+      y: midPoint.y,
     };
   }
 }

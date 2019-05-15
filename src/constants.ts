@@ -33,6 +33,8 @@ export enum constants {
   POST_YLENGTH_TO_FIELD_YLENGTH = 0.15,
 }
 
+// TODO: This enum may be a misnomer. It should be merged into
+// the IO_MESSAGE_TYPE name space.
 export enum EVENTS {
   BALL_DATA = "ball.data",
   BOXES_DATA = "boxes.data",
@@ -41,6 +43,7 @@ export enum EVENTS {
   PLAYER_DATA = "player.data",
   POSTS_DATA = "posts.data",
   STATE_CHANGED = "state.changed",
+  GAME_STATE_TEXT_DATA = "game.state.text.data",
 }
 
 export enum DIRECTION {

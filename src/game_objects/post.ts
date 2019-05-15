@@ -22,6 +22,9 @@ export class Post {
     return new ThreeDimensionalVector(x, y, 0);
   }
 
+  // TODO: It feels disatisfactory that there's a collision notification
+  // service and this piece of code is here. Will change this to use that
+  // service later.
   public containsBall(ball: Ball): boolean {
     const withinXBounds = this.x < ball.x && ball.x < (this.x  + this.xlength);
     const withinYBounds = this.y < ball.y && ball.y < (this.y  + this.ylength);

@@ -2,8 +2,10 @@ import { IBallSchema } from "./iball_schema";
 import { IBoxSchema } from "./ibox_schema";
 import { IFieldRegionSchema } from "./ifield_region_schema";
 import { IPlayerSchema } from "./iplayer_schema";
+import { ITextSchema } from "./itext_schema";
 
 export interface IAnimationEngine {
+  displayText(text: ITextSchema): void;
   drawBall(ball: IBallSchema): void;
   drawBox(box: IBoxSchema): void;
   drawField(field: IBoxSchema): void;

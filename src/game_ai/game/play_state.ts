@@ -11,7 +11,7 @@ export class PlayState implements IGameState {
     if (game.goalScored()) {
       return new GoalState();
     }
-
+    game.runPlayAnimation();
     return null;
   }
 
