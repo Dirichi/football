@@ -67,13 +67,13 @@ export class Game {
   }
 
   public runGoalAnimation(): void {
-    // tslint:disable-next-line:no-console
-    console.log("goal scored");
+    // TODO: Implement animation
+    return;
   }
 
   public runKickOffAnimation(): void {
-    // tslint:disable-next-line:no-console
-    console.log("kicking off");
+    // TODO: Implement animation
+    return;
   }
 
   public goalScored(): boolean {

@@ -113,8 +113,8 @@ export const BOX18B_INITIAL_COORDINATES = [
 
 export const COLLISION_MARGIN_FACTOR = 1.2;
 
-export const GOAL_ANIMATION_TIME = 300; // in number of `update` calls
-export const KICKOFF_ANIMATION_TIME = 300; // in number of `update` calls
+export const GOAL_ANIMATION_TIME = 180; // in number of `update` calls
+export const KICKOFF_ANIMATION_TIME = 180; // in number of `update` calls
 
 export const FIELD_INITIAL_COORDINATES = [
   constants.FIELD_INITIAL_X as number,

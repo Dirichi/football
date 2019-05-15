@@ -1,7 +1,7 @@
-import { Game } from "./game";
-import { IGameState } from "./interfaces/igame_state";
+import { KICKOFF_ANIMATION_TIME } from "../../constants";
+import { Game } from "../../game";
+import { IGameState } from "../../interfaces/igame_state";
 import { PlayState } from "./play_state";
-import { KICKOFF_ANIMATION_TIME } from "./constants";
 
 export class KickOffState implements IGameState {
   private animationTimer: number;
@@ -11,7 +11,7 @@ export class KickOffState implements IGameState {
   }
 
   public enter(game: Game): void {
-    this.animationTimer = KICK_OFF_ANIMATION_TIME;
+    this.animationTimer = KICKOFF_ANIMATION_TIME;
     game.disableControls();
     game.prepareForKickOff();
   }

@@ -1,3 +1,5 @@
+import { GameStateMachine } from "./game_ai/game/game_state_machine";
+import { KickOffState } from "./game_ai/game/kickoff_state";
 import { AttackingRunState } from "./game_ai/player/state_machine/attacking_run_state";
 import { InterceptionCalculator } from "./game_ai/player/state_machine/calculators/interception_calculator";
 import { PassValueCalculator } from "./game_ai/player/state_machine/calculators/pass_value_calculator";
@@ -9,8 +11,6 @@ import { PassingState } from "./game_ai/player/state_machine/passing_state";
 import { PlayerStateFeatureExtractor } from "./game_ai/player/state_machine/player_state_feature_extractor";
 import { ShootingState } from "./game_ai/player/state_machine/shooting_state";
 import { WaitingState } from "./game_ai/player/state_machine/waiting_state";
-import { GameStateMachine } from "./game_state_machine";
-import { KickOffState } from "./kickoff_state";
 
 import { ChaseBallCommand } from "./commands/chase_ball_command";
 import { CommandFactory } from "./commands/command_factory";
@@ -243,6 +243,9 @@ setInterval(() => {
   });
 }, 20);
 
+// TODO: We may need an abstraction to handle messaging between
+// the main process and the child process. This would make it easy to
+// run a game in the parent process if we wanted to.
 process.on("message", (commandRequest: ICommandRequest) => {
   const commandId = commandRequest.commandId as string;
   const commandPaths = [...commandHandlerRouter.keys()];

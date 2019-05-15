@@ -1,7 +1,7 @@
-import { Game } from "./game";
-import { IGameState } from "./interfaces/igame_state";
+import { GOAL_ANIMATION_TIME } from "../../constants";
+import { Game } from "../../game";
+import { IGameState } from "../../interfaces/igame_state";
 import { KickOffState } from "./kickoff_state";
-import { GOAL_ANIMATION_TIME } from "./constants";
 
 export class GoalState implements IGameState {
   private animationTimer: number;

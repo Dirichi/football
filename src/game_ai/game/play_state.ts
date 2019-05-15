@@ -1,6 +1,6 @@
-import { Game } from "./game";
+import { Game } from "../../game";
+import { IGameState } from "../../interfaces/igame_state";
 import { GoalState } from "./goal_state";
-import { IGameState } from "./interfaces/igame_state";
 
 export class PlayState implements IGameState {
   public enter(game: Game) {
