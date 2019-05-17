@@ -207,6 +207,8 @@ const buildStateMachine = (player: Player) => {
 };
 
 aiPlayers.forEach((player) => player.setController(buildStateMachine(player)));
+// TODO: Replace this with a controller that listens to commands from a specific
+// user.
 playerA.setController(new PlayerNullController(playerA));
 
 players.forEach((player) => player.setMessageQueue(queue));

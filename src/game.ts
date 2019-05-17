@@ -103,6 +103,7 @@ export class Game {
     };
   }
 
+  // TODO: Maybe this doesn't belong to `Game`
   private buildStateText(): ITextSchema {
     const midPoint = this.field.getMidPoint();
     return {
