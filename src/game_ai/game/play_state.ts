@@ -3,6 +3,7 @@ import { IGameState } from "../../interfaces/igame_state";
 import { GoalState } from "./goal_state";
 
 export class PlayState implements IGameState {
+  // TODO: Test this class
   public enter(game: Game) {
     game.enableControls();
   }

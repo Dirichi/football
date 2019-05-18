@@ -4,14 +4,17 @@ import { IGameState } from "../../interfaces/igame_state";
 import { PlayState } from "./play_state";
 
 export class KickOffState implements IGameState {
+  // TODO: Test this class
+  private animationDuration: number;
   private animationTimer: number;
 
-  public constructor() {
+  public constructor(animationDuration?: number) {
+    this.animationDuration = animationDuration || KICKOFF_ANIMATION_TIME;
     this.animationTimer = 0;
   }
 
   public enter(game: Game): void {
-    this.animationTimer = KICKOFF_ANIMATION_TIME;
+    this.animationTimer = this.animationDuration;
     game.disableControls();
     game.prepareForKickOff();
   }
