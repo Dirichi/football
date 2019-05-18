@@ -72,6 +72,7 @@ export class PlayerPhysics {
   }
 
   private controlBall(ball: ICircle): void {
+    // TODO: Should this entire flow of controlling the ball be its own state?
     const newBallPosition = this.calculateNewBallPosition(ball);
     const payload: IBallControlPayload = {
       newVx: 0,

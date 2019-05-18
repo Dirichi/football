@@ -1,3 +1,5 @@
+import { GameStateMachine } from "./game_ai/game/game_state_machine";
+import { KickOffState } from "./game_ai/game/kickoff_state";
 import { AttackingRunState } from "./game_ai/player/state_machine/attacking_run_state";
 import { InterceptionCalculator } from "./game_ai/player/state_machine/calculators/interception_calculator";
 import { PassValueCalculator } from "./game_ai/player/state_machine/calculators/pass_value_calculator";
@@ -32,6 +34,7 @@ import { BALL_INITIAL_ARGS, BOX18A_INITIAL_COORDINATES,
   TEAM_SIDES
   } from "./constants";
 import { EventQueue } from "./event_queue";
+import { Game } from "./game";
 import { PlayerNullController } from "./game_ai/player/null_controller/player_null_controller";
 import { PlayerStateMachine } from "./game_ai/player/state_machine/player_state_machine";
 import { Ball } from "./game_objects/ball";
@@ -71,6 +74,7 @@ const ballPhysics = new BallPhysics(field, queue);
 const ball = new Ball(ballx, bally, ballvx, ballvy, balldiameter);
 ball.setPhysics(ballPhysics);
 ball.setMaximumSpeed(constants.BALL_DEFAULT_SPEED);
+ball.setKickOffPosition(field.getMidPoint());
 
 const [postAX, postAY, postAXlength, postAYlength] = POSTA_INITIAL_COORDINATES;
 const postA = new Post(postAX, postAY, postAXlength, postAYlength);
@@ -188,8 +192,10 @@ const PLAYER_STATES: IPlayerState[] = [
   new DribblingState(commandFactory),
 ];
 const interceptionCalculator = new InterceptionCalculator();
-const passValueCalculator = new PassValueCalculator(ball, interceptionCalculator);
-const shotValueCalculator = new ShotValueCalculator(ball, interceptionCalculator);
+const passValueCalculator =
+  new PassValueCalculator(ball, interceptionCalculator);
+const shotValueCalculator =
+  new ShotValueCalculator(ball, interceptionCalculator);
 
 const featureExtractor = new PlayerStateFeatureExtractor(
   ball, ballPossessionService, passValueCalculator, shotValueCalculator);
@@ -201,6 +207,8 @@ const buildStateMachine = (player: Player) => {
 };
 
 aiPlayers.forEach((player) => player.setController(buildStateMachine(player)));
+// TODO: Replace this with a controller that listens to commands from a specific
+// user.
 playerA.setController(new PlayerNullController(playerA));
 
 players.forEach((player) => player.setMessageQueue(queue));
@@ -215,23 +223,31 @@ const commandHandlerRouter = new Map<string, ICommandHandler>([
   [".*", genericHandler],
 ]);
 
+const initialState = new KickOffState();
+const gameStateMachine = new GameStateMachine(initialState);
+const game = new Game();
+game.setBall(ball)
+  .setTeams(teams)
+  .setBoxes(boxes)
+  .setField(field)
+  .setRegions(regions)
+  .setPosts(posts)
+  .setStateMachine(gameStateMachine);
+
 setInterval(() => {
   ballPossessionService.update();
   collisionNotificationService.update();
-  ball.update();
-  players.forEach((player) => player.update());
-  const data = {
-    [EVENTS.BALL_DATA]: ball.serialized(),
-    [EVENTS.BOXES_DATA]: boxes.map((box) => box.serialized()),
-    [EVENTS.FIELD_DATA]: field.serialized(),
-    [EVENTS.FIELD_REGION_DATA]: regions.map((region) => region.serialized()),
-    [EVENTS.PLAYER_DATA]: players.map((player) => player.serialized()),
-    [EVENTS.POSTS_DATA]: posts.map((post) => post.serialized()),
-  };
+  game.update();
 
-  process.send({messageType: PROCESS_MESSAGE_TYPE.GAME_STATE, data});
+  process.send({
+    data: game.getState(),
+    messageType: PROCESS_MESSAGE_TYPE.GAME_STATE,
+  });
 }, 20);
 
+// TODO: We may need an abstraction to handle messaging between
+// the main process and the child process. This would make it easy to
+// run a game in the parent process if we wanted to.
 process.on("message", (commandRequest: ICommandRequest) => {
   const commandId = commandRequest.commandId as string;
   const commandPaths = [...commandHandlerRouter.keys()];

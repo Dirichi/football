@@ -7,12 +7,22 @@ import { IBallSchema } from "../interfaces/iball_schema";
 import { IBoxSchema } from "../interfaces/ibox_schema";
 import { IFieldRegionSchema } from "../interfaces/ifield_region_schema";
 import { IPlayerSchema } from "../interfaces/iplayer_schema";
+import { ITextSchema } from "../interfaces/itext_schema";
 
 export class P5AnimationEngine implements IAnimationEngine {
   public animator: p5;
 
   constructor(animator: p5) {
     this.animator = animator;
+  }
+
+  public displayText(text: ITextSchema) {
+    this.animator.push();
+    this.animator.textAlign(this.animator.CENTER);
+    this.animator.textSize(64);
+    this.animator.fill(255);
+    this.animator.text(text.value, text.x, text.y);
+    this.animator.pop();
   }
 
   public drawField(field: IBoxSchema) {

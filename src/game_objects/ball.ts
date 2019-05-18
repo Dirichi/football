@@ -15,6 +15,7 @@ export class Ball implements ICollidable {
   private physics?: BallPhysics;
   private maximumSpeed?: number;
   private id: string;
+  private kickOffPosition: ThreeDimensionalVector;
 
   constructor(x: number, y: number, vx: number, vy: number, diameter: number) {
     this.id = v4(); // Random unique id generation
@@ -47,6 +48,10 @@ export class Ball implements ICollidable {
     this.maximumSpeed = speed;
   }
 
+  public setKickOffPosition(position: ThreeDimensionalVector) {
+    this.kickOffPosition = position;
+  }
+
   public serialized(): IBallSchema {
     return {
       diameter: this.diameter,
@@ -59,6 +64,10 @@ export class Ball implements ICollidable {
 
   public getPosition(): ThreeDimensionalVector {
     return new ThreeDimensionalVector(this.x, this.y, 0);
+  }
+
+  public prepareForKickOff(): void {
+    [this.x, this.y] = [this.kickOffPosition.x, this.kickOffPosition.y];
   }
 
   public getGameObjectId(): string {

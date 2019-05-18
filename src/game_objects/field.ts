@@ -1,5 +1,6 @@
 import { IBoundary } from "../interfaces/iboundary";
 import { IBoxSchema } from "../interfaces/ibox_schema";
+import { ThreeDimensionalVector } from "../three_dimensional_vector";
 
 export class Field implements IBoundary {
   public x: number;
@@ -12,6 +13,14 @@ export class Field implements IBoundary {
     this.y = y;
     this.xlength = xlength;
     this.ylength = ylength;
+  }
+
+  public getMidPoint(): ThreeDimensionalVector {
+    return new ThreeDimensionalVector(
+      this.x + (this.xlength / 2),
+      this.y + (this.ylength / 2),
+      0
+    );
   }
 
   // TODO: Perhaps this method doesn't belong here.

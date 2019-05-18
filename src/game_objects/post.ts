@@ -1,5 +1,6 @@
 import { IBoxSchema } from "../interfaces/ibox_schema";
 import { ThreeDimensionalVector } from "../three_dimensional_vector";
+import { Ball } from "./ball";
 
 export class Post {
   public x: number;
@@ -19,6 +20,16 @@ export class Post {
     const y = this.y + this.ylength / 2;
 
     return new ThreeDimensionalVector(x, y, 0);
+  }
+
+  // TODO: It feels disatisfactory that there's a collision notification
+  // service and this piece of code is here. Will change this to use that
+  // service later.
+  public containsBall(ball: Ball): boolean {
+    const withinXBounds = this.x < ball.x && ball.x < (this.x  + this.xlength);
+    const withinYBounds = this.y < ball.y && ball.y < (this.y  + this.ylength);
+
+    return withinXBounds && withinYBounds;
   }
 
   public serialized(): IBoxSchema {
