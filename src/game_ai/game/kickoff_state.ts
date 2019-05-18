@@ -17,11 +17,9 @@ export class KickOffState implements IGameState {
   }
 
   public update(game: Game): IGameState | null {
-    if (this.animationTimer === 0) {
-      return new PlayState();
-    }
     game.runKickOffAnimation();
     this.animationTimer -= 1;
+    return this.animationTimer === 0 ? new PlayState() : null;
   }
 
   public exit(game: Game): void {

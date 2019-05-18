@@ -8,11 +8,8 @@ export class PlayState implements IGameState {
   }
 
   public update(game: Game): IGameState | null {
-    if (game.goalScored()) {
-      return new GoalState();
-    }
     game.runPlayAnimation();
-    return null;
+    return game.goalScored() ? new GoalState() : null;
   }
 
   public exit(game: Game) {

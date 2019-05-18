@@ -16,11 +16,10 @@ export class GoalState implements IGameState {
   }
 
   public update(game: Game): IGameState | null {
-    if (this.animationTimer === 0) {
-      return new KickOffState();
-    }
     game.runGoalAnimation();
     this.animationTimer -= 1;
+
+    return this.animationTimer === 0 ? new KickOffState() : null;
   }
 
   public exit(game: Game): void {
