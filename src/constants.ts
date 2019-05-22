@@ -43,6 +43,7 @@ export enum EVENTS {
   PLAYER_DATA = "player.data",
   POSTS_DATA = "posts.data",
   STATE_CHANGED = "state.changed",
+  SCORES_PANEL_DATA = "scores.panel.data",
   GAME_STATE_TEXT_DATA = "game.state.text.data",
 }
 
