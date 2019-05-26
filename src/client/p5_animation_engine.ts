@@ -145,6 +145,8 @@ export class P5AnimationEngine implements IAnimationEngine {
   private displayTeamABadge(panel: IScoresPanelSchema) {
     const midY = panel.y + panel.ylength / 2;
     this.animator.push();
+    // TODO: These colors are hardcoded and should be passed in from the
+    // server perhaps through the IScoresPanelSchema.
     this.animator.fill(0, 0, 255);
     this.animator.circle(panel.x + (panel.xlength * 0.3), midY, panel.xlength * 0.05);
     this.animator.pop();
@@ -153,6 +155,8 @@ export class P5AnimationEngine implements IAnimationEngine {
   private displayTeamBBadge(panel: IScoresPanelSchema) {
     const midY = panel.y + panel.ylength / 2;
     this.animator.push();
+    // TODO: These colors are hardcoded and should be passed in from the
+    // server perhaps through the IScoresPanelSchema.
     this.animator.fill(255, 0, 0);
     this.animator.circle(panel.x + (panel.xlength * 0.9), midY, panel.xlength * 0.05);
     this.animator.pop();
