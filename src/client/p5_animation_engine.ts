@@ -7,6 +7,7 @@ import { IBallSchema } from "../interfaces/iball_schema";
 import { IBoxSchema } from "../interfaces/ibox_schema";
 import { IFieldRegionSchema } from "../interfaces/ifield_region_schema";
 import { IPlayerSchema } from "../interfaces/iplayer_schema";
+import { IScoresPanelSchema } from "../interfaces/iscores_panel_schema";
 import { ITextSchema } from "../interfaces/itext_schema";
 
 export class P5AnimationEngine implements IAnimationEngine {
@@ -27,10 +28,11 @@ export class P5AnimationEngine implements IAnimationEngine {
 
   public drawField(field: IBoxSchema) {
     this.animator.push();
-    this.animator.fill(0, 0, 0);
+    this.animator.fill(0, 200, 0);
     this.animator.rect(field.x, field.y, field.xlength, field.ylength);
     this.drawCenterCircle(field);
     this.drawHalfWayLine(field);
+    this.drawBox(field);
     this.animator.pop();
   }
 
@@ -55,6 +57,16 @@ export class P5AnimationEngine implements IAnimationEngine {
     const midPointX = region.x + (region.xlength / 2);
     const midPointY = region.y + (region.ylength / 2);
     this.animator.text(region.id, midPointX, midPointY);
+    this.animator.pop();
+  }
+
+  public drawScoresPanel(panel: IScoresPanelSchema) {
+    this.animator.push();
+    this.drawTransparentPanel(panel);
+    this.displayTimer(panel);
+    this.displayTeamABadge(panel);
+    this.displayTeamBBadge(panel);
+    this.displayScores(panel);
     this.animator.pop();
   }
 
@@ -99,6 +111,54 @@ export class P5AnimationEngine implements IAnimationEngine {
     this.animator.noFill();
     const midPointX = field.x + (field.xlength / 2);
     this.animator.line(midPointX, field.y, midPointX, (field.y + field.ylength));
+    this.animator.pop();
+  }
+
+  private drawTransparentPanel(panel: IScoresPanelSchema) {
+    this.animator.push();
+    this.animator.fill(96, 125, 139, 128);
+    this.animator.rect(panel.x, panel.y, panel.xlength, panel.ylength);
+    this.animator.pop();
+  }
+
+  private displayTimer(panel: IScoresPanelSchema) {
+    const midY = panel.y + panel.ylength / 2;
+    this.animator.push();
+    this.animator.fill(255);
+    this.animator.textAlign(this.animator.CENTER, this.animator.CENTER);
+    this.animator.textSize(24);
+    this.animator.text(panel.time, panel.x + (panel.xlength * 0.1), midY);
+    this.animator.pop();
+  }
+
+  private displayScores(panel: IScoresPanelSchema) {
+    const midY = panel.y + panel.ylength / 2;
+    const scoresText = `${panel.teamAScore} - ${panel.teamBScore}`;
+    this.animator.push();
+    this.animator.fill(255);
+    this.animator.textAlign(this.animator.CENTER, this.animator.CENTER);
+    this.animator.textSize(24);
+    this.animator.text(scoresText, panel.x + panel.xlength * 0.6, midY);
+    this.animator.pop();
+  }
+
+  private displayTeamABadge(panel: IScoresPanelSchema) {
+    const midY = panel.y + panel.ylength / 2;
+    this.animator.push();
+    // TODO: These colors are hardcoded and should be passed in from the
+    // server perhaps through the IScoresPanelSchema.
+    this.animator.fill(0, 0, 255);
+    this.animator.circle(panel.x + (panel.xlength * 0.3), midY, panel.xlength * 0.05);
+    this.animator.pop();
+  }
+
+  private displayTeamBBadge(panel: IScoresPanelSchema) {
+    const midY = panel.y + panel.ylength / 2;
+    this.animator.push();
+    // TODO: These colors are hardcoded and should be passed in from the
+    // server perhaps through the IScoresPanelSchema.
+    this.animator.fill(255, 0, 0);
+    this.animator.circle(panel.x + (panel.xlength * 0.9), midY, panel.xlength * 0.05);
     this.animator.pop();
   }
 }

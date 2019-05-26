@@ -7,6 +7,7 @@ export class Team {
   private players: Player[];
   private opposition?: Team;
   private side?: TEAM_SIDES;
+  private opposingGoalPost?: Post;
 
   constructor(players: Player[]) {
     this.players = players;
@@ -30,11 +31,16 @@ export class Team {
   }
 
   public setOpposingGoalPost(post: Post): void {
+    this.opposingGoalPost = post;
     this.players.forEach((player) => player.setOpposingGoalPost(post));
   }
 
   public setOpposition(opposition: Team): void {
     this.opposition = opposition;
+  }
+
+  public getOpposingGoalPost(): Post {
+    return this.opposingGoalPost;
   }
 
   public setColors(colors: [number, number, number]): void {

@@ -6,7 +6,9 @@ import { FieldRegion } from "./game_objects/field_region";
 import { Post } from "./game_objects/post";
 import { Team } from "./game_objects/team";
 import { IGameStateMachine } from "./interfaces/igame_state_machine";
+import { IScoresPanelSchema } from "./interfaces/iscores_panel_schema";
 import { ITextSchema } from "./interfaces/itext_schema";
+import { TimerService } from "./timer_service";
 
 export class Game {
   private ball: Ball;
@@ -16,9 +18,16 @@ export class Game {
   private posts: Post[];
   private stateMachine: IGameStateMachine;
   private teams: Team[];
+  // TODO: These three should be moved into different classes, or be classes of
+  // their own.
   private stateText: string = "";
+  private teamAScore: number = 0;
+  private teamBScore: number = 0;
+
+  private timer: TimerService;
 
   public update(): void {
+    this.timer.update();
     this.stateMachine.update(this);
     this.ball.update();
     this.teams.forEach((team) => team.update());
@@ -60,6 +69,11 @@ export class Game {
     return this;
   }
 
+  public setTimer(timer: TimerService): Game {
+    this.timer = timer;
+    return this;
+  }
+
   public disableControls(): void {
     this.teams.forEach((team) => team.disableControls());
   }
@@ -80,13 +94,32 @@ export class Game {
     this.stateText = "";
   }
 
+  public runGameOverAnimation(): void {
+    this.stateText = "GAME OVER";
+  }
+
   public goalScored(): boolean {
-    return this.posts.some((post) => post.containsBall(this.ball));
+    return this.getPostContainingBall() !== null;
+  }
+
+  public isOver(): boolean {
+    return this.timer.isFinished();
   }
 
   public prepareForKickOff(): void {
     this.ball.prepareForKickOff();
     this.teams.forEach((team) => team.prepareForKickOff());
+  }
+
+  public recordGoal(): void {
+    const post = this.getPostContainingBall();
+    if (!post) { return; }
+
+    const scoringTeam = this.teams.find((team) => {
+      return team.getOpposingGoalPost() === post;
+    });
+
+    this.incrementScoreFor(scoringTeam);
   }
 
   public getState() {
@@ -100,6 +133,7 @@ export class Game {
         (region) => region.serialized()),
       [EVENTS.PLAYER_DATA]: players.map((player) => player.serialized()),
       [EVENTS.POSTS_DATA]: this.posts.map((post) => post.serialized()),
+      [EVENTS.SCORES_PANEL_DATA]: this.buildScoresPanel(),
     };
   }
 
@@ -111,5 +145,31 @@ export class Game {
       x: midPoint.x,
       y: midPoint.y,
     };
+  }
+
+  // TODO: This may not need to be here
+  private buildScoresPanel(): IScoresPanelSchema {
+    return {
+      teamAScore: this.teamAScore,
+      teamBScore: this.teamBScore,
+      time: Math.floor(this.timer.getElapsedTime()),
+      x: this.field.x,
+      xlength: this.field.xlength * 0.1,
+      y: this.field.y,
+      ylength: this.field.ylength * 0.05,
+    };
+  }
+
+  private getPostContainingBall(): Post | null {
+    return this.posts.find((post) => post.containsBall(this.ball)) || null;
+  }
+
+  private incrementScoreFor(team: Team): void {
+    // TODO: This could be moved into a player / team stats class
+    if (team === this.teams[0]) {
+      this.teamAScore += 1;
+    } else {
+      this.teamBScore += 1;
+    }
   }
 }

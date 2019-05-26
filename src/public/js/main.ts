@@ -11,6 +11,7 @@ import { P5AnimationEngine } from "../../client/p5_animation_engine";
 import { PlayerGraphics } from "../../graphics/player_graphics";
 import { PostGraphics } from "../../graphics/post_graphics";
 import { GameStateTextGraphics } from "../../graphics/game_state_text_graphics";
+import { ScoresPanelGraphics } from "../../graphics/scores_panel_graphics";
 
 const socket = io();
 const queue = new EventQueue();
@@ -25,6 +26,7 @@ const sketch = (p: p5) => {
   const playerGraphics = new PlayerGraphics(animationEngine, queue);
   const fieldRegionGraphics = new FieldRegionGraphics(animationEngine, queue);
   const gameStateTextGraphics = new GameStateTextGraphics(animationEngine, queue);
+  const scoresPanelGraphics = new ScoresPanelGraphics(animationEngine, queue);
 
 // DO NOT REORDER THIS
 // Maybe there should be a way to specify the order in which animations
@@ -38,6 +40,7 @@ const sketch = (p: p5) => {
     playerGraphics,
     ballGraphics,
     gameStateTextGraphics,
+    scoresPanelGraphics,
   ];
 
   const fieldCoordinates = [];
