@@ -8,6 +8,7 @@ import { Team } from "./game_objects/team";
 import { IGameStateMachine } from "./interfaces/igame_state_machine";
 import { IScoresPanelSchema } from "./interfaces/iscores_panel_schema";
 import { ITextSchema } from "./interfaces/itext_schema";
+import { TimerService } from "./timer_service";
 
 export class Game {
   private ball: Ball;
@@ -17,15 +18,16 @@ export class Game {
   private posts: Post[];
   private stateMachine: IGameStateMachine;
   private teams: Team[];
-  // TODO: These four should be moved into different classes, or be classes of
+  // TODO: These three should be moved into different classes, or be classes of
   // their own.
   private stateText: string = "";
   private teamAScore: number = 0;
   private teamBScore: number = 0;
-  private time: number = 0;
+
+  private timer: TimerService;
 
   public update(): void {
-    this.updateTime();
+    this.timer.update();
     this.stateMachine.update(this);
     this.ball.update();
     this.teams.forEach((team) => team.update());
@@ -67,6 +69,11 @@ export class Game {
     return this;
   }
 
+  public setTimer(timer: TimerService): Game {
+    this.timer = timer;
+    return this;
+  }
+
   public disableControls(): void {
     this.teams.forEach((team) => team.disableControls());
   }
@@ -87,8 +94,16 @@ export class Game {
     this.stateText = "";
   }
 
+  public runGameOverAnimation(): void {
+    this.stateText = "GAME OVER";
+  }
+
   public goalScored(): boolean {
     return this.getPostContainingBall() !== null;
+  }
+
+  public isOver(): boolean {
+    return this.timer.isFinished();
   }
 
   public prepareForKickOff(): void {
@@ -137,7 +152,7 @@ export class Game {
     return {
       teamAScore: this.teamAScore,
       teamBScore: this.teamBScore,
-      time: Math.floor(this.time),
+      time: Math.floor(this.timer.getElapsedTime()),
       x: this.field.x,
       xlength: this.field.xlength * 0.1,
       y: this.field.y,
@@ -156,9 +171,5 @@ export class Game {
     } else {
       this.teamBScore += 1;
     }
-  }
-
-  private updateTime() {
-    this.time += 0.01;
   }
 }

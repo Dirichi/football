@@ -53,6 +53,7 @@ import { PlayerPhysics } from "./physics/player_physics";
 import { BallPossessionService } from "./services/ball_possession_service";
 import { CollisionDetectionService } from "./services/collision_detection_service";
 import { CollisionNotificationService } from "./services/collision_notification_service";
+import { TimerService } from "./timer_service";
 
 // TODO: Alright we need to introduce proper logging.
 // tslint:disable-next-line:no-console
@@ -225,6 +226,7 @@ const commandHandlerRouter = new Map<string, ICommandHandler>([
 
 const initialState = new KickOffState();
 const gameStateMachine = new GameStateMachine(initialState);
+const timer = new TimerService(0, 0.01, 90);
 const game = new Game();
 game.setBall(ball)
   .setTeams(teams)
@@ -232,7 +234,8 @@ game.setBall(ball)
   .setField(field)
   .setRegions(regions)
   .setPosts(posts)
-  .setStateMachine(gameStateMachine);
+  .setStateMachine(gameStateMachine)
+  .setTimer(timer);
 
 setInterval(() => {
   ballPossessionService.update();
