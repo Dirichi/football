@@ -4,6 +4,7 @@ import { IBoxSchema } from "../../src/interfaces/ibox_schema";
 import { IFieldRegionSchema } from "../../src/interfaces/ifield_region_schema";
 import { IPlayerSchema } from "../../src/interfaces/iplayer_schema";
 import { ITextSchema } from "../../src/interfaces/itext_schema";
+import { IScoresPanelSchema } from "../../src/interfaces/iscores_panel_schema";
 
 export class TestAnimationEngine implements IAnimationEngine {
   public displayText(text: ITextSchema) {};
@@ -13,4 +14,5 @@ export class TestAnimationEngine implements IAnimationEngine {
   public drawFieldRegion(region: IFieldRegionSchema) {};
   public drawPlayer(player: IPlayerSchema) {};
   public drawPost(post: IBoxSchema) {};
+  public drawScoresPanel(panel: IScoresPanelSchema) {};
 }

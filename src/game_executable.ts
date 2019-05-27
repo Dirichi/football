@@ -53,6 +53,8 @@ import { PlayerPhysics } from "./physics/player_physics";
 import { BallPossessionService } from "./services/ball_possession_service";
 import { CollisionDetectionService } from "./services/collision_detection_service";
 import { CollisionNotificationService } from "./services/collision_notification_service";
+import { GoalDetectionService } from "./services/goal_detection_service";
+import { GoalRecordService } from "./services/goal_record_service";
 import { TimerService } from "./timer_service";
 
 // TODO: Alright we need to introduce proper logging.
@@ -104,28 +106,34 @@ const [playerx, playery, playervx, playervy, playerSpeed, playerDiameter]
   = PLAYER_INITIAL_ARGS;
 
 const playerA = new Player(0, 0, 0, 0, playerDiameter);
-playerA.setDefendingPosition(regions[5].getMidPoint());
-playerA.setAttackingPosition(regions[35].getMidPoint());
+playerA.setDefendingPosition(regions[5].getMidPoint())
+  .setKickOffPosition(regions[5].getMidPoint())
+  .setAttackingPosition(regions[35].getMidPoint());
 
 const playerB = new Player(0, 0, 0, 0, playerDiameter);
-playerB.setDefendingPosition(regions[7].getMidPoint());
-playerB.setAttackingPosition(regions[37].getMidPoint());
+playerB.setDefendingPosition(regions[7].getMidPoint())
+  .setKickOffPosition(regions[7].getMidPoint())
+  .setAttackingPosition(regions[37].getMidPoint());
 
 const playerC = new Player(0, 0, 0, 0, playerDiameter);
-playerC.setDefendingPosition(regions[9].getMidPoint());
-playerC.setAttackingPosition(regions[39].getMidPoint());
+playerC.setDefendingPosition(regions[9].getMidPoint())
+  .setKickOffPosition(regions[9].getMidPoint())
+  .setAttackingPosition(regions[39].getMidPoint());
 
 const playerD = new Player(0, 0, 0, 0, playerDiameter);
-playerD.setDefendingPosition(regions[40].getMidPoint());
-playerD.setAttackingPosition(regions[10].getMidPoint());
+playerD.setDefendingPosition(regions[40].getMidPoint())
+  .setKickOffPosition(regions[40].getMidPoint())
+  .setAttackingPosition(regions[10].getMidPoint());
 
 const playerE = new Player(0, 0, 0, 0, playerDiameter);
-playerE.setDefendingPosition(regions[42].getMidPoint());
-playerE.setAttackingPosition(regions[12].getMidPoint());
+playerE.setDefendingPosition(regions[42].getMidPoint())
+  .setKickOffPosition(regions[42].getMidPoint())
+  .setAttackingPosition(regions[12].getMidPoint());
 
 const playerF = new Player(0, 0, 0, 0, playerDiameter);
-playerF.setDefendingPosition(regions[44].getMidPoint());
-playerF.setAttackingPosition(regions[14].getMidPoint());
+playerF.setDefendingPosition(regions[44].getMidPoint())
+  .setKickOffPosition(regions[44].getMidPoint())
+  .setAttackingPosition(regions[14].getMidPoint());
 
 const players = [playerA, playerB, playerC, playerD, playerE, playerF];
 const aiPlayers = [playerB, playerC, playerD, playerE, playerF];
@@ -133,27 +141,28 @@ const aiPlayers = [playerB, playerC, playerD, playerE, playerF];
 players.forEach((player) => {
   const physics = new PlayerPhysics(field, queue);
   physics.setFriction(constants.PLAYER_PHYSICS_DEFAULT_FRICTION);
-  player.setPhysics(physics);
-  player.positionAtDefendingPosition();
-  player.setMaximumSpeed(playerSpeed);
+  player.setPhysics(physics)
+    .setMaximumSpeed(playerSpeed)
+    .setMessageQueue(queue);
 });
 
-const teamA = new Team([playerA, playerB, playerC]);
-teamA.setSide(TEAM_SIDES.LEFT);
-const teamB = new Team([playerD, playerE, playerF]);
-teamB.setSide(TEAM_SIDES.RIGHT);
-
-const teams = [teamA, teamB];
 const ballPossessionService = new BallPossessionService(ball, players, queue);
+const teamA = new Team([playerA, playerB, playerC]);
+const teamB = new Team([playerD, playerE, playerF]);
+const teams = [teamA, teamB];
+teamA.setSide(TEAM_SIDES.LEFT)
+  .setOpposition(teamB)
+  .setOpposingGoalPost(postB)
+  .setColors([0, 0, 225])
+  .setKickOffStartingPlayer(playerB)
+  .setKickOffSupportingPlayer(playerA);
 
-teamA.setOpposition(teamB);
-teamB.setOpposition(teamA);
-
-teamA.setOpposingGoalPost(postB);
-teamB.setOpposingGoalPost(postA);
-
-teamA.setColors([0, 0, 225]);
-teamB.setColors([225, 0, 0]);
+teamB.setSide(TEAM_SIDES.RIGHT)
+  .setOpposition(teamA)
+  .setOpposingGoalPost(postA)
+  .setColors([225, 0, 0])
+  .setKickOffStartingPlayer(playerD)
+  .setKickOffSupportingPlayer(playerF);
 
 collisionNotificationService.registerCollisionGroup([ball, ...players]);
 
@@ -212,7 +221,6 @@ aiPlayers.forEach((player) => player.setController(buildStateMachine(player)));
 // user.
 playerA.setController(new PlayerNullController(playerA));
 
-players.forEach((player) => player.setMessageQueue(queue));
 ballPossessionService.enable();
 collisionDetectionService.setCollisionMarginFactor(COLLISION_MARGIN_FACTOR);
 
@@ -226,7 +234,9 @@ const commandHandlerRouter = new Map<string, ICommandHandler>([
 
 const initialState = new KickOffState();
 const gameStateMachine = new GameStateMachine(initialState);
-const timer = new TimerService(0, 0.01, 90);
+const timer = new TimerService(0, 0.04, 90);
+const goalDetectionService = new GoalDetectionService(ball, posts);
+const goalRecordService = new GoalRecordService(goalDetectionService, teams);
 const game = new Game();
 game.setBall(ball)
   .setTeams(teams)
@@ -235,7 +245,9 @@ game.setBall(ball)
   .setRegions(regions)
   .setPosts(posts)
   .setStateMachine(gameStateMachine)
-  .setTimer(timer);
+  .setTimer(timer)
+  .setGoalDetectionService(goalDetectionService)
+  .setGoalRecordService(goalRecordService);
 
 setInterval(() => {
   ballPossessionService.update();

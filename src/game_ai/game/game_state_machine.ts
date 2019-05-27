@@ -11,7 +11,7 @@ export class GameStateMachine implements IGameStateMachine {
     this.enteredInitialState = false;
   }
 
-  public update(game: Game) {
+  public update(game: Game): void {
     this.enterInitialStateIfRequired(game);
 
     const state = this.state.update(game);
