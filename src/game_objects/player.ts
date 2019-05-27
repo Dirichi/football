@@ -8,6 +8,7 @@ import { IPlayerSchema } from "../interfaces/iplayer_schema";
 import { PlayerPhysics } from "../physics/player_physics";
 import { ThreeDimensionalVector } from "../three_dimensional_vector";
 import { minimumBy } from "../utils/helper_functions";
+import { Ball } from "./ball";
 import { Post } from "./post";
 import { Team } from "./team";
 
@@ -33,6 +34,7 @@ export class Player implements ICollidable {
   // a PlayerRole class
   private attackingPosition?: ThreeDimensionalVector;
   private defendingPosition?: ThreeDimensionalVector;
+  private kickOffPosition?: ThreeDimensionalVector;
 
   constructor(x: number, y: number, vx: number, vy: number, diameter: number) {
       this.id = v4(); // Randomly generated id
@@ -85,13 +87,15 @@ export class Player implements ICollidable {
     [this.vx, this.vy] = [velocity.x, velocity.y];
   }
 
-  public setPhysics(physics: PlayerPhysics) {
+  public setPhysics(physics: PlayerPhysics): Player {
     this.physics = physics;
     this.physics.setPlayer(this);
+    return this;
   }
 
-  public setMaximumSpeed(speed: number) {
+  public setMaximumSpeed(speed: number): Player {
     this.maximumSpeed = speed;
+    return this;
   }
 
   public getMaximumSpeed(): number {
@@ -102,12 +106,14 @@ export class Player implements ICollidable {
     return this.opposingGoalPost;
   }
 
-  public setOpposingGoalPost(post: Post) {
+  public setOpposingGoalPost(post: Post): Player {
     this.opposingGoalPost = post;
+    return this;
   }
 
-  public setColors(colors: [number, number, number]) {
+  public setColors(colors: [number, number, number]): Player {
     this.colors = colors;
+    return this;
   }
 
   public serialized(): IPlayerSchema {
@@ -173,30 +179,35 @@ export class Player implements ICollidable {
     return !this.ballControlEnabled;
   }
 
-  public setTeam(team: Team): void {
+  public setTeam(team: Team): Player {
     this.team = team;
+    return this;
   }
 
-  public setAttackingPosition(position: ThreeDimensionalVector): void {
+  public setAttackingPosition(position: ThreeDimensionalVector): Player {
     this.attackingPosition = position;
+    return this;
   }
 
-  public setDefendingPosition(position: ThreeDimensionalVector): void {
+  public setDefendingPosition(position: ThreeDimensionalVector): Player {
     this.defendingPosition = position;
+    return this;
   }
 
-  public setController(controller: IPlayerController): void {
+  public setKickOffPosition(position: ThreeDimensionalVector): Player {
+    this.kickOffPosition = position;
+    return this;
+  }
+
+  public setController(controller: IPlayerController): Player {
     this.controller = controller;
+    return this;
   }
 
-  public setMessageQueue(queue: EventQueue): void {
+  public setMessageQueue(queue: EventQueue): Player {
     this.messageQueue = queue;
     this.listenForMessages();
-  }
-
-  public positionAtDefendingPosition(): void {
-    this.x = this.defendingPosition.x;
-    this.y = this.defendingPosition.y;
+    return this;
   }
 
   public moveTowardsAttackingPosition(): void {
@@ -220,7 +231,17 @@ export class Player implements ICollidable {
   }
 
   public prepareForKickOff(): void {
-    [this.x, this.y] = [this.defendingPosition.x, this.defendingPosition.y];
+    [this.x, this.y] = [this.kickOffPosition.x, this.kickOffPosition.y];
+  }
+
+  public prepareToStartKickOff(ball: Ball): void {
+    this.x = ball.getPosition().x;
+    this.y = ball.getPosition().y;
+  }
+
+  public prepareToSupportKickOff(ball: Ball): void {
+    this.x = ball.getPosition().x;
+    this.y = ball.getPosition().y - 4 * this.diameter;
   }
 
   private listenForMessages(): void {

@@ -5,10 +5,13 @@ import { Field } from "./game_objects/field";
 import { FieldRegion } from "./game_objects/field_region";
 import { Post } from "./game_objects/post";
 import { Team } from "./game_objects/team";
+import { GoalDetectionService } from "./goal_detection_service";
+import { GoalRecordService } from "./goal_record_service";
 import { IGameStateMachine } from "./interfaces/igame_state_machine";
 import { IScoresPanelSchema } from "./interfaces/iscores_panel_schema";
 import { ITextSchema } from "./interfaces/itext_schema";
 import { TimerService } from "./timer_service";
+import { sample } from "./utils/helper_functions";
 
 export class Game {
   private ball: Ball;
@@ -18,16 +21,16 @@ export class Game {
   private posts: Post[];
   private stateMachine: IGameStateMachine;
   private teams: Team[];
-  // TODO: These three should be moved into different classes, or be classes of
-  // their own.
+  // TODO: This should be moved into a different class
   private stateText: string = "";
-  private teamAScore: number = 0;
-  private teamBScore: number = 0;
-
+  private goalRecordService: GoalRecordService;
+  private goalDetectionService: GoalDetectionService;
   private timer: TimerService;
 
   public update(): void {
     this.timer.update();
+    this.goalDetectionService.update();
+    this.goalRecordService.update();
     this.stateMachine.update(this);
     this.ball.update();
     this.teams.forEach((team) => team.update());
@@ -74,6 +77,17 @@ export class Game {
     return this;
   }
 
+  public setGoalRecordService(goalRecordService: GoalRecordService): Game {
+    this.goalRecordService = goalRecordService;
+    return this;
+  }
+
+  public setGoalDetectionService(
+    goalDetectionService: GoalDetectionService): Game {
+      this.goalDetectionService = goalDetectionService;
+      return this;
+  }
+
   public disableControls(): void {
     this.teams.forEach((team) => team.disableControls());
   }
@@ -99,7 +113,7 @@ export class Game {
   }
 
   public goalScored(): boolean {
-    return this.getPostContainingBall() !== null;
+    return this.goalDetectionService.goalDetected();
   }
 
   public isOver(): boolean {
@@ -109,17 +123,7 @@ export class Game {
   public prepareForKickOff(): void {
     this.ball.prepareForKickOff();
     this.teams.forEach((team) => team.prepareForKickOff());
-  }
-
-  public recordGoal(): void {
-    const post = this.getPostContainingBall();
-    if (!post) { return; }
-
-    const scoringTeam = this.teams.find((team) => {
-      return team.getOpposingGoalPost() === post;
-    });
-
-    this.incrementScoreFor(scoringTeam);
+    this.teamToStartKickOff().prepareToStartKickOff(this.ball);
   }
 
   public getState() {
@@ -150,8 +154,8 @@ export class Game {
   // TODO: This may not need to be here
   private buildScoresPanel(): IScoresPanelSchema {
     return {
-      teamAScore: this.teamAScore,
-      teamBScore: this.teamBScore,
+      teamAScore: this.goalRecordService.goalsFor(this.teams[0]),
+      teamBScore: this.goalRecordService.goalsFor(this.teams[1]),
       time: Math.floor(this.timer.getElapsedTime()),
       x: this.field.x,
       xlength: this.field.xlength * 0.1,
@@ -160,16 +164,8 @@ export class Game {
     };
   }
 
-  private getPostContainingBall(): Post | null {
-    return this.posts.find((post) => post.containsBall(this.ball)) || null;
-  }
-
-  private incrementScoreFor(team: Team): void {
-    // TODO: This could be moved into a player / team stats class
-    if (team === this.teams[0]) {
-      this.teamAScore += 1;
-    } else {
-      this.teamBScore += 1;
-    }
+  private teamToStartKickOff(): Team {
+    const lastConcedingTeam = this.goalRecordService.getLastConcedingTeam();
+    return lastConcedingTeam || sample(this.teams);
   }
 }

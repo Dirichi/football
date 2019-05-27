@@ -22,3 +22,9 @@ export const maximumBy = <T>(array: T[], valueFunction: (element: T) => number):
 export const minimumBy = <T>(array: T[], valueFunction: (element: T) => number): T | null => {
   return maximumBy(array, (element: T) => valueFunction(element) * -1);
 };
+
+// Helper to get a random element from an array.
+export const sample = <T>(array: T[]): T | null => {
+  const randomIndex = Math.floor(Math.random() * array.length);
+  return array[randomIndex] || null;
+};
