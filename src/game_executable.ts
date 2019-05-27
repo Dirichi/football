@@ -44,8 +44,6 @@ import { FieldRegion } from "./game_objects/field_region";
 import { Player } from "./game_objects/player";
 import { Post } from "./game_objects/post";
 import { Team } from "./game_objects/team";
-import { GoalDetectionService } from "./goal_detection_service";
-import { GoalRecordService } from "./goal_record_service";
 import { ICommand } from "./interfaces/icommand";
 import { ICommandHandler } from "./interfaces/icommand_handler";
 import { ICommandRequest } from "./interfaces/icommand_request";
@@ -55,6 +53,8 @@ import { PlayerPhysics } from "./physics/player_physics";
 import { BallPossessionService } from "./services/ball_possession_service";
 import { CollisionDetectionService } from "./services/collision_detection_service";
 import { CollisionNotificationService } from "./services/collision_notification_service";
+import { GoalDetectionService } from "./services/goal_detection_service";
+import { GoalRecordService } from "./services/goal_record_service";
 import { TimerService } from "./timer_service";
 
 // TODO: Alright we need to introduce proper logging.
@@ -234,7 +234,7 @@ const commandHandlerRouter = new Map<string, ICommandHandler>([
 
 const initialState = new KickOffState();
 const gameStateMachine = new GameStateMachine(initialState);
-const timer = new TimerService(0, 0.01, 90);
+const timer = new TimerService(0, 0.04, 90);
 const goalDetectionService = new GoalDetectionService(ball, posts);
 const goalRecordService = new GoalRecordService(goalDetectionService, teams);
 const game = new Game();

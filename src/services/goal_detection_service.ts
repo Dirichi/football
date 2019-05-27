@@ -1,7 +1,8 @@
-import { Ball } from "./game_objects/ball";
-import { Post } from "./game_objects/post";
+import { Ball } from "../game_objects/ball";
+import { Post } from "../game_objects/post";
+import { IGoalDetectionService } from "../interfaces/igoal_detection_service";
 
-export class GoalDetectionService {
+export class GoalDetectionService implements IGoalDetectionService {
   private ball: Ball;
   private posts: Post[];
   private goalScored: boolean;
@@ -16,7 +17,7 @@ export class GoalDetectionService {
 
   public update(): void {
     const postContainingBall = this.findPostContainingBall();
-    this.goalScored = postContainingBall && !this.postContainingBall;
+    this.goalScored = (postContainingBall !== null) && !this.postContainingBall;
     this.postContainingBall = postContainingBall;
   }
 

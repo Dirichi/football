@@ -1,14 +1,14 @@
-import { Ball } from "./game_objects/ball";
-import { Team } from "./game_objects/team";
-import { GoalDetectionService } from "./goal_detection_service";
+import { Ball } from "../game_objects/ball";
+import { Team } from "../game_objects/team";
+import { IGoalDetectionService } from "../interfaces/igoal_detection_service";
 
 export class GoalRecordService {
-  private detectionService: GoalDetectionService;
+  private detectionService: IGoalDetectionService;
   private teams: Team[];
   private scoresByTeam: Map<Team, number>;
   private lastScoringTeam?: Team;
 
-  constructor(detectionService: GoalDetectionService, teams: Team[]) {
+  constructor(detectionService: IGoalDetectionService, teams: Team[]) {
     this.detectionService = detectionService;
     this.teams = teams;
     this.scoresByTeam = new Map([[teams[0], 0], [teams[1], 0]]);

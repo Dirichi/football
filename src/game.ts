@@ -5,11 +5,11 @@ import { Field } from "./game_objects/field";
 import { FieldRegion } from "./game_objects/field_region";
 import { Post } from "./game_objects/post";
 import { Team } from "./game_objects/team";
-import { GoalDetectionService } from "./goal_detection_service";
-import { GoalRecordService } from "./goal_record_service";
 import { IGameStateMachine } from "./interfaces/igame_state_machine";
 import { IScoresPanelSchema } from "./interfaces/iscores_panel_schema";
 import { ITextSchema } from "./interfaces/itext_schema";
+import { GoalDetectionService } from "./services/goal_detection_service";
+import { GoalRecordService } from "./services/goal_record_service";
 import { TimerService } from "./timer_service";
 import { sample } from "./utils/helper_functions";
 
