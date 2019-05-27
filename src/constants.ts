@@ -206,6 +206,7 @@ export enum IO_MESSAGE_TYPE {
 
 export enum PROCESS_MESSAGE_TYPE {
   GAME_STATE = "state.changed",
+  COMMAND = "command",
 }
 
 export const GAME_EXECUTABLE_FILE = "game_executable.js";

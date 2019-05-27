@@ -1,7 +1,7 @@
 import { Player } from "../../../game_objects/player";
 import { IPlayerController } from "../../../interfaces/iplayer_controller";
 
-export class PlayerNullController implements IPlayerController {
+export class PlayerHumanController implements IPlayerController {
   private player: Player;
 
   constructor(player: Player) {

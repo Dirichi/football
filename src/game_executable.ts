@@ -14,7 +14,7 @@ import { WaitingState } from "./game_ai/player/state_machine/waiting_state";
 
 import { ChaseBallCommand } from "./commands/chase_ball_command";
 import { CommandFactory } from "./commands/command_factory";
-import { GenericCommandHandler } from "./commands/generic_command_handler";
+import { GenericRemoteCommandRequestHandler } from "./commands/generic_remote_command_request_handler";
 import { MoveDownCommand } from "./commands/move_down_command";
 import { MoveLeftCommand } from "./commands/move_left_command";
 import { MoveRightCommand } from "./commands/move_right_command";
@@ -22,7 +22,7 @@ import { MoveToAttackingPositionCommand } from "./commands/move_to_attacking_pos
 import { MoveToDefensivePositionCommand } from "./commands/move_to_defensive_position_command";
 import { MoveUpCommand } from "./commands/move_up_command";
 import { PassBallCommand } from "./commands/pass_ball_command";
-import { PassBallCommandHandler } from "./commands/pass_ball_command_handler";
+import { PassBallRemoteCommandRequestHandler } from "./commands/pass_ball_remote_command_request_handler";
 import { ShootBallCommand } from "./commands/shoot_ball_command";
 import { StopCommand } from "./commands/stop_command";
 // TODO: This is starting to look ugly
@@ -35,7 +35,7 @@ import { BALL_INITIAL_ARGS, BOX18A_INITIAL_COORDINATES,
   } from "./constants";
 import { EventQueue } from "./event_queue";
 import { Game } from "./game";
-import { PlayerNullController } from "./game_ai/player/null_controller/player_null_controller";
+import { PlayerHumanController } from "./game_ai/player/human_controller/player_human_controller";
 import { PlayerStateMachine } from "./game_ai/player/state_machine/player_state_machine";
 import { Ball } from "./game_objects/ball";
 import { Box } from "./game_objects/box";
@@ -45,9 +45,10 @@ import { Player } from "./game_objects/player";
 import { Post } from "./game_objects/post";
 import { Team } from "./game_objects/team";
 import { ICommand } from "./interfaces/icommand";
-import { ICommandHandler } from "./interfaces/icommand_handler";
 import { ICommandRequest } from "./interfaces/icommand_request";
+import { ICommandRequestHandler } from "./interfaces/icommand_request_handler";
 import { IPlayerState } from "./interfaces/iplayer_state";
+import { IProcessMessage } from "./interfaces/iprocess_message";
 import { BallPhysics } from "./physics/ball_physics";
 import { PlayerPhysics } from "./physics/player_physics";
 import { BallPossessionService } from "./services/ball_possession_service";
@@ -219,15 +220,17 @@ const buildStateMachine = (player: Player) => {
 aiPlayers.forEach((player) => player.setController(buildStateMachine(player)));
 // TODO: Replace this with a controller that listens to commands from a specific
 // user.
-playerA.setController(new PlayerNullController(playerA));
+playerA.setController(new PlayerHumanController(playerA));
 
 ballPossessionService.enable();
 collisionDetectionService.setCollisionMarginFactor(COLLISION_MARGIN_FACTOR);
 
-const genericHandler = new GenericCommandHandler(playerA, commandFactory);
-const passHandler = new PassBallCommandHandler(playerA, commandFactory);
+const genericHandler =
+  new GenericRemoteCommandRequestHandler(playerA, commandFactory);
+const passHandler =
+  new PassBallRemoteCommandRequestHandler(playerA, commandFactory);
 
-const commandHandlerRouter = new Map<string, ICommandHandler>([
+const commandHandlerRouter = new Map<string, ICommandRequestHandler>([
   [COMMAND_ID.PASS_BALL as string, passHandler],
   [".*", genericHandler],
 ]);
@@ -260,10 +263,7 @@ setInterval(() => {
   });
 }, 20);
 
-// TODO: We may need an abstraction to handle messaging between
-// the main process and the child process. This would make it easy to
-// run a game in the parent process if we wanted to.
-process.on("message", (commandRequest: ICommandRequest) => {
+const handleCommandRequests = (commandRequest: ICommandRequest) => {
   const commandId = commandRequest.commandId as string;
   const commandPaths = [...commandHandlerRouter.keys()];
   const matchingCommandPath = commandPaths.find((commandPath) => {
@@ -272,5 +272,15 @@ process.on("message", (commandRequest: ICommandRequest) => {
 
   if (matchingCommandPath) {
     commandHandlerRouter.get(matchingCommandPath).handle(commandRequest);
+  }
+};
+
+// TODO: We may need an abstraction to handle messaging between
+// the main process and the child process. This would make it easy to
+// run a game in the parent process if we wanted to.
+process.on("message", (message: IProcessMessage) => {
+  if (message.messageType === PROCESS_MESSAGE_TYPE.COMMAND) {
+    handleCommandRequests(message.data as ICommandRequest);
+    return;
   }
 });
