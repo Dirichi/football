@@ -209,3 +209,5 @@ export enum PROCESS_MESSAGE_TYPE {
 }
 
 export const GAME_EXECUTABLE_FILE = "game_executable.js";
+
+export const Y_BALL_MARGIN_FOR_KICKOFF_SUPPORT = constants.PLAYER_DIAMETER_TO_FIELD_YLENGTH * 6;

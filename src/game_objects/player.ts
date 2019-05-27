@@ -1,5 +1,5 @@
 import v4 from "uuid/v4";
-import { BALL_CONTROL_REFRESH_TIME, constants, EVENTS } from "../constants";
+import { BALL_CONTROL_REFRESH_TIME, constants, EVENTS, Y_BALL_MARGIN_FOR_KICKOFF_SUPPORT } from "../constants";
 import { EventQueue } from "../event_queue";
 import { ICircle } from "../interfaces/icircle";
 import { ICollidable } from "../interfaces/icollidable";
@@ -241,7 +241,7 @@ export class Player implements ICollidable {
 
   public prepareToSupportKickOff(ball: Ball): void {
     this.x = ball.getPosition().x;
-    this.y = ball.getPosition().y - 4 * this.diameter;
+    this.y = ball.getPosition().y - Y_BALL_MARGIN_FOR_KICKOFF_SUPPORT;
   }
 
   private listenForMessages(): void {
