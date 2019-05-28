@@ -20,7 +20,6 @@ export class Player implements ICollidable {
   public diameter: number;
 
   private ballControlEnabled: boolean;
-  private controllerEnabled: boolean;
   private opposingGoalPost?: Post;
   private physics?: PlayerPhysics;
   private maximumSpeed?: number;
@@ -48,14 +47,11 @@ export class Player implements ICollidable {
       // swap representations out as we see fit.
       this.colors = [0, 0, 225];
       this.ballControlEnabled = true;
-      this.controllerEnabled = true;
   }
 
   public update() {
     this.physics.update();
-    if (this.controllerEnabled) {
-      this.controller.update();
-    }
+    this.controller.update();
   }
 
   public moveUp() {
@@ -223,11 +219,11 @@ export class Player implements ICollidable {
   }
 
   public enableControls(): void {
-    this.controllerEnabled = true;
+    this.controller.enable();
   }
 
   public disableControls(): void {
-    this.controllerEnabled = false;
+    this.controller.disable();
   }
 
   public prepareForKickOff(): void {

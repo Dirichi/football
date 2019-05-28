@@ -220,7 +220,6 @@ const buildStateMachine = (player: Player) => {
 aiPlayers.forEach((player) => player.setController(buildStateMachine(player)));
 // TODO: Replace this with a controller that listens to commands from a specific
 // user.
-playerA.setController(new PlayerHumanController(playerA));
 
 ballPossessionService.enable();
 collisionDetectionService.setCollisionMarginFactor(COLLISION_MARGIN_FACTOR);
@@ -234,6 +233,10 @@ const commandHandlerRouter = new Map<string, ICommandRequestHandler>([
   [COMMAND_ID.PASS_BALL as string, passHandler],
   [".*", genericHandler],
 ]);
+
+const playerController =
+  new PlayerHumanController(playerA, commandHandlerRouter);
+playerA.setController(playerController);
 
 const initialState = new KickOffState();
 const gameStateMachine = new GameStateMachine(initialState);
@@ -263,24 +266,12 @@ setInterval(() => {
   });
 }, 20);
 
-const handleCommandRequests = (commandRequest: ICommandRequest) => {
-  const commandId = commandRequest.commandId as string;
-  const commandPaths = [...commandHandlerRouter.keys()];
-  const matchingCommandPath = commandPaths.find((commandPath) => {
-    return commandId.match(commandPath) !== null;
-  });
-
-  if (matchingCommandPath) {
-    commandHandlerRouter.get(matchingCommandPath).handle(commandRequest);
-  }
-};
-
 // TODO: We may need an abstraction to handle messaging between
 // the main process and the child process. This would make it easy to
 // run a game in the parent process if we wanted to.
 process.on("message", (message: IProcessMessage) => {
   if (message.messageType === PROCESS_MESSAGE_TYPE.COMMAND) {
-    handleCommandRequests(message.data as ICommandRequest);
+    playerController.handleCommandRequest(message.data as ICommandRequest);
     return;
   }
 });
