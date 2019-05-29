@@ -41,20 +41,17 @@ export class PlayerHumanController implements IPlayerController {
   }
 
   public handleCommandRequest(commandRequest: ICommandRequest): void {
+    if (!this.enabled) { return; }
     this.commandRequestList.push(commandRequest);
   }
 
   private applyCommandRequest(commandRequest: ICommandRequest): void {
-    if (!this.enabled) { return; }
-
     const commandId = commandRequest.commandId as string;
-    const commandPaths = [...this.commandRequestRouter.keys()];
-    const matchingCommandPath = commandPaths.find((commandPath) => {
-      return commandId.match(commandPath) !== null;
-    });
 
-    if (matchingCommandPath) {
-      this.commandRequestRouter.get(matchingCommandPath).handle(commandRequest);
-    }
+    const routerEntries = [...this.commandRequestRouter.entries()];
+    const matchingRouterEntry = routerEntries.find(([handlerKey, handler]) => {
+      return commandId.match(handlerKey) !== null;
+    });
+    matchingRouterEntry[1].handle(commandRequest, this.player);
   }
 }

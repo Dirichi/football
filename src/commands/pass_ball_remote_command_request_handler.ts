@@ -6,20 +6,17 @@ import { ICommandRequestHandler } from "../interfaces/icommand_request_handler";
 
 export class PassBallRemoteCommandRequestHandler
   implements ICommandRequestHandler {
-    private sender: Player;
     private factory: ICommandFactory;
 
-    constructor(sender: Player, factory: ICommandFactory) {
-      // TODO: Find a way to extract the sender from the request payload
-      this.sender = sender;
+    constructor(factory: ICommandFactory) {
       this.factory = factory;
     }
 
-    public handle(request: ICommandRequest): void {
+    public handle(request: ICommandRequest, player: Player): void {
       const direction = this.getDirectionFrom(request.commandId);
-      const receiver = this.findReceiver(direction);
+      const receiver = this.findReceiver(player, direction);
       const command = this.factory.getCommand(COMMAND_ID.PASS_BALL);
-      command.execute(this.sender, receiver);
+      command.execute(player, receiver);
     }
 
     private getDirectionFrom(commandId: COMMAND_ID): DIRECTION | null {
@@ -31,8 +28,8 @@ export class PassBallRemoteCommandRequestHandler
       return null;
     }
 
-    private findReceiver(direction: DIRECTION | null): Player {
+    private findReceiver(player: Player, direction: DIRECTION | null): Player {
       // TODO: Calculate the nearest teammate in the provided direction
-      return this.sender.getNearestTeamMate();
+      return player.getNearestTeamMate();
     }
 }

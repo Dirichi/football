@@ -5,16 +5,14 @@ import { ICommandRequestHandler } from "../interfaces/icommand_request_handler";
 
 export class GenericRemoteCommandRequestHandler
   implements ICommandRequestHandler {
-    private player: Player;
     private factory: ICommandFactory;
 
-    constructor(player: Player, factory: ICommandFactory) {
-      this.player = player;
+    constructor(factory: ICommandFactory) {
       this.factory = factory;
     }
 
-    public handle(request: ICommandRequest) {
+    public handle(request: ICommandRequest, player: Player) {
       const command = this.factory.getCommand(request.commandId);
-      command.execute(this.player);
+      command.execute(player);
     }
 }

@@ -225,9 +225,9 @@ ballPossessionService.enable();
 collisionDetectionService.setCollisionMarginFactor(COLLISION_MARGIN_FACTOR);
 
 const genericHandler =
-  new GenericRemoteCommandRequestHandler(playerA, commandFactory);
+  new GenericRemoteCommandRequestHandler(commandFactory);
 const passHandler =
-  new PassBallRemoteCommandRequestHandler(playerA, commandFactory);
+  new PassBallRemoteCommandRequestHandler(commandFactory);
 
 const commandHandlerRouter = new Map<string, ICommandRequestHandler>([
   [COMMAND_ID.PASS_BALL as string, passHandler],
