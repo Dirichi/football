@@ -6,19 +6,25 @@ import { IPlayerStateFeature } from "../../../interfaces/iplayer_state_feature";
 import { IPlayerStateFeatureExtractor } from "../../../interfaces/iplayer_state_feature_extractor";
 import { minimumBy } from "../../../utils/helper_functions";
 
+// TODO: A case could be made to separate the state machine from the concept
+// of the controller.
 export class PlayerStateMachine implements IPlayerController {
   private states: IPlayerState[];
   private player: Player;
   private messages: string[];
   private extractor: IPlayerStateFeatureExtractor;
+  private enabled: boolean;
 
   constructor(player: Player, states: IPlayerState[]) {
     this.player = player;
     this.states = states;
     this.messages = [];
+    this.enabled = true;
   }
 
   public update() {
+    if (!this.enabled) { return; }
+
     const features = this.getFeatures();
     const eligibleState = this.states.find(
         (state) => state.eligibleFor(features));
@@ -45,6 +51,14 @@ export class PlayerStateMachine implements IPlayerController {
 
   public setFeatureExtractor(extractor: IPlayerStateFeatureExtractor) {
     this.extractor = extractor;
+  }
+
+  public enable(): void {
+    this.enabled = true;
+  }
+
+  public disable(): void {
+    this.enabled = false;
   }
 
   private getFeatures(): IPlayerStateFeature {

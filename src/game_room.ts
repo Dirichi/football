@@ -43,7 +43,11 @@ export class GameRoom {
   public addClient(client: IGameClient): void {
     this.clients.add(client);
     client.when(IO_MESSAGE_TYPE.COMMAND, (payload: object) => {
-      this.gameProcess.send(payload);
+      const message = {
+        data: payload,
+        messageType: PROCESS_MESSAGE_TYPE.COMMAND,
+      };
+      this.gameProcess.send(message);
     });
   }
 

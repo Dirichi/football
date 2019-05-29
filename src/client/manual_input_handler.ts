@@ -35,17 +35,14 @@ export class ManualInputHandler {
   }
 
   public handleKeyDown(event: KeyboardEvent): void {
-    if (!this.catchRecognizedCommand(event)) {
-      return;
-    }
+    if (!this.catchRecognizedCommand(event)) { return; }
     const key = event.code as INPUT_KEY;
     this.inputKeysSet.add(key);
   }
 
   public handleKeyUp(event: KeyboardEvent): void {
-    if (!this.catchRecognizedCommand(event)) {
-      return;
-    }
+    if (!this.catchRecognizedCommand(event)) { return; }
+
     const key = event.code as INPUT_KEY;
     this.inputKeysSet.delete(key);
   }
@@ -57,11 +54,10 @@ export class ManualInputHandler {
 
   private catchRecognizedCommand(event: KeyboardEvent): boolean {
     const key = event.code as INPUT_KEY;
-    if (this.allowedInputKeysSet.has(key)) {
-      event.preventDefault();
-      return true;
-    }
-    return false;
+    if (!this.allowedInputKeysSet.has(key)) { return false; }
+
+    event.preventDefault();
+    return true;
   }
 
   private sendCommand(commandId: COMMAND_ID) {

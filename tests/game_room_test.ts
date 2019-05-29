@@ -64,8 +64,10 @@ describe('GameRoom', () => {
       room.startGame();
       client.simulateEvent(
         IO_MESSAGE_TYPE.COMMAND, {commandId: 'do.something'});
-      expect(testProcess.send).to.have.been.calledWith(
-        {commandId: 'do.something'});
+      expect(testProcess.send).to.have.been.calledWith({
+        data: {commandId: 'do.something'},
+        messageType: PROCESS_MESSAGE_TYPE.COMMAND,
+      });
     });
   });
 
