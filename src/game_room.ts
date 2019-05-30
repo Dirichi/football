@@ -42,13 +42,8 @@ export class GameRoom {
 
   public addClient(client: IGameClient): void {
     this.clients.add(client);
-    client.when(IO_MESSAGE_TYPE.COMMAND, (payload: object) => {
-      const message = {
-        data: payload,
-        messageType: PROCESS_MESSAGE_TYPE.COMMAND,
-      };
-      this.gameProcess.send(message);
-    });
+    this.routeClientCommandsToGameProcess(client);
+    this.assignControllerToClient(client);
   }
 
   public setProcessForker(forker: IProcessForker): void {
@@ -82,5 +77,23 @@ export class GameRoom {
         client.send(IO_MESSAGE_TYPE.GAME_STATE, message.data);
       });
     }
+  }
+
+  private routeClientCommandsToGameProcess(client: IGameClient): void {
+    client.when(IO_MESSAGE_TYPE.COMMAND, (payload: object) => {
+      const message = {
+        data: {...payload, clientId: client.getId() },
+        messageType: PROCESS_MESSAGE_TYPE.COMMAND,
+      };
+      this.gameProcess.send(message);
+    });
+  }
+
+  private assignControllerToClient(client: IGameClient): void {
+    const message = {
+      data: { clientId: client.getId() },
+      messageType: PROCESS_MESSAGE_TYPE.ASSIGN_CONTROLLER,
+    };
+    this.gameProcess.send(message);
   }
 }

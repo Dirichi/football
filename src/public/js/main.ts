@@ -25,7 +25,8 @@ const sketch = (p: p5) => {
   const ballGraphics = new BallGraphics(animationEngine, queue);
   const playerGraphics = new PlayerGraphics(animationEngine, queue);
   const fieldRegionGraphics = new FieldRegionGraphics(animationEngine, queue);
-  const gameStateTextGraphics = new GameStateTextGraphics(animationEngine, queue);
+  const gameStateTextGraphics =
+    new GameStateTextGraphics(animationEngine, queue);
   const scoresPanelGraphics = new ScoresPanelGraphics(animationEngine, queue);
 
 // DO NOT REORDER THIS

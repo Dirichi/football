@@ -39,6 +39,6 @@ httpServer.listen(port, () => {
 
 io.on("connection", (socket) => {
   const client = new GameClient(socket);
-  room.addClient(client);
   room.startGame();
+  room.addClient(client);
 });
