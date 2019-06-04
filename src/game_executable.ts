@@ -217,7 +217,7 @@ const buildStateMachine = (player: Player) => {
   return machine;
 };
 
-aiPlayers.forEach((player) => player.setController(buildStateMachine(player)));
+players.forEach((player) => player.setController(buildStateMachine(player)));
 // TODO: Replace this with a controller that listens to commands from a specific
 // user.
 
@@ -233,10 +233,6 @@ const commandHandlerRouter = new Map<string, ICommandRequestHandler>([
   [COMMAND_ID.PASS_BALL as string, passHandler],
   [".*", genericHandler],
 ]);
-
-const playerController =
-  new PlayerHumanController(playerA, commandHandlerRouter);
-playerA.setController(playerController);
 
 const initialState = new KickOffState();
 const gameStateMachine = new GameStateMachine(initialState);
@@ -266,12 +262,39 @@ setInterval(() => {
   });
 }, 20);
 
+const playersAvailableForRemoteControl = [...players];
+const remoteControllers: PlayerHumanController[] = [];
+
+const handleAssignControllerRequest = (request: { clientId: string }) => {
+  const player = playersAvailableForRemoteControl.shift();
+  const controller = new PlayerHumanController(player, commandHandlerRouter);
+  controller.setRemoteClientId(request.clientId);
+  player.disableControls();
+  player.setController(controller);
+  remoteControllers.push(controller);
+};
+
+const handleCommandRequest = (request: ICommandRequest) => {
+  const matchingController = remoteControllers.find((controller) => {
+    return controller.getRemoteClientId() === request.clientId;
+  });
+
+  if (matchingController) {
+    matchingController.handleCommandRequest(request);
+  }
+};
+
 // TODO: We may need an abstraction to handle messaging between
 // the main process and the child process. This would make it easy to
 // run a game in the parent process if we wanted to.
 process.on("message", (message: IProcessMessage) => {
   if (message.messageType === PROCESS_MESSAGE_TYPE.COMMAND) {
-    playerController.handleCommandRequest(message.data as ICommandRequest);
+    handleCommandRequest(message.data as ICommandRequest);
+    return;
+  }
+
+  if (message.messageType === PROCESS_MESSAGE_TYPE.ASSIGN_CONTROLLER) {
+    handleAssignControllerRequest(message.data as {clientId: string});
     return;
   }
 });

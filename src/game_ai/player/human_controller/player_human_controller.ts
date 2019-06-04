@@ -10,6 +10,7 @@ export class PlayerHumanController implements IPlayerController {
   private commandRequestRouter: RequestRouter;
   private commandRequestList: ICommandRequest[];
   private enabled: boolean;
+  private remoteClientId: string;
 
   constructor(player: Player, commandRequestRouter: RequestRouter) {
     this.player = player;
@@ -43,6 +44,14 @@ export class PlayerHumanController implements IPlayerController {
   public handleCommandRequest(commandRequest: ICommandRequest): void {
     if (!this.enabled) { return; }
     this.commandRequestList.push(commandRequest);
+  }
+
+  public setRemoteClientId(clientId: string) {
+    this.remoteClientId = clientId;
+  }
+
+  public getRemoteClientId(): string {
+    return this.remoteClientId;
   }
 
   private applyCommandRequest(commandRequest: ICommandRequest): void {

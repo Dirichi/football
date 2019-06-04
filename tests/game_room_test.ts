@@ -59,13 +59,13 @@ describe('GameRoom', () => {
       room.setProcessForker(forker);
 
       sinon.stub(forker, 'fork').returns(testProcess);
-      sinon.spy(testProcess, 'send');
 
       room.startGame();
+      sinon.spy(testProcess, 'send');
       client.simulateEvent(
         IO_MESSAGE_TYPE.COMMAND, {commandId: 'do.something'});
       expect(testProcess.send).to.have.been.calledWith({
-        data: {commandId: 'do.something'},
+        data: { clientId: '1', commandId: 'do.something'},
         messageType: PROCESS_MESSAGE_TYPE.COMMAND,
       });
     });

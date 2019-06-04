@@ -202,11 +202,13 @@ export enum IO_MESSAGE_TYPE {
   PING = "custom.ping",
   COMMAND = "command",
   GAME_STATE = "state.changed",
+  START = "start.game",
 }
 
 export enum PROCESS_MESSAGE_TYPE {
-  GAME_STATE = "state.changed",
+  ASSIGN_CONTROLLER = "assign.controller",
   COMMAND = "command",
+  GAME_STATE = "state.changed",
 }
 
 export const GAME_EXECUTABLE_FILE = "game_executable.js";

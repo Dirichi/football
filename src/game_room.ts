@@ -42,13 +42,7 @@ export class GameRoom {
 
   public addClient(client: IGameClient): void {
     this.clients.add(client);
-    client.when(IO_MESSAGE_TYPE.COMMAND, (payload: object) => {
-      const message = {
-        data: payload,
-        messageType: PROCESS_MESSAGE_TYPE.COMMAND,
-      };
-      this.gameProcess.send(message);
-    });
+    this.routeClientCommandsToGameProcess(client);
   }
 
   public setProcessForker(forker: IProcessForker): void {
@@ -71,6 +65,11 @@ export class GameRoom {
     if (this.gameProcess) { return; }
 
     this.gameProcess = this.forker.fork(this.gameExecutablePath);
+    // TODO: We will need an abstraction on the raw process to be able to handle
+    // direct communication with the process. So that we don't have to have all
+    // this IPC code to the GameRoom class, and we can also reduce coupling
+    // between raw processes and the GameRoom.
+    this.clients.forEach((client) => this.assignControllerToClient(client));
     this.gameProcess.on("message", (payload: object) => {
       this.handleGameProcessMessage(payload as IProcessMessage);
     });
@@ -82,5 +81,23 @@ export class GameRoom {
         client.send(IO_MESSAGE_TYPE.GAME_STATE, message.data);
       });
     }
+  }
+
+  private routeClientCommandsToGameProcess(client: IGameClient): void {
+    client.when(IO_MESSAGE_TYPE.COMMAND, (payload: object) => {
+      const message = {
+        data: {...payload, clientId: client.getId() },
+        messageType: PROCESS_MESSAGE_TYPE.COMMAND,
+      };
+      this.gameProcess.send(message);
+    });
+  }
+
+  private assignControllerToClient(client: IGameClient): void {
+    const message = {
+      data: { clientId: client.getId() },
+      messageType: PROCESS_MESSAGE_TYPE.ASSIGN_CONTROLLER,
+    };
+    this.gameProcess.send(message);
   }
 }
