@@ -43,7 +43,6 @@ export class GameRoom {
   public addClient(client: IGameClient): void {
     this.clients.add(client);
     this.routeClientCommandsToGameProcess(client);
-    this.assignControllerToClient(client);
   }
 
   public setProcessForker(forker: IProcessForker): void {
@@ -66,6 +65,11 @@ export class GameRoom {
     if (this.gameProcess) { return; }
 
     this.gameProcess = this.forker.fork(this.gameExecutablePath);
+    // TODO: We will need an abstraction on the raw process to be able to handle
+    // direct communication with the process. So that we don't have to have all
+    // this IPC code to the GameRoom class, and we can also reduce coupling
+    // between raw processes and the GameRoom.
+    this.clients.forEach((client) => this.assignControllerToClient(client));
     this.gameProcess.on("message", (payload: object) => {
       this.handleGameProcessMessage(payload as IProcessMessage);
     });

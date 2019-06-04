@@ -36,9 +36,15 @@ httpServer.listen(port, () => {
   // tslint:disable-next-line:no-console
   console.log(`server started at http://localhost:${port}`);
 });
+let clientSize = 0;
 
 io.on("connection", (socket) => {
   const client = new GameClient(socket);
-  room.startGame();
+  // TODO: Hacky way to implement room size limit / timeout. Will be replaced.
+  clientSize += 1;
+  setTimeout(() => { room.startGame(); }, 10000);
   room.addClient(client);
+  if (clientSize === 2) {
+    room.startGame();
+  }
 });
