@@ -2,6 +2,7 @@ import { TEAM_SIDES } from "../constants";
 import { minimumBy } from "../utils/helper_functions";
 import { Ball } from "./ball";
 import { Player } from "./player";
+import { PlayerRole } from "./player_role";
 import { Post } from "./post";
 
 export class Team {
@@ -83,5 +84,18 @@ export class Team {
   public prepareToStartKickOff(ball: Ball): void {
     this.kickOffStartingPlayer.prepareToStartKickOff(ball);
     this.kickOffSupportingPlayer.prepareToSupportKickOff(ball);
+  }
+
+  public applyRoles(roles: PlayerRole[]): void {
+    if (roles.length !== this.players.length) {
+      throw new Error("The number of roles and the number of players on the team must be the same size.");
+    }
+
+    roles.forEach((role, index) => {
+      const player = this.players[index];
+      player.setAttackingPosition(role.getDefaultAttackingPosition(this.side))
+        .setDefendingPosition(role.getDefaultDefendingPosition(this.side))
+        .setKickOffPosition(role.getDefaultDefendingPosition(this.side));
+    });
   }
 }

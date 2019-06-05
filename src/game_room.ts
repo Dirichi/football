@@ -94,6 +94,7 @@ export class GameRoom {
   }
 
   private assignControllerToClient(client: IGameClient): void {
+    // TODO: Test that each client is assigned a controller in the game.
     const message = {
       data: { clientId: client.getId() },
       messageType: PROCESS_MESSAGE_TYPE.ASSIGN_CONTROLLER,
