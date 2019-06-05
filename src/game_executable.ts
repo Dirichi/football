@@ -203,7 +203,6 @@ const buildStateMachine = (player: Player) => {
   return machine;
 };
 
-
 defaultPlayers.forEach((player) => {
   player.setController(buildStateMachine(player));
 });

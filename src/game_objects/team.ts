@@ -18,7 +18,7 @@ export class Team {
     this.players.forEach((player) =>  player.setTeam(this));
   }
 
-  public getSide(): string {
+  public getSide(): TEAM_SIDES {
     return this.side;
   }
 
@@ -88,14 +88,12 @@ export class Team {
 
   public applyRoles(roles: PlayerRole[]): void {
     if (roles.length !== this.players.length) {
-      throw new Error("The number of roles and the number of players on the team must be the same size.");
+      throw new Error(`Number of roles: ${roles.length} must match the number\
+         of players: ${this.players.length}`);
     }
 
     roles.forEach((role, index) => {
-      const player = this.players[index];
-      player.setAttackingPosition(role.getDefaultAttackingPosition(this.side))
-        .setDefendingPosition(role.getDefaultDefendingPosition(this.side))
-        .setKickOffPosition(role.getDefaultDefendingPosition(this.side));
+      this.players[index].assignRole(role);
     });
   }
 }

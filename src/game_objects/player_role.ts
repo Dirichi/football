@@ -41,22 +41,16 @@ export class PlayerRole {
   }
 
   public getDefaultAttackingPosition(side: TEAM_SIDES): ThreeDimensionalVector {
-    if (side === TEAM_SIDES.LEFT) {
-      return this.defaultAttackingPosition;
-    } else {
-      const x = 1 - this.defaultAttackingPosition.x;
-      const y = 1 - this.defaultAttackingPosition.y;
-      return new ThreeDimensionalVector(x, y, this.defaultAttackingPosition.z);
-    }
+    return side === TEAM_SIDES.LEFT ?
+      this.defaultAttackingPosition : this.invert(this.defaultAttackingPosition);
   }
 
   public getDefaultDefendingPosition(side: TEAM_SIDES): ThreeDimensionalVector {
-    if (side === TEAM_SIDES.LEFT) {
-      return this.defaultDefensivePosition;
-    } else {
-      const x = 1 - this.defaultDefensivePosition.x;
-      const y = 1 - this.defaultDefensivePosition.y;
-      return new ThreeDimensionalVector(x, y, this.defaultDefensivePosition.z);
-    }
+    return side === TEAM_SIDES.LEFT ?
+      this.defaultDefensivePosition : this.invert(this.defaultDefensivePosition);
+  }
+
+  private invert(position: ThreeDimensionalVector): ThreeDimensionalVector {
+    return position.scalarMultiply(-1).add(new ThreeDimensionalVector(1, 1, 0));
   }
 }
