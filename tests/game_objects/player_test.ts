@@ -4,7 +4,6 @@ import { IPlayerController } from '../../src/interfaces/iplayer_controller';
 import { Team } from '../../src/game_objects/team';
 import { EventQueue } from '../../src/event_queue';
 import { ThreeDimensionalVector } from '../../src/three_dimensional_vector';
-import { BALL_CONTROL_REFRESH_TIME } from "../../src/constants";
 import * as chai from 'chai';
 import * as sinon from 'sinon';
 

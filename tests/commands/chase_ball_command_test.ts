@@ -3,7 +3,6 @@ import { ChaseBallCommand } from '../../src/commands/chase_ball_command';
 import { Player } from '../../src/game_objects/player';
 import { TestBallPossessionService } from '../helpers/test_ball_possession_service';
 import { ThreeDimensionalVector } from '../../src/three_dimensional_vector';
-import { matchesVector } from '../helpers/custom_assertions';
 import * as chai from 'chai';
 import * as sinon from 'sinon';
 
@@ -23,9 +22,7 @@ describe('ChaseBallCommand', () => {
 
         sinon.spy(player, 'moveTowards');
         command.execute(player);
-        expect(player.moveTowards).to.have.been.calledWith(
-          matchesVector(ball.getPosition())
-        );
+        expect(player.moveTowards).to.have.been.calledWith(ball.getPosition());
     });
 
     it('stops the player if already has the ball', () => {

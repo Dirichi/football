@@ -10,9 +10,3 @@ export function assertApproximatelyEqual(x: number, y: number, margin: number) {
   const error = Math.abs(x - y);
   expect(error < margin).to.be.true;
 }
-
-export function matchesVector(vector: ThreeDimensionalVector) {
-  return sinon.match((destination: ThreeDimensionalVector) => {
-    return destination.equals(vector);
-  }, 'matching the expected destination');
-}

@@ -4,7 +4,6 @@ import { Post } from '../../src/game_objects/post';
 import { ShootBallCommand } from '../../src/commands/shoot_ball_command';
 import { TestBallPossessionService } from '../helpers/test_ball_possession_service';
 import { ThreeDimensionalVector } from '../../src/three_dimensional_vector';
-import { matchesVector } from '../helpers/custom_assertions';
 import * as chai from 'chai';
 import * as sinon from 'sinon';
 
@@ -24,8 +23,7 @@ describe('ShootBallCommand', () => {
       const command = new ShootBallCommand(ball);
       command.execute(player);
 
-      expect(player.kickBall).to.have.been.calledWith(
-        ball, matchesVector(post.getMidPoint()));
+      expect(player.kickBall).to.have.been.calledWith(ball, post.getMidPoint());
     });
   });
 });

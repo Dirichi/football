@@ -3,7 +3,6 @@ import { PassBallCommand } from '../../src/commands/pass_ball_command';
 import { STATE_MACHINE_COMMANDS } from '../../src/constants';
 import { Player } from '../../src/game_objects/player';
 import { ThreeDimensionalVector } from '../../src/three_dimensional_vector';
-import { matchesVector } from '../helpers/custom_assertions';
 import * as chai from 'chai';
 import * as sinon from 'sinon';
 
@@ -27,7 +26,7 @@ describe('PassBallCommand', () => {
       command.execute(sender, receiver);
 
       expect(sender.kickBall).to.have.been.calledWith(
-        ball, matchesVector(receiver.getPosition()));
+        ball, receiver.getPosition());
     });
 
     it('sends a stop message to the receiver if the ball was kicked', () => {
