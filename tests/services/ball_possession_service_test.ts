@@ -41,6 +41,28 @@ describe('BallPossessionService', () => {
       expect(queue.when).to.have.been.calledWith(
         `${ball.getGameObjectId()}.collision`);
     });
+
+    it('publishes ballPossession events when it receives a ball collision event',
+      () => {
+        const playerA = new Player(1, 1, 0, 0, 2); // x, y, vx, vy, diameter
+        const playerB = new Player(5, 0, 0, 0, 2); // x, y, vx, vy, diameter
+
+        const service = new BallPossessionService(
+          ball, [playerA, playerB], queue);
+        service.enable();
+
+        triggerBallCollisionEventForPlayer(playerA);
+
+        const playerBallPossessionEvents = (player: Player) => {
+          const key = `player.${player.getGameObjectId()}.ballPossession`;
+          return queue.triggeredEvents.get(key);
+        }
+        const playerAEvents = playerBallPossessionEvents(playerA);
+        const playerBEvents = playerBallPossessionEvents(playerB);
+
+        expect(playerAEvents).to.eql([{possession: true}])
+        expect(playerBEvents).to.eql([{possession: false}])
+      });
   });
 
   describe('`getCurrentPlayerInPossessionOrNull`', () => {

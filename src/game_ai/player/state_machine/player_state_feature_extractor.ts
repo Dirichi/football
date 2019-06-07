@@ -35,9 +35,7 @@ export class PlayerStateFeatureExtractor implements IPlayerStateFeatureExtractor
   }
 
   public hasBall(player: Player): boolean {
-    const currentPlayerInPossession =
-      this.ballPossessionService.getCurrentPlayerInPossessionOrNull();
-    return currentPlayerInPossession === player;
+    return player.hasBall();
   }
 
   public hasOpenPassingOptions(player: Player): boolean {

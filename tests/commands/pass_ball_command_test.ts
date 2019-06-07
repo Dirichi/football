@@ -1,10 +1,9 @@
 import { Ball } from '../../src/game_objects/ball';
-import { BallPossessionService } from '../../src/services/ball_possession_service';
 import { PassBallCommand } from '../../src/commands/pass_ball_command';
 import { STATE_MACHINE_COMMANDS } from '../../src/constants';
 import { Player } from '../../src/game_objects/player';
-import { TestBallPossessionService } from '../helpers/test_ball_possession_service';
 import { ThreeDimensionalVector } from '../../src/three_dimensional_vector';
+import { matchesVector } from '../helpers/custom_assertions';
 import * as chai from 'chai';
 import * as sinon from 'sinon';
 
@@ -22,105 +21,42 @@ describe('PassBallCommand', () => {
       // HACK: Stub sendMessage to prevent methods being sent to a non-existent
       // queue
       sinon.stub(sender, 'sendMessage');
+      sinon.spy(sender, 'kickBall');
 
-      // Actual Test
-      const moveStub = sinon.stub(ball, 'moveTowards').callsFake(
-        (actualTarget: ThreeDimensionalVector) => {
-          const expectedTarget = new ThreeDimensionalVector(5, 4, 0);
-          expect(expectedTarget.equals(actualTarget));
-        });
-
-      // stub the current player in possession of the ball as the sender
-      const service = new TestBallPossessionService(sender);
-      const command = new PassBallCommand(ball, service);
+      const command = new PassBallCommand(ball);
       command.execute(sender, receiver);
 
-      expect(moveStub).to.have.been.called;
+      expect(sender.kickBall).to.have.been.calledWith(
+        ball, matchesVector(receiver.getPosition()));
     });
 
-    it('disables ball control for the sender', () => {
+    it('sends a stop message to the receiver if the ball was kicked', () => {
       const sender = new Player(1, 1, 0, 0, 2); // x, y, vx, vy, diameter
       const receiver = new Player(5, 4, 0, 0, 2); // x, y, vx, vy, diameter
       const ball = new Ball(0, 0, 0, 0, 2); // x, y, vx, vy, diameter
 
-      // HACK: Stub sendMessage to prevent methods being sent to a non-existent
-      // queue
       sinon.stub(sender, 'sendMessage');
+      sinon.stub(sender, 'kickBall').returns(true);
 
-      sinon.stub(sender, 'temporarilyDisableBallControl');
-
-      // stub the current player in possession of the ball as the sender
-      const service = new TestBallPossessionService(sender);
-      const command = new PassBallCommand(ball, service);
+      const command = new PassBallCommand(ball);
       command.execute(sender, receiver);
 
-      expect(sender.temporarilyDisableBallControl).to.have.been.called;
-    });
-
-    it('sends a stop message to the receiver', () => {
-      const sender = new Player(1, 1, 0, 0, 2); // x, y, vx, vy, diameter
-      const receiver = new Player(5, 4, 0, 0, 2); // x, y, vx, vy, diameter
-      const ball = new Ball(0, 0, 0, 0, 2); // x, y, vx, vy, diameter
-
-      const sendMessageStub = sinon.stub(sender, 'sendMessage');
-      // stub the current player in possession of the ball as the sender
-      const service = new TestBallPossessionService(sender);
-
-      const command = new PassBallCommand(ball, service);
-      command.execute(sender, receiver);
-
-      expect(sendMessageStub).to.have.been.calledWith(
+      expect(sender.sendMessage).to.have.been.calledWith(
         receiver, {details: STATE_MACHINE_COMMANDS.WAIT});
     });
 
-    it('does not move the ball if the sender is not in possession', () => {
+    it('does not send stop to the receiver if the ball was not kicked', () => {
       const sender = new Player(1, 1, 0, 0, 2); // x, y, vx, vy, diameter
       const receiver = new Player(5, 4, 0, 0, 2); // x, y, vx, vy, diameter
       const ball = new Ball(0, 0, 0, 0, 2); // x, y, vx, vy, diameter
 
-      const moveStub = sinon.stub(ball, 'moveTowards');
-
-      // stub the current player in possession of the ball as a random player
-      const service = new TestBallPossessionService(new Player(1, 1, 0, 0, 2));
-      const command = new PassBallCommand(ball, service);
-      command.execute(sender, receiver);
-
-      expect(moveStub).not.to.have.been.called;
-    });
-
-    it('does not move the ball if there is no player in possession', () => {
-      const sender = new Player(1, 1, 0, 0, 2); // x, y, vx, vy, diameter
-      const receiver = new Player(5, 4, 0, 0, 2); // x, y, vx, vy, diameter
-      const ball = new Ball(0, 0, 0, 0, 2); // x, y, vx, vy, diameter
-
-      const moveStub = sinon.stub(ball, 'moveTowards');
-
-      // stub the current player in possession of the ball as null
-      const service = new TestBallPossessionService(null);
-      const command = new PassBallCommand(ball, service);
-      command.execute(sender, receiver);
-
-      expect(moveStub).not.to.have.been.called;
-    });
-
-    it('does not move the ball is the player has ball control disabled', () => {
-      const sender = new Player(1, 1, 0, 0, 2); // x, y, vx, vy, diameter
-      const receiver = new Player(5, 4, 0, 0, 2); // x, y, vx, vy, diameter
-      const ball = new Ball(0, 0, 0, 0, 2); // x, y, vx, vy, diameter
-
-      // HACK: Stub sendMessage to prevent methods being sent to a non-existent
-      // queue
       sinon.stub(sender, 'sendMessage');
+      sinon.stub(sender, 'kickBall').returns(false);
 
-      sinon.stub(sender, 'ballControlIsDisabled').returns(true);
-      sinon.stub(ball, 'moveTowards');
-
-      // stub the current player in possession of the ball as the sender
-      const service = new TestBallPossessionService(sender);
-      const command = new PassBallCommand(ball, service);
+      const command = new PassBallCommand(ball);
       command.execute(sender, receiver);
 
-      expect(ball.moveTowards).not.to.have.been.called;
+      expect(sender.sendMessage).not.to.have.been.called;
     });
   });
 });
