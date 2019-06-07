@@ -32,33 +32,6 @@ describe('Player', () => {
     });
   });
 
-  describe('`temporarilyDisableBallControl`', () => {
-    beforeEach(() => {
-      this.clock = sinon.useFakeTimers();
-    });
-
-    afterEach(() => {
-      this.clock.restore();
-    });
-
-    it('sets ballControlEnabled to false', () => {
-      const player = new Player(0, 0, 0, 0, 5);
-      expect(player.ballControlIsDisabled()).to.be.false;
-      player.temporarilyDisableBallControl();
-
-      expect(player.ballControlIsDisabled()).to.be.true;
-    });
-
-    it('re-enables ball control after a delay', () => {
-      const player = new Player(0, 0, 0, 0, 5);
-      player.temporarilyDisableBallControl();
-      expect(player.ballControlIsDisabled()).to.be.true;
-
-      this.clock.tick(BALL_CONTROL_REFRESH_TIME);
-      expect(player.ballControlIsDisabled()).to.be.false;
-    });
-  });
-
   describe('`setMessageQueue`', () => {
     it('passes player messages to its controller', () => {
       class TestController implements IPlayerController {

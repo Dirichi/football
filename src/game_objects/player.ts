@@ -161,14 +161,6 @@ export class Player implements ICollidable {
     });
   }
 
-  public temporarilyDisableBallControl() {
-    this.ballControlEnabled = false;
-
-    setTimeout(() => {
-      this.ballControlEnabled = true;
-    }, BALL_CONTROL_REFRESH_TIME);
-  }
-
   public ballControlIsEnabled() {
     return this.ballControlEnabled;
   }
@@ -268,5 +260,14 @@ export class Player implements ICollidable {
       `player.${this.id}.ballPossession`, (message: {possession: boolean}) => {
         this.isInPossession = message.possession;
       });
+  }
+
+  private temporarilyDisableBallControl() {
+    this.ballControlEnabled = false;
+    // TODO: Use number of game update ticks as a unit, not milliseconds,
+    // because update frequency varies in speed across ticks.
+    setTimeout(() => {
+      this.ballControlEnabled = true;
+    }, BALL_CONTROL_REFRESH_TIME);
   }
 }
