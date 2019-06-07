@@ -18,7 +18,7 @@ let ball: Ball;
 let passValueCalculator: IPassValueCalculator;
 let shotValueCalculator: IShotValueCalculator;
 
-describe('PlayerStateMachine', () => {
+describe('PlayerStateFeatureExtractor', () => {
   beforeEach(() => {
     player = new Player(0, 0, 0, 0, 5);
     ball = new Ball(0, 0, 0, 0, 5);
@@ -38,8 +38,9 @@ describe('PlayerStateMachine', () => {
   });
 
   describe('`hasBall`', () => {
-    it('returns true if the currentplayerinpossession is the player', () => {
-      const possessionService = new TestBallPossessionService(player, null);
+    it('returns true if the player hasBall', () => {
+      sinon.stub(player, 'hasBall').returns(true);
+      const possessionService = new TestBallPossessionService();
       const extractor =
         new PlayerStateFeatureExtractor(
           ball, possessionService, passValueCalculator, shotValueCalculator);

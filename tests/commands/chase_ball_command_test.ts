@@ -16,28 +16,22 @@ describe('ChaseBallCommand', () => {
       () => {
         const ball = new Ball(0, 0, 0, 0, 0.5);
         const player = new Player(0, 0, 0, 0, 1);
-        // no player in possession of the ball
-        const possessionService = new TestBallPossessionService(null);
 
-        const command = new ChaseBallCommand(ball, possessionService);
+        const command = new ChaseBallCommand(ball);
+        sinon.stub(player, 'hasBall').returns(false);
 
-        sinon.stub(player, 'moveTowards').callsFake(
-          (actual: ThreeDimensionalVector) => {
-            const expected = new ThreeDimensionalVector(ball.x, ball.y, 0);
-            expect(expected.equals(actual));
-          });
-
+        sinon.spy(player, 'moveTowards');
         command.execute(player);
-        expect(player.moveTowards).to.have.been.called;
+        expect(player.moveTowards).to.have.been.calledWith(ball.getPosition());
     });
 
-    it('stops the player if already within the margin', () => {
+    it('stops the player if already has the ball', () => {
       const ball = new Ball(0, 0, 0, 0, 0.5); // x, y, vx, vy, diameter
       const player = new Player(0, 0, 0, 0, 1); // x, y, vx, vy, diameter
-      // set player as in possession of the ball
-      const possessionService = new TestBallPossessionService(player);
 
-      const command = new ChaseBallCommand(ball, possessionService);
+      sinon.stub(player, 'hasBall').returns(true);
+
+      const command = new ChaseBallCommand(ball);
 
       const stopStub = sinon.stub(player, 'stop');
       const moveStub = sinon.stub(player, 'moveTowards');

@@ -28,6 +28,7 @@ export class Player implements ICollidable {
   private team?: Team;
   private controller?: IPlayerController;
   private messageQueue?: EventQueue;
+  private isInPossession: boolean;
 
   // TODO: Flirting with the idea of moving these attributes to
   // a PlayerRole class
@@ -47,6 +48,7 @@ export class Player implements ICollidable {
       // swap representations out as we see fit.
       this.colors = [0, 0, 225];
       this.ballControlEnabled = true;
+      this.isInPossession = false;
   }
 
   public update() {
@@ -159,14 +161,6 @@ export class Player implements ICollidable {
     });
   }
 
-  public temporarilyDisableBallControl() {
-    this.ballControlEnabled = false;
-
-    setTimeout(() => {
-      this.ballControlEnabled = true;
-    }, BALL_CONTROL_REFRESH_TIME);
-  }
-
   public ballControlIsEnabled() {
     return this.ballControlEnabled;
   }
@@ -240,9 +234,40 @@ export class Player implements ICollidable {
     this.y = ball.getPosition().y - Y_BALL_MARGIN_FOR_KICKOFF_SUPPORT;
   }
 
+  public kickBall(ball: Ball, destination: ThreeDimensionalVector): boolean {
+    if (!this.canKickBall()) { return false; }
+
+    this.temporarilyDisableBallControl();
+    ball.moveTowards(destination);
+    return true;
+  }
+
+  public hasBall(): boolean {
+    return this.isInPossession;
+  }
+
+  private canKickBall(): boolean {
+    return this.ballControlEnabled && this.isInPossession;
+  }
+
   private listenForMessages(): void {
-    this.messageQueue.when(`player.${this.id}.messaged`, (message: {details: string}) => {
-      this.controller.handleMessage(message);
-    });
+    this.messageQueue.when(
+      `player.${this.id}.messaged`, (message: {details: string}) => {
+        this.controller.handleMessage(message);
+      });
+
+    this.messageQueue.when(
+      `player.${this.id}.ballPossession`, (message: {possession: boolean}) => {
+        this.isInPossession = message.possession;
+      });
+  }
+
+  private temporarilyDisableBallControl() {
+    this.ballControlEnabled = false;
+    // TODO: Use number of game update ticks as a unit, not milliseconds,
+    // because update frequency varies in speed across ticks.
+    setTimeout(() => {
+      this.ballControlEnabled = true;
+    }, BALL_CONTROL_REFRESH_TIME);
   }
 }
