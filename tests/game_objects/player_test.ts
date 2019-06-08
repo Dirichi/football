@@ -1,6 +1,7 @@
 import { Ball } from '../../src/game_objects/ball';
 import { Player } from '../../src/game_objects/player';
 import { IPlayerController } from '../../src/interfaces/iplayer_controller';
+import { IPlayerBallInteractionMediator } from '../../src/interfaces/iplayer_ball_interaction_mediator';
 import { Team } from '../../src/game_objects/team';
 import { EventQueue } from '../../src/event_queue';
 import { ThreeDimensionalVector } from '../../src/three_dimensional_vector';
@@ -10,6 +11,20 @@ import * as sinon from 'sinon';
 const sinonChai = require('sinon-chai');
 const expect = chai.expect;
 chai.use(sinonChai);
+
+class TestPlayerBallInteractionMediator implements IPlayerBallInteractionMediator {
+  hasBall(player: Player): boolean {
+    return true;
+  }
+
+  kickBall(player: Player, destination: ThreeDimensionalVector): boolean {
+    return true;
+  }
+
+  controlBall(player: Player): boolean {
+    return true;
+  }
+}
 
 describe('Player', () => {
   describe('`getNearestTeamMate`', () => {
@@ -53,122 +68,43 @@ describe('Player', () => {
       expect(controller.handleMessage).to.have.been.calledWith(
         {details: 'message'});
     });
-
-    it('records when the player is in possession', () => {
-      const queue = new EventQueue();
-      const player = new Player(0, 0, 0, 0, 5);
-      player.setMessageQueue(queue);
-
-      queue.trigger(`player.${player.getGameObjectId()}.ballPossession`,
-        {possession: true});
-
-      expect(player.hasBall()).to.be.true;
-    });
-
-    it('records when the player is not in possession', () => {
-      const queue = new EventQueue();
-      const player = new Player(0, 0, 0, 0, 5);
-      player.setMessageQueue(queue);
-
-      queue.trigger(`player.${player.getGameObjectId()}.ballPossession`,
-        {possession: false});
-
-      expect(player.hasBall()).to.be.false;
-    });
   });
 
+  // describe('`feetPosition`', () => {
+  //   it('returns ')
+  // });
+
   describe('`kickBall`', () => {
-    it('moves the ball to the desired destination', () => {
-      const queue = new EventQueue();
+    it('calls `kickBall` on the ballInteractionMediator', () => {
       const player = new Player(0, 0, 0, 0, 5);
-      const ball = new Ball(0, 0, 0, 0, 1);
-      player.setMessageQueue(queue);
-      // Give player possession of ball
-      queue.trigger(`player.${player.getGameObjectId()}.ballPossession`,
-        {possession: true});
-      sinon.spy(ball, 'moveTowards');
-
+      const mediator = new TestPlayerBallInteractionMediator();
       const destination = new ThreeDimensionalVector(5, 5, 0);
-      player.kickBall(ball, destination);
+      player.setBallInteractionMediator(mediator);
+      sinon.stub(mediator, 'kickBall');
 
-      expect(ball.moveTowards).to.have.been.calledWith(destination);
-    });
+      player.kickBall(destination);
 
-    it('does not move the ball if the player is not in possession', () => {
-      const queue = new EventQueue();
-      const player = new Player(0, 0, 0, 0, 5);
-      const ball = new Ball(0, 0, 0, 0, 1);
-      player.setMessageQueue(queue);
-      // Player does not have possession
-      queue.trigger(`player.${player.getGameObjectId()}.ballPossession`,
-        {possession: false});
-      sinon.spy(ball, 'moveTowards');
-
-      const destination = new ThreeDimensionalVector(5, 5, 0);
-      player.kickBall(ball, destination);
-
-      expect(ball.moveTowards).not.to.have.been.called;
-    });
-
-    it('temporarily disables kicking', () => {
-      const queue = new EventQueue();
-      const player = new Player(0, 0, 0, 0, 5);
-      const ball = new Ball(0, 0, 0, 0, 1);
-      player.setMessageQueue(queue);
-      // Give player possession of ball
-      queue.trigger(`player.${player.getGameObjectId()}.ballPossession`,
-        {possession: true});
-
-      const destinationOne = new ThreeDimensionalVector(5, 5, 0);
-      player.kickBall(ball, destinationOne);
-
-      const destinationTwo = new ThreeDimensionalVector(15, 15, 0);
-      player.kickBall(ball, destinationTwo);
-      sinon.spy(ball, 'moveTowards');
-
-      expect(ball.moveTowards).not.to.have.been.called;
+      expect(mediator.kickBall).to.have.been.calledWith(player, destination);
     });
 
     it('returns true if the ball was kicked', () => {
-      const queue = new EventQueue();
       const player = new Player(0, 0, 0, 0, 5);
-      const ball = new Ball(0, 0, 0, 0, 1);
-      player.setMessageQueue(queue);
-      // Give player possession of ball
-      queue.trigger(`player.${player.getGameObjectId()}.ballPossession`,
-        {possession: true});
-
+      const mediator = new TestPlayerBallInteractionMediator();
       const destination = new ThreeDimensionalVector(5, 5, 0);
-      expect(player.kickBall(ball, destination)).to.be.true;
+      player.setBallInteractionMediator(mediator);
+      sinon.stub(mediator, 'kickBall').returns(true);
+
+      expect(player.kickBall(destination)).to.be.true;
     });
 
     it('returns false if the ball was not kicked', () => {
-      const queue = new EventQueue();
       const player = new Player(0, 0, 0, 0, 5);
-      const ball = new Ball(0, 0, 0, 0, 1);
-      player.setMessageQueue(queue);
-      // Give player possession of ball
-      queue.trigger(`player.${player.getGameObjectId()}.ballPossession`,
-        {possession: false});
-
+      const mediator = new TestPlayerBallInteractionMediator();
       const destination = new ThreeDimensionalVector(5, 5, 0);
-      expect(player.kickBall(ball, destination)).to.be.false;
-    });
+      player.setBallInteractionMediator(mediator);
+      sinon.stub(mediator, 'kickBall').returns(false);
 
-    it('returns false if kicking is disabled', () => {
-      const queue = new EventQueue();
-      const player = new Player(0, 0, 0, 0, 5);
-      const ball = new Ball(0, 0, 0, 0, 1);
-      player.setMessageQueue(queue);
-      // Give player possession of ball
-      queue.trigger(`player.${player.getGameObjectId()}.ballPossession`,
-        {possession: true});
-
-      const destinationOne = new ThreeDimensionalVector(5, 5, 0);
-      player.kickBall(ball, destinationOne);
-
-      const destinationTwo = new ThreeDimensionalVector(15, 15, 0);
-      expect(player.kickBall(ball, destinationTwo)).to.be.false;
+      expect(player.kickBall(destination)).to.be.false;
     });
   });
 });

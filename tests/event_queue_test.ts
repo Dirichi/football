@@ -70,4 +70,40 @@ describe('EventQueue', () => {
       expect(trigger).not.to.throw();
     });
   });
+
+  describe('`once`', () => {
+    it('adds the event and callback to the `events` map', () => {
+      const queue = new EventQueue();
+      const callback = () => {};
+
+      queue.once('something.happened', callback);
+      const registeredCallbacks = queue.events.get('something.happened');
+      expect(registeredCallbacks).to.eql([callback]);
+    });
+
+    it('appends the callback to the event entry if other callbacks are'
+        + ' already registered', () => {
+      const events = new Map();
+      const previouslyAddedCallBack = () => {};
+      events.set('something.happened', [previouslyAddedCallBack]);
+
+      const queue = new EventQueue(events);
+      const callback = () => {};
+      queue.once('something.happened', callback);
+
+      const registeredCallbacks = queue.events.get('something.happened');
+      expect(registeredCallbacks.length).to.equal(2);
+      expect(registeredCallbacks).to.eql([previouslyAddedCallBack, callback]);
+    });
+
+    it('ensures that the event is deleted after is triggered once', () => {
+      const queue = new EventQueue();
+      const callback = () => {};
+
+      queue.once('something.happened', callback);
+      queue.trigger('something.happened', {});
+      const registeredCallbacks = queue.events.get('something.happened');
+      expect(registeredCallbacks).to.be.undefined;
+    });
+  });
 });

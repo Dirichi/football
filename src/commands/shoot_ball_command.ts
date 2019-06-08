@@ -12,6 +12,6 @@ export class ShootBallCommand implements ICommand {
 
   public execute(player: Player) {
     const postMidPoint = player.getOpposingGoalPost().getMidPoint();
-    player.kickBall(this.ball, postMidPoint);
+    player.kickBall(postMidPoint);
   }
 }

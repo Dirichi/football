@@ -66,6 +66,14 @@ export class Ball implements ICollidable {
     return new ThreeDimensionalVector(this.x, this.y, 0);
   }
 
+  public reposition(newPosition: ThreeDimensionalVector): void {
+    return;
+  }
+
+  public stop(): void {
+    [this.vx, this.vy] = [0, 0];
+  }
+
   public prepareForKickOff(): void {
     [this.x, this.y] = [this.kickOffPosition.x, this.kickOffPosition.y];
   }

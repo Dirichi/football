@@ -28,14 +28,13 @@ export class PlayerPhysics {
     const nextY = this.player.y + this.player.vy;
     const withinBoundary =
       this.boundary.containsCircle(nextX, nextY, this.player.diameter);
-    withinBoundary ? this.move() : this.stop();
+    withinBoundary ? this.move() : this.player.stop();
 
     this.applyFriction();
   }
 
   public setPlayer(player: Player): void {
     this.player = player;
-    this.listenForCollisions();
   }
 
   public setFriction(friction: number): void {
@@ -50,49 +49,5 @@ export class PlayerPhysics {
   private move(): void {
     this.player.x += this.player.vx;
     this.player.y += this.player.vy;
-  }
-
-  private stop(): void {
-    this.player.vx = 0;
-    this.player.vy = 0;
-  }
-
-  private listenForCollisions(): void {
-    this.queue.when(`${this.player.getGameObjectId()}.collision`, (data) => {
-      const payload = data as ICollisionPayload;
-      this.handleCollision(payload);
-    });
-  }
-
-  private handleCollision(collisionPayload: ICollisionPayload): void {
-    if (collisionPayload.colliderType === "ball"
-        && this.player.ballControlIsEnabled()) {
-          this.controlBall(collisionPayload.shape);
-      }
-  }
-
-  private controlBall(ball: ICircle): void {
-    // TODO: Should this entire flow of controlling the ball be its own state?
-    const newBallPosition = this.calculateNewBallPosition(ball);
-    const payload: IBallControlPayload = {
-      newVx: 0,
-      newVy: 0,
-      newX: newBallPosition.x,
-      newY: newBallPosition.y,
-    };
-    this.queue.trigger("ball.control", payload);
-  }
-
-  private calculateNewBallPosition(ball: ICircle): ThreeDimensionalVector {
-    const velocity = this.player.getVelocity();
-    if (velocity.isZero()) {
-      return ball.getCentre();
-    }
-
-    const desiredMargin = (this.player.diameter + ball.getDiameter()) / 2;
-    return velocity
-      .unit()
-      .scalarMultiply(desiredMargin)
-      .add(this.player.getPosition());
   }
 }
