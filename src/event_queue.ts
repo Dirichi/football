@@ -3,7 +3,7 @@ import { IEventQueue } from "./interfaces/ievent_queue";
 export class EventQueue implements IEventQueue {
   // TODO: No reason for this to be public
   public events: Map<string, Array<(payload: object) => void>>;
-  private oneTimeEvents: Set<string>
+  private oneTimeEvents: Set<string>;
 
   constructor(events?: Map<string, Array<(payload: object) => void>>) {
     this.events = events || new Map();
@@ -31,7 +31,7 @@ export class EventQueue implements IEventQueue {
   }
 
   private handleOneTimeEvent(event: string): void {
-    if(this.oneTimeEvents.delete(event)) {
+    if (this.oneTimeEvents.delete(event)) {
       this.events.delete(event);
     }
   }

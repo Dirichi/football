@@ -56,6 +56,8 @@ import { CollisionDetectionService } from "./services/collision_detection_servic
 import { CollisionNotificationService } from "./services/collision_notification_service";
 import { GoalDetectionService } from "./services/goal_detection_service";
 import { GoalRecordService } from "./services/goal_record_service";
+import { PlayerBallInteractionMediator } from "./services/player_ball_interaction_mediator";
+import { TickService } from "./services/tick_service";
 import { TimerService } from "./timer_service";
 
 // TODO: Alright we need to introduce proper logging.
@@ -251,7 +253,15 @@ game.setBall(ball)
   .setGoalDetectionService(goalDetectionService)
   .setGoalRecordService(goalRecordService);
 
+const tickService = new TickService(queue);
+const mediator =
+  new PlayerBallInteractionMediator(
+    ball, ballPossessionService, tickService, 20);
+
+players.forEach((player) => player.setBallInteractionMediator(mediator));
+
 setInterval(() => {
+  tickService.tick();
   ballPossessionService.update();
   collisionNotificationService.update();
   game.update();

@@ -1,8 +1,8 @@
 import { Ball } from "../game_objects/ball";
-import { IPlayerBallInteractionMediator } from "../interfaces/iplayer_ball_interaction_mediator";
-import { IBallPossessionService } from "../interfaces/iball_possession_service";
-import { ITickService } from "../interfaces/itick_service";
 import { Player } from "../game_objects/player";
+import { IBallPossessionService } from "../interfaces/iball_possession_service";
+import { IPlayerBallInteractionMediator } from "../interfaces/iplayer_ball_interaction_mediator";
+import { ITickService } from "../interfaces/itick_service";
 import { ThreeDimensionalVector } from "../three_dimensional_vector";
 
 export class PlayerBallInteractionMediator

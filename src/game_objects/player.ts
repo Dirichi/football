@@ -3,13 +3,13 @@ import { BALL_CONTROL_REFRESH_TIME, constants, EVENTS, Y_BALL_MARGIN_FOR_KICKOFF
 import { EventQueue } from "../event_queue";
 import { ICircle } from "../interfaces/icircle";
 import { ICollidable } from "../interfaces/icollidable";
-import { IPlayerController } from "../interfaces/iplayer_controller";
 import { IPlayerBallInteractionMediator } from "../interfaces/iplayer_ball_interaction_mediator";
+import { IPlayerController } from "../interfaces/iplayer_controller";
 import { IPlayerSchema } from "../interfaces/iplayer_schema";
 import { PlayerPhysics } from "../physics/player_physics";
 import { ThreeDimensionalVector } from "../three_dimensional_vector";
 import { minimumBy } from "../utils/helper_functions";
-import { Ball } from "./ball"
+import { Ball } from "./ball";
 import { Post } from "./post";
 import { Team } from "./team";
 
@@ -37,7 +37,7 @@ export class Player implements ICollidable {
   private defendingPosition?: ThreeDimensionalVector;
   private kickOffPosition?: ThreeDimensionalVector;
 
-  private positionOfFeet: ThreeDimensionalVector;
+  private lastNonZeroVelocity?: ThreeDimensionalVector;
 
   constructor(x: number, y: number, vx: number, vy: number, diameter: number) {
       this.id = v4(); // Randomly generated id
@@ -59,19 +59,23 @@ export class Player implements ICollidable {
   }
 
   public moveUp(): void {
-    [this.vx, this.vy] = [0, -this.maximumSpeed];
+    const velocity = new ThreeDimensionalVector(0, -this.maximumSpeed, 0);
+    this.setVelocity(velocity);
   }
 
   public moveDown(): void {
-    [this.vx, this.vy] = [0, this.maximumSpeed];
+    const velocity = new ThreeDimensionalVector(0, this.maximumSpeed, 0);
+    this.setVelocity(velocity);
   }
 
   public moveLeft(): void {
-    [this.vx, this.vy] = [-this.maximumSpeed, 0];
+    const velocity = new ThreeDimensionalVector(-this.maximumSpeed, 0, 0);
+    this.setVelocity(velocity);
   }
 
   public moveRight(): void {
-    [this.vx, this.vy] = [this.maximumSpeed, 0];
+    const velocity = new ThreeDimensionalVector(this.maximumSpeed, 0, 0);
+    this.setVelocity(velocity);
   }
 
   public stop(): void {
@@ -79,23 +83,17 @@ export class Player implements ICollidable {
   }
 
   public feetPosition(): ThreeDimensionalVector {
-    return new ThreeDimensionalVector(0, 0, 0);
-    // const velocity = this.getVelocity();
-    // if (velocity.isZero()) {
-    //   return ball.getCentre();
-    // }
-    //
-    // const desiredMargin = (this.diameter + ball.getDiameter()) / 2;
-    // return velocity
-    //   .unit()
-    //   .scalarMultiply(desiredMargin)
-    //   .add(this.player.getPosition());
+    this.lastNonZeroVelocity =
+      this.lastNonZeroVelocity || ThreeDimensionalVector.random2D();
+
+    const margin = this.diameter / 2;
+    return this.lastNonZeroVelocity.unit()
+      .scalarMultiply(margin)
+      .add(this.getPosition());
   }
 
   public moveTowards(target: ThreeDimensionalVector): void {
-    // TODO: Move to physics class
-    const position = new ThreeDimensionalVector(this.x, this.y, 0);
-    const unitDelta = target.minus(position).unit();
+    const unitDelta = target.minus(this.getPosition()).unit();
     const velocity = unitDelta.scalarMultiply(this.maximumSpeed);
 
     [this.vx, this.vy] = [velocity.x, velocity.y];
@@ -223,7 +221,8 @@ export class Player implements ICollidable {
   }
 
   public sendMessage(player: Player, message: {details: string}): void {
-    this.messageQueue.trigger(`player.${player.getGameObjectId()}.messaged`, message);
+    this.messageQueue.trigger(
+      `player.${player.getGameObjectId()}.messaged`, message);
   }
 
   public enableControls(): void {
@@ -265,5 +264,13 @@ export class Player implements ICollidable {
       `player.${this.id}.messaged`, (message: {details: string}) => {
         this.controller.handleMessage(message);
       });
+  }
+
+  private setVelocity(velocity: ThreeDimensionalVector) {
+    [this.vx, this.vy] = [velocity.x, velocity.y];
+
+    if (velocity.isNonZero()) {
+      this.lastNonZeroVelocity = velocity;
+    }
   }
 }

@@ -1,5 +1,5 @@
-import { ITickService } from "../interfaces/itick_service";
 import { EventQueue } from "../event_queue";
+import { ITickService } from "../interfaces/itick_service";
 
 export class TickService implements ITickService {
   private tickCount: number;
@@ -10,12 +10,12 @@ export class TickService implements ITickService {
     this.tickCount = 0;
   }
 
-  tick(): void {
+  public tick(): void {
     this.tickCount += 1;
     this.queue.trigger(`tickService.tickCount.${this.tickCount}`, {});
   }
 
-  after(numberOfTicks: number, callback: () => void): void {
+  public after(numberOfTicks: number, callback: () => void): void {
     const deadline = this.tickCount + numberOfTicks + 1;
     this.queue.once(`tickService.tickCount.${deadline}`, callback);
   }

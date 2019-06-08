@@ -1,11 +1,6 @@
 // TODO: Refactor any objects that have x, y properties to use the vector class.
 // This class should be tested
 export class ThreeDimensionalVector {
-  private representation: number[];
-
-  constructor(x: number, y: number, z: number) {
-    this.representation = [x, y, z];
-  }
 
   get x(): number {
     return this.representation[0];
@@ -17,6 +12,16 @@ export class ThreeDimensionalVector {
 
   get z(): number {
     return this.representation[2];
+  }
+
+  public static random2D(): ThreeDimensionalVector {
+    // TODO: This class should not be 3D. There's no use case for 3D yet.
+    return new ThreeDimensionalVector(Math.random(), Math.random(), 0);
+  }
+  private representation: number[];
+
+  constructor(x: number, y: number, z: number) {
+    this.representation = [x, y, z];
   }
 
   public equals(other: ThreeDimensionalVector): boolean {
