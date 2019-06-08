@@ -244,7 +244,7 @@ const mediator =
   new PlayerBallInteractionMediator(
     ball, ballPossessionService, tickService, 20);
 
-players.forEach((player) => player.setBallInteractionMediator(mediator));
+defaultPlayers.forEach((player) => player.setBallInteractionMediator(mediator));
 
 setInterval(() => {
   tickService.tick();
