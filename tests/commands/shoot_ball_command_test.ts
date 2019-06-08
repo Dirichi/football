@@ -18,12 +18,12 @@ describe('ShootBallCommand', () => {
       const player = new Player(1, 1, 0, 0, 2); // x, y, vx, vy, diameter
       const ball = new Ball(0, 0, 0, 0, 2); // x, y, vx, vy, diameter
       player.setOpposingGoalPost(post);
-      sinon.spy(player, 'kickBall');
+      sinon.stub(player, 'kickBall');
 
       const command = new ShootBallCommand(ball);
       command.execute(player);
 
-      expect(player.kickBall).to.have.been.calledWith(ball, post.getMidPoint());
+      expect(player.kickBall).to.have.been.calledWith(post.getMidPoint());
     });
   });
 });

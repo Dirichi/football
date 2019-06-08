@@ -82,29 +82,4 @@ describe('BallPhysics', () => {
       expect([ball.vx, ball.vy]).to.eql([3.6, 7.2]);
     });
   });
-
-  describe('`setPlayer`', () => {
-    context('when the player collides with a ball', () => {
-      beforeEach(() => {
-        queue = new TestEventQueue();
-        boundary = new TestBoundary();
-      });
-
-      afterEach(() => {
-        queue = null;
-        boundary = null;
-      });
-
-      it('sets the ball position and velocity with the passed params', () => {
-        const [x, y, vx, vy, diameter] = [0, 0, 0, 0, 5];
-        const ball = new Ball(x, y, vx, vy, diameter);
-        const physics = new BallPhysics(boundary, queue);
-        physics.setBall(ball);
-
-        const payload = {newX: 2, newY: 3, newVx: 4, newVy: 8};
-        queue.trigger(`ball.control`, payload);
-        expect([ball.x, ball.y, ball.vx, ball.vy]).to.eql([2, 3, 4, 8]);
-      });
-    });
-  });
 });

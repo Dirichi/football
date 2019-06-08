@@ -20,7 +20,6 @@ export class BallPossessionService implements IBallPossessionService {
   }
 
   public update(): void {
-    this.publishBallPossessionData();
     // Clear data about the current player in possession.
     // It will be refreshed when another ball collision event
     // occurs
@@ -56,13 +55,5 @@ export class BallPossessionService implements IBallPossessionService {
       this.currentPlayerInPossession = playerInPossession;
       this.lastPlayerInPossession = playerInPossession;
     }
-  }
-
-  private publishBallPossessionData(): void {
-    this.players.forEach((player) => {
-      const inPossession = player === this.currentPlayerInPossession;
-      this.queue.trigger(`player.${player.getGameObjectId()}.ballPossession`,
-        {possession: inPossession});
-    });
   }
 }

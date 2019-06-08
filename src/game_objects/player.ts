@@ -3,6 +3,7 @@ import { BALL_CONTROL_REFRESH_TIME, constants, EVENTS, Y_BALL_MARGIN_FOR_KICKOFF
 import { EventQueue } from "../event_queue";
 import { ICircle } from "../interfaces/icircle";
 import { ICollidable } from "../interfaces/icollidable";
+import { IPlayerBallInteractionMediator } from "../interfaces/iplayer_ball_interaction_mediator";
 import { IPlayerController } from "../interfaces/iplayer_controller";
 import { IPlayerSchema } from "../interfaces/iplayer_schema";
 import { PlayerPhysics } from "../physics/player_physics";
@@ -13,13 +14,13 @@ import { Post } from "./post";
 import { Team } from "./team";
 
 export class Player implements ICollidable {
+  // TODO: Make these private
   public x: number;
   public y: number;
   public vx: number;
   public vy: number;
   public diameter: number;
 
-  private ballControlEnabled: boolean;
   private opposingGoalPost?: Post;
   private physics?: PlayerPhysics;
   private maximumSpeed?: number;
@@ -28,13 +29,15 @@ export class Player implements ICollidable {
   private team?: Team;
   private controller?: IPlayerController;
   private messageQueue?: EventQueue;
-  private isInPossession: boolean;
+  private ballInteractionMediator?: IPlayerBallInteractionMediator;
 
   // TODO: Flirting with the idea of moving these attributes to
   // a PlayerRole class
   private attackingPosition?: ThreeDimensionalVector;
   private defendingPosition?: ThreeDimensionalVector;
   private kickOffPosition?: ThreeDimensionalVector;
+
+  private lastNonZeroVelocity?: ThreeDimensionalVector;
 
   constructor(x: number, y: number, vx: number, vy: number, diameter: number) {
       this.id = v4(); // Randomly generated id
@@ -47,39 +50,50 @@ export class Player implements ICollidable {
       // Like a PhysicalRepresentation or something like that. So that we can
       // swap representations out as we see fit.
       this.colors = [0, 0, 225];
-      this.ballControlEnabled = true;
-      this.isInPossession = false;
   }
 
-  public update() {
+  public update(): void {
+    this.controlBall();
     this.physics.update();
     this.controller.update();
   }
 
-  public moveUp() {
-    [this.vx, this.vy] = [0, -this.maximumSpeed];
+  public moveUp(): void {
+    const velocity = new ThreeDimensionalVector(0, -this.maximumSpeed, 0);
+    this.setVelocity(velocity);
   }
 
-  public moveDown() {
-    [this.vx, this.vy] = [0, this.maximumSpeed];
+  public moveDown(): void {
+    const velocity = new ThreeDimensionalVector(0, this.maximumSpeed, 0);
+    this.setVelocity(velocity);
   }
 
-  public moveLeft() {
-    [this.vx, this.vy] = [-this.maximumSpeed, 0];
+  public moveLeft(): void {
+    const velocity = new ThreeDimensionalVector(-this.maximumSpeed, 0, 0);
+    this.setVelocity(velocity);
   }
 
-  public moveRight() {
-    [this.vx, this.vy] = [this.maximumSpeed, 0];
+  public moveRight(): void {
+    const velocity = new ThreeDimensionalVector(this.maximumSpeed, 0, 0);
+    this.setVelocity(velocity);
   }
 
-  public stop() {
+  public stop(): void {
     [this.vx, this.vy] = [0, 0];
   }
 
-  public moveTowards(target: ThreeDimensionalVector) {
-    // TODO: Move to physics class
-    const position = new ThreeDimensionalVector(this.x, this.y, 0);
-    const unitDelta = target.minus(position).unit();
+  public feetPosition(): ThreeDimensionalVector {
+    this.lastNonZeroVelocity =
+      this.lastNonZeroVelocity || ThreeDimensionalVector.random2D();
+
+    const margin = this.diameter / 2;
+    return this.lastNonZeroVelocity.unit()
+      .scalarMultiply(margin)
+      .add(this.getPosition());
+  }
+
+  public moveTowards(target: ThreeDimensionalVector): void {
+    const unitDelta = target.minus(this.getPosition()).unit();
     const velocity = unitDelta.scalarMultiply(this.maximumSpeed);
 
     [this.vx, this.vy] = [velocity.x, velocity.y];
@@ -161,14 +175,6 @@ export class Player implements ICollidable {
     });
   }
 
-  public ballControlIsEnabled() {
-    return this.ballControlEnabled;
-  }
-
-  public ballControlIsDisabled() {
-    return !this.ballControlEnabled;
-  }
-
   public setTeam(team: Team): Player {
     this.team = team;
     return this;
@@ -200,6 +206,12 @@ export class Player implements ICollidable {
     return this;
   }
 
+  public setBallInteractionMediator(
+    mediator: IPlayerBallInteractionMediator): Player {
+      this.ballInteractionMediator = mediator;
+      return this;
+  }
+
   public moveTowardsAttackingPosition(): void {
     this.moveTowards(this.attackingPosition);
   }
@@ -209,7 +221,8 @@ export class Player implements ICollidable {
   }
 
   public sendMessage(player: Player, message: {details: string}): void {
-    this.messageQueue.trigger(`player.${player.getGameObjectId()}.messaged`, message);
+    this.messageQueue.trigger(
+      `player.${player.getGameObjectId()}.messaged`, message);
   }
 
   public enableControls(): void {
@@ -234,20 +247,16 @@ export class Player implements ICollidable {
     this.y = ball.getPosition().y - Y_BALL_MARGIN_FOR_KICKOFF_SUPPORT;
   }
 
-  public kickBall(ball: Ball, destination: ThreeDimensionalVector): boolean {
-    if (!this.canKickBall()) { return false; }
-
-    this.temporarilyDisableBallControl();
-    ball.moveTowards(destination);
-    return true;
+  public kickBall(destination: ThreeDimensionalVector): boolean {
+    return this.ballInteractionMediator.kickBall(this, destination);
   }
 
   public hasBall(): boolean {
-    return this.isInPossession;
+    return this.ballInteractionMediator.hasBall(this);
   }
 
-  private canKickBall(): boolean {
-    return this.ballControlEnabled && this.isInPossession;
+  public controlBall(): boolean {
+    return this.ballInteractionMediator.controlBall(this);
   }
 
   private listenForMessages(): void {
@@ -255,19 +264,13 @@ export class Player implements ICollidable {
       `player.${this.id}.messaged`, (message: {details: string}) => {
         this.controller.handleMessage(message);
       });
-
-    this.messageQueue.when(
-      `player.${this.id}.ballPossession`, (message: {possession: boolean}) => {
-        this.isInPossession = message.possession;
-      });
   }
 
-  private temporarilyDisableBallControl() {
-    this.ballControlEnabled = false;
-    // TODO: Use number of game update ticks as a unit, not milliseconds,
-    // because update frequency varies in speed across ticks.
-    setTimeout(() => {
-      this.ballControlEnabled = true;
-    }, BALL_CONTROL_REFRESH_TIME);
+  private setVelocity(velocity: ThreeDimensionalVector) {
+    [this.vx, this.vy] = [velocity.x, velocity.y];
+
+    if (velocity.isNonZero()) {
+      this.lastNonZeroVelocity = velocity;
+    }
   }
 }

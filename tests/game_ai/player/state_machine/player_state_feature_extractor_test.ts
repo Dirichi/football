@@ -47,14 +47,12 @@ describe('PlayerStateFeatureExtractor', () => {
       expect(extractor.hasBall(player)).to.be.true;
     });
 
-    it('returns false if the currentplayerinpossession is not the player',
-        () => {
-        const otherPlayer = new Player(0, 0, 0, 0, 5);
-        const possessionService = new TestBallPossessionService(otherPlayer, null);
-        const extractor =
-          new PlayerStateFeatureExtractor(
-            ball, possessionService, passValueCalculator, shotValueCalculator);
-        expect(extractor.hasBall(player)).to.be.false;
+    it('returns false if the player does not have the ball', () => {
+      sinon.stub(player, 'hasBall').returns(false);
+      const possessionService = new TestBallPossessionService();
+      const extractor = new PlayerStateFeatureExtractor(
+        ball, possessionService, passValueCalculator, shotValueCalculator);
+      expect(extractor.hasBall(player)).to.be.false;
     });
   });
 

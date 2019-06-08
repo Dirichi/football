@@ -17,7 +17,6 @@ export class BallPhysics {
 
   public setBall(ball: Ball) {
     this.ball = ball;
-    this.listenForControl();
   }
 
   public update() {
@@ -25,7 +24,7 @@ export class BallPhysics {
     const nextY = this.ball.y + this.ball.vy;
     const withinBoundary =
       this.boundary.containsCircle(nextX, nextY, this.ball.diameter);
-    withinBoundary ? this.move(nextX, nextY) : this.stop();
+    withinBoundary ? this.move(nextX, nextY) : this.ball.stop();
 
     this.applyFriction();
   }
@@ -42,25 +41,5 @@ export class BallPhysics {
   private move(x: number, y: number) {
     this.ball.x = x;
     this.ball.y = y;
-  }
-
-  private stop() {
-    this.ball.vx = 0;
-    this.ball.vy = 0;
-  }
-
-  private listenForControl() {
-    // TODO: Listen for the specific ball by id
-    this.queue.when("ball.control", (data) => {
-      const controlPayload = data as IBallControlPayload;
-      this.adjustBall(controlPayload);
-    });
-  }
-
-  private adjustBall(controlPayload: IBallControlPayload) {
-    this.ball.x = controlPayload.newX;
-    this.ball.y = controlPayload.newY;
-    this.ball.vx = controlPayload.newVx;
-    this.ball.vy = controlPayload.newVy;
   }
 }

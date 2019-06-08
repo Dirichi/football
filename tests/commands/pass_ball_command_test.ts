@@ -12,7 +12,7 @@ chai.use(sinonChai);
 
 describe('PassBallCommand', () => {
   describe('`execute`', () => {
-    it('moves the ball towards the specified receiver', () => {
+    it('kicks the ball towards the receiver', () => {
       const sender = new Player(1, 1, 0, 0, 2); // x, y, vx, vy, diameter
       const receiver = new Player(5, 4, 0, 0, 2); // x, y, vx, vy, diameter
       const ball = new Ball(0, 0, 0, 0, 2); // x, y, vx, vy, diameter
@@ -20,13 +20,12 @@ describe('PassBallCommand', () => {
       // HACK: Stub sendMessage to prevent methods being sent to a non-existent
       // queue
       sinon.stub(sender, 'sendMessage');
-      sinon.spy(sender, 'kickBall');
+      sinon.stub(sender, 'kickBall');
 
       const command = new PassBallCommand(ball);
       command.execute(sender, receiver);
 
-      expect(sender.kickBall).to.have.been.calledWith(
-        ball, receiver.getPosition());
+      expect(sender.kickBall).to.have.been.calledWith(receiver.getPosition());
     });
 
     it('sends a stop message to the receiver if the ball was kicked', () => {
@@ -40,8 +39,8 @@ describe('PassBallCommand', () => {
       const command = new PassBallCommand(ball);
       command.execute(sender, receiver);
 
-      expect(sender.sendMessage).to.have.been.calledWith(
-        receiver, {details: STATE_MACHINE_COMMANDS.WAIT});
+      expect(sender.sendMessage).to.have.been.calledWith(receiver,
+        {details: STATE_MACHINE_COMMANDS.WAIT});
     });
 
     it('does not send stop to the receiver if the ball was not kicked', () => {
