@@ -83,6 +83,18 @@ describe('Player', () => {
         expect(position.equals(expectedPosition)).to.be.true;
       });
 
+    it('returns the unit of the last non-zero velocity scaled by player' +
+      ' radius offset by current position', () => {
+        const player = new Player(3, 6, 0, 0, 5);
+        player.setMaximumSpeed(10);
+        player.moveTowards(new ThreeDimensionalVector(13, 6, 0));
+        player.stop();
+
+        const position = player.feetPosition();
+        const expectedPosition = new ThreeDimensionalVector(5.5, 6, 0);
+        expect(position.equals(expectedPosition)).to.be.true;
+      });
+
     it('defaults to a random direction if no non-zero velocity has been' +
       ' recorded', () => {
         const player = new Player(3, 6, 0, 0, 5);

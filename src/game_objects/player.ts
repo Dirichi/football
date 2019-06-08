@@ -95,8 +95,7 @@ export class Player implements ICollidable {
   public moveTowards(target: ThreeDimensionalVector): void {
     const unitDelta = target.minus(this.getPosition()).unit();
     const velocity = unitDelta.scalarMultiply(this.maximumSpeed);
-
-    [this.vx, this.vy] = [velocity.x, velocity.y];
+    this.setVelocity(velocity);
   }
 
   public setPhysics(physics: PlayerPhysics): Player {
