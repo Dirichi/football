@@ -1,5 +1,7 @@
 import v4 from "uuid/v4";
-import { BALL_CONTROL_REFRESH_TIME, constants, EVENTS, Y_BALL_MARGIN_FOR_KICKOFF_SUPPORT } from "../constants";
+import { BALL_CONTROL_REFRESH_TIME,
+  constants, EVENTS, PLAYER_ROLE_TYPE, Y_BALL_MARGIN_FOR_KICKOFF_SUPPORT
+} from "../constants";
 import { EventQueue } from "../event_queue";
 import { ICircle } from "../interfaces/icircle";
 import { ICollidable } from "../interfaces/icollidable";
@@ -31,12 +33,7 @@ export class Player implements ICollidable {
   private controller?: IPlayerController;
   private messageQueue?: EventQueue;
   private ballInteractionMediator?: IPlayerBallInteractionMediator;
-
-  // TODO: Flirting with the idea of moving these attributes to
-  // a PlayerRole class
-  private attackingPosition?: ThreeDimensionalVector;
-  private defendingPosition?: ThreeDimensionalVector;
-  private kickOffPosition?: ThreeDimensionalVector;
+  private role?: PlayerRole;
 
   private lastNonZeroVelocity?: ThreeDimensionalVector;
 
@@ -180,26 +177,13 @@ export class Player implements ICollidable {
     return this;
   }
 
-  public assignRole(role: PlayerRole): void {
-    const side = this.team.getSide();
-    this.setAttackingPosition(role.getDefaultAttackingPosition(side))
-      .setDefendingPosition(role.getDefaultDefendingPosition(side))
-      .setKickOffPosition(role.getDefaultDefendingPosition(side));
-  }
-
-  public setAttackingPosition(position: ThreeDimensionalVector): Player {
-    this.attackingPosition = position;
+  public setRole(role: PlayerRole): Player {
+    this.role = role;
     return this;
   }
 
-  public setDefendingPosition(position: ThreeDimensionalVector): Player {
-    this.defendingPosition = position;
-    return this;
-  }
-
-  public setKickOffPosition(position: ThreeDimensionalVector): Player {
-    this.kickOffPosition = position;
-    return this;
+  public getRoleType(): PLAYER_ROLE_TYPE {
+    return this.role.getType();
   }
 
   public setController(controller: IPlayerController): Player {
@@ -220,11 +204,11 @@ export class Player implements ICollidable {
   }
 
   public moveTowardsAttackingPosition(): void {
-    this.moveTowards(this.attackingPosition);
+    this.moveTowards(this.attackingPosition());
   }
 
   public moveTowardsDefensivePosition(): void {
-    this.moveTowards(this.defendingPosition);
+    this.moveTowards(this.defendingPosition());
   }
 
   public sendMessage(player: Player, message: {details: string}): void {
@@ -241,7 +225,7 @@ export class Player implements ICollidable {
   }
 
   public prepareForKickOff(): void {
-    [this.x, this.y] = [this.kickOffPosition.x, this.kickOffPosition.y];
+    [this.x, this.y] = [this.kickOffPosition().x, this.kickOffPosition().y];
   }
 
   public prepareToStartKickOff(ball: Ball): void {
@@ -268,6 +252,18 @@ export class Player implements ICollidable {
 
   public chaseBall(): void {
     this.ballInteractionMediator.chaseBall(this);
+  }
+
+  private attackingPosition(): ThreeDimensionalVector {
+    return this.role.getDefaultAttackingPosition(this.team.getSide());
+  }
+
+  private defendingPosition(): ThreeDimensionalVector {
+    return this.role.getDefaultDefendingPosition(this.team.getSide());
+  }
+
+  private kickOffPosition(): ThreeDimensionalVector {
+    return this.role.getDefaultDefendingPosition(this.team.getSide());
   }
 
   private listenForMessages(): void {

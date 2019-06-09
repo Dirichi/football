@@ -30,8 +30,8 @@ import { BALL_INITIAL_ARGS, BOX18A_INITIAL_COORDINATES,
   BOX18B_INITIAL_COORDINATES, BOX6A_INITIAL_COORDINATES,
   BOX6B_INITIAL_COORDINATES, COLLISION_MARGIN_FACTOR, COMMAND_ID, constants,
   EVENTS, FIELD_INITIAL_COORDINATES, PLAYER_INITIAL_ARGS,
-  PLAYER_ROLE, POSTA_INITIAL_COORDINATES, POSTB_INITIAL_COORDINATES,
-  PROCESS_MESSAGE_TYPE, TEAM_SIDES
+  PLAYER_ROLE, PLAYER_ROLE_TYPE, POSTA_INITIAL_COORDINATES,
+  POSTB_INITIAL_COORDINATES, PROCESS_MESSAGE_TYPE, TEAM_SIDES
   } from "./constants";
 import { EventQueue } from "./event_queue";
 import { Game } from "./game";
@@ -160,8 +160,8 @@ const teamBroles = [
   PlayerRole.get(PLAYER_ROLE.RF, field),
 ];
 
-teamA.applyRoles(teamAroles);
-teamB.applyRoles(teamBroles);
+teamA.setRoles(teamAroles);
+teamB.setRoles(teamBroles);
 collisionNotificationService.registerCollisionGroup([ball, ...defaultPlayers]);
 
 const moveDownCommand = new MoveDownCommand();
@@ -272,12 +272,20 @@ setInterval(() => {
 const playersAvailableForRemoteControl = [...defaultPlayers];
 const remoteControllers: PlayerHumanController[] = [];
 
-const handleAssignControllerRequest = (request: { clientId: string }) => {
-  const player = playersAvailableForRemoteControl.pop();
-  const controller = new PlayerHumanController(player, commandHandlerRouter);
+interface IAssignControllerRequest {
+  clientId: string;
+  role: PLAYER_ROLE_TYPE;
+}
+
+const handleAssignControllerRequest = (request: IAssignControllerRequest ) => {
+  const selectedPlayer = playersAvailableForRemoteControl.find((player) => {
+    return player.getRoleType() === request.role;
+  });
+  const controller =
+    new PlayerHumanController(selectedPlayer, commandHandlerRouter);
   controller.setRemoteClientId(request.clientId);
-  player.disableControls();
-  player.setController(controller);
+  selectedPlayer.disableControls();
+  selectedPlayer.setController(controller);
   remoteControllers.push(controller);
 };
 
@@ -301,7 +309,7 @@ process.on("message", (message: IProcessMessage) => {
   }
 
   if (message.messageType === PROCESS_MESSAGE_TYPE.ASSIGN_CONTROLLER) {
-    handleAssignControllerRequest(message.data as {clientId: string});
+    handleAssignControllerRequest(message.data as IAssignControllerRequest);
     return;
   }
 });
