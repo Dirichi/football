@@ -1,37 +1,31 @@
-import { TEAM_SIDES } from "../constants";
+import { PLAYER_ROLE, TEAM_SIDES } from "../constants";
 import { PLAYER_ROLES_CONFIGURATION } from "../game_configs/player_roles_config";
+import { Field } from "../game_objects/field";
 import { IRoleConfig } from "../interfaces/irole_config";
 import { ThreeDimensionalVector } from "../three_dimensional_vector";
 
 export class PlayerRole {
 
-  public static loadRoles(storedRoles: IRoleConfig[]): PlayerRole[] {
-    return storedRoles.map((role) => this.loadRole(role));
-  }
-
-  public static loadRole(storedRole: IRoleConfig): PlayerRole {
+  public static get(roleId: PLAYER_ROLE, field: Field): PlayerRole {
+    const roleConfig = PLAYER_ROLES_CONFIGURATION.get(roleId);
     const attackingPosition =
-      new ThreeDimensionalVector(...storedRole.defaultAttackingPosition);
+      new ThreeDimensionalVector(...roleConfig.defaultAttackingPosition);
     const defendingPosition =
-      new ThreeDimensionalVector(...storedRole.defaultDefensivePosition);
+      new ThreeDimensionalVector(...roleConfig.defaultDefensivePosition);
 
-    return new PlayerRole(
-      storedRole.name,
-      attackingPosition,
-      defendingPosition
-    );
+    return new PlayerRole(attackingPosition, defendingPosition, field);
   }
-  private name: string;
   private defaultAttackingPosition: ThreeDimensionalVector;
   private defaultDefensivePosition: ThreeDimensionalVector;
+  private field: Field;
 
   constructor(
-    name: string,
     attackingPosition: ThreeDimensionalVector,
-    defendingPosition: ThreeDimensionalVector) {
-      this.name = name;
+    defendingPosition: ThreeDimensionalVector,
+    field: Field) {
       this.defaultAttackingPosition = attackingPosition;
       this.defaultDefensivePosition = defendingPosition;
+      this.field = field;
   }
 
   public getDefaultAttackingPosition(side: TEAM_SIDES): ThreeDimensionalVector {
@@ -45,6 +39,8 @@ export class PlayerRole {
   }
 
   private invert(position: ThreeDimensionalVector): ThreeDimensionalVector {
-    return position.scalarMultiply(-1).add(new ThreeDimensionalVector(1, 1, 0));
+    const fieldStart = this.field.leftMostPosition();
+    const fieldEnd = this.field.rightMostPosition();
+    return fieldStart.minus(position).add(fieldEnd);
   }
 }

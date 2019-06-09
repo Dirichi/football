@@ -30,8 +30,8 @@ import { BALL_INITIAL_ARGS, BOX18A_INITIAL_COORDINATES,
   BOX18B_INITIAL_COORDINATES, BOX6A_INITIAL_COORDINATES,
   BOX6B_INITIAL_COORDINATES, COLLISION_MARGIN_FACTOR, COMMAND_ID, constants,
   EVENTS, FIELD_INITIAL_COORDINATES, PLAYER_INITIAL_ARGS,
-  POSTA_INITIAL_COORDINATES, POSTB_INITIAL_COORDINATES, PROCESS_MESSAGE_TYPE,
-  TEAM_SIDES
+  PLAYER_ROLE, POSTA_INITIAL_COORDINATES, POSTB_INITIAL_COORDINATES,
+  PROCESS_MESSAGE_TYPE, TEAM_SIDES
   } from "./constants";
 import { EventQueue } from "./event_queue";
 import { Game } from "./game";
@@ -110,7 +110,6 @@ const boxes = [box18A, box18B, box6A, box6B];
 
 const [playerx, playery, playervx, playervy, playerSpeed, playerDiameter]
   = PLAYER_INITIAL_ARGS;
-const roles = PlayerRole.loadRoles(PLAYER_ROLES_CONFIGURATION);
 
 const buildDefaultPlayerPhysics = (): PlayerPhysics => {
   const physics = new PlayerPhysics(field, queue);
@@ -125,8 +124,8 @@ const buildDefaultPlayer = (): Player => {
     .setMessageQueue(queue);
 };
 
-const teamAPlayers = range(11).map((_) => buildDefaultPlayer());
-const teamBPlayers = range(11).map((_) => buildDefaultPlayer());
+const teamAPlayers = range(3).map((_) => buildDefaultPlayer());
+const teamBPlayers = range(3).map((_) => buildDefaultPlayer());
 const defaultPlayers = [...teamAPlayers, ...teamBPlayers];
 
 const ballPossessionService =
@@ -139,18 +138,30 @@ teamA.setSide(TEAM_SIDES.LEFT)
   .setOpposition(teamB)
   .setOpposingGoalPost(postB)
   .setColors([0, 0, 225])
-  .setKickOffStartingPlayer(teamAPlayers[9])
-  .setKickOffSupportingPlayer(teamAPlayers[10]);
+  .setKickOffStartingPlayer(teamAPlayers[1])
+  .setKickOffSupportingPlayer(teamAPlayers[2]);
 
 teamB.setSide(TEAM_SIDES.RIGHT)
   .setOpposition(teamA)
   .setOpposingGoalPost(postA)
   .setColors([225, 0, 0])
-  .setKickOffStartingPlayer(teamBPlayers[9])
-  .setKickOffSupportingPlayer(teamBPlayers[10]);
+  .setKickOffStartingPlayer(teamBPlayers[1])
+  .setKickOffSupportingPlayer(teamBPlayers[2]);
 
-teamA.applyRoles(roles);
-teamB.applyRoles(roles);
+const teamAroles = [
+  PlayerRole.get(PLAYER_ROLE.GK, field),
+  PlayerRole.get(PLAYER_ROLE.LF, field),
+  PlayerRole.get(PLAYER_ROLE.RF, field),
+];
+
+const teamBroles = [
+  PlayerRole.get(PLAYER_ROLE.GK, field),
+  PlayerRole.get(PLAYER_ROLE.LF, field),
+  PlayerRole.get(PLAYER_ROLE.RF, field),
+];
+
+teamA.applyRoles(teamAroles);
+teamB.applyRoles(teamBroles);
 collisionNotificationService.registerCollisionGroup([ball, ...defaultPlayers]);
 
 const moveDownCommand = new MoveDownCommand();

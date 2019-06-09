@@ -23,6 +23,17 @@ export class Field implements IBoundary {
     );
   }
 
+  public leftMostPosition(): ThreeDimensionalVector {
+    return new ThreeDimensionalVector(this.x, this.y, 0);
+  }
+
+  public rightMostPosition(): ThreeDimensionalVector {
+    return new ThreeDimensionalVector(
+      this.x + this.xlength,
+      this.y + this.ylength,
+      0);
+  }
+
   // TODO: Perhaps this method doesn't belong here.
   public containsCircle(x: number, y: number, diameter: number): boolean {
     const xLowest = this.x;
