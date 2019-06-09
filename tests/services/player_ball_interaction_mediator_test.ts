@@ -257,11 +257,25 @@ describe('PlayerBallInteractionMediator', () => {
         const mediator = new PlayerBallInteractionMediator(
           ball, possessionService, tickService, kickDisabledTimeout);
         sinon.spy(player, 'moveTowards');
-        tickService.fastForward(kickDisabledTimeout + 1);
 
         mediator.chaseBall(player);
 
         expect(player.moveTowards).to.have.been.calledWith(ball.getPosition());
+      });
+
+    it('stops the player if the player has the ball',
+      () => {
+        let ball = new Ball(10, 10, 0, 0, 5);
+        const possessionService = new TestBallPossessionService(player);
+        const mediator = new PlayerBallInteractionMediator(
+          ball, possessionService, tickService, kickDisabledTimeout);
+        sinon.spy(player, 'moveTowards');
+        sinon.spy(player, 'stop');
+
+        mediator.chaseBall(player);
+
+        expect(player.moveTowards).not.to.have.been.called;
+        expect(player.stop).to.have.been.called;
       });
   });
 });
