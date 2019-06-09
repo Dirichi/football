@@ -47,6 +47,11 @@ export class PlayerBallInteractionMediator
       return true;
     }
 
+    public chaseBall(player: Player): void {
+      if (this.hasBall(player)) { return player.stop(); }
+      player.moveTowards(this.ball.getPosition());
+    }
+
     private temporarilyDisableKicking(player: Player): void {
       this.kickBlackList.add(player);
       this.tickService.after(this.kickDisabledTimeout, () => {

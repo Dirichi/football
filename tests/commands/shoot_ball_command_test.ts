@@ -1,4 +1,3 @@
-import { Ball } from '../../src/game_objects/ball';
 import { Player } from '../../src/game_objects/player';
 import { Post } from '../../src/game_objects/post';
 import { ShootBallCommand } from '../../src/commands/shoot_ball_command';
@@ -16,11 +15,10 @@ describe('ShootBallCommand', () => {
     it('commands the player to kick the ball towards the goalpost', () => {
       const post = new Post(0, 0, 1, 1);
       const player = new Player(1, 1, 0, 0, 2); // x, y, vx, vy, diameter
-      const ball = new Ball(0, 0, 0, 0, 2); // x, y, vx, vy, diameter
       player.setOpposingGoalPost(post);
       sinon.stub(player, 'kickBall');
 
-      const command = new ShootBallCommand(ball);
+      const command = new ShootBallCommand();
       command.execute(player);
 
       expect(player.kickBall).to.have.been.calledWith(post.getMidPoint());

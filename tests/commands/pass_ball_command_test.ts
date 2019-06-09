@@ -1,4 +1,3 @@
-import { Ball } from '../../src/game_objects/ball';
 import { PassBallCommand } from '../../src/commands/pass_ball_command';
 import { STATE_MACHINE_COMMANDS } from '../../src/constants';
 import { Player } from '../../src/game_objects/player';
@@ -15,14 +14,13 @@ describe('PassBallCommand', () => {
     it('kicks the ball towards the receiver', () => {
       const sender = new Player(1, 1, 0, 0, 2); // x, y, vx, vy, diameter
       const receiver = new Player(5, 4, 0, 0, 2); // x, y, vx, vy, diameter
-      const ball = new Ball(0, 0, 0, 0, 2); // x, y, vx, vy, diameter
 
       // HACK: Stub sendMessage to prevent methods being sent to a non-existent
       // queue
       sinon.stub(sender, 'sendMessage');
       sinon.stub(sender, 'kickBall');
 
-      const command = new PassBallCommand(ball);
+      const command = new PassBallCommand();
       command.execute(sender, receiver);
 
       expect(sender.kickBall).to.have.been.calledWith(receiver.getPosition());
@@ -31,12 +29,11 @@ describe('PassBallCommand', () => {
     it('sends a stop message to the receiver if the ball was kicked', () => {
       const sender = new Player(1, 1, 0, 0, 2); // x, y, vx, vy, diameter
       const receiver = new Player(5, 4, 0, 0, 2); // x, y, vx, vy, diameter
-      const ball = new Ball(0, 0, 0, 0, 2); // x, y, vx, vy, diameter
 
       sinon.stub(sender, 'sendMessage');
       sinon.stub(sender, 'kickBall').returns(true);
 
-      const command = new PassBallCommand(ball);
+      const command = new PassBallCommand();
       command.execute(sender, receiver);
 
       expect(sender.sendMessage).to.have.been.calledWith(receiver,
@@ -46,12 +43,11 @@ describe('PassBallCommand', () => {
     it('does not send stop to the receiver if the ball was not kicked', () => {
       const sender = new Player(1, 1, 0, 0, 2); // x, y, vx, vy, diameter
       const receiver = new Player(5, 4, 0, 0, 2); // x, y, vx, vy, diameter
-      const ball = new Ball(0, 0, 0, 0, 2); // x, y, vx, vy, diameter
 
       sinon.stub(sender, 'sendMessage');
       sinon.stub(sender, 'kickBall').returns(false);
 
-      const command = new PassBallCommand(ball);
+      const command = new PassBallCommand();
       command.execute(sender, receiver);
 
       expect(sender.sendMessage).not.to.have.been.called;

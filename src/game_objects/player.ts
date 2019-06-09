@@ -266,6 +266,10 @@ export class Player implements ICollidable {
     return this.ballInteractionMediator.controlBall(this);
   }
 
+  public chaseBall(): void {
+    this.ballInteractionMediator.chaseBall(this);
+  }
+
   private listenForMessages(): void {
     this.messageQueue.when(
       `player.${this.id}.messaged`, (message: {details: string}) => {

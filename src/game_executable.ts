@@ -168,10 +168,10 @@ const moveDownCommand = new MoveDownCommand();
 const moveLeftCommand = new MoveLeftCommand();
 const moveRightCommand = new MoveRightCommand();
 const moveUpCommand = new MoveUpCommand();
-const chaseBallCommand = new ChaseBallCommand(ball);
-const passBallCommand = new PassBallCommand(ball);
+const chaseBallCommand = new ChaseBallCommand();
+const passBallCommand = new PassBallCommand();
 const stopCommand = new StopCommand();
-const shootBallCommand = new ShootBallCommand(ball);
+const shootBallCommand = new ShootBallCommand();
 const moveToAttackingPositionCommand = new MoveToAttackingPositionCommand();
 const moveToDefensivePositionCommand = new MoveToDefensivePositionCommand();
 
