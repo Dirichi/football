@@ -11,15 +11,9 @@ export class PlayerRole {
 
   public static loadRole(storedRole: IRoleConfig): PlayerRole {
     const attackingPosition =
-      new ThreeDimensionalVector(
-        storedRole.defaultAttackingPosition[0],
-        storedRole.defaultAttackingPosition[1],
-        0);
+      new ThreeDimensionalVector(...storedRole.defaultAttackingPosition);
     const defendingPosition =
-      new ThreeDimensionalVector(
-        storedRole.defaultDefensivePosition[0],
-        storedRole.defaultDefensivePosition[1],
-        0);
+      new ThreeDimensionalVector(...storedRole.defaultDefensivePosition);
 
     return new PlayerRole(
       storedRole.name,
