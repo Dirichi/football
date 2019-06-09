@@ -1,25 +1,19 @@
-import { constants, EVENTS } from "../constants";
 import { Player } from "../game_objects/player";
-import { IBallControlPayload } from "../interfaces/iball_control_payload";
 import { IBoundary } from "../interfaces/iboundary";
 import { ICircle } from "../interfaces/icircle";
-import { ICollisionPayload } from "../interfaces/icollision_payload";
-import { IEventQueue } from "../interfaces/ievent_queue";
 import { ThreeDimensionalVector } from "../three_dimensional_vector";
 
 export class PlayerPhysics {
   private boundary: IBoundary;
   private friction: number;
   private player?: Player;
-  private queue: IEventQueue;
 
-  constructor(boundary: IBoundary, queue: IEventQueue) {
+  constructor(boundary: IBoundary, ) {
     // TODO: For some reason the player moves faster vertically
     // than horizontally. Also the player starts moving then stops, before
     // starting again
 
     this.boundary = boundary;
-    this.queue = queue;
     this.friction = 0;
   }
 

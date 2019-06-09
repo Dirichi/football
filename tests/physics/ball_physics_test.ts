@@ -1,6 +1,5 @@
 import { Ball } from '../../src/game_objects/ball';
 import { BallPhysics } from '../../src/physics/ball_physics';
-import { TestEventQueue } from '../helpers/test_event_queue';
 import { IBoundary } from '../../src/interfaces/iboundary';
 import * as chai from 'chai';
 import * as sinon from 'sinon';
@@ -15,13 +14,11 @@ class TestBoundary implements IBoundary {
   }
 }
 
-let queue: TestEventQueue;
 let boundary: TestBoundary;
 
 describe('BallPhysics', () => {
   describe('`update`', () => {
     beforeEach(() => {
-      queue = new TestEventQueue();
       boundary = new TestBoundary();
     });
 
@@ -29,7 +26,7 @@ describe('BallPhysics', () => {
       const containsCircleStub =
         sinon.stub(boundary, 'containsCircle').returns(true);
 
-      const ballPhysics = new BallPhysics(boundary, queue);
+      const ballPhysics = new BallPhysics(boundary);
       const [x, y, vx, vy, diameter] = [2, 3, 4, 8, 5];
       const ball = new Ball(x, y, vx, vy, diameter);
       ballPhysics.setBall(ball);
@@ -44,7 +41,7 @@ describe('BallPhysics', () => {
       const containsCircleStub =
         sinon.stub(boundary, 'containsCircle').returns(false);
 
-      const ballPhysics = new BallPhysics(boundary, queue);
+      const ballPhysics = new BallPhysics(boundary);
       const [x, y, vx, vy, diameter] = [2, 3, 4, 8, 5];
       const ball = new Ball(x, y, vx, vy, diameter);
       ballPhysics.setBall(ball);
@@ -60,7 +57,7 @@ describe('BallPhysics', () => {
     it('stops the ball when it hits a boundary', () => {
       sinon.stub(boundary, 'containsCircle').returns(false);
 
-      const ballPhysics = new BallPhysics(boundary, queue);
+      const ballPhysics = new BallPhysics(boundary);
       const [x, y, vx, vy, diameter] = [2, 3, 4, 8, 5];
       const ball = new Ball(x, y, vx, vy, diameter);
       ballPhysics.setBall(ball);
@@ -74,7 +71,7 @@ describe('BallPhysics', () => {
 
       const [x, y, vx, vy, diameter] = [2, 3, 4, 8, 5];
       const ball = new Ball(x, y, vx, vy, diameter);
-      const physics = new BallPhysics(boundary, queue);
+      const physics = new BallPhysics(boundary);
       physics.setFriction(0.1);
       physics.setBall(ball);
 

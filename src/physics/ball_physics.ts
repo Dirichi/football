@@ -1,17 +1,13 @@
 import { Ball } from "../game_objects/ball";
-import { IBallControlPayload } from "../interfaces/iball_control_payload";
 import { IBoundary } from "../interfaces/iboundary";
-import { IEventQueue } from "../interfaces/ievent_queue";
 
 export class BallPhysics {
   private boundary: IBoundary;
   private ball?: Ball;
   private friction: number;
-  private queue: IEventQueue;
 
-  constructor(boundary: IBoundary, queue: IEventQueue) {
+  constructor(boundary: IBoundary) {
     this.boundary = boundary;
-    this.queue = queue;
     this.friction = 0;
   }
 

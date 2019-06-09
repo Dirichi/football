@@ -1,4 +1,3 @@
-import { TestEventQueue } from '../helpers/test_event_queue';
 import { ThreeDimensionalVector } from '../../src/three_dimensional_vector';
 import { Player } from '../../src/game_objects/player';
 import { PlayerPhysics } from '../../src/physics/player_physics';
@@ -17,18 +16,15 @@ class TestBoundary implements IBoundary {
   }
 }
 
-let queue: TestEventQueue;
 let boundary: TestBoundary;
 
 describe('PlayerPhysics', () => {
   describe('`update`', () => {
     beforeEach(() => {
-      queue = new TestEventQueue();
       boundary = new TestBoundary();
     });
 
     afterEach(() => {
-      queue = null;
       boundary = null;
     });
 
@@ -37,7 +33,7 @@ describe('PlayerPhysics', () => {
 
       const [x, y, vx, vy, diameter] = [2, 3, 4, 8, 5];
       const player = new Player(x, y, vx, vy, diameter);
-      const physics = new PlayerPhysics(boundary, queue);
+      const physics = new PlayerPhysics(boundary);
       player.setPhysics(physics);
 
       physics.update();
@@ -49,7 +45,7 @@ describe('PlayerPhysics', () => {
 
       const [x, y, vx, vy, diameter] = [2, 3, 4, 8, 5];
       const player = new Player(x, y, vx, vy, diameter);
-      const physics = new PlayerPhysics(boundary, queue);
+      const physics = new PlayerPhysics(boundary);
       player.setPhysics(physics);
 
       physics.update();
@@ -61,7 +57,7 @@ describe('PlayerPhysics', () => {
 
       const [x, y, vx, vy, diameter] = [2, 3, 4, 8, 5];
       const player = new Player(x, y, vx, vy, diameter);
-      const physics = new PlayerPhysics(boundary, queue);
+      const physics = new PlayerPhysics(boundary);
       player.setPhysics(physics);
 
       physics.update();
@@ -73,7 +69,7 @@ describe('PlayerPhysics', () => {
 
       const [x, y, vx, vy, diameter] = [2, 3, 4, 8, 5];
       const player = new Player(x, y, vx, vy, diameter);
-      const physics = new PlayerPhysics(boundary, queue);
+      const physics = new PlayerPhysics(boundary);
       physics.setFriction(0.1);
       player.setPhysics(physics);
 

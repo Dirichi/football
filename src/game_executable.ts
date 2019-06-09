@@ -79,7 +79,7 @@ const field = new Field(fieldx, fieldy, fieldxlength, fieldylength);
 const regions = FieldRegion.generate(field, 10, 5);
 
 const [ballx, bally, ballvx, ballvy, balldiameter] = BALL_INITIAL_ARGS;
-const ballPhysics = new BallPhysics(field, queue);
+const ballPhysics = new BallPhysics(field);
 const ball = new Ball(ballx, bally, ballvx, ballvy, balldiameter);
 ball.setPhysics(ballPhysics);
 ball.setMaximumSpeed(constants.BALL_DEFAULT_SPEED);
@@ -112,7 +112,7 @@ const [playerx, playery, playervx, playervy, playerSpeed, playerDiameter]
   = PLAYER_INITIAL_ARGS;
 
 const buildDefaultPlayerPhysics = (): PlayerPhysics => {
-  const physics = new PlayerPhysics(field, queue);
+  const physics = new PlayerPhysics(field);
   physics.setFriction(constants.PLAYER_PHYSICS_DEFAULT_FRICTION);
   return physics;
 };
