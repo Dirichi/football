@@ -2,6 +2,7 @@ import { TEAM_SIDES } from "../constants";
 import { minimumBy } from "../utils/helper_functions";
 import { Ball } from "./ball";
 import { Player } from "./player";
+import { PlayerRole } from "./player_role";
 import { Post } from "./post";
 
 export class Team {
@@ -17,7 +18,7 @@ export class Team {
     this.players.forEach((player) =>  player.setTeam(this));
   }
 
-  public getSide(): string {
+  public getSide(): TEAM_SIDES {
     return this.side;
   }
 
@@ -83,5 +84,16 @@ export class Team {
   public prepareToStartKickOff(ball: Ball): void {
     this.kickOffStartingPlayer.prepareToStartKickOff(ball);
     this.kickOffSupportingPlayer.prepareToSupportKickOff(ball);
+  }
+
+  public applyRoles(roles: PlayerRole[]): void {
+    if (roles.length !== this.players.length) {
+      throw new Error(`Number of roles: ${roles.length} must match the number\
+         of players: ${this.players.length}`);
+    }
+
+    roles.forEach((role, index) => {
+      this.players[index].assignRole(role);
+    });
   }
 }

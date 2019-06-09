@@ -30,18 +30,20 @@ import { BALL_INITIAL_ARGS, BOX18A_INITIAL_COORDINATES,
   BOX18B_INITIAL_COORDINATES, BOX6A_INITIAL_COORDINATES,
   BOX6B_INITIAL_COORDINATES, COLLISION_MARGIN_FACTOR, COMMAND_ID, constants,
   EVENTS, FIELD_INITIAL_COORDINATES, PLAYER_INITIAL_ARGS,
-  POSTA_INITIAL_COORDINATES, POSTB_INITIAL_COORDINATES, PROCESS_MESSAGE_TYPE,
-  TEAM_SIDES
+  PLAYER_ROLE, POSTA_INITIAL_COORDINATES, POSTB_INITIAL_COORDINATES,
+  PROCESS_MESSAGE_TYPE, TEAM_SIDES
   } from "./constants";
 import { EventQueue } from "./event_queue";
 import { Game } from "./game";
 import { PlayerHumanController } from "./game_ai/player/human_controller/player_human_controller";
 import { PlayerStateMachine } from "./game_ai/player/state_machine/player_state_machine";
+import { PLAYER_ROLES_CONFIGURATION } from "./game_configs/player_roles_config";
 import { Ball } from "./game_objects/ball";
 import { Box } from "./game_objects/box";
 import { Field } from "./game_objects/field";
 import { FieldRegion } from "./game_objects/field_region";
 import { Player } from "./game_objects/player";
+import { PlayerRole } from "./game_objects/player_role";
 import { Post } from "./game_objects/post";
 import { Team } from "./game_objects/team";
 import { ICommand } from "./interfaces/icommand";
@@ -59,6 +61,7 @@ import { GoalRecordService } from "./services/goal_record_service";
 import { PlayerBallInteractionMediator } from "./services/player_ball_interaction_mediator";
 import { TickService } from "./services/tick_service";
 import { TimerService } from "./timer_service";
+import { range } from "./utils/helper_functions";
 
 // TODO: Alright we need to introduce proper logging.
 // tslint:disable-next-line:no-console
@@ -108,66 +111,58 @@ const boxes = [box18A, box18B, box6A, box6B];
 const [playerx, playery, playervx, playervy, playerSpeed, playerDiameter]
   = PLAYER_INITIAL_ARGS;
 
-const playerA = new Player(0, 0, 0, 0, playerDiameter);
-playerA.setDefendingPosition(regions[5].getMidPoint())
-  .setKickOffPosition(regions[5].getMidPoint())
-  .setAttackingPosition(regions[35].getMidPoint());
-
-const playerB = new Player(0, 0, 0, 0, playerDiameter);
-playerB.setDefendingPosition(regions[7].getMidPoint())
-  .setKickOffPosition(regions[7].getMidPoint())
-  .setAttackingPosition(regions[37].getMidPoint());
-
-const playerC = new Player(0, 0, 0, 0, playerDiameter);
-playerC.setDefendingPosition(regions[9].getMidPoint())
-  .setKickOffPosition(regions[9].getMidPoint())
-  .setAttackingPosition(regions[39].getMidPoint());
-
-const playerD = new Player(0, 0, 0, 0, playerDiameter);
-playerD.setDefendingPosition(regions[40].getMidPoint())
-  .setKickOffPosition(regions[40].getMidPoint())
-  .setAttackingPosition(regions[10].getMidPoint());
-
-const playerE = new Player(0, 0, 0, 0, playerDiameter);
-playerE.setDefendingPosition(regions[42].getMidPoint())
-  .setKickOffPosition(regions[42].getMidPoint())
-  .setAttackingPosition(regions[12].getMidPoint());
-
-const playerF = new Player(0, 0, 0, 0, playerDiameter);
-playerF.setDefendingPosition(regions[44].getMidPoint())
-  .setKickOffPosition(regions[44].getMidPoint())
-  .setAttackingPosition(regions[14].getMidPoint());
-
-const players = [playerA, playerB, playerC, playerD, playerE, playerF];
-const aiPlayers = [playerB, playerC, playerD, playerE, playerF];
-
-players.forEach((player) => {
+const buildDefaultPlayerPhysics = (): PlayerPhysics => {
   const physics = new PlayerPhysics(field, queue);
   physics.setFriction(constants.PLAYER_PHYSICS_DEFAULT_FRICTION);
-  player.setPhysics(physics)
+  return physics;
+};
+
+const buildDefaultPlayer = (): Player => {
+  const player = new Player(0, 0, 0, 0, playerDiameter);
+  return player.setPhysics(buildDefaultPlayerPhysics())
     .setMaximumSpeed(playerSpeed)
     .setMessageQueue(queue);
-});
+};
 
-const ballPossessionService = new BallPossessionService(ball, players, queue);
-const teamA = new Team([playerA, playerB, playerC]);
-const teamB = new Team([playerD, playerE, playerF]);
+const teamAPlayers = range(3).map((_) => buildDefaultPlayer());
+const teamBPlayers = range(3).map((_) => buildDefaultPlayer());
+const defaultPlayers = [...teamAPlayers, ...teamBPlayers];
+
+const ballPossessionService =
+  new BallPossessionService(ball, defaultPlayers, queue);
+const teamA = new Team(teamAPlayers);
+const teamB = new Team(teamBPlayers);
+
 const teams = [teamA, teamB];
 teamA.setSide(TEAM_SIDES.LEFT)
   .setOpposition(teamB)
   .setOpposingGoalPost(postB)
   .setColors([0, 0, 225])
-  .setKickOffStartingPlayer(playerB)
-  .setKickOffSupportingPlayer(playerA);
+  .setKickOffStartingPlayer(teamAPlayers[1])
+  .setKickOffSupportingPlayer(teamAPlayers[2]);
 
 teamB.setSide(TEAM_SIDES.RIGHT)
   .setOpposition(teamA)
   .setOpposingGoalPost(postA)
   .setColors([225, 0, 0])
-  .setKickOffStartingPlayer(playerD)
-  .setKickOffSupportingPlayer(playerF);
+  .setKickOffStartingPlayer(teamBPlayers[1])
+  .setKickOffSupportingPlayer(teamBPlayers[2]);
 
-collisionNotificationService.registerCollisionGroup([ball, ...players]);
+const teamAroles = [
+  PlayerRole.get(PLAYER_ROLE.GK, field),
+  PlayerRole.get(PLAYER_ROLE.LF, field),
+  PlayerRole.get(PLAYER_ROLE.RF, field),
+];
+
+const teamBroles = [
+  PlayerRole.get(PLAYER_ROLE.GK, field),
+  PlayerRole.get(PLAYER_ROLE.LF, field),
+  PlayerRole.get(PLAYER_ROLE.RF, field),
+];
+
+teamA.applyRoles(teamAroles);
+teamB.applyRoles(teamBroles);
+collisionNotificationService.registerCollisionGroup([ball, ...defaultPlayers]);
 
 const moveDownCommand = new MoveDownCommand();
 const moveLeftCommand = new MoveLeftCommand();
@@ -219,7 +214,9 @@ const buildStateMachine = (player: Player) => {
   return machine;
 };
 
-players.forEach((player) => player.setController(buildStateMachine(player)));
+defaultPlayers.forEach((player) => {
+  player.setController(buildStateMachine(player));
+});
 // TODO: Replace this with a controller that listens to commands from a specific
 // user.
 
@@ -238,7 +235,7 @@ const commandHandlerRouter = new Map<string, ICommandRequestHandler>([
 
 const initialState = new KickOffState();
 const gameStateMachine = new GameStateMachine(initialState);
-const timer = new TimerService(0, 0.04, 90);
+const timer = new TimerService(0, 0.02, 90);
 const goalDetectionService = new GoalDetectionService(ball, posts);
 const goalRecordService = new GoalRecordService(goalDetectionService, teams);
 const game = new Game();
@@ -258,7 +255,7 @@ const mediator =
   new PlayerBallInteractionMediator(
     ball, ballPossessionService, tickService, 20);
 
-players.forEach((player) => player.setBallInteractionMediator(mediator));
+defaultPlayers.forEach((player) => player.setBallInteractionMediator(mediator));
 
 setInterval(() => {
   tickService.tick();
@@ -272,11 +269,11 @@ setInterval(() => {
   });
 }, 20);
 
-const playersAvailableForRemoteControl = [...players];
+const playersAvailableForRemoteControl = [...defaultPlayers];
 const remoteControllers: PlayerHumanController[] = [];
 
 const handleAssignControllerRequest = (request: { clientId: string }) => {
-  const player = playersAvailableForRemoteControl.shift();
+  const player = playersAvailableForRemoteControl.pop();
   const controller = new PlayerHumanController(player, commandHandlerRouter);
   controller.setRemoteClientId(request.clientId);
   player.disableControls();

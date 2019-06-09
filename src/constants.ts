@@ -22,7 +22,7 @@ export enum constants {
   // from there
   FIELD_INITIAL_XLENGTH = 1,
   FIELD_INITIAL_YLENGTH = 1,
-  PLAYER_DIAMETER_TO_FIELD_YLENGTH = 0.03,
+  PLAYER_DIAMETER_TO_FIELD_YLENGTH = 0.02,
   PLAYER_INITIAL_VX = 0,
   PLAYER_INITIAL_VY = 0,
   PLAYER_INITIAL_X = 0.3,
@@ -209,6 +209,27 @@ export enum PROCESS_MESSAGE_TYPE {
   ASSIGN_CONTROLLER = "assign.controller",
   COMMAND = "command",
   GAME_STATE = "state.changed",
+}
+
+export enum PLAYER_ROLE {
+  GK = 0,
+  LB = 1,
+  LCB = 2,
+  RCB = 3,
+  RB = 4,
+  LM = 5,
+  LCM = 6,
+  RCM = 7,
+  RM = 8,
+  LF = 9,
+  RF = 10,
+}
+
+export enum PLAYER_ROLE_TYPE {
+  KEEPER = 0,
+  DEFENDER = 1,
+  MIDFIELDER = 2,
+  FORWARD = 3,
 }
 
 export const GAME_EXECUTABLE_FILE = "game_executable.js";

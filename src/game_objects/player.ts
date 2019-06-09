@@ -10,6 +10,7 @@ import { PlayerPhysics } from "../physics/player_physics";
 import { ThreeDimensionalVector } from "../three_dimensional_vector";
 import { minimumBy } from "../utils/helper_functions";
 import { Ball } from "./ball";
+import { PlayerRole } from "./player_role";
 import { Post } from "./post";
 import { Team } from "./team";
 
@@ -177,6 +178,13 @@ export class Player implements ICollidable {
   public setTeam(team: Team): Player {
     this.team = team;
     return this;
+  }
+
+  public assignRole(role: PlayerRole): void {
+    const side = this.team.getSide();
+    this.setAttackingPosition(role.getDefaultAttackingPosition(side))
+      .setDefendingPosition(role.getDefaultDefendingPosition(side))
+      .setKickOffPosition(role.getDefaultDefendingPosition(side));
   }
 
   public setAttackingPosition(position: ThreeDimensionalVector): Player {
