@@ -5,4 +5,5 @@ export interface IPlayerBallInteractionMediator {
   hasBall(player: Player): boolean;
   kickBall(player: Player, destination: ThreeDimensionalVector): boolean;
   controlBall(player: Player): boolean;
+  chaseBall(player: Player): void;
 }

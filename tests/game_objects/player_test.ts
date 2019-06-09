@@ -24,6 +24,8 @@ class TestPlayerBallInteractionMediator implements IPlayerBallInteractionMediato
   controlBall(player: Player): boolean {
     return true;
   }
+
+  chaseBall(player: Player): void {}
 }
 
 describe('Player', () => {
