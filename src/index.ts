@@ -7,6 +7,7 @@ import { EventQueue } from "./event_queue";
 import { GameClient } from "./game_client";
 import { GameRoom } from "./game_room";
 import { WrappedProcessForker } from "./wrapped_process_forker";
+import { WrappedSocket } from "./wrapped_socket";
 
 const app = express();
 const httpServer = http.createServer(app);
@@ -39,10 +40,12 @@ httpServer.listen(port, () => {
 let clientSize = 0;
 
 io.on("connection", (socket) => {
-  const client = new GameClient(socket);
+  const wrappedSocket = new WrappedSocket(socket);
+  const client = new GameClient(wrappedSocket);
+  // client.configure();
   // TODO: Hacky way to implement room size limit / timeout. Will be replaced.
   clientSize += 1;
-  setTimeout(() => { room.startGame(); }, 10000);
+  setTimeout(() => { room.startGame(); }, 3000);
   room.addClient(client);
   if (clientSize === 2) {
     room.startGame();

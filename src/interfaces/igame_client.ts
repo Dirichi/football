@@ -1,5 +1,5 @@
-import { ICommandRequest } from "../interfaces/icommand_request";
 import { PLAYER_ROLE_TYPE } from "../constants";
+import { ICommandRequest } from "../interfaces/icommand_request";
 
 export interface IGameClient {
   getId(): string;
