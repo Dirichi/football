@@ -199,10 +199,9 @@ export enum TEAM_SIDES {
 }
 
 export enum IO_MESSAGE_TYPE {
-  PING = "custom.ping",
-  COMMAND = "command",
-  GAME_STATE = "state.changed",
-  START = "start.game",
+  COMMAND = 0,
+  GAME_STATE = 1,
+  PREFFERD_ROLE_TYPE = 2,
 }
 
 export enum PROCESS_MESSAGE_TYPE {

@@ -5,6 +5,7 @@ import { IGameClient } from "./interfaces/igame_client";
 
 export class GameClient implements IGameClient {
   private socket: Socket;
+  private preferredRole?: PLAYER_ROLE_TYPE;
 
   constructor(socket: Socket) {
     this.socket = socket;
@@ -27,7 +28,7 @@ export class GameClient implements IGameClient {
     });
   }
 
-  public getRole(): PLAYER_ROLE_TYPE {
-    return PLAYER_ROLE_TYPE.KEEPER;
+  public getPreferredRoleType(): PLAYER_ROLE_TYPE {
+    return PLAYER_ROLE_TYPE.FORWARD;
   }
 }
