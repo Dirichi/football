@@ -5,5 +5,5 @@ export interface IGameClient {
   getId(): string;
   updateGameState(payload: object): void;
   onCommandRequest(callback: (request: ICommandRequest) => void): void;
-  getRole(): PLAYER_ROLE_TYPE;
+  getPreferredRoleType(): PLAYER_ROLE_TYPE;
 }
