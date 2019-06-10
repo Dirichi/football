@@ -1,8 +1,7 @@
-import { IO_MESSAGE_TYPE } from "../constants";
-import { GameRoom } from "../game_room";
+import { ICommandRequest } from "../interfaces/icommand_request";
 
 export interface IGameClient {
   getId(): string;
-  send(messageType: IO_MESSAGE_TYPE, message: any): void;
-  when(event: string, callback: (payload: object) => void): void;
+  updateGameState(payload: object): void;
+  onCommandRequest(callback: (request: ICommandRequest) => void): void;
 }

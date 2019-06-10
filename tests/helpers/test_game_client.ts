@@ -1,6 +1,7 @@
 import { EventQueue } from "../../src/event_queue";
 import { IGameClient } from "../../src/interfaces/igame_client";
-import { IO_MESSAGE_TYPE } from "../../src/constants";
+import { ICommandRequest } from "../../src/interfaces/icommand_request";
+import { COMMAND_ID, IO_MESSAGE_TYPE } from "../../src/constants";
 
 export class TestGameClient implements IGameClient {
   private id: string;
@@ -10,16 +11,18 @@ export class TestGameClient implements IGameClient {
     this.id = id;
     this.queue = new EventQueue();
   }
-  public send(messageType: IO_MESSAGE_TYPE, message: any): void {
-    return;
+
+  public updateGameState(payload: object) {
+    this.queue.trigger(IO_MESSAGE_TYPE.GAME_STATE, payload);
   }
 
-  public when(event: string, callback: (payload: object) => void): void {
-    this.queue.when(event, callback);
+  public onCommandRequest(callback: (payload: ICommandRequest) => void): void {
+    this.queue.when(IO_MESSAGE_TYPE.COMMAND, callback);
   }
 
-  public simulateEvent(event: string, payload: object): void {
-    this.queue.trigger(event, payload);
+  public simulateCommandRequest(request: {commandId: string}): void {
+    const command = {...request, clientId: this.id}
+    this.queue.trigger(IO_MESSAGE_TYPE.COMMAND, command);
   }
 
   public getId(): string {
