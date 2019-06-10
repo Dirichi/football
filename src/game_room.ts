@@ -1,6 +1,6 @@
 import path from "path";
 import v4 from "uuid/v4";
-import { GAME_EXECUTABLE_FILE, IO_MESSAGE_TYPE , PROCESS_MESSAGE_TYPE } from "./constants";
+import { COMMAND_ID, GAME_EXECUTABLE_FILE , IO_MESSAGE_TYPE, PROCESS_MESSAGE_TYPE } from "./constants";
 import { IGameClient } from "./interfaces/igame_client";
 import { IProcess } from "./interfaces/iprocess";
 import { IProcessForker } from "./interfaces/iprocess_forker";
@@ -78,15 +78,15 @@ export class GameRoom {
   private handleGameProcessMessage(message: IProcessMessage): void {
     if (message.messageType === PROCESS_MESSAGE_TYPE.GAME_STATE) {
       this.clients.forEach((client) => {
-        client.send(IO_MESSAGE_TYPE.GAME_STATE, message.data);
+        client.updateGameState(message.data);
       });
     }
   }
 
   private routeClientCommandsToGameProcess(client: IGameClient): void {
-    client.when(IO_MESSAGE_TYPE.COMMAND, (payload: object) => {
+    client.onCommandRequest((request) => {
       const message = {
-        data: {...payload, clientId: client.getId() },
+        data: request,
         messageType: PROCESS_MESSAGE_TYPE.COMMAND,
       };
       this.gameProcess.send(message);

@@ -1,5 +1,5 @@
 import { GameRoom } from '../src/game_room';
-import { IO_MESSAGE_TYPE, PROCESS_MESSAGE_TYPE } from '../src/constants';
+import { IO_MESSAGE_TYPE, PROCESS_MESSAGE_TYPE, COMMAND_ID } from '../src/constants';
 import { TestProcess } from './helpers/test_process';
 import { TestProcessForker } from './helpers/test_process_forker';
 import { TestGameClient } from './helpers/test_game_client';
@@ -62,10 +62,9 @@ describe('GameRoom', () => {
 
       room.startGame();
       sinon.spy(testProcess, 'send');
-      client.simulateEvent(
-        IO_MESSAGE_TYPE.COMMAND, {commandId: 'do.something'});
+      client.simulateCommandRequest({commandId: COMMAND_ID.STOP});
       expect(testProcess.send).to.have.been.calledWith({
-        data: { clientId: '1', commandId: 'do.something'},
+        data: { clientId: '1', commandId: COMMAND_ID.STOP},
         messageType: PROCESS_MESSAGE_TYPE.COMMAND,
       });
     });
@@ -109,7 +108,7 @@ describe('GameRoom', () => {
       room.setProcessForker(forker);
       room.setGameExecutablePath('fake/executable/path.js');
 
-      clients.forEach((client) => sinon.stub(client, 'send'));
+      clients.forEach((client) => sinon.stub(client, 'updateGameState'));
       sinon.stub(forker, 'fork')
         .withArgs('fake/executable/path.js')
         .returns(testProcess);
@@ -121,8 +120,7 @@ describe('GameRoom', () => {
       });
 
       clients.forEach((client) => {
-        expect(client.send).to.have.been.calledWith(
-          IO_MESSAGE_TYPE.GAME_STATE, { alive: true });
+        expect(client.updateGameState).to.have.been.calledWith({ alive: true });
       });
     });
   });
