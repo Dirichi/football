@@ -1,6 +1,6 @@
 import io from 'socket.io-client';
 import p5 from "p5";
-import { constants, EVENTS } from "../../constants";
+import { constants, IO_MESSAGE_TYPE } from "../../constants";
 import { BallGraphics } from "../../graphics/ball_graphics";
 import { BoxGraphics } from "../../graphics/box_graphics";
 import { EventQueue } from '../../event_queue';
@@ -61,7 +61,7 @@ const sketch = (p: p5) => {
 };
 
 // TODO: Socket configuration could be encapsulated in another class
-socket.on(EVENTS.STATE_CHANGED, (data) => {
+socket.on(IO_MESSAGE_TYPE.GAME_STATE, (data) => {
   Object.keys(data).forEach((event) {
     const payload = data[event];
     queue.trigger(event, payload);

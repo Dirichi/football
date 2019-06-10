@@ -1,20 +1,24 @@
 import { IWebSocket } from "../../src/interfaces/iweb_socket";
+import { EventQueue } from "../../src/event_queue";
 
 export class TestWebSocket implements IWebSocket {
-  private events: Map<string, Array<Function>>;
+  private queue: EventQueue;
+  private id: string;
 
-  constructor() {
-    this.events = new Map();
+  constructor(id: string, queue: EventQueue = new EventQueue()) {
+    this.id = id;
+    this.queue = queue;
   }
 
-  public emit(event: string, message: any) {
-    const callbacks = this.events.get(event) || [];
-    callbacks.forEach((callback) => callback.call(this, message));
+  public getId(): string {
+    return this.id;
   }
 
-  public on(event: string, callback: Function) {
-    let callbacks = this.events.get(event) || [];
-    callbacks.push(callback);
-    this.events.set(event, callbacks);
+  public on(event: string, callback: (payload: object) => void): void {
+    this.queue.when(event, callback);
+  }
+
+  public emit(event: string, message: any): void {
+    this.queue.trigger(event, message);
   }
 }

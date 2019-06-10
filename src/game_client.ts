@@ -1,17 +1,18 @@
-import { Socket } from "socket.io";
-import { COMMAND_ID, IO_MESSAGE_TYPE } from "./constants";
+import { COMMAND_ID, IO_MESSAGE_TYPE, PLAYER_ROLE_TYPE } from "./constants";
 import { ICommandRequest } from "./interfaces/icommand_request";
 import { IGameClient } from "./interfaces/igame_client";
+import { IWebSocket } from "./interfaces/iweb_socket";
 
 export class GameClient implements IGameClient {
-  private socket: Socket;
+  private socket: IWebSocket;
+  private preferredRoleType?: PLAYER_ROLE_TYPE;
 
-  constructor(socket: Socket) {
+  constructor(socket: IWebSocket) {
     this.socket = socket;
   }
 
   public getId(): string {
-    return this.socket.id;
+    return this.socket.getId();
   }
 
   public updateGameState(payload: object): void {
@@ -22,8 +23,14 @@ export class GameClient implements IGameClient {
     this.socket.on(
       IO_MESSAGE_TYPE.COMMAND, (payload: {commandId: COMMAND_ID}) => {
         const request =
-          {...payload, clientId: this.socket.id } as ICommandRequest;
+          {...payload, clientId: this.getId() } as ICommandRequest;
         callback.call(this, request);
     });
+  }
+
+  public getPreferredRoleType(): PLAYER_ROLE_TYPE {
+    // TODO: Implement a way to return this property instead of KEEPER
+    // return this.preferredRoleType;
+    return PLAYER_ROLE_TYPE.KEEPER;
   }
 }

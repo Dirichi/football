@@ -86,14 +86,14 @@ export class Team {
     this.kickOffSupportingPlayer.prepareToSupportKickOff(ball);
   }
 
-  public applyRoles(roles: PlayerRole[]): void {
+  public setRoles(roles: PlayerRole[]): void {
     if (roles.length !== this.players.length) {
-      throw new Error(`Number of roles: ${roles.length} must match the number\
+      throw new Error(`Number of roles: ${roles.length}, must match the number\
          of players: ${this.players.length}`);
     }
 
     roles.forEach((role, index) => {
-      this.players[index].assignRole(role);
+      this.players[index].setRole(role);
     });
   }
 }
