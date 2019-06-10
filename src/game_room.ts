@@ -1,6 +1,6 @@
 import path from "path";
 import v4 from "uuid/v4";
-import { COMMAND_ID, GAME_EXECUTABLE_FILE , IO_MESSAGE_TYPE, PROCESS_MESSAGE_TYPE } from "./constants";
+import { COMMAND_ID, GAME_EXECUTABLE_FILE, PROCESS_MESSAGE_TYPE } from "./constants";
 import { IGameClient } from "./interfaces/igame_client";
 import { IProcess } from "./interfaces/iprocess";
 import { IProcessForker } from "./interfaces/iprocess_forker";

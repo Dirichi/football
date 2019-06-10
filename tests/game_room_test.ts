@@ -64,7 +64,7 @@ describe('GameRoom', () => {
       sinon.spy(testProcess, 'send');
       client.simulateCommandRequest({commandId: COMMAND_ID.STOP});
       expect(testProcess.send).to.have.been.calledWith({
-        data: { clientId: '1', commandId: COMMAND_ID.STOP},
+        data: { clientId: '1', commandId: COMMAND_ID.STOP },
         messageType: PROCESS_MESSAGE_TYPE.COMMAND,
       });
     });
