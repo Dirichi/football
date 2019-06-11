@@ -1,13 +1,20 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
   <head>
-    <script src="js/main.js"></script>
     <meta charset="utf-8">
     <title></title>
   </head>
   <body>
-    <style>
-      body {margin: 0px;}
-    </style>
+    <div>
+      <form action="/games" method="post" class="user-preferences-form">
+        <select class="role-type-preference" name="role-type">
+          <option value="defender">Defender</option>
+          <option value="midfield">Midfield</option>
+          <option value="forward">Forward</option>
+        </select>
+        <br><br>
+        <input type="submit">
+      </form>
+    </div>
   </body>
 </html>
