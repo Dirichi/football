@@ -35,7 +35,7 @@ export class Player implements ICollidable {
   private ballInteractionMediator?: IPlayerBallInteractionMediator;
   private role?: PlayerRole;
 
-  private lastNonZeroVelocity?: ThreeDimensionalVector;
+  private lastNonZeroVelocity: ThreeDimensionalVector;
 
   constructor(x: number, y: number, vx: number, vy: number, diameter: number) {
       this.id = v4(); // Randomly generated id
@@ -48,6 +48,9 @@ export class Player implements ICollidable {
       // Like a PhysicalRepresentation or something like that. So that we can
       // swap representations out as we see fit.
       this.colors = [0, 0, 225];
+
+      // HACK: Prevent last non zero velocity from starting off null.
+      this.lastNonZeroVelocity = new ThreeDimensionalVector(1, 0, 0);
   }
 
   public update(): void {
@@ -81,9 +84,6 @@ export class Player implements ICollidable {
   }
 
   public feetPosition(): ThreeDimensionalVector {
-    this.lastNonZeroVelocity =
-      this.lastNonZeroVelocity || ThreeDimensionalVector.random2D();
-
     const margin = this.diameter / 2;
     return this.lastNonZeroVelocity.unit()
       .scalarMultiply(margin)

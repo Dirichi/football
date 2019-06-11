@@ -96,41 +96,6 @@ describe('Player', () => {
         const expectedPosition = new ThreeDimensionalVector(5.5, 6, 0);
         expect(position.equals(expectedPosition)).to.be.true;
       });
-
-    it('defaults to a random direction if no non-zero velocity has been' +
-      ' recorded', () => {
-        const player = new Player(3, 6, 0, 0, 5);
-        player.setMaximumSpeed(10);
-        player.stop();
-        // generate a (1, 0) vector 'at random';
-        const randomStub =
-          sinon.stub(ThreeDimensionalVector, 'random2D').returns(
-            new ThreeDimensionalVector(1, 0, 0));
-
-        const position = player.feetPosition();
-        const expectedPosition = new ThreeDimensionalVector(5.5, 6, 0);
-        expect(position.equals(expectedPosition)).to.be.true;
-        randomStub.restore();
-      });
-
-    it('memoizes the provided random direction when no non-zero velocity was' +
-      ' previously recorded', () => {
-        const player = new Player(3, 6, 0, 0, 5);
-        player.setMaximumSpeed(10);
-        player.stop();
-        // generate a (1, 0) vector 'at random';
-        const randomStub =
-          sinon.stub(ThreeDimensionalVector, 'random2D').onCall(0).returns(
-            new ThreeDimensionalVector(1, 0, 0));
-        // first call
-        player.feetPosition();
-
-        // second call should not change feetPosition
-        const position = player.feetPosition();
-        const expectedPosition = new ThreeDimensionalVector(5.5, 6, 0);
-        expect(position.equals(expectedPosition)).to.be.true;
-        randomStub.restore();
-      });
   });
 
   describe('`kickBall`', () => {
