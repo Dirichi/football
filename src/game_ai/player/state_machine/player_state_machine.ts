@@ -22,7 +22,7 @@ export class PlayerStateMachine implements IPlayerController {
     this.enabled = true;
   }
 
-  public update() {
+  public update(): void {
     if (!this.enabled) { return; }
 
     const features = this.getFeatures();
@@ -45,11 +45,11 @@ export class PlayerStateMachine implements IPlayerController {
     }
   }
 
-  public getMessages() {
+  public getMessages(): string[] {
     return [...this.messages];
   }
 
-  public setFeatureExtractor(extractor: IPlayerStateFeatureExtractor) {
+  public setFeatureExtractor(extractor: IPlayerStateFeatureExtractor): void {
     this.extractor = extractor;
   }
 
