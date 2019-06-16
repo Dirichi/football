@@ -15,12 +15,10 @@ import { WaitingState } from "./game_ai/player/state_machine/waiting_state";
 import { ChaseBallCommand } from "./commands/chase_ball_command";
 import { CommandFactory } from "./commands/command_factory";
 import { GenericRemoteCommandRequestHandler } from "./commands/generic_remote_command_request_handler";
-import { MoveDownCommand } from "./commands/move_down_command";
-import { MoveLeftCommand } from "./commands/move_left_command";
-import { MoveRightCommand } from "./commands/move_right_command";
+import { MoveCommand } from "./commands/move_command";
+import { MovePlayerRemoteCommandRequestHandler } from "./commands/move_player_remote_command_request_handler";
 import { MoveToAttackingPositionCommand } from "./commands/move_to_attacking_position_command";
 import { MoveToDefensivePositionCommand } from "./commands/move_to_defensive_position_command";
-import { MoveUpCommand } from "./commands/move_up_command";
 import { PassBallCommand } from "./commands/pass_ball_command";
 import { PassBallRemoteCommandRequestHandler } from "./commands/pass_ball_remote_command_request_handler";
 import { ShootBallCommand } from "./commands/shoot_ball_command";
@@ -164,10 +162,7 @@ teamA.setRoles(teamAroles);
 teamB.setRoles(teamBroles);
 collisionNotificationService.registerCollisionGroup([ball, ...defaultPlayers]);
 
-const moveDownCommand = new MoveDownCommand();
-const moveLeftCommand = new MoveLeftCommand();
-const moveRightCommand = new MoveRightCommand();
-const moveUpCommand = new MoveUpCommand();
+const moveCommand = new MoveCommand();
 const chaseBallCommand = new ChaseBallCommand();
 const passBallCommand = new PassBallCommand();
 const stopCommand = new StopCommand();
@@ -176,10 +171,7 @@ const moveToAttackingPositionCommand = new MoveToAttackingPositionCommand();
 const moveToDefensivePositionCommand = new MoveToDefensivePositionCommand();
 
 const COMMAND_ID_TO_COMMAND_MAPPING = new Map<COMMAND_ID, ICommand>([
-  [COMMAND_ID.MOVE_PLAYER_DOWN, moveDownCommand],
-  [COMMAND_ID.MOVE_PLAYER_LEFT, moveLeftCommand],
-  [COMMAND_ID.MOVE_PLAYER_RIGHT, moveRightCommand],
-  [COMMAND_ID.MOVE_PLAYER_UP, moveUpCommand],
+  [COMMAND_ID.MOVE, moveCommand],
   [COMMAND_ID.CHASE_BALL, chaseBallCommand],
   [COMMAND_ID.SHOOT_BALL, shootBallCommand],
   [COMMAND_ID.PASS_BALL, passBallCommand],
@@ -227,9 +219,11 @@ const genericHandler =
   new GenericRemoteCommandRequestHandler(commandFactory);
 const passHandler =
   new PassBallRemoteCommandRequestHandler(commandFactory);
+const moveHandler = new MovePlayerRemoteCommandRequestHandler(commandFactory);
 
 const commandHandlerRouter = new Map<string, ICommandRequestHandler>([
   [COMMAND_ID.PASS_BALL as string, passHandler],
+  ["move.player.*", moveHandler],
   [".*", genericHandler],
 ]);
 
