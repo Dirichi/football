@@ -64,11 +64,15 @@ export enum COMMAND_ID {
   CHASE_BALL = "chase.ball",
   DRIBBLE = "dribble.ball",
   MOVE_PLAYER_DOWN = "move.player.down",
+  MOVE_PLAYER_LOWER_LEFT = "move.player.down.left",
+  MOVE_PLAYER_LOWER_RIGHT = "move.player.down.right",
   MOVE_PLAYER_LEFT = "move.player.left",
   MOVE_PLAYER_RIGHT = "move.player.right",
   MOVE_TO_ATTACKING_POSITION = "move.player.to.attacking.position",
   MOVE_TO_DEFENSIVE_POSITION = "move.player.to.defensive.position",
   MOVE_PLAYER_UP = "move.player.up",
+  MOVE_PLAYER_UPPER_LEFT = "move.player.up.left",
+  MOVE_PLAYER_UPPER_RIGHT = "move.player.up.right",
   PASS_BALL = "pass.ball",
   PASS_BALL_DOWN = "pass.ball.down",
   PASS_BALL_LEFT = "pass.ball.left",
@@ -76,6 +80,7 @@ export enum COMMAND_ID {
   PASS_BALL_UP = "pass.ball.up",
   SHOOT_BALL = "shoot.ball",
   STOP = "player.stop",
+  MOVE = "player.move",
 }
 
 export const BALL_INITIAL_ARGS = [
@@ -126,16 +131,6 @@ export const FIELD_INITIAL_COORDINATES = [
   constants.FIELD_INITIAL_YLENGTH as number,
 ];
 
-export const KEY_DOWN_EVENT_TO_COMMAND_MAP: Map<string, COMMAND_ID> = new Map([
-  ["ArrowDown", COMMAND_ID.MOVE_PLAYER_DOWN],
-  ["ArrowLeft", COMMAND_ID.MOVE_PLAYER_LEFT],
-  ["ArrowRight", COMMAND_ID.MOVE_PLAYER_RIGHT],
-  ["ArrowUp", COMMAND_ID.MOVE_PLAYER_UP],
-  ["KeyA", COMMAND_ID.SHOOT_BALL],
-  ["KeyF", COMMAND_ID.CHASE_BALL],
-  ["KeyS", COMMAND_ID.PASS_BALL],
-]);
-
 export enum INPUT_KEY {
   ARROW_DOWN = "ArrowDown",
   ARROW_LEFT = "ArrowLeft",
@@ -158,6 +153,10 @@ export const COMMAND_ID_TO_KEY_COMBINATION: Map<COMMAND_ID, INPUT_KEY[]> =
     [COMMAND_ID.PASS_BALL_UP, [INPUT_KEY.ARROW_UP, INPUT_KEY.KEY_S]],
     [COMMAND_ID.PASS_BALL, [INPUT_KEY.KEY_S]],
     [COMMAND_ID.CHASE_BALL, [INPUT_KEY.KEY_F]],
+    [COMMAND_ID.MOVE_PLAYER_LOWER_LEFT, [INPUT_KEY.ARROW_DOWN, INPUT_KEY.ARROW_LEFT]],
+    [COMMAND_ID.MOVE_PLAYER_LOWER_RIGHT, [INPUT_KEY.ARROW_DOWN, INPUT_KEY.ARROW_RIGHT]],
+    [COMMAND_ID.MOVE_PLAYER_UPPER_LEFT, [INPUT_KEY.ARROW_UP, INPUT_KEY.ARROW_LEFT]],
+    [COMMAND_ID.MOVE_PLAYER_UPPER_RIGHT, [INPUT_KEY.ARROW_UP, INPUT_KEY.ARROW_RIGHT]],
     [COMMAND_ID.MOVE_PLAYER_DOWN, [INPUT_KEY.ARROW_DOWN]],
     [COMMAND_ID.MOVE_PLAYER_LEFT, [INPUT_KEY.ARROW_LEFT]],
     [COMMAND_ID.MOVE_PLAYER_RIGHT, [INPUT_KEY.ARROW_RIGHT]],

@@ -54,23 +54,8 @@ export class Player implements ICollidable {
     this.controller.update();
   }
 
-  public moveUp(): void {
-    const velocity = new ThreeDimensionalVector(0, -this.maximumSpeed, 0);
-    this.setVelocity(velocity);
-  }
-
-  public moveDown(): void {
-    const velocity = new ThreeDimensionalVector(0, this.maximumSpeed, 0);
-    this.setVelocity(velocity);
-  }
-
-  public moveLeft(): void {
-    const velocity = new ThreeDimensionalVector(-this.maximumSpeed, 0, 0);
-    this.setVelocity(velocity);
-  }
-
-  public moveRight(): void {
-    const velocity = new ThreeDimensionalVector(this.maximumSpeed, 0, 0);
+  public moveInDirection(direction: ThreeDimensionalVector): void {
+    const velocity = direction.unit().scalarMultiply(this.maximumSpeed);
     this.setVelocity(velocity);
   }
 
@@ -266,7 +251,7 @@ export class Player implements ICollidable {
       });
   }
 
-  private setVelocity(velocity: ThreeDimensionalVector) {
+  private setVelocity(velocity: ThreeDimensionalVector): void {
     [this.vx, this.vy] = [velocity.x, velocity.y];
   }
 }
