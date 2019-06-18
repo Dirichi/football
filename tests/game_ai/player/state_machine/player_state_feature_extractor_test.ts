@@ -5,6 +5,7 @@ import { Player } from '../../../../src/game_objects/player';
 import { PlayerStateFeatureExtractor } from '../../../../src/game_ai/player/state_machine/player_state_feature_extractor';
 import { Team } from '../../../../src/game_objects/team';
 import { TestBallPossessionService } from '../../../helpers/test_ball_possession_service';
+import { ThreeDimensionalVector } from '../../../../src/three_dimensional_vector';
 import * as chai from 'chai';
 import * as sinon from 'sinon';
 import { COMMAND_ID } from '../../../../src/constants';
@@ -26,7 +27,7 @@ describe('PlayerStateFeatureExtractor', () => {
       valueFor: (player: Player) => 0.5,
     }
     shotValueCalculator = {
-      valueFor: (player: Player) => 0.5,
+      evaluate: (player: Player, shootingFrom?: ThreeDimensionalVector) => 0.5,
     }
   });
 

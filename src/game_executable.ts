@@ -195,7 +195,7 @@ const interceptionCalculator = new InterceptionCalculator();
 const passValueCalculator =
   new PassValueCalculator(ball, interceptionCalculator);
 const shotValueCalculator =
-  new ShotValueCalculator(ball, interceptionCalculator);
+  new ShotValueCalculator(ball, field, interceptionCalculator);
 
 const featureExtractor = new PlayerStateFeatureExtractor(
   ball, ballPossessionService, passValueCalculator, shotValueCalculator);

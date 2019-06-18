@@ -1,46 +1,55 @@
+import { MAXIMUM_SHOT_VALUE, MINIMUM_SHOT_VALUE } from "../../../../constants";
 import { Ball } from "../../../../game_objects/ball";
+import { Field } from "../../../../game_objects/field";
 import { Player } from "../../../../game_objects/player";
 import { IShotValueCalculator } from "../../../../interfaces/ishot_value_calculator";
+import { ThreeDimensionalVector } from "../../../../three_dimensional_vector";
+import { scale } from "../../../../utils/helper_functions";
 import { InterceptionCalculator } from "./interception_calculator";
 
 export class ShotValueCalculator implements IShotValueCalculator {
   private ball: Ball;
+  private field: Field;
   private interceptionCalculator: InterceptionCalculator;
+  private minShotValue: number;
+  private maxShotValue: number;
 
-  constructor(ball: Ball, interceptionCalculator: InterceptionCalculator) {
-    this.ball = ball;
-    this.interceptionCalculator = interceptionCalculator;
+  constructor(
+    ball: Ball,
+    field: Field,
+    interceptionCalculator: InterceptionCalculator,
+    minShotValue: number = MINIMUM_SHOT_VALUE,
+    maxShotValue: number = MAXIMUM_SHOT_VALUE) {
+      this.ball = ball;
+      this.field = field;
+      this.interceptionCalculator = interceptionCalculator;
+      this.minShotValue = minShotValue;
+      this.maxShotValue = maxShotValue;
   }
 
-  public valueFor(player: Player): number {
-    if (this.interceptionLikelyFor(player)) {
-      return 0;
-    }
+  public evaluate(
+    player: Player, shootingFrom?: ThreeDimensionalVector ): number {
+      const startingPosition = shootingFrom || player.getPosition();
 
-    const maxDistance = Math.sqrt(1.25);
-    const distance = this.distanceToGoal(player);
-    if (distance > maxDistance / 2) {
-      return 0;
-    }
-    const minScore = 0.1;
-    const maxScore = 1;
-    const score =
-      minScore + (maxDistance - distance) / (maxScore - minScore);
-    return score;
+      if (this.interceptionLikely(player, startingPosition)) {
+        return this.minShotValue;
+      }
+      const distance =
+        player.getOpposingGoalPost().distanceTo(startingPosition);
+
+      const naiveScore = scale(distance, 0, this.field.xlength,
+        this.maxShotValue, this.minShotValue);
+
+      return Math.max(naiveScore, this.minShotValue);
   }
 
-  private interceptionLikelyFor(player: Player) {
-    const opposition = player.getTeam().getOpposition().getPlayers();
+  private interceptionLikely(
+    player: Player, startingPosition: ThreeDimensionalVector) {
+    const opposition = player.getOpposingFieldPlayers();
     const target = player.getOpposingGoalPost().getMidPoint();
-    const start = player.getPosition();
     const speed = this.ball.getMaximumSpeed();
-    const interceptionLikely = this.interceptionCalculator.canAnyIntercept(
-      opposition, start, target, speed);
-    return interceptionLikely;
-  }
 
-  private distanceToGoal(player: Player): number {
-    const target = player.getOpposingGoalPost().getMidPoint();
-    return player.getPosition().distanceTo(target);
+    return this.interceptionCalculator.canAnyIntercept(
+      opposition, startingPosition, target, speed);
   }
 }

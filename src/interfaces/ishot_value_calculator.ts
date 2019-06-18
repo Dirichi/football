@@ -1,5 +1,6 @@
 import { Player } from "../game_objects/player";
+import { ThreeDimensionalVector } from "../three_dimensional_vector";
 
 export interface IShotValueCalculator {
-  valueFor(player: Player): number;
+  evaluate(player: Player, shootingFrom?: ThreeDimensionalVector): number;
 }

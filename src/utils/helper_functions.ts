@@ -28,3 +28,22 @@ export const sample = <T>(array: T[]): T | null => {
   const randomIndex = Math.floor(Math.random() * array.length);
   return array[randomIndex] || null;
 };
+
+// Helper function to scale a number from one range to another.
+export const scale = (
+  value: number,
+  initialMin: number,
+  initialMax: number,
+  finalMin: number,
+  finalMax: number): number => {
+    const initialRange = initialMax - initialMin;
+    const finalRange = finalMax - finalMin;
+    const diff = ((value - initialMin) * finalRange) / initialRange;
+    return finalMin + diff;
+};
+
+// Helper to round a decimal to the provided number of decimal places
+export const round = (value: number, decimalPlaces: number): number => {
+  const factor = Math.pow(10, decimalPlaces);
+  return Math.round(value * factor) / factor;
+};
