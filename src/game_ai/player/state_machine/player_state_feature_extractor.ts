@@ -52,7 +52,7 @@ export class PlayerStateFeatureExtractor implements IPlayerStateFeatureExtractor
   }
 
   public shotValue(player: Player): number {
-    return this.shotValueCalculator.valueFor(player);
+    return this.shotValueCalculator.evaluate(player);
   }
 
   public isNearestTeamMateToBall(player: Player): boolean {

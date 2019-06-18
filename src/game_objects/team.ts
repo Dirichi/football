@@ -1,4 +1,4 @@
-import { TEAM_SIDES } from "../constants";
+import { PLAYER_ROLE_TYPE, TEAM_SIDES } from "../constants";
 import { minimumBy } from "../utils/helper_functions";
 import { Ball } from "./ball";
 import { Player } from "./player";
@@ -24,6 +24,12 @@ export class Team {
 
   public getPlayers(): Player[] {
     return [...this.players];
+  }
+
+  public getFieldPlayers(): Player[] {
+    return this.players.filter((player) => {
+      return player.getRoleType() !== PLAYER_ROLE_TYPE.KEEPER;
+    });
   }
 
   public getOpposition(): Team {

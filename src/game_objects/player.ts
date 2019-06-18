@@ -93,6 +93,10 @@ export class Player implements ICollidable {
     return this.opposingGoalPost;
   }
 
+  public getOpposingFieldPlayers(): Player[] {
+    return this.getTeam().getOpposition().getFieldPlayers();
+  }
+
   public setOpposingGoalPost(post: Post): Player {
     this.opposingGoalPost = post;
     return this;
