@@ -203,7 +203,7 @@ const shotValueCalculator =
 const congestionCalculator =
   new CongestionCalculator(defaultPlayers, RADIUS_FOR_CONGESTION);
 const positionValueCalculator =
-  new PositionValueCalculator(congestionCalculator);
+  new PositionValueCalculator(congestionCalculator, shotValueCalculator);
 
 const positionValueDebugService =
   new PositionValueDebugService(positionValueCalculator, defaultPlayers);

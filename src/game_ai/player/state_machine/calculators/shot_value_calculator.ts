@@ -13,18 +13,21 @@ export class ShotValueCalculator implements IShotValueCalculator {
   private interceptionCalculator: InterceptionCalculator;
   private minShotValue: number;
   private maxShotValue: number;
+  private idealDistanceFromGoal: number;
 
   constructor(
     ball: Ball,
     field: Field,
     interceptionCalculator: InterceptionCalculator,
     minShotValue: number = MINIMUM_SHOT_VALUE,
-    maxShotValue: number = MAXIMUM_SHOT_VALUE) {
+    maxShotValue: number = MAXIMUM_SHOT_VALUE,
+    idealDistanceFromGoal: number = field.xlength / 3) {
       this.ball = ball;
       this.field = field;
       this.interceptionCalculator = interceptionCalculator;
       this.minShotValue = minShotValue;
       this.maxShotValue = maxShotValue;
+      this.idealDistanceFromGoal = idealDistanceFromGoal;
   }
 
   public evaluate(
@@ -34,11 +37,21 @@ export class ShotValueCalculator implements IShotValueCalculator {
       if (this.interceptionLikely(player, startingPosition)) {
         return this.minShotValue;
       }
+
       const distance =
         player.getOpposingGoalPost().distanceTo(startingPosition);
 
-      const naiveScore = scale(distance, 0, this.field.xlength,
-        this.maxShotValue, this.minShotValue);
+      if (distance <= this.idealDistanceFromGoal) {
+        return this.maxShotValue;
+      }
+
+      const naiveScore = scale(
+        distance,
+        this.idealDistanceFromGoal,
+        this.field.xlength,
+        this.maxShotValue,
+        this.minShotValue
+      );
 
       return Math.max(naiveScore, this.minShotValue);
   }

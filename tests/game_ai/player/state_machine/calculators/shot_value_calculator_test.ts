@@ -56,9 +56,35 @@ describe('ShotValueCalculator', () => {
           .withArgs(opposition, player.getPosition(), post.getMidPoint(), 2)
           .returns(false);
 
-        // score = (10 - distFromGoal) scaled from (0, 10) to (0.2, 1)
+        // score = (10 - distFromGoal) scaled from (3.33, 10) to (1, 0.2)
         const score = round(calculator.evaluate(player), 2);
-        expect(score).to.equal(0.68);
+        expect(score).to.equal(0.92);
+    });
+
+    it('returns a constant maximum value if the player is within a radius ' +
+      ' a third of the field\'s length of the post', () => {
+        const ball = new Ball(0, 0, 0, 0, 5);
+        ball.setMaximumSpeed(2);
+        const player = new Player(0, 0, 0, 0, 5);
+        const post = new Post(0, 0, 0, 0);
+        player.setOpposingGoalPost(post);
+
+        const opposition = [new Player(1, 1, 0, 0, 5)];
+        // field xlength = 10; Important for this test
+        const field = new Field(0, 0, 10, 0);
+        const interceptionCalculator = new InterceptionCalculator();
+        const calculator =
+          new ShotValueCalculator(ball, field, interceptionCalculator);
+
+        sinon.stub(post, 'distanceTo')
+          .withArgs(player.getPosition()).returns(3.33);
+        sinon.stub(player, 'getOpposingFieldPlayers').returns(opposition);
+        sinon.stub(interceptionCalculator, 'canAnyIntercept')
+          .withArgs(opposition, player.getPosition(), post.getMidPoint(), 2)
+          .returns(false);
+
+        const score = round(calculator.evaluate(player), 2);
+        expect(score).to.equal(1);
     });
 
     it('does not return values lower than the prescribed minimum', () => {
@@ -106,9 +132,9 @@ describe('ShotValueCalculator', () => {
           .withArgs(opposition, startingPosition, post.getMidPoint(), 2)
           .returns(false);
 
-        // score = (10 - distFromGoal) scaled from (0, 10) to (0.2, 1)
+        // score = (10 - distFromGoal) scaled from (3.33, 10) to (1, 0.2)
         const score = round(calculator.evaluate(player, startingPosition), 2);
-        expect(score).to.equal(0.68);
+        expect(score).to.equal(0.92);
         expect(post.distanceTo).not.to.have.been.calledWith(
           player.getPosition());
     });
