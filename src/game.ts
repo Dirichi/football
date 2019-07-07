@@ -30,7 +30,6 @@ export class Game {
   private goalRecordService: GoalRecordService;
   private goalDetectionService: GoalDetectionService;
   private timer: TimerService;
-  private positionValueCalculator: PositionValueCalculator;
   private positionValueDebugService: PositionValueDebugService;
 
   public update(): void {
@@ -90,11 +89,6 @@ export class Game {
 
   public setGoalDetectionService(detectionService: GoalDetectionService): Game {
     this.goalDetectionService = detectionService;
-    return this;
-  }
-
-  public setPositionValueCalculator(calculator: PositionValueCalculator): Game {
-    this.positionValueCalculator = calculator;
     return this;
   }
 
