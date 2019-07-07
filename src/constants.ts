@@ -44,6 +44,7 @@ export enum EVENTS {
   POSTS_DATA = "posts.data",
   SCORES_PANEL_DATA = "scores.panel.data",
   GAME_STATE_TEXT_DATA = "game.state.text.data",
+  POSITION_VALUE_DEBUG_INFO = "position.debug.info",
 }
 
 export enum DIRECTION {
@@ -232,6 +233,11 @@ export enum PLAYER_ROLE_TYPE {
 export const GAME_EXECUTABLE_FILE = "game_executable.js";
 
 export const MINIMUM_SHOT_VALUE = 0.2;
+
 export const MAXIMUM_SHOT_VALUE = 1;
 
 export const Y_BALL_MARGIN_FOR_KICKOFF_SUPPORT = constants.PLAYER_DIAMETER_TO_FIELD_YLENGTH * 6;
+
+export const RADIUS_FOR_CONGESTION = constants.PLAYER_DIAMETER_TO_FIELD_YLENGTH * 8;
+
+export const POSITION_DELTA_FOR_POSITION_VALUE_CALCULATION = constants.FIELD_INITIAL_YLENGTH * 0.1;

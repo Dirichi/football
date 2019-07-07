@@ -7,6 +7,7 @@ import { IBallSchema } from "../interfaces/iball_schema";
 import { IBoxSchema } from "../interfaces/ibox_schema";
 import { IFieldRegionSchema } from "../interfaces/ifield_region_schema";
 import { IPlayerSchema } from "../interfaces/iplayer_schema";
+import { IPositionValueSchema } from "../interfaces/iposition_value_schema";
 import { IScoresPanelSchema } from "../interfaces/iscores_panel_schema";
 import { ITextSchema } from "../interfaces/itext_schema";
 
@@ -17,10 +18,10 @@ export class P5AnimationEngine implements IAnimationEngine {
     this.animator = animator;
   }
 
-  public displayText(text: ITextSchema) {
+  public displayText(text: ITextSchema, size: number = 64) {
     this.animator.push();
     this.animator.textAlign(this.animator.CENTER);
-    this.animator.textSize(64);
+    this.animator.textSize(size);
     this.animator.fill(255);
     this.animator.text(text.value, text.x, text.y);
     this.animator.pop();
@@ -88,6 +89,21 @@ export class P5AnimationEngine implements IAnimationEngine {
     this.animator.push();
     this.animator.fill(player.colors);
     this.animator.circle(player.x, player.y, player.diameter);
+    this.animator.pop();
+  }
+
+  public displayPositionValues(values: IPositionValueSchema) {
+    const currX = values.currentPositionX;
+    const currY = values.currentPositionY;
+    const potentialPositionsAndValues = values.potentialPositionsAndValues;
+
+    this.animator.push();
+    this.animator.stroke(0);
+    this.animator.strokeWeight(2);
+    potentialPositionsAndValues.forEach((positionText) => {
+      this.animator.line(currX, currY, positionText.x, positionText.y);
+      this.displayText(positionText, 32);
+    });
     this.animator.pop();
   }
 

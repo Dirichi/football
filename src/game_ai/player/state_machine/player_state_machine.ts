@@ -64,6 +64,7 @@ export class PlayerStateMachine implements IPlayerController {
   private getFeatures(): IPlayerStateFeature {
     return {
       bestPassingOption: this.extractor.bestPassingOption(this.player),
+      bestPositionOption: this.extractor.bestPositionOption(this.player),
       hasBall: this.extractor.hasBall(this.player),
       hasOpenPassingOptions: this.extractor.hasOpenPassingOptions(this.player),
       hasWaitMessages: this.hasWaitMessages(),
