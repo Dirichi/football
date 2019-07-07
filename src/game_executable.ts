@@ -60,6 +60,7 @@ import { CollisionNotificationService } from "./services/collision_notification_
 import { GoalDetectionService } from "./services/goal_detection_service";
 import { GoalRecordService } from "./services/goal_record_service";
 import { PlayerBallInteractionMediator } from "./services/player_ball_interaction_mediator";
+import { PositionValueDebugService } from "./services/position_value_debug_service";
 import { TickService } from "./services/tick_service";
 import { TimerService } from "./timer_service";
 import { range } from "./utils/helper_functions";
@@ -204,6 +205,9 @@ const congestionCalculator =
 const positionValueCalculator =
   new PositionValueCalculator(congestionCalculator);
 
+const positionValueDebugService =
+  new PositionValueDebugService(positionValueCalculator, defaultPlayers);
+
 const featureExtractor =
   new PlayerStateFeatureExtractor(
     ball,
@@ -255,7 +259,7 @@ game.setBall(ball)
   .setTimer(timer)
   .setGoalDetectionService(goalDetectionService)
   .setGoalRecordService(goalRecordService)
-  .setPositionValueCalculator(positionValueCalculator);
+  .setPositionValueDebugService(positionValueDebugService);
 
 const tickService = new TickService(queue);
 const mediator =

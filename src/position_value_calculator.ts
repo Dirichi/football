@@ -1,6 +1,6 @@
 import { CongestionCalculator } from "./game_ai/player/state_machine/calculators/congestion_calculator";
-import { IPositionValueCalculator } from "./interfaces/iposition_value_calculator";
 import { Player } from "./game_objects/player";
+import { IPositionValueCalculator } from "./interfaces/iposition_value_calculator";
 import { ThreeDimensionalVector } from "./three_dimensional_vector";
 import { round } from "./utils/helper_functions";
 
