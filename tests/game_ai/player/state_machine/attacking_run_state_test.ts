@@ -2,6 +2,7 @@ import { CommandFactory } from '../../../../src/commands/command_factory';
 import { AttackingRunState } from '../../../../src/game_ai/player/state_machine/attacking_run_state';
 import { IPlayerStateFeature } from '../../../../src/interfaces/iplayer_state_feature';
 import { Player } from '../../../../src/game_objects/player';
+import { ThreeDimensionalVector } from '../../../../src/three_dimensional_vector';
 import * as chai from 'chai';
 import * as sinon from 'sinon';
 import { COMMAND_ID } from '../../../../src/constants';
@@ -10,10 +11,12 @@ const sinonChai = require('sinon-chai');
 const expect = chai.expect;
 chai.use(sinonChai);
 
+const bestPosition = new ThreeDimensionalVector(0, 0, 0);
 let commandFactory: CommandFactory;
 let player: Player;
 let getNewFeatures = () => {
   return {
+    bestPositionOption: bestPosition,
     bestPassingOption: new Player(0, 0, 0, 0, 5),
     hasBall: false,
     hasOpenPassingOptions: false,
@@ -41,14 +44,11 @@ describe('AttackingRunState', () => {
         const features = getNewFeatures();
         features.teamInControl = true;
         features.hasBall = false;
-
-        const command = { execute: sinon.spy() };
-        sinon.stub(commandFactory, 'getCommand')
-          .withArgs(COMMAND_ID.MOVE_TO_ATTACKING_POSITION)
-          .returns(command);
+        sinon.stub(player, 'moveTowards');
 
         state.update(player, features);
-        expect(command.execute).to.have.been.calledWith(player);
+
+        expect(player.moveTowards).to.have.been.calledWith(bestPosition);
     });
 
     it('does nothing if the team does not have the ball', () => {
@@ -57,14 +57,11 @@ describe('AttackingRunState', () => {
       const features = getNewFeatures();
       features.teamInControl = false;
       features.hasBall = false;
-
-      const command = { execute: sinon.spy() };
-      sinon.stub(commandFactory, 'getCommand')
-        .withArgs(COMMAND_ID.MOVE_TO_ATTACKING_POSITION)
-        .returns(command);
+      sinon.stub(player, 'moveTowards');
 
       state.update(player, features);
-      expect(command.execute).not.to.have.been.called;
+
+      expect(player.moveTowards).not.to.have.been.called;
     });
 
     it('does nothing if the player is with the ball', () => {
@@ -73,14 +70,11 @@ describe('AttackingRunState', () => {
       const features = getNewFeatures();
       features.teamInControl = true;
       features.hasBall = true;
-
-      const command = { execute: sinon.spy() };
-      sinon.stub(commandFactory, 'getCommand')
-        .withArgs(COMMAND_ID.MOVE_TO_ATTACKING_POSITION)
-        .returns(command);
+      sinon.stub(player, 'moveTowards');
 
       state.update(player, features);
-      expect(command.execute).not.to.have.been.called;
+
+      expect(player.moveTowards).not.to.have.been.called;
     });
   });
 });

@@ -12,6 +12,7 @@ import { PlayerGraphics } from "../../graphics/player_graphics";
 import { PostGraphics } from "../../graphics/post_graphics";
 import { GameStateTextGraphics } from "../../graphics/game_state_text_graphics";
 import { ScoresPanelGraphics } from "../../graphics/scores_panel_graphics";
+import { PositionValueDebugGraphics } from "../../graphics/position_value_debug_graphics";
 
 const socket = io();
 const queue = new EventQueue();
@@ -28,6 +29,8 @@ const sketch = (p: p5) => {
   const gameStateTextGraphics =
     new GameStateTextGraphics(animationEngine, queue);
   const scoresPanelGraphics = new ScoresPanelGraphics(animationEngine, queue);
+  const positionValueDebugGraphics =
+    new PositionValueDebugGraphics(animationEngine, queue);
 
 // DO NOT REORDER THIS
 // Maybe there should be a way to specify the order in which animations
@@ -40,6 +43,7 @@ const sketch = (p: p5) => {
     postGraphics,
     playerGraphics,
     ballGraphics,
+    positionValueDebugGraphics,
     gameStateTextGraphics,
     scoresPanelGraphics,
   ];

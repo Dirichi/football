@@ -3,13 +3,17 @@ import { Ball } from "./game_objects/ball";
 import { Box } from "./game_objects/box";
 import { Field } from "./game_objects/field";
 import { FieldRegion } from "./game_objects/field_region";
+import { Player } from "./game_objects/player";
 import { Post } from "./game_objects/post";
 import { Team } from "./game_objects/team";
 import { IGameStateMachine } from "./interfaces/igame_state_machine";
+import { IPositionValueSchema } from "./interfaces/iposition_value_schema";
 import { IScoresPanelSchema } from "./interfaces/iscores_panel_schema";
 import { ITextSchema } from "./interfaces/itext_schema";
+import { PositionValueCalculator } from "./position_value_calculator";
 import { GoalDetectionService } from "./services/goal_detection_service";
 import { GoalRecordService } from "./services/goal_record_service";
+import { ThreeDimensionalVector } from "./three_dimensional_vector";
 import { TimerService } from "./timer_service";
 import { sample } from "./utils/helper_functions";
 
@@ -26,6 +30,7 @@ export class Game {
   private goalRecordService: GoalRecordService;
   private goalDetectionService: GoalDetectionService;
   private timer: TimerService;
+  private positionValueCalculator: PositionValueCalculator;
 
   public update(): void {
     this.timer.update();
@@ -82,10 +87,14 @@ export class Game {
     return this;
   }
 
-  public setGoalDetectionService(
-    goalDetectionService: GoalDetectionService): Game {
-      this.goalDetectionService = goalDetectionService;
-      return this;
+  public setGoalDetectionService(detectionService: GoalDetectionService): Game {
+    this.goalDetectionService = detectionService;
+    return this;
+  }
+
+  public setPositionValueCalculator(calculator: PositionValueCalculator): Game {
+    this.positionValueCalculator = calculator;
+    return this;
   }
 
   public disableControls(): void {
@@ -127,7 +136,6 @@ export class Game {
   }
 
   public getState() {
-    const players = this.teams.map((team) => team.getPlayers()).flat();
     return {
       [EVENTS.GAME_STATE_TEXT_DATA]: this.buildStateText(),
       [EVENTS.BALL_DATA]: this.ball.serialized(),
@@ -135,10 +143,15 @@ export class Game {
       [EVENTS.FIELD_DATA]: this.field.serialized(),
       [EVENTS.FIELD_REGION_DATA]: this.regions.map(
         (region) => region.serialized()),
-      [EVENTS.PLAYER_DATA]: players.map((player) => player.serialized()),
+      [EVENTS.PLAYER_DATA]: this.players().map((player) => player.serialized()),
       [EVENTS.POSTS_DATA]: this.posts.map((post) => post.serialized()),
       [EVENTS.SCORES_PANEL_DATA]: this.buildScoresPanel(),
+      [EVENTS.POSITION_VALUE_DEBUG_INFO]: this.buildPositionValues(),
     };
+  }
+
+  private players(): Player[] {
+    return this.teams.map((team) => team.getPlayers()).flat();
   }
 
   // TODO: Maybe this doesn't belong to `Game`
@@ -149,6 +162,34 @@ export class Game {
       x: midPoint.x,
       y: midPoint.y,
     };
+  }
+
+  private buildPositionValues(): IPositionValueSchema[] {
+    return this.players().map((player) => {
+      return this.buildPositionValue(player);
+    });
+  }
+
+  private buildPositionValue(player: Player) {
+    const positionDiffs = [
+      new ThreeDimensionalVector(0.1, 0, 0),
+      new ThreeDimensionalVector(-0.1, 0, 0),
+      new ThreeDimensionalVector(0, 0.1, 0),
+      new ThreeDimensionalVector(0, -0.1, 0),
+    ];
+
+    const potentialPositionsAndValues = positionDiffs.map((diff) => {
+      const position = player.getPosition().add(diff);
+      const value = this.positionValueCalculator.evaluate(player, position);
+
+      return {x: position.x, y: position.y, value: String(value)} as ITextSchema;
+    });
+
+    return {
+      currentPositionX: player.getPosition().x,
+      currentPositionY: player.getPosition().y,
+      potentialPositionsAndValues,
+    } as IPositionValueSchema;
   }
 
   // TODO: This may not need to be here

@@ -17,9 +17,7 @@ export class AttackingRunState implements IPlayerState {
 
   public update(player: Player, features: IPlayerStateFeature): void {
     if (this.eligibleFor(features)) {
-      this.commandFactory
-        .getCommand(COMMAND_ID.MOVE_TO_ATTACKING_POSITION)
-        .execute(player);
+      player.moveTowards(features.bestPositionOption);
     }
   }
 }

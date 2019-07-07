@@ -1,5 +1,5 @@
-import { Player } from '../../../../../src/game_objects/player';
-import { ThreeDimensionalVector } from '../../../../../src/three_dimensional_vector';
+import { Player } from "../../../../../src/game_objects/player";
+import { ThreeDimensionalVector } from "../../../../../src/three_dimensional_vector";
 
 export class CongestionCalculator {
   private players: Player[];

@@ -1,6 +1,7 @@
 import { GameStateMachine } from "./game_ai/game/game_state_machine";
 import { KickOffState } from "./game_ai/game/kickoff_state";
 import { AttackingRunState } from "./game_ai/player/state_machine/attacking_run_state";
+import { CongestionCalculator } from "./game_ai/player/state_machine/calculators/congestion_calculator";
 import { InterceptionCalculator } from "./game_ai/player/state_machine/calculators/interception_calculator";
 import { PassValueCalculator } from "./game_ai/player/state_machine/calculators/pass_value_calculator";
 import { ShotValueCalculator } from "./game_ai/player/state_machine/calculators/shot_value_calculator";
@@ -11,6 +12,7 @@ import { PassingState } from "./game_ai/player/state_machine/passing_state";
 import { PlayerStateFeatureExtractor } from "./game_ai/player/state_machine/player_state_feature_extractor";
 import { ShootingState } from "./game_ai/player/state_machine/shooting_state";
 import { WaitingState } from "./game_ai/player/state_machine/waiting_state";
+import { PositionValueCalculator } from "./position_value_calculator";
 
 import { ChaseBallCommand } from "./commands/chase_ball_command";
 import { CommandFactory } from "./commands/command_factory";
@@ -29,7 +31,8 @@ import { BALL_INITIAL_ARGS, BOX18A_INITIAL_COORDINATES,
   BOX6B_INITIAL_COORDINATES, COLLISION_MARGIN_FACTOR, COMMAND_ID, constants,
   EVENTS, FIELD_INITIAL_COORDINATES, PLAYER_INITIAL_ARGS,
   PLAYER_ROLE, PLAYER_ROLE_TYPE, POSTA_INITIAL_COORDINATES,
-  POSTB_INITIAL_COORDINATES, PROCESS_MESSAGE_TYPE, TEAM_SIDES
+  POSTB_INITIAL_COORDINATES, PROCESS_MESSAGE_TYPE, RADIUS_FOR_CONGESTION,
+  TEAM_SIDES
   } from "./constants";
 import { EventQueue } from "./event_queue";
 import { Game } from "./game";
@@ -196,9 +199,18 @@ const passValueCalculator =
   new PassValueCalculator(ball, interceptionCalculator);
 const shotValueCalculator =
   new ShotValueCalculator(ball, field, interceptionCalculator);
+const congestionCalculator =
+  new CongestionCalculator(defaultPlayers, RADIUS_FOR_CONGESTION);
+const positionValueCalculator =
+  new PositionValueCalculator(congestionCalculator);
 
-const featureExtractor = new PlayerStateFeatureExtractor(
-  ball, ballPossessionService, passValueCalculator, shotValueCalculator);
+const featureExtractor =
+  new PlayerStateFeatureExtractor(
+    ball,
+    ballPossessionService,
+    passValueCalculator,
+    shotValueCalculator,
+    positionValueCalculator);
 
 const buildStateMachine = (player: Player) => {
   const machine = new PlayerStateMachine(player, PLAYER_STATES);
@@ -242,7 +254,8 @@ game.setBall(ball)
   .setStateMachine(gameStateMachine)
   .setTimer(timer)
   .setGoalDetectionService(goalDetectionService)
-  .setGoalRecordService(goalRecordService);
+  .setGoalRecordService(goalRecordService)
+  .setPositionValueCalculator(positionValueCalculator);
 
 const tickService = new TickService(queue);
 const mediator =
