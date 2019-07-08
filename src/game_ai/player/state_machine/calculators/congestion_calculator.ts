@@ -1,5 +1,6 @@
 import { Player } from "../../../../../src/game_objects/player";
 import { ThreeDimensionalVector } from "../../../../../src/three_dimensional_vector";
+import { scale } from "../../../../utils/helper_functions";
 
 export class CongestionCalculator {
   private players: Player[];
@@ -11,8 +12,17 @@ export class CongestionCalculator {
   }
 
   public evaluate(position: ThreeDimensionalVector): number {
-    return this.players.filter((player) => {
-      return player.getPosition().distanceTo(position) <= this.radiusOfInterest;
-    }).length;
+    return this.players.reduce((totalCongestion, player) => {
+      totalCongestion += this.individualContributionToCongestion(
+        player, position);
+      return totalCongestion;
+    }, 0);
   }
+
+  private individualContributionToCongestion(
+    player: Player, position: ThreeDimensionalVector): number {
+      const distance = player.getPosition().distanceTo(position);
+      if (distance >= this.radiusOfInterest) { return 0; }
+      return scale(distance, 0, this.radiusOfInterest, 1, 0);
+    }
 }
