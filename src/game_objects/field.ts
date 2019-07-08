@@ -34,6 +34,10 @@ export class Field implements IBoundary {
       0);
   }
 
+  public diagonalLength(): number {
+    return this.leftMostPosition().distanceTo(this.rightMostPosition());
+  }
+
   // TODO: Perhaps this method doesn't belong here.
   public containsCircle(x: number, y: number, diameter: number): boolean {
     const xLowest = this.x;
