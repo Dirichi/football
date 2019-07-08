@@ -25,6 +25,7 @@ export class PositionValueCalculator implements IPositionValueCalculator {
   }
 
   public evaluate(player: Player, position: ThreeDimensionalVector): number {
+    // TODO: Use a more fluent way to check if a position is within the bounds
     if (!this.field.containsCircle(position.x, position.y, 0.001)) {
       return 0;
     }
@@ -34,6 +35,7 @@ export class PositionValueCalculator implements IPositionValueCalculator {
     const trackingBall = this.trackingBallScore(player, position);
 
     const weightedScore =
+      // TODO: Make these weights constants
       (congestion * 0.4) + (shotValue * 0.4) + (trackingBall * 0.2);
     return round(weightedScore, 2);
   }
@@ -42,6 +44,7 @@ export class PositionValueCalculator implements IPositionValueCalculator {
     player: Player, position: ThreeDimensionalVector): number {
       const congestion = this.congestionCalculator.evaluate(position);
       const congestionInverse = 1 / congestion;
+      // Make this cutoff a constant
       const score = congestionInverse >= 0.2 ? congestionInverse : 0;
       return score;
   }
