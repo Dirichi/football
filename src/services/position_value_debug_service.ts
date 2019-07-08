@@ -8,14 +8,20 @@ import { ThreeDimensionalVector } from "../three_dimensional_vector";
 export class PositionValueDebugService {
   private positionValueCalculator: PositionValueCalculator;
   private players: Player[];
+  private enabled: boolean;
 
   constructor(
-    positionValueCalculator: PositionValueCalculator, players: Player[]) {
+    positionValueCalculator: PositionValueCalculator,
+    players: Player[],
+    enabled: boolean = false) {
       this.positionValueCalculator = positionValueCalculator;
       this.players = players;
+      this.enabled = enabled;
   }
 
   public getDebugData(): IPositionValueSchema[] {
+    if (!this.enabled) { return [] as IPositionValueSchema[]; }
+
     return this.players.map((player) => {
       return this.buildPositionValues(player);
     });
@@ -24,6 +30,7 @@ export class PositionValueDebugService {
   private buildPositionValues(player: Player): IPositionValueSchema {
     const delta = POSITION_DELTA_FOR_POSITION_VALUE_CALCULATION;
     const potentialPositionDiffs = [
+      new ThreeDimensionalVector(0, 0, 0),
       new ThreeDimensionalVector(delta, 0, 0),
       new ThreeDimensionalVector(-delta, 0, 0),
       new ThreeDimensionalVector(0, delta, 0),

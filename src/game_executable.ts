@@ -126,8 +126,8 @@ const buildDefaultPlayer = (): Player => {
     .setMessageQueue(queue);
 };
 
-const teamAPlayers = range(3).map((_) => buildDefaultPlayer());
-const teamBPlayers = range(3).map((_) => buildDefaultPlayer());
+const teamAPlayers = range(11).map((_) => buildDefaultPlayer());
+const teamBPlayers = range(11).map((_) => buildDefaultPlayer());
 const defaultPlayers = [...teamAPlayers, ...teamBPlayers];
 
 const ballPossessionService =
@@ -152,12 +152,28 @@ teamB.setSide(TEAM_SIDES.RIGHT)
 
 const teamAroles = [
   PlayerRole.get(PLAYER_ROLE.GK, field),
+  PlayerRole.get(PLAYER_ROLE.LB, field),
+  PlayerRole.get(PLAYER_ROLE.RB, field),
+  PlayerRole.get(PLAYER_ROLE.LCB, field),
+  PlayerRole.get(PLAYER_ROLE.RCB, field),
+  PlayerRole.get(PLAYER_ROLE.LM, field),
+  PlayerRole.get(PLAYER_ROLE.RM, field),
+  PlayerRole.get(PLAYER_ROLE.LCM, field),
+  PlayerRole.get(PLAYER_ROLE.RCM, field),
   PlayerRole.get(PLAYER_ROLE.LF, field),
   PlayerRole.get(PLAYER_ROLE.RF, field),
 ];
 
 const teamBroles = [
   PlayerRole.get(PLAYER_ROLE.GK, field),
+  PlayerRole.get(PLAYER_ROLE.LB, field),
+  PlayerRole.get(PLAYER_ROLE.RB, field),
+  PlayerRole.get(PLAYER_ROLE.LCB, field),
+  PlayerRole.get(PLAYER_ROLE.RCB, field),
+  PlayerRole.get(PLAYER_ROLE.LM, field),
+  PlayerRole.get(PLAYER_ROLE.RM, field),
+  PlayerRole.get(PLAYER_ROLE.LCM, field),
+  PlayerRole.get(PLAYER_ROLE.RCM, field),
   PlayerRole.get(PLAYER_ROLE.LF, field),
   PlayerRole.get(PLAYER_ROLE.RF, field),
 ];
@@ -202,8 +218,8 @@ const shotValueCalculator =
   new ShotValueCalculator(ball, field, interceptionCalculator);
 const congestionCalculator =
   new CongestionCalculator(defaultPlayers, RADIUS_FOR_CONGESTION);
-const positionValueCalculator =
-  new PositionValueCalculator(congestionCalculator, shotValueCalculator);
+const positionValueCalculator = new PositionValueCalculator(
+    ball, field, congestionCalculator, shotValueCalculator);
 
 const positionValueDebugService =
   new PositionValueDebugService(positionValueCalculator, defaultPlayers);

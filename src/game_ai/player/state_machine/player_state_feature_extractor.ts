@@ -68,6 +68,7 @@ export class PlayerStateFeatureExtractor implements IPlayerStateFeatureExtractor
       new ThreeDimensionalVector(-delta, 0, 0),
       new ThreeDimensionalVector(0, delta, 0),
       new ThreeDimensionalVector(0, -delta, 0),
+      new ThreeDimensionalVector(0, 0, 0),
     ];
 
     const positions = positionDiffs.map((position) => {
