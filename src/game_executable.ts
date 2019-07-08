@@ -212,14 +212,15 @@ const PLAYER_STATES: IPlayerState[] = [
   new DribblingState(commandFactory),
 ];
 const interceptionCalculator = new InterceptionCalculator();
-const passValueCalculator =
-  new PassValueCalculator(ball, interceptionCalculator);
 const shotValueCalculator =
   new ShotValueCalculator(ball, field, interceptionCalculator);
 const congestionCalculator =
   new CongestionCalculator(defaultPlayers, RADIUS_FOR_CONGESTION);
 const positionValueCalculator = new PositionValueCalculator(
     ball, field, congestionCalculator, shotValueCalculator);
+const passValueCalculator =
+new PassValueCalculator(
+  ball, interceptionCalculator, shotValueCalculator);
 
 const positionValueDebugService =
   new PositionValueDebugService(positionValueCalculator, defaultPlayers);
