@@ -1,4 +1,7 @@
-import { MAXIMUM_SHOT_VALUE, MINIMUM_SHOT_VALUE } from "../../../../constants";
+import {
+   SHOT_VALUE_IDEAL_DISTANCE_FROM_GOAL,
+   SHOT_VALUE_INTERCEPTION_LIKELIHOOD_WEIGHT,
+   SHOT_VALUE_PROXIMITY_TO_POST_WEIGHT } from "../../../../constants";
 import { Ball } from "../../../../game_objects/ball";
 import { Field } from "../../../../game_objects/field";
 import { Player } from "../../../../game_objects/player";
@@ -11,58 +14,57 @@ export class ShotValueCalculator implements IShotValueCalculator {
   private ball: Ball;
   private field: Field;
   private interceptionCalculator: InterceptionCalculator;
-  private minShotValue: number;
-  private maxShotValue: number;
+  private interceptionLikelihoodWeight: number;
+  private proximityToPostWeight: number;
   private idealDistanceFromGoal: number;
 
   constructor(
     ball: Ball,
     field: Field,
     interceptionCalculator: InterceptionCalculator,
-    minShotValue: number = MINIMUM_SHOT_VALUE,
-    maxShotValue: number = MAXIMUM_SHOT_VALUE,
-    idealDistanceFromGoal: number = field.xlength / 3) {
+    interceptionLikelihoodWeight: number =
+      SHOT_VALUE_INTERCEPTION_LIKELIHOOD_WEIGHT,
+    proximityToPostWeight: number = SHOT_VALUE_PROXIMITY_TO_POST_WEIGHT,
+    idealDistanceFromGoal: number = SHOT_VALUE_IDEAL_DISTANCE_FROM_GOAL) {
       this.ball = ball;
       this.field = field;
       this.interceptionCalculator = interceptionCalculator;
-      this.minShotValue = minShotValue;
-      this.maxShotValue = maxShotValue;
+      this.interceptionLikelihoodWeight = interceptionLikelihoodWeight;
+      this.proximityToPostWeight = proximityToPostWeight;
       this.idealDistanceFromGoal = idealDistanceFromGoal;
   }
 
   public evaluate(
-    player: Player, shootingFrom?: ThreeDimensionalVector ): number {
-      const startingPosition = shootingFrom || player.getPosition();
+    player: Player,
+    position: ThreeDimensionalVector = player.getPosition()): number {
+      const weightedInterceptionLikelihood =
+        this.interceptionLikelihood(player, position) *
+        this.interceptionLikelihoodWeight;
+      const weightedProximityToPost =
+        this.proximityToPost(player, position) * this.proximityToPostWeight;
 
-      if (this.interceptionLikely(player, startingPosition)) {
-        return this.minShotValue;
-      }
-
-      const distance =
-        player.getOpposingGoalPost().distanceTo(startingPosition);
-
-      if (distance <= this.idealDistanceFromGoal) {
-        return this.maxShotValue;
-      }
-
-      const naiveScore = scale(
-        distance,
-        this.idealDistanceFromGoal,
-        this.field.xlength,
-        this.maxShotValue,
-        this.minShotValue
-      );
-
-      return Math.max(naiveScore, this.minShotValue);
+      return  weightedProximityToPost - weightedInterceptionLikelihood;
   }
 
-  private interceptionLikely(
-    player: Player, startingPosition: ThreeDimensionalVector) {
+  private proximityToPost(
+    player: Player, position: ThreeDimensionalVector): number {
+      const distance = player.getOpposingGoalPost().distanceTo(position);
+      if (distance <= this.idealDistanceFromGoal) {
+        return 1;
+      }
+      return scale(
+        distance, this.idealDistanceFromGoal, this.field.diagonalLength(), 1, 0);
+  }
+
+  private interceptionLikelihood(
+    player: Player, position: ThreeDimensionalVector): number {
+    // TODO: This should be all players, including the keeper.
     const opposition = player.getOpposingFieldPlayers();
     const target = player.getOpposingGoalPost().getMidPoint();
     const speed = this.ball.getMaximumSpeed();
 
-    return this.interceptionCalculator.canAnyIntercept(
-      opposition, startingPosition, target, speed);
+    const likely = this.interceptionCalculator.canAnyIntercept(
+      opposition, position, target, speed);
+    return likely ? 1 : 0;
   }
 }

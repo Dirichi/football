@@ -126,8 +126,9 @@ const buildDefaultPlayer = (): Player => {
     .setMessageQueue(queue);
 };
 
-const teamAPlayers = range(11).map((_) => buildDefaultPlayer());
-const teamBPlayers = range(11).map((_) => buildDefaultPlayer());
+const teamSize = 11;
+const teamAPlayers = range(teamSize).map((_) => buildDefaultPlayer());
+const teamBPlayers = range(teamSize).map((_) => buildDefaultPlayer());
 const defaultPlayers = [...teamAPlayers, ...teamBPlayers];
 
 const ballPossessionService =
@@ -140,15 +141,15 @@ teamA.setSide(TEAM_SIDES.LEFT)
   .setOpposition(teamB)
   .setOpposingGoalPost(postB)
   .setColors([0, 0, 225])
-  .setKickOffStartingPlayer(teamAPlayers[1])
-  .setKickOffSupportingPlayer(teamAPlayers[2]);
+  .setKickOffStartingPlayer(teamAPlayers[teamSize - 1])
+  .setKickOffSupportingPlayer(teamAPlayers[teamSize - 2]);
 
 teamB.setSide(TEAM_SIDES.RIGHT)
   .setOpposition(teamA)
   .setOpposingGoalPost(postA)
   .setColors([225, 0, 0])
-  .setKickOffStartingPlayer(teamBPlayers[1])
-  .setKickOffSupportingPlayer(teamBPlayers[2]);
+  .setKickOffStartingPlayer(teamBPlayers[teamSize - 1])
+  .setKickOffSupportingPlayer(teamBPlayers[teamSize - 2]);
 
 const teamAroles = [
   PlayerRole.get(PLAYER_ROLE.GK, field),
