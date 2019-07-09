@@ -10,16 +10,17 @@ chai.use(sinonChai);
 
 describe('CongestionCalculator', () => {
   describe('`evaluate`', () => {
-    it('returns the number of players within a given radius', () => {
-      const playerA = new Player(2, 1, 0, 0, 5);
-      const playerB = new Player(1, 2, 0, 0, 5);
-      const playerC = new Player(0, 0, 0, 0, 5);
-      const players = [playerA, playerB, playerC];
-      const radiusOfInterest = 1;
-      const calculator = new CongestionCalculator(players, radiusOfInterest);
-      const positionToEvaluate = new ThreeDimensionalVector(2, 2, 0);
+    it('returns a scaled sum of distances from players within the ' +
+      '`radiusOfInterest`', () => {
+        const playerA = new Player(2, 1.5, 0, 0, 5);
+        const playerB = new Player(1.5, 2, 0, 0, 5);
+        const playerC = new Player(0, 0, 0, 0, 5);
+        const players = [playerA, playerB, playerC];
+        const radiusOfInterest = 1;
+        const calculator = new CongestionCalculator(players, radiusOfInterest);
+        const positionToEvaluate = new ThreeDimensionalVector(2, 2, 0);
 
-      expect(calculator.evaluate(positionToEvaluate)).to.equal(2);
+        expect(calculator.evaluate(positionToEvaluate)).to.equal(1);
     });
   });
 });

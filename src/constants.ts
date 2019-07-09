@@ -232,9 +232,11 @@ export enum PLAYER_ROLE_TYPE {
 
 export const GAME_EXECUTABLE_FILE = "game_executable.js";
 
-export const MINIMUM_SHOT_VALUE = 0.2;
+export const SHOT_VALUE_IDEAL_DISTANCE_FROM_GOAL = constants.FIELD_INITIAL_XLENGTH / 3;
+export const SHOT_VALUE_PROXIMITY_TO_POST_WEIGHT = 0.7;
+export const SHOT_VALUE_INTERCEPTION_LIKELIHOOD_WEIGHT = 0.3;
 
-export const MAXIMUM_SHOT_VALUE = 1;
+export const MAXIMUM_SHOT_VALUE = 0.8;
 
 export const Y_BALL_MARGIN_FOR_KICKOFF_SUPPORT = constants.PLAYER_DIAMETER_TO_FIELD_YLENGTH * 6;
 

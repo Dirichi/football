@@ -36,17 +36,15 @@ export class PositionValueCalculator implements IPositionValueCalculator {
 
     const weightedScore =
       // TODO: Make these weights constants
-      (congestion * 0.4) + (shotValue * 0.4) + (trackingBall * 0.2);
+      (congestion * -0.2) + (shotValue * 0.4) + (trackingBall * 0.4);
     return round(weightedScore, 2);
   }
 
   private congestionScore(
     player: Player, position: ThreeDimensionalVector): number {
       const congestion = this.congestionCalculator.evaluate(position);
-      const congestionInverse = 1 / congestion;
-      // Make this cutoff a constant
-      const score = congestionInverse >= 0.2 ? congestionInverse : 0;
-      return score;
+      // Make this factor a constant
+      return congestion;
   }
 
   private shotValueScore(
