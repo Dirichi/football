@@ -4,7 +4,7 @@ import { Ball } from "./game_objects/ball";
 import { Field } from "./game_objects/field";
 import { Player } from "./game_objects/player";
 import { IPositionValueCalculator } from "./interfaces/iposition_value_calculator";
-import { ThreeDimensionalVector } from "./three_dimensional_vector";
+import { Vector3D } from "./three_dimensional_vector";
 import { round, scale } from "./utils/helper_functions";
 
 export class PositionValueCalculator implements IPositionValueCalculator {
@@ -26,7 +26,7 @@ export class PositionValueCalculator implements IPositionValueCalculator {
 
   public evaluate(
     player: Player,
-    position: ThreeDimensionalVector = player.getPosition()): number {
+    position: Vector3D = player.getPosition()): number {
       if (!this.field.containsPoint(position)) {
         return 0;
       }
@@ -41,20 +41,17 @@ export class PositionValueCalculator implements IPositionValueCalculator {
       return round(weightedScore, 2);
   }
 
-  private congestionScore(
-    player: Player, position: ThreeDimensionalVector): number {
-      const congestion = this.congestionCalculator.evaluate(position);
-      return congestion;
+  private congestionScore(player: Player, position: Vector3D): number {
+    const congestion = this.congestionCalculator.evaluate(position);
+    return congestion;
   }
 
-  private shotValueScore(
-    player: Player, position: ThreeDimensionalVector): number {
-      return this.shotValueCalculator.evaluate(player, position);
-    }
+  private shotValueScore(player: Player, position: Vector3D): number {
+    return this.shotValueCalculator.evaluate(player, position);
+  }
 
-  private trackingBallScore(
-    player: Player, position: ThreeDimensionalVector): number {
-      const distanceToBall = position.distanceTo(this.ball.getPosition());
-      return scale(distanceToBall, 0, this.field.diagonalLength(), 1, 0);
-    }
+  private trackingBallScore(player: Player, position: Vector3D): number {
+    const distanceToBall = position.distanceTo(this.ball.getPosition());
+    return scale(distanceToBall, 0, this.field.diagonalLength(), 1, 0);
+  }
 }

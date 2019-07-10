@@ -1,7 +1,6 @@
 import { STATE_MACHINE_COMMANDS } from "../constants";
 import { Player } from "../game_objects/player";
 import { ICommand } from "../interfaces/icommand";
-import { ThreeDimensionalVector } from "../three_dimensional_vector";
 
 export class PassBallCommand implements ICommand {
   public execute(sender: Player, receiver: Player): void {

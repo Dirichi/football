@@ -4,7 +4,7 @@ import { IPlayerController } from '../../src/interfaces/iplayer_controller';
 import { IPlayerBallInteractionMediator } from '../../src/interfaces/iplayer_ball_interaction_mediator';
 import { Team } from '../../src/game_objects/team';
 import { EventQueue } from '../../src/event_queue';
-import { ThreeDimensionalVector } from '../../src/three_dimensional_vector';
+import { Vector3D } from '../../src/three_dimensional_vector';
 import * as chai from 'chai';
 import * as sinon from 'sinon';
 
@@ -17,7 +17,7 @@ class TestPlayerBallInteractionMediator implements IPlayerBallInteractionMediato
     return true;
   }
 
-  kickBall(player: Player, destination: ThreeDimensionalVector): boolean {
+  kickBall(player: Player, destination: Vector3D): boolean {
     return true;
   }
 
@@ -76,7 +76,7 @@ describe('Player', () => {
     it('calls `kickBall` on the ballInteractionMediator', () => {
       const player = new Player(0, 0, 0, 0, 5);
       const mediator = new TestPlayerBallInteractionMediator();
-      const destination = new ThreeDimensionalVector(5, 5, 0);
+      const destination = new Vector3D(5, 5, 0);
       player.setBallInteractionMediator(mediator);
       sinon.stub(mediator, 'kickBall');
 
@@ -88,7 +88,7 @@ describe('Player', () => {
     it('returns true if the ball was kicked', () => {
       const player = new Player(0, 0, 0, 0, 5);
       const mediator = new TestPlayerBallInteractionMediator();
-      const destination = new ThreeDimensionalVector(5, 5, 0);
+      const destination = new Vector3D(5, 5, 0);
       player.setBallInteractionMediator(mediator);
       sinon.stub(mediator, 'kickBall').returns(true);
 
@@ -98,7 +98,7 @@ describe('Player', () => {
     it('returns false if the ball was not kicked', () => {
       const player = new Player(0, 0, 0, 0, 5);
       const mediator = new TestPlayerBallInteractionMediator();
-      const destination = new ThreeDimensionalVector(5, 5, 0);
+      const destination = new Vector3D(5, 5, 0);
       player.setBallInteractionMediator(mediator);
       sinon.stub(mediator, 'kickBall').returns(false);
 

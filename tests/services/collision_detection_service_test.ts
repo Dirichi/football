@@ -2,7 +2,7 @@ import { CollisionDetectionService } from '../../src/services/collision_detectio
 import { EventQueue } from '../../src/event_queue';
 import { ICircle } from '../../src/interfaces/icircle';
 import { Shape } from '../../src/custom_types/shape';
-import { ThreeDimensionalVector } from '../../src/three_dimensional_vector';
+import { Vector3D } from '../../src/three_dimensional_vector';
 import { TestCollidable } from "../helpers/test_collidable";
 import * as chai from 'chai';
 import * as sinon from 'sinon';
@@ -16,12 +16,12 @@ describe('CollisionDetectionService', () => {
     it('returns true if two circles are within collision range', () => {
       const circleOne = {
         kind: 'circle',
-        getCentre: () => new ThreeDimensionalVector(0, 0, 0),
+        getCentre: () => new Vector3D(0, 0, 0),
         getDiameter: () => 2,
       } as ICircle;
       const circleTwo = {
         kind: 'circle',
-        getCentre: () => new ThreeDimensionalVector(2.2, 0, 0),
+        getCentre: () => new Vector3D(2.2, 0, 0),
         getDiameter: () => 2,
       } as ICircle;
 
@@ -38,12 +38,12 @@ describe('CollisionDetectionService', () => {
     it('returns true if two circles are intersecting', () => {
       const circleOne = {
         kind: 'circle',
-        getCentre: () => new ThreeDimensionalVector(0, 0, 0),
+        getCentre: () => new Vector3D(0, 0, 0),
         getDiameter: () => 2,
       } as ICircle;
       const circleTwo = {
         kind: 'circle',
-        getCentre: () => new ThreeDimensionalVector(1, 0, 0),
+        getCentre: () => new Vector3D(1, 0, 0),
         getDiameter: () => 2,
       } as ICircle;
 
@@ -61,12 +61,12 @@ describe('CollisionDetectionService', () => {
 
       const circleOne = {
         kind: 'circle',
-        getCentre: () => new ThreeDimensionalVector(0, 0, 0),
+        getCentre: () => new Vector3D(0, 0, 0),
         getDiameter: () => 2,
       } as ICircle;
       const circleTwo = {
         kind: 'circle',
-        getCentre: () => new ThreeDimensionalVector(3, 0, 0),
+        getCentre: () => new Vector3D(3, 0, 0),
         getDiameter: () => 2,
       } as ICircle;
 

@@ -1,6 +1,6 @@
 import { InterceptionCalculator } from '../../../../../src/game_ai/player/state_machine/calculators/interception_calculator';
 import { Player } from '../../../../../src/game_objects/player';
-import { ThreeDimensionalVector } from '../../../../../src/three_dimensional_vector';
+import { Vector3D } from '../../../../../src/three_dimensional_vector';
 import * as chai from 'chai';
 import * as sinon from 'sinon';
 
@@ -18,8 +18,8 @@ describe('InterceptionCalculator', () => {
       players.forEach((player) => player.setMaximumSpeed(0.1));
 
 
-      const start = new ThreeDimensionalVector(0, 0, 0);
-      const target = new ThreeDimensionalVector(1, 0, 0);
+      const start = new Vector3D(0, 0, 0);
+      const target = new Vector3D(1, 0, 0);
       const speed = 0.1;
 
       const calculator = new InterceptionCalculator();
@@ -34,8 +34,8 @@ describe('InterceptionCalculator', () => {
       const players = [playerOne, playerTwo];
       players.forEach((player) => player.setMaximumSpeed(0.1));
 
-      const start = new ThreeDimensionalVector(0, 0, 0);
-      const target = new ThreeDimensionalVector(1, 0, 0);
+      const start = new Vector3D(0, 0, 0);
+      const target = new Vector3D(1, 0, 0);
       const speed = 0.1;
 
       const calculator = new InterceptionCalculator();
@@ -50,8 +50,8 @@ describe('InterceptionCalculator', () => {
       const players = [playerOne, playerTwo];
       players.forEach((player) => player.setMaximumSpeed(0.1));
 
-      const start = new ThreeDimensionalVector(0, 0, 0);
-      const target = new ThreeDimensionalVector(1, 0, 0);
+      const start = new Vector3D(0, 0, 0);
+      const target = new Vector3D(1, 0, 0);
       const speed = 0.1;
 
       const calculator = new InterceptionCalculator();
@@ -68,8 +68,8 @@ describe('InterceptionCalculator', () => {
         players.forEach((player) => player.setMaximumSpeed(0.1));
 
 
-        const start = new ThreeDimensionalVector(0, 0, 0);
-        const target = new ThreeDimensionalVector(1, 0, 0);
+        const start = new Vector3D(0, 0, 0);
+        const target = new Vector3D(1, 0, 0);
         const speed = 0.1;
 
         const calculator = new InterceptionCalculator();

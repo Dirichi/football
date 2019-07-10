@@ -3,25 +3,25 @@ import { Player } from "../game_objects/player";
 import { ICommandFactory } from "../interfaces/icommand_factory";
 import { ICommandRequest } from "../interfaces/icommand_request";
 import { ICommandRequestHandler } from "../interfaces/icommand_request_handler";
-import { ThreeDimensionalVector } from "../three_dimensional_vector";
+import { Vector3D } from "../three_dimensional_vector";
 
-const COMMAND_ID_TO_DIRECTION_MAPPING: Map<COMMAND_ID, ThreeDimensionalVector> =
+const COMMAND_ID_TO_DIRECTION_MAPPING: Map<COMMAND_ID, Vector3D> =
   new Map([
-    [COMMAND_ID.MOVE_PLAYER_UP, new ThreeDimensionalVector(0, -1, 0)],
-    [COMMAND_ID.MOVE_PLAYER_UPPER_LEFT, new ThreeDimensionalVector(-1, -1, 0)],
-    [COMMAND_ID.MOVE_PLAYER_UPPER_RIGHT, new ThreeDimensionalVector(1, -1, 0)],
-    [COMMAND_ID.MOVE_PLAYER_DOWN, new ThreeDimensionalVector(0, 1, 0)],
-    [COMMAND_ID.MOVE_PLAYER_LOWER_LEFT, new ThreeDimensionalVector(-1, 1, 0)],
-    [COMMAND_ID.MOVE_PLAYER_LOWER_RIGHT, new ThreeDimensionalVector(1, 1, 0)],
-    [COMMAND_ID.MOVE_PLAYER_LEFT, new ThreeDimensionalVector(-1, 0, 0)],
-    [COMMAND_ID.MOVE_PLAYER_RIGHT, new ThreeDimensionalVector(1, 0, 0)],
+    [COMMAND_ID.MOVE_PLAYER_UP, new Vector3D(0, -1, 0)],
+    [COMMAND_ID.MOVE_PLAYER_UPPER_LEFT, new Vector3D(-1, -1, 0)],
+    [COMMAND_ID.MOVE_PLAYER_UPPER_RIGHT, new Vector3D(1, -1, 0)],
+    [COMMAND_ID.MOVE_PLAYER_DOWN, new Vector3D(0, 1, 0)],
+    [COMMAND_ID.MOVE_PLAYER_LOWER_LEFT, new Vector3D(-1, 1, 0)],
+    [COMMAND_ID.MOVE_PLAYER_LOWER_RIGHT, new Vector3D(1, 1, 0)],
+    [COMMAND_ID.MOVE_PLAYER_LEFT, new Vector3D(-1, 0, 0)],
+    [COMMAND_ID.MOVE_PLAYER_RIGHT, new Vector3D(1, 0, 0)],
   ]);
 
 export class MovePlayerRemoteCommandRequestHandler
   implements ICommandRequestHandler {
     private factory: ICommandFactory;
     private commandIdToDirectionMapping:
-      Map<COMMAND_ID, ThreeDimensionalVector>;
+      Map<COMMAND_ID, Vector3D>;
 
     constructor(factory: ICommandFactory) {
       this.factory = factory;

@@ -1,6 +1,6 @@
 // TODO: Refactor any objects that have x, y properties to use the vector class.
 // This class should be tested
-export class ThreeDimensionalVector {
+export class Vector3D {
 
   get x(): number {
     return this.representation[0];
@@ -20,7 +20,7 @@ export class ThreeDimensionalVector {
     this.representation = [x, y, z];
   }
 
-  public equals(other: ThreeDimensionalVector): boolean {
+  public equals(other: Vector3D): boolean {
     return this.x === other.x && this.y === other.y && this.z === other.z;
   }
 
@@ -28,18 +28,18 @@ export class ThreeDimensionalVector {
     return [...this.representation];
   }
 
-  public copy(): ThreeDimensionalVector {
-    return new ThreeDimensionalVector(this.x, this.y, this.z);
+  public copy(): Vector3D {
+    return new Vector3D(this.x, this.y, this.z);
   }
 
-  public unit(): ThreeDimensionalVector {
+  public unit(): Vector3D {
     const magnitude = this.magnitude();
     return this.scalarMultiply(1 / magnitude);
   }
 
   public scalarMultiply(scalar: number) {
     const result = this.representation.map((value) => value * scalar);
-    return new ThreeDimensionalVector(result[0], result[1], result[2]);
+    return new Vector3D(result[0], result[1], result[2]);
   }
 
   public isZero() {
@@ -50,20 +50,20 @@ export class ThreeDimensionalVector {
     return !this.isZero();
   }
 
-  public add(b: ThreeDimensionalVector): ThreeDimensionalVector {
+  public add(b: Vector3D): Vector3D {
     const bArray = b.toArray();
     const result =
       this.representation.map((value, index) => value + bArray[index]);
-    return new ThreeDimensionalVector(result[0], result[1], result[2]);
+    return new Vector3D(result[0], result[1], result[2]);
   }
 
-  public minus(b: ThreeDimensionalVector): ThreeDimensionalVector {
+  public minus(b: Vector3D): Vector3D {
     const negativeB = b.scalarMultiply(-1);
     return this.add(negativeB);
   }
 
-  public squared(): ThreeDimensionalVector {
-    return new ThreeDimensionalVector(
+  public squared(): Vector3D {
+    return new Vector3D(
       this.x * this.x, this.y * this.y, this.z * this.z);
   }
 
@@ -72,24 +72,24 @@ export class ThreeDimensionalVector {
     return Math.sqrt(squared.x + squared.y + squared.z);
   }
 
-  public distanceTo(b: ThreeDimensionalVector): number {
+  public distanceTo(b: Vector3D): number {
     const diff = this.minus(b);
     return diff.magnitude();
   }
 
-  public dotProduct(b: ThreeDimensionalVector): number {
+  public dotProduct(b: Vector3D): number {
     return (this.x * b.x) + (this.y * b.y) + (this.z * b.z);
   }
 
-  public cosineOfAngleTo(b: ThreeDimensionalVector): number {
+  public cosineOfAngleTo(b: Vector3D): number {
     return this.dotProduct(b) / (this.magnitude() * b.magnitude());
   }
 
-  public scalarProjectionOnTo(b: ThreeDimensionalVector): number {
+  public scalarProjectionOnTo(b: Vector3D): number {
     return this.magnitude() * this.cosineOfAngleTo(b);
   }
 
-  public perpendicularDistanceTo(b: ThreeDimensionalVector): number {
+  public perpendicularDistanceTo(b: Vector3D): number {
     const squaredDistance =
       Math.pow(this.magnitude(), 2) - Math.pow(this.scalarProjectionOnTo(b), 2);
     return Math.sqrt(squaredDistance);

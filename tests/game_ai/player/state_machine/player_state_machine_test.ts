@@ -1,7 +1,7 @@
 import { PlayerStateMachine } from '../../../../src/game_ai/player/state_machine/player_state_machine';
 import { IPlayerStateFeature } from '../../../../src/interfaces/iplayer_state_feature';
 import { Player } from '../../../../src/game_objects/player';
-import { ThreeDimensionalVector } from '../../../../src/three_dimensional_vector';
+import { Vector3D } from '../../../../src/three_dimensional_vector';
 import * as chai from 'chai';
 import * as sinon from 'sinon';
 import { STATE_MACHINE_COMMANDS } from '../../../../src/constants';
@@ -12,7 +12,7 @@ chai.use(sinonChai);
 
 let player: Player;
 const bestPassingOption = new Player(0, 0, 0, 0, 5);
-const bestPosition = new ThreeDimensionalVector(0, 0, 0);
+const bestPosition = new Vector3D(0, 0, 0);
 let extractor = {
   bestPositionOption: (player: Player) => bestPosition,
   bestPassingOption: (player: Player) => bestPassingOption,
@@ -55,7 +55,7 @@ describe('PlayerStateMachine', () => {
       machine.update();
 
       const features = {
-        bestPositionOption: new ThreeDimensionalVector(0, 0, 0),
+        bestPositionOption: new Vector3D(0, 0, 0),
         bestPassingOption: bestPassingOption,
         hasBall: false,
         isNearestTeamMateToBall: false,

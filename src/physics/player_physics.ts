@@ -1,7 +1,6 @@
 import { Player } from "../game_objects/player";
 import { IBoundary } from "../interfaces/iboundary";
 import { ICircle } from "../interfaces/icircle";
-import { ThreeDimensionalVector } from "../three_dimensional_vector";
 
 export class PlayerPhysics {
   private boundary: IBoundary;

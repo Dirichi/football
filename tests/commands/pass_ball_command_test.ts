@@ -1,7 +1,6 @@
 import { PassBallCommand } from '../../src/commands/pass_ball_command';
 import { STATE_MACHINE_COMMANDS } from '../../src/constants';
 import { Player } from '../../src/game_objects/player';
-import { ThreeDimensionalVector } from '../../src/three_dimensional_vector';
 import * as chai from 'chai';
 import * as sinon from 'sinon';
 

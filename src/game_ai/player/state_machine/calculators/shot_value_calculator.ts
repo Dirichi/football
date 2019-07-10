@@ -6,7 +6,7 @@ import { Ball } from "../../../../game_objects/ball";
 import { Field } from "../../../../game_objects/field";
 import { Player } from "../../../../game_objects/player";
 import { IShotValueCalculator } from "../../../../interfaces/ishot_value_calculator";
-import { ThreeDimensionalVector } from "../../../../three_dimensional_vector";
+import { Vector3D } from "../../../../three_dimensional_vector";
 import { scale } from "../../../../utils/helper_functions";
 import { InterceptionCalculator } from "./interception_calculator";
 
@@ -35,8 +35,7 @@ export class ShotValueCalculator implements IShotValueCalculator {
   }
 
   public evaluate(
-    player: Player,
-    position: ThreeDimensionalVector = player.getPosition()): number {
+    player: Player, position: Vector3D = player.getPosition()): number {
       const weightedInterceptionLikelihood =
         this.interceptionLikelihood(player, position) *
         this.interceptionLikelihoodWeight;
@@ -47,7 +46,7 @@ export class ShotValueCalculator implements IShotValueCalculator {
   }
 
   private proximityToPost(
-    player: Player, position: ThreeDimensionalVector): number {
+    player: Player, position: Vector3D): number {
       const distance = player.getOpposingGoalPost().distanceTo(position);
       if (distance <= this.idealDistanceFromGoal) {
         return 1;
@@ -62,7 +61,7 @@ export class ShotValueCalculator implements IShotValueCalculator {
   }
 
   private interceptionLikelihood(
-    player: Player, position: ThreeDimensionalVector): number {
+    player: Player, position: Vector3D): number {
     // TODO: This should be all players, including the keeper.
     const opposition = player.getOpposingFieldPlayers();
     const target = player.getOpposingGoalPost().getMidPoint();

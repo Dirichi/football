@@ -1,11 +1,11 @@
 import { Player } from "../../../../game_objects/player";
-import { ThreeDimensionalVector } from "../../../../three_dimensional_vector";
+import { Vector3D } from "../../../../three_dimensional_vector";
 
 export class InterceptionCalculator {
   public canAnyIntercept(
     players: Player[],
-    startPosition: ThreeDimensionalVector,
-    targetPosition: ThreeDimensionalVector,
+    startPosition: Vector3D,
+    targetPosition: Vector3D,
     speed: number): boolean {
 
       return players.some((player) => {
@@ -15,8 +15,8 @@ export class InterceptionCalculator {
 
     private canIntercept(
       player: Player,
-      startPosition: ThreeDimensionalVector,
-      targetPosition: ThreeDimensionalVector,
+      startPosition: Vector3D,
+      targetPosition: Vector3D,
       speed: number): boolean {
 
         // TODO: Consider references to entity shapes as an opportunity to

@@ -1,7 +1,7 @@
 import { Ball } from '../../src/game_objects/ball';
 import { Player } from '../../src/game_objects/player';
 import { PlayerBallInteractionMediator } from '../../src/services/player_ball_interaction_mediator';
-import { ThreeDimensionalVector } from '../../src/three_dimensional_vector';
+import { Vector3D } from '../../src/three_dimensional_vector';
 import { TestBallPossessionService } from '../helpers/test_ball_possession_service';
 import { TestTickService } from '../helpers/test_tick_service';
 import * as chai from 'chai';
@@ -61,7 +61,7 @@ describe('PlayerBallInteractionMediator', () => {
       const possessionService = new TestBallPossessionService(player);
       const mediator = new PlayerBallInteractionMediator(
         ball, possessionService, tickService, kickDisabledTimeout);
-      const position = new ThreeDimensionalVector(10, 10, 0);
+      const position = new Vector3D(10, 10, 0);
       sinon.spy(ball, 'reposition');
       sinon.stub(player, 'feetPosition').returns(position);
 
@@ -123,7 +123,7 @@ describe('PlayerBallInteractionMediator', () => {
       const mediator = new PlayerBallInteractionMediator(
         ball, possessionService, tickService, kickDisabledTimeout);
 
-      mediator.kickBall(player, new ThreeDimensionalVector(5, 5, 0));
+      mediator.kickBall(player, new Vector3D(5, 5, 0));
       sinon.spy(ball, 'reposition');
 
       mediator.controlBall(player);
@@ -136,7 +136,7 @@ describe('PlayerBallInteractionMediator', () => {
       const mediator = new PlayerBallInteractionMediator(
         ball, possessionService, tickService, kickDisabledTimeout);
 
-      mediator.kickBall(player, new ThreeDimensionalVector(5, 5, 0));
+      mediator.kickBall(player, new Vector3D(5, 5, 0));
       sinon.spy(ball, 'stop');
 
       mediator.controlBall(player);
@@ -149,7 +149,7 @@ describe('PlayerBallInteractionMediator', () => {
       const mediator = new PlayerBallInteractionMediator(
         ball, possessionService, tickService, kickDisabledTimeout);
 
-      mediator.kickBall(player, new ThreeDimensionalVector(5, 5, 0));
+      mediator.kickBall(player, new Vector3D(5, 5, 0));
       expect(mediator.controlBall(player)).to.be.false;
     });
 
@@ -158,9 +158,9 @@ describe('PlayerBallInteractionMediator', () => {
       const mediator = new PlayerBallInteractionMediator(
         ball, possessionService, tickService, kickDisabledTimeout);
 
-      mediator.kickBall(player, new ThreeDimensionalVector(5, 5, 0));
+      mediator.kickBall(player, new Vector3D(5, 5, 0));
       tickService.fastForward(kickDisabledTimeout + 1);
-      const position = new ThreeDimensionalVector(10, 10, 0);
+      const position = new Vector3D(10, 10, 0);
       sinon.spy(ball, 'reposition');
       sinon.stub(player, 'feetPosition').returns(position);
 
@@ -175,7 +175,7 @@ describe('PlayerBallInteractionMediator', () => {
       const possessionService = new TestBallPossessionService(player);
       const mediator = new PlayerBallInteractionMediator(
         ball, possessionService, tickService, kickDisabledTimeout);
-      const direction = new ThreeDimensionalVector(2, 2, 0);
+      const direction = new Vector3D(2, 2, 0);
       sinon.spy(ball, 'moveTowards');
 
       mediator.kickBall(player, direction);
@@ -186,7 +186,7 @@ describe('PlayerBallInteractionMediator', () => {
       const possessionService = new TestBallPossessionService(player);
       const mediator = new PlayerBallInteractionMediator(
         ball, possessionService, tickService, kickDisabledTimeout);
-      const direction = new ThreeDimensionalVector(2, 2, 0);
+      const direction = new Vector3D(2, 2, 0);
 
       expect(mediator.kickBall(player, direction)).to.be.true;
     });
@@ -195,7 +195,7 @@ describe('PlayerBallInteractionMediator', () => {
       const possessionService = new TestBallPossessionService(null);
       const mediator = new PlayerBallInteractionMediator(
         ball, possessionService, tickService, kickDisabledTimeout);
-      const direction = new ThreeDimensionalVector(2, 2, 0);
+      const direction = new Vector3D(2, 2, 0);
       sinon.spy(ball, 'moveTowards');
 
       mediator.kickBall(player, direction);
@@ -206,7 +206,7 @@ describe('PlayerBallInteractionMediator', () => {
       const possessionService = new TestBallPossessionService(null);
       const mediator = new PlayerBallInteractionMediator(
         ball, possessionService, tickService, kickDisabledTimeout);
-      const direction = new ThreeDimensionalVector(2, 2, 0);
+      const direction = new Vector3D(2, 2, 0);
 
       expect(mediator.kickBall(player, direction)).to.be.false;
     });
@@ -215,7 +215,7 @@ describe('PlayerBallInteractionMediator', () => {
       const possessionService = new TestBallPossessionService(player);
       const mediator = new PlayerBallInteractionMediator(
         ball, possessionService, tickService, kickDisabledTimeout);
-      const direction = new ThreeDimensionalVector(2, 2, 0);
+      const direction = new Vector3D(2, 2, 0);
       mediator.kickBall(player, direction);
       sinon.spy(ball, 'moveTowards');
 
@@ -228,7 +228,7 @@ describe('PlayerBallInteractionMediator', () => {
       const possessionService = new TestBallPossessionService(player);
       const mediator = new PlayerBallInteractionMediator(
         ball, possessionService, tickService, kickDisabledTimeout);
-      const direction = new ThreeDimensionalVector(2, 2, 0);
+      const direction = new Vector3D(2, 2, 0);
       mediator.kickBall(player, direction);
 
       expect(mediator.kickBall(player, direction)).to.be.false;
@@ -238,7 +238,7 @@ describe('PlayerBallInteractionMediator', () => {
       const possessionService = new TestBallPossessionService(player);
       const mediator = new PlayerBallInteractionMediator(
         ball, possessionService, tickService, kickDisabledTimeout);
-      const direction = new ThreeDimensionalVector(2, 2, 0);
+      const direction = new Vector3D(2, 2, 0);
       mediator.kickBall(player, direction);
       sinon.spy(ball, 'moveTowards');
       tickService.fastForward(kickDisabledTimeout + 1);

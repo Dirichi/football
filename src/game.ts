@@ -13,7 +13,6 @@ import { ITextSchema } from "./interfaces/itext_schema";
 import { GoalDetectionService } from "./services/goal_detection_service";
 import { GoalRecordService } from "./services/goal_record_service";
 import { PositionValueDebugService } from "./services/position_value_debug_service";
-import { ThreeDimensionalVector } from "./three_dimensional_vector";
 import { TimerService } from "./timer_service";
 import { sample } from "./utils/helper_functions";
 

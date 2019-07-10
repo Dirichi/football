@@ -1,7 +1,6 @@
 import { ChaseBallCommand } from '../../src/commands/chase_ball_command';
 import { Player } from '../../src/game_objects/player';
 import { TestBallPossessionService } from '../helpers/test_ball_possession_service';
-import { ThreeDimensionalVector } from '../../src/three_dimensional_vector';
 import * as chai from 'chai';
 import * as sinon from 'sinon';
 

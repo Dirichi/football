@@ -3,7 +3,7 @@ import { Player } from "../game_objects/player";
 import { IPositionValueSchema } from "../interfaces/iposition_value_schema";
 import { ITextSchema } from "../interfaces/itext_schema";
 import { PositionValueCalculator } from "../position_value_calculator";
-import { ThreeDimensionalVector } from "../three_dimensional_vector";
+import { Vector3D } from "../three_dimensional_vector";
 
 export class PositionValueDebugService {
   private positionValueCalculator: PositionValueCalculator;
@@ -30,11 +30,11 @@ export class PositionValueDebugService {
   private buildPositionValues(player: Player): IPositionValueSchema {
     const delta = POSITION_DELTA_FOR_POSITION_VALUE_CALCULATION;
     const potentialPositionDiffs = [
-      new ThreeDimensionalVector(0, 0, 0),
-      new ThreeDimensionalVector(delta, 0, 0),
-      new ThreeDimensionalVector(-delta, 0, 0),
-      new ThreeDimensionalVector(0, delta, 0),
-      new ThreeDimensionalVector(0, -delta, 0),
+      new Vector3D(0, 0, 0),
+      new Vector3D(delta, 0, 0),
+      new Vector3D(-delta, 0, 0),
+      new Vector3D(0, delta, 0),
+      new Vector3D(0, -delta, 0),
     ];
 
     const potentialPositionsAndValues = potentialPositionDiffs.map((diff) => {
@@ -50,7 +50,7 @@ export class PositionValueDebugService {
   }
 
   private buildPositionTextSchema(
-    player: Player, position: ThreeDimensionalVector): ITextSchema {
+    player: Player, position: Vector3D): ITextSchema {
       const value = this.positionValueCalculator.evaluate(player, position);
 
       return {
