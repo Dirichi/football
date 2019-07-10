@@ -2,6 +2,7 @@ import { TEAM_SIDES } from "../../../../constants";
 import { Ball } from "../../../../game_objects/ball";
 import { Player } from "../../../../game_objects/player";
 import { IPassValueCalculator } from "../../../../interfaces/ipass_value_calculator";
+import { scale } from "../../../../utils/helper_functions";
 import { InterceptionCalculator } from "./interception_calculator";
 
 export class PassValueCalculator implements IPassValueCalculator {
@@ -17,9 +18,9 @@ export class PassValueCalculator implements IPassValueCalculator {
     if (this.interceptionLikely(player)) {
       return 0;
     }
-
-    const score = this.aheadOfBall(player) ? 0.9 : 0.3;
-    return score;
+    const distanceToGoalPost =
+      player.getOpposingGoalPost().distanceTo(player.getPosition());
+    return scale(distanceToGoalPost, 0, 2, 1, 0);
   }
 
   private interceptionLikely(player: Player): boolean {

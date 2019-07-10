@@ -53,7 +53,12 @@ export class ShotValueCalculator implements IShotValueCalculator {
         return 1;
       }
       return scale(
-        distance, this.idealDistanceFromGoal, this.field.diagonalLength(), 1, 0);
+        distance,
+        this.idealDistanceFromGoal,
+        this.field.diagonalLength(),
+        1,
+        0
+      );
   }
 
   private interceptionLikelihood(
