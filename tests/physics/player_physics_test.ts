@@ -1,4 +1,3 @@
-import { ThreeDimensionalVector } from '../../src/three_dimensional_vector';
 import { Player } from '../../src/game_objects/player';
 import { PlayerPhysics } from '../../src/physics/player_physics';
 import { IBoundary } from '../../src/interfaces/iboundary';

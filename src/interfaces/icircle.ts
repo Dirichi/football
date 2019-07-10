@@ -1,7 +1,7 @@
-import { ThreeDimensionalVector } from "../three_dimensional_vector";
+import { Vector3D } from "../three_dimensional_vector";
 
 export interface ICircle {
   kind: "circle";
-  getCentre(): ThreeDimensionalVector;
+  getCentre(): Vector3D;
   getDiameter(): number;
 }

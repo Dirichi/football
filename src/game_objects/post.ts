@@ -1,5 +1,5 @@
 import { IBoxSchema } from "../interfaces/ibox_schema";
-import { ThreeDimensionalVector } from "../three_dimensional_vector";
+import { Vector3D } from "../three_dimensional_vector";
 import { Ball } from "./ball";
 
 export class Post {
@@ -15,14 +15,14 @@ export class Post {
     this.ylength = ylength;
   }
 
-  public getMidPoint(): ThreeDimensionalVector {
+  public getMidPoint(): Vector3D {
     const x = this.x + this.xlength / 2;
     const y = this.y + this.ylength / 2;
 
-    return new ThreeDimensionalVector(x, y, 0);
+    return new Vector3D(x, y, 0);
   }
 
-  public distanceTo(point: ThreeDimensionalVector): number {
+  public distanceTo(point: Vector3D): number {
     return this.getMidPoint().distanceTo(point);
   }
 

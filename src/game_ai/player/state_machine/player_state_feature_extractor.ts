@@ -6,7 +6,7 @@ import { IPassValueCalculator } from "../../../interfaces/ipass_value_calculator
 import { IPlayerStateFeatureExtractor } from "../../../interfaces/iplayer_state_feature_extractor";
 import { IPositionValueCalculator } from "../../../interfaces/iposition_value_calculator";
 import { IShotValueCalculator } from "../../../interfaces/ishot_value_calculator";
-import { ThreeDimensionalVector } from "../../../three_dimensional_vector";
+import { Vector3D } from "../../../three_dimensional_vector";
 import { maximumBy, minimumBy } from "../../../utils/helper_functions";
 
 export class PlayerStateFeatureExtractor implements IPlayerStateFeatureExtractor {
@@ -54,14 +54,14 @@ export class PlayerStateFeatureExtractor implements IPlayerStateFeatureExtractor
     return this.shotValueCalculator.evaluate(player);
   }
 
-  public bestPositionOption(player: Player): ThreeDimensionalVector {
+  public bestPositionOption(player: Player): Vector3D {
     const delta = POSITION_DELTA_FOR_POSITION_VALUE_CALCULATION;
     const positionDiffs = [
-      new ThreeDimensionalVector(delta, 0, 0),
-      new ThreeDimensionalVector(-delta, 0, 0),
-      new ThreeDimensionalVector(0, delta, 0),
-      new ThreeDimensionalVector(0, -delta, 0),
-      new ThreeDimensionalVector(0, 0, 0),
+      new Vector3D(delta, 0, 0),
+      new Vector3D(-delta, 0, 0),
+      new Vector3D(0, delta, 0),
+      new Vector3D(0, -delta, 0),
+      new Vector3D(0, 0, 0),
     ];
 
     const positions = positionDiffs.map((position) => {

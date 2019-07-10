@@ -2,7 +2,7 @@ import { CommandFactory } from '../../../../src/commands/command_factory';
 import { AttackingRunState } from '../../../../src/game_ai/player/state_machine/attacking_run_state';
 import { IPlayerStateFeature } from '../../../../src/interfaces/iplayer_state_feature';
 import { Player } from '../../../../src/game_objects/player';
-import { ThreeDimensionalVector } from '../../../../src/three_dimensional_vector';
+import { Vector3D } from '../../../../src/three_dimensional_vector';
 import * as chai from 'chai';
 import * as sinon from 'sinon';
 import { COMMAND_ID } from '../../../../src/constants';
@@ -11,7 +11,7 @@ const sinonChai = require('sinon-chai');
 const expect = chai.expect;
 chai.use(sinonChai);
 
-const bestPosition = new ThreeDimensionalVector(0, 0, 0);
+const bestPosition = new Vector3D(0, 0, 0);
 let commandFactory: CommandFactory;
 let player: Player;
 let getNewFeatures = () => {

@@ -9,7 +9,7 @@ import { IPlayerBallInteractionMediator } from "../interfaces/iplayer_ball_inter
 import { IPlayerController } from "../interfaces/iplayer_controller";
 import { IPlayerSchema } from "../interfaces/iplayer_schema";
 import { PlayerPhysics } from "../physics/player_physics";
-import { ThreeDimensionalVector } from "../three_dimensional_vector";
+import { Vector3D } from "../three_dimensional_vector";
 import { minimumBy } from "../utils/helper_functions";
 import { Ball } from "./ball";
 import { PlayerRole } from "./player_role";
@@ -54,7 +54,7 @@ export class Player implements ICollidable {
     this.controller.update();
   }
 
-  public moveInDirection(direction: ThreeDimensionalVector): void {
+  public moveInDirection(direction: Vector3D): void {
     const velocity = direction.unit().scalarMultiply(this.maximumSpeed);
     this.setVelocity(velocity);
   }
@@ -63,12 +63,12 @@ export class Player implements ICollidable {
     [this.vx, this.vy] = [0, 0];
   }
 
-  public feetPosition(): ThreeDimensionalVector {
+  public feetPosition(): Vector3D {
     // TODO: Actually properly calculate feetPosition
     return this.getPosition();
   }
 
-  public moveTowards(target: ThreeDimensionalVector): void {
+  public moveTowards(target: Vector3D): void {
     const unitDelta = target.minus(this.getPosition()).unit();
     const velocity = unitDelta.scalarMultiply(this.maximumSpeed);
     this.setVelocity(velocity);
@@ -126,17 +126,17 @@ export class Player implements ICollidable {
     return this.id;
   }
 
-  public getVelocity(): ThreeDimensionalVector {
-    return new ThreeDimensionalVector(this.vx, this.vy, 0);
+  public getVelocity(): Vector3D {
+    return new Vector3D(this.vx, this.vy, 0);
   }
 
-  public getPosition(): ThreeDimensionalVector {
-    return new ThreeDimensionalVector(this.x, this.y, 0);
+  public getPosition(): Vector3D {
+    return new Vector3D(this.x, this.y, 0);
   }
 
   public getShape(): ICircle {
     return {
-      getCentre: () => new ThreeDimensionalVector(this.x, this.y, 0),
+      getCentre: () => new Vector3D(this.x, this.y, 0),
       getDiameter: () => this.diameter,
       kind: "circle",
     } as ICircle;
@@ -224,7 +224,7 @@ export class Player implements ICollidable {
     this.y = ball.getPosition().y - Y_BALL_MARGIN_FOR_KICKOFF_SUPPORT;
   }
 
-  public kickBall(destination: ThreeDimensionalVector): boolean {
+  public kickBall(destination: Vector3D): boolean {
     return this.ballInteractionMediator.kickBall(this, destination);
   }
 
@@ -240,15 +240,15 @@ export class Player implements ICollidable {
     this.ballInteractionMediator.chaseBall(this);
   }
 
-  private attackingPosition(): ThreeDimensionalVector {
+  private attackingPosition(): Vector3D {
     return this.role.getDefaultAttackingPosition(this.team.getSide());
   }
 
-  private defendingPosition(): ThreeDimensionalVector {
+  private defendingPosition(): Vector3D {
     return this.role.getDefaultDefendingPosition(this.team.getSide());
   }
 
-  private kickOffPosition(): ThreeDimensionalVector {
+  private kickOffPosition(): Vector3D {
     return this.role.getDefaultDefendingPosition(this.team.getSide());
   }
 
@@ -259,7 +259,7 @@ export class Player implements ICollidable {
       });
   }
 
-  private setVelocity(velocity: ThreeDimensionalVector): void {
+  private setVelocity(velocity: Vector3D): void {
     [this.vx, this.vy] = [velocity.x, velocity.y];
   }
 }

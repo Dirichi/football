@@ -1,9 +1,9 @@
 import { Player } from "../game_objects/player";
 import { ICommand } from "../interfaces/icommand";
-import { ThreeDimensionalVector } from "../three_dimensional_vector";
+import { Vector3D } from "../three_dimensional_vector";
 
 export class MoveCommand implements ICommand {
-  public execute(player: Player, direction: ThreeDimensionalVector) {
+  public execute(player: Player, direction: Vector3D) {
     player.moveInDirection(direction);
   }
 }

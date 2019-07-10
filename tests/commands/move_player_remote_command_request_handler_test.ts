@@ -3,7 +3,7 @@ import { ICommand } from '../../src/interfaces/icommand';
 import { ICommandFactory } from '../../src/interfaces/icommand_factory';
 import { MovePlayerRemoteCommandRequestHandler } from '../../src/commands/move_player_remote_command_request_handler';
 import { Player } from '../../src/game_objects/player';
-import { ThreeDimensionalVector } from '../../src/three_dimensional_vector';
+import { Vector3D } from '../../src/three_dimensional_vector';
 import * as chai from 'chai';
 import * as sinon from 'sinon';
 
@@ -14,24 +14,24 @@ chai.use(sinonChai);
 describe('MovePlayerRemoteCommandRequestHandler', () => {
   describe('`handle`', () => {
     it('executes a move command with the right direction', () => {
-      const commandByDirectionMapping: Map<COMMAND_ID, ThreeDimensionalVector> =
+      const commandByDirectionMapping: Map<COMMAND_ID, Vector3D> =
         new Map([
-          [COMMAND_ID.MOVE_PLAYER_UP, new ThreeDimensionalVector(0, -1, 0)],
+          [COMMAND_ID.MOVE_PLAYER_UP, new Vector3D(0, -1, 0)],
           [COMMAND_ID.MOVE_PLAYER_UPPER_LEFT,
-            new ThreeDimensionalVector(-1, -1, 0)],
+            new Vector3D(-1, -1, 0)],
           [COMMAND_ID.MOVE_PLAYER_UPPER_RIGHT,
-            new ThreeDimensionalVector(1, -1, 0)],
-          [COMMAND_ID.MOVE_PLAYER_DOWN, new ThreeDimensionalVector(0, 1, 0)],
+            new Vector3D(1, -1, 0)],
+          [COMMAND_ID.MOVE_PLAYER_DOWN, new Vector3D(0, 1, 0)],
           [COMMAND_ID.MOVE_PLAYER_LOWER_LEFT,
-            new ThreeDimensionalVector(-1, 1, 0)],
+            new Vector3D(-1, 1, 0)],
           [COMMAND_ID.MOVE_PLAYER_LOWER_RIGHT,
-            new ThreeDimensionalVector(1, 1, 0)],
-          [COMMAND_ID.MOVE_PLAYER_LEFT, new ThreeDimensionalVector(-1, 0, 0)],
-          [COMMAND_ID.MOVE_PLAYER_RIGHT, new ThreeDimensionalVector(1, 0, 0)],
+            new Vector3D(1, 1, 0)],
+          [COMMAND_ID.MOVE_PLAYER_LEFT, new Vector3D(-1, 0, 0)],
+          [COMMAND_ID.MOVE_PLAYER_RIGHT, new Vector3D(1, 0, 0)],
         ]);
 
       const moveCommandMock = {
-        execute: (player: Player, direction: ThreeDimensionalVector) => {
+        execute: (player: Player, direction: Vector3D) => {
           return;
         }
       } as ICommand;

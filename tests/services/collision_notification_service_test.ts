@@ -2,7 +2,7 @@ import { CollisionNotificationService } from '../../src/services/collision_notif
 import { CollisionDetectionService } from '../../src/services/collision_detection_service';
 import { ICircle } from '../../src/interfaces/icircle';
 import { EventQueue } from '../../src/event_queue';
-import { ThreeDimensionalVector } from '../../src/three_dimensional_vector';
+import { Vector3D } from '../../src/three_dimensional_vector';
 import { TestCollidable } from "../helpers/test_collidable";
 import * as chai from 'chai';
 import * as sinon from 'sinon';
@@ -45,19 +45,19 @@ describe('CollisionNotificationService', () => {
 
         const circleOne = {
           kind: 'circle',
-          getCentre: () => new ThreeDimensionalVector(0, 0, 0),
+          getCentre: () => new Vector3D(0, 0, 0),
           getDiameter: () => 2,
         } as ICircle;
 
         const circleTwo = {
           kind: 'circle',
-          getCentre: () => new ThreeDimensionalVector(2, 0, 0),
+          getCentre: () => new Vector3D(2, 0, 0),
           getDiameter: () => 2,
         } as ICircle;
 
         const circleThree = {
           kind: 'circle',
-          getCentre: () => new ThreeDimensionalVector(4, 0, 0),
+          getCentre: () => new Vector3D(4, 0, 0),
           getDiameter: () => 2,
         } as ICircle;
 

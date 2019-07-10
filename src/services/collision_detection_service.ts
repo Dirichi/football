@@ -1,7 +1,6 @@
 import { EventQueue } from "../event_queue";
 import { ICircle } from "../interfaces/icircle";
 import { ICollidable } from "../interfaces/icollidable";
-import { ThreeDimensionalVector } from "../three_dimensional_vector";
 
 export class CollisionDetectionService {
   private collisionMarginFactor: number;
@@ -10,15 +9,16 @@ export class CollisionDetectionService {
     this.collisionMarginFactor = collisionMarginFactor;
   }
 
-  public isColliding(collidableA: ICollidable, collidableB: ICollidable): boolean {
-    const shapeA = collidableA.getShape();
-    const shapeB = collidableB.getShape();
+  public isColliding(
+    collidableA: ICollidable, collidableB: ICollidable): boolean {
+      const shapeA = collidableA.getShape();
+      const shapeB = collidableB.getShape();
 
-    if (shapeA.kind === "circle" && shapeB.kind === "circle") {
-      return this.cicleCircleColliding(shapeA, shapeB);
-    }
+      if (shapeA.kind === "circle" && shapeB.kind === "circle") {
+        return this.cicleCircleColliding(shapeA, shapeB);
+      }
 
-    throw new Error(`Unexpected shape kinds ${shapeA.kind}, ${shapeB.kind}`);
+      throw new Error(`Unexpected shape kinds ${shapeA.kind}, ${shapeB.kind}`);
   }
 
   public setCollisionMarginFactor(factor: number) {

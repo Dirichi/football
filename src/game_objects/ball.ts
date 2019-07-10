@@ -3,7 +3,7 @@ import { IBallSchema } from "../interfaces/iball_schema";
 import { ICircle } from "../interfaces/icircle";
 import { ICollidable } from "../interfaces/icollidable";
 import { BallPhysics } from "../physics/ball_physics";
-import { ThreeDimensionalVector } from "../three_dimensional_vector";
+import { Vector3D } from "../three_dimensional_vector";
 
 export class Ball implements ICollidable {
   public x: number;
@@ -15,7 +15,7 @@ export class Ball implements ICollidable {
   private physics?: BallPhysics;
   private maximumSpeed?: number;
   private id: string;
-  private kickOffPosition: ThreeDimensionalVector;
+  private kickOffPosition: Vector3D;
 
   constructor(x: number, y: number, vx: number, vy: number, diameter: number) {
     this.id = v4(); // Random unique id generation
@@ -30,9 +30,9 @@ export class Ball implements ICollidable {
     this.physics.update();
   }
 
-  public moveTowards(target: ThreeDimensionalVector) {
+  public moveTowards(target: Vector3D) {
     // this should be the responsibility of physics
-    const position = new ThreeDimensionalVector(this.x, this.y, 0);
+    const position = new Vector3D(this.x, this.y, 0);
     const unitDelta = target.minus(position).unit();
     const velocity = unitDelta.scalarMultiply(this.maximumSpeed);
 
@@ -48,7 +48,7 @@ export class Ball implements ICollidable {
     this.maximumSpeed = speed;
   }
 
-  public setKickOffPosition(position: ThreeDimensionalVector) {
+  public setKickOffPosition(position: Vector3D) {
     this.kickOffPosition = position;
   }
 
@@ -62,11 +62,11 @@ export class Ball implements ICollidable {
     } as IBallSchema;
   }
 
-  public getPosition(): ThreeDimensionalVector {
-    return new ThreeDimensionalVector(this.x, this.y, 0);
+  public getPosition(): Vector3D {
+    return new Vector3D(this.x, this.y, 0);
   }
 
-  public reposition(newPosition: ThreeDimensionalVector): void {
+  public reposition(newPosition: Vector3D): void {
     [this.x, this.y] = [newPosition.x, newPosition.y];
   }
 
@@ -88,7 +88,7 @@ export class Ball implements ICollidable {
 
   public getShape(): ICircle {
     return {
-      getCentre: () => new ThreeDimensionalVector(this.x, this.y, 0),
+      getCentre: () => new Vector3D(this.x, this.y, 0),
       getDiameter: () => this.diameter,
       kind: "circle",
     } as ICircle;

@@ -2,7 +2,6 @@ import { Ball } from '../../src/game_objects/ball';
 import { BallPossessionService } from '../../src/services/ball_possession_service';
 import { Player } from '../../src/game_objects/player';
 import { TestEventQueue } from '../helpers/test_event_queue';
-import { ThreeDimensionalVector } from '../../src/three_dimensional_vector';
 import * as chai from 'chai';
 import * as sinon from 'sinon';
 

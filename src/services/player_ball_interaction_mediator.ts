@@ -3,7 +3,7 @@ import { Player } from "../game_objects/player";
 import { IBallPossessionService } from "../interfaces/iball_possession_service";
 import { IPlayerBallInteractionMediator } from "../interfaces/iplayer_ball_interaction_mediator";
 import { ITickService } from "../interfaces/itick_service";
-import { ThreeDimensionalVector } from "../three_dimensional_vector";
+import { Vector3D } from "../three_dimensional_vector";
 
 export class PlayerBallInteractionMediator
   implements IPlayerBallInteractionMediator {
@@ -30,13 +30,12 @@ export class PlayerBallInteractionMediator
         this.possessionService.getCurrentPlayerInPossessionOrNull();
     }
 
-    public kickBall(
-      player: Player, destination: ThreeDimensionalVector): boolean {
-        if (!this.canKickBall(player)) { return false; }
+    public kickBall(player: Player, destination: Vector3D): boolean {
+      if (!this.canKickBall(player)) { return false; }
 
-        this.temporarilyDisableKicking(player);
-        this.ball.moveTowards(destination);
-        return true;
+      this.temporarilyDisableKicking(player);
+      this.ball.moveTowards(destination);
+      return true;
     }
 
     public controlBall(player: Player): boolean {

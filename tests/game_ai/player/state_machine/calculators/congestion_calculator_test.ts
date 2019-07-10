@@ -1,6 +1,6 @@
 import { CongestionCalculator } from '../../../../../src/game_ai/player/state_machine/calculators/congestion_calculator';
 import { Player } from '../../../../../src/game_objects/player';
-import { ThreeDimensionalVector } from '../../../../../src/three_dimensional_vector';
+import { Vector3D } from '../../../../../src/three_dimensional_vector';
 import * as chai from 'chai';
 import * as sinon from 'sinon';
 
@@ -18,7 +18,7 @@ describe('CongestionCalculator', () => {
         const players = [playerA, playerB, playerC];
         const radiusOfInterest = 1;
         const calculator = new CongestionCalculator(players, radiusOfInterest);
-        const positionToEvaluate = new ThreeDimensionalVector(2, 2, 0);
+        const positionToEvaluate = new Vector3D(2, 2, 0);
 
         expect(calculator.evaluate(positionToEvaluate)).to.equal(1);
     });

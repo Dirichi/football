@@ -1,6 +1,6 @@
 import { IBoundary } from "../interfaces/iboundary";
 import { IBoxSchema } from "../interfaces/ibox_schema";
-import { ThreeDimensionalVector } from "../three_dimensional_vector";
+import { Vector3D } from "../three_dimensional_vector";
 
 export class Field implements IBoundary {
   public x: number;
@@ -15,20 +15,20 @@ export class Field implements IBoundary {
     this.ylength = ylength;
   }
 
-  public getMidPoint(): ThreeDimensionalVector {
-    return new ThreeDimensionalVector(
+  public getMidPoint(): Vector3D {
+    return new Vector3D(
       this.x + (this.xlength / 2),
       this.y + (this.ylength / 2),
       0
     );
   }
 
-  public leftMostPosition(): ThreeDimensionalVector {
-    return new ThreeDimensionalVector(this.x, this.y, 0);
+  public leftMostPosition(): Vector3D {
+    return new Vector3D(this.x, this.y, 0);
   }
 
-  public rightMostPosition(): ThreeDimensionalVector {
-    return new ThreeDimensionalVector(
+  public rightMostPosition(): Vector3D {
+    return new Vector3D(
       this.x + this.xlength,
       this.y + this.ylength,
       0);
@@ -52,7 +52,7 @@ export class Field implements IBoundary {
     return withinXBounds && withinYBounds;
   }
 
-  public containsPoint(point: ThreeDimensionalVector): boolean {
+  public containsPoint(point: Vector3D): boolean {
     return this.containsCircle(point.x, point.y, 0);
   }
 
