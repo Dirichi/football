@@ -18,7 +18,6 @@ let extractor = {
   bestPassingOption: (player: Player) => bestPassingOption,
   hasBall: (player: Player) => false,
   isNearestTeamMateToBall: (player: Player) => false,
-  hasOpenPassingOptions: (player: Player) => false,
   shotValue: (player: Player) => 0,
   teamInControl: (player: Player) => false,
 };
@@ -59,7 +58,6 @@ describe('PlayerStateMachine', () => {
         bestPositionOption: new ThreeDimensionalVector(0, 0, 0),
         bestPassingOption: bestPassingOption,
         hasBall: false,
-        hasOpenPassingOptions: false,
         isNearestTeamMateToBall: false,
         hasWaitMessages: false,
         shotValue: 0,

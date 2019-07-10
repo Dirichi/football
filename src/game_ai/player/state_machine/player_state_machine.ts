@@ -66,7 +66,6 @@ export class PlayerStateMachine implements IPlayerController {
       bestPassingOption: this.extractor.bestPassingOption(this.player),
       bestPositionOption: this.extractor.bestPositionOption(this.player),
       hasBall: this.extractor.hasBall(this.player),
-      hasOpenPassingOptions: this.extractor.hasOpenPassingOptions(this.player),
       hasWaitMessages: this.hasWaitMessages(),
       isNearestTeamMateToBall: this.extractor.isNearestTeamMateToBall(this.player),
       shotValue: this.extractor.shotValue(this.player),

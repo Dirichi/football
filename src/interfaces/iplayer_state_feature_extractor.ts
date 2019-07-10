@@ -5,7 +5,6 @@ export interface IPlayerStateFeatureExtractor {
   bestPassingOption(player: Player): Player;
   bestPositionOption(player: Player): ThreeDimensionalVector;
   hasBall(player: Player): boolean;
-  hasOpenPassingOptions(player: Player): boolean;
   isNearestTeamMateToBall(player: Player): boolean;
   shotValue(player: Player): number;
   teamInControl(player: Player): boolean;

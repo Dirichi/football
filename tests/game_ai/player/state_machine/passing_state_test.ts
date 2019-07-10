@@ -15,7 +15,6 @@ let getNewFeatures = () => {
   return {
     bestPassingOption: new Player(0, 0, 0, 0, 5),
     hasBall: false,
-    hasOpenPassingOptions: false,
     hasWaitMessages: false,
     isNearestTeamMateToBall: false,
     shotValue: 0,
@@ -40,7 +39,6 @@ describe('PassingState', () => {
         const state = new PassingState(commandFactory);
         const features = getNewFeatures();
         features.hasBall = true;
-        features.hasOpenPassingOptions = true;
 
         const command = { execute: sinon.spy() };
         sinon.stub(commandFactory, 'getCommand')
@@ -56,22 +54,6 @@ describe('PassingState', () => {
       const state = new PassingState(commandFactory);
       const features = getNewFeatures();
       features.hasBall = false;
-      features.hasOpenPassingOptions = true;
-
-      const command = { execute: sinon.spy() };
-      sinon.stub(commandFactory, 'getCommand')
-        .withArgs(COMMAND_ID.PASS_BALL)
-        .returns(command);
-
-      state.update(player, features);
-      expect(command.execute).not.to.have.been.called;
-    });
-
-    it('does nothing if the player does not have good passing options', () => {
-      const state = new PassingState(commandFactory);
-      const features = getNewFeatures();
-      features.hasBall = false;
-      features.hasOpenPassingOptions = true;
 
       const command = { execute: sinon.spy() };
       sinon.stub(commandFactory, 'getCommand')

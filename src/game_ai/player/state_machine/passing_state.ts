@@ -14,7 +14,7 @@ export class PassingState implements IPlayerState {
   public eligibleFor(features: IPlayerStateFeature): boolean {
     // TODO: address duplication between command and state by reusing the command's
     // validation in the state
-    return features.hasBall && features.hasOpenPassingOptions;
+    return features.hasBall;
   }
 
   public update(player: Player, features: IPlayerStateFeature): void {

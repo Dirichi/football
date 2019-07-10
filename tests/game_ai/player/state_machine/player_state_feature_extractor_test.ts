@@ -108,50 +108,6 @@ describe('PlayerStateFeatureExtractor', () => {
     });
   });
 
-  describe('`hasOpenPassingOptions`', () => {
-    it('returns true if the passValue is greater than 0 for some of the' +
-        ' player\'s teamMates', () => {
-          const mateOne = new Player(0, 0, 0, 0, 5);
-          const mateTwo = new Player(0, 0, 0, 0, 5);
-          const team = new Team([mateOne, mateTwo, player]);
-
-          const passValueStub = sinon.stub(passValueCalculator, 'valueFor');
-          passValueStub.withArgs(mateOne).returns(0);
-          passValueStub.withArgs(mateTwo).returns(0.5);
-
-          const possessionService = new TestBallPossessionService();
-          const extractor = new PlayerStateFeatureExtractor(
-            ball,
-            possessionService,
-            passValueCalculator,
-            shotValueCalculator,
-            positionValueCalculator
-          );
-          expect(extractor.hasOpenPassingOptions(player)).to.be.true;
-    });
-
-    it('returns false if the passValue is 0 for all the player\'s' +
-        ' teamMates', () => {
-          const mateOne = new Player(0, 0, 0, 0, 5);
-          const mateTwo = new Player(0, 0, 0, 0, 5);
-          const team = new Team([mateOne, mateTwo, player]);
-
-          const passValueStub = sinon.stub(passValueCalculator, 'valueFor');
-          passValueStub.withArgs(mateOne).returns(0);
-          passValueStub.withArgs(mateTwo).returns(0);
-
-          const possessionService = new TestBallPossessionService();
-          const extractor = new PlayerStateFeatureExtractor(
-            ball,
-            possessionService,
-            passValueCalculator,
-            shotValueCalculator,
-            positionValueCalculator
-          );
-          expect(extractor.hasOpenPassingOptions(player)).to.be.false;
-    });
-  });
-
   describe('`bestPassingOption`', () => {
     it('returns true player with the best passing value', () => {
       const mateOne = new Player(0, 0, 0, 0, 5);

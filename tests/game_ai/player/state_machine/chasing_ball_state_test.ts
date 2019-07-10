@@ -17,7 +17,6 @@ let getNewFeatures = () => {
   return {
     bestPassingOption: new Player(0, 0, 0, 0, 5),
     hasBall: false,
-    hasOpenPassingOptions: false,
     hasWaitMessages: false,
     isNearestTeamMateToBall: false,
     shotValue: 0,
