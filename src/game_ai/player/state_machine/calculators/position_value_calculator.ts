@@ -1,11 +1,11 @@
-import { CongestionCalculator } from "./game_ai/player/state_machine/calculators/congestion_calculator";
-import { ShotValueCalculator } from "./game_ai/player/state_machine/calculators/shot_value_calculator";
-import { Ball } from "./game_objects/ball";
-import { Field } from "./game_objects/field";
-import { Player } from "./game_objects/player";
-import { IPositionValueCalculator } from "./interfaces/iposition_value_calculator";
-import { Vector3D } from "./three_dimensional_vector";
-import { round, scale } from "./utils/helper_functions";
+import { Ball } from "../../../../game_objects/ball";
+import { Field } from "../../../../game_objects/field";
+import { Player } from "../../../../game_objects/player";
+import { IPositionValueCalculator } from "../../../../interfaces/iposition_value_calculator";
+import { Vector3D } from "../../../../three_dimensional_vector";
+import { round, scale } from "../../../../utils/helper_functions";
+import { CongestionCalculator } from "./congestion_calculator";
+import { ShotValueCalculator } from "./shot_value_calculator";
 
 export class PositionValueCalculator implements IPositionValueCalculator {
   private ball: Ball;

@@ -4,6 +4,7 @@ import { AttackingRunState } from "./game_ai/player/state_machine/attacking_run_
 import { CongestionCalculator } from "./game_ai/player/state_machine/calculators/congestion_calculator";
 import { InterceptionCalculator } from "./game_ai/player/state_machine/calculators/interception_calculator";
 import { PassValueCalculator } from "./game_ai/player/state_machine/calculators/pass_value_calculator";
+import { PositionValueCalculator } from "./game_ai/player/state_machine/calculators/position_value_calculator";
 import { ShotValueCalculator } from "./game_ai/player/state_machine/calculators/shot_value_calculator";
 import { ChasingBallState } from "./game_ai/player/state_machine/chasing_ball_state";
 import { DefensiveRunState } from "./game_ai/player/state_machine/defensive_run_state";
@@ -12,7 +13,6 @@ import { PassingState } from "./game_ai/player/state_machine/passing_state";
 import { PlayerStateFeatureExtractor } from "./game_ai/player/state_machine/player_state_feature_extractor";
 import { ShootingState } from "./game_ai/player/state_machine/shooting_state";
 import { WaitingState } from "./game_ai/player/state_machine/waiting_state";
-import { PositionValueCalculator } from "./position_value_calculator";
 
 import { ChaseBallCommand } from "./commands/chase_ball_command";
 import { CommandFactory } from "./commands/command_factory";
