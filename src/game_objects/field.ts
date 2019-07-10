@@ -52,6 +52,10 @@ export class Field implements IBoundary {
     return withinXBounds && withinYBounds;
   }
 
+  public containsPoint(point: ThreeDimensionalVector): boolean {
+    return this.containsCircle(point.x, point.y, 0);
+  }
+
   public serialized(): IBoxSchema {
     return {
       x: this.x,
