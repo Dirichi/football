@@ -44,13 +44,6 @@ export class PlayerStateFeatureExtractor implements IPlayerStateFeatureExtractor
     return player.hasBall();
   }
 
-  public hasOpenPassingOptions(player: Player): boolean {
-    const best = this.bestPassingOption(player);
-    // feature extractor shouldn't know that 0 means that the player can't be
-    // passed to.
-    return this.passValueCalculator.valueFor(best) > 0;
-  }
-
   public bestPassingOption(player: Player): Player {
     return maximumBy(player.teamMates(), (teamMate: Player) => {
       return this.passValueCalculator.valueFor(teamMate);

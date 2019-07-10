@@ -5,7 +5,6 @@ export interface IPlayerStateFeature {
   bestPassingOption: Player;
   bestPositionOption: ThreeDimensionalVector;
   hasBall: boolean;
-  hasOpenPassingOptions: boolean;
   hasWaitMessages: boolean;
   isNearestTeamMateToBall: boolean;
   shotValue: number;

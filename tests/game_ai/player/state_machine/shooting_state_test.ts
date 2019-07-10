@@ -15,10 +15,9 @@ let getNewFeatures = () => {
   return {
     bestPassingOption: new Player(0, 0, 0, 0, 5),
     hasBall: false,
-    hasOpenPassingOptions: false,
     hasWaitMessages: false,
     isNearestTeamMateToBall: false,
-    shotValue: 0,
+    shotValue: 0.5,
     teamInControl: false,
   } as IPlayerStateFeature;
 };
@@ -37,10 +36,10 @@ describe('ShootingState', () => {
 
   describe('`update`', () => {
     it('executes a shoot command if eligilble', () => {
-        const state = new ShootingState(commandFactory);
+        const state = new ShootingState(commandFactory, 0.8);
         const features = getNewFeatures();
         features.hasBall = true;
-        features.hasOpenPassingOptions = false;
+        features.shotValue = 0.9; // 0.9 > threshold (0.8)
 
         const command = { execute: sinon.spy() };
         sinon.stub(commandFactory, 'getCommand')
@@ -52,10 +51,10 @@ describe('ShootingState', () => {
     });
 
     it('does nothing if the player does not have the ball', () => {
-      const state = new ShootingState(commandFactory);
+      const state = new ShootingState(commandFactory, 0.8);
       const features = getNewFeatures();
       features.hasBall = false;
-      features.hasOpenPassingOptions = false;
+      features.shotValue = 0.9;
 
       const command = { execute: sinon.spy() };
       sinon.stub(commandFactory, 'getCommand')
@@ -66,11 +65,11 @@ describe('ShootingState', () => {
       expect(command.execute).not.to.have.been.called;
     });
 
-    it('does nothing if the player is not in a good shooting position', () => {
-      const state = new ShootingState(commandFactory);
+    it('does nothing if the shotValue is below the specified threshold', () => {
+      const state = new ShootingState(commandFactory, 0.8);
       const features = getNewFeatures();
       features.hasBall = true;
-      features.hasOpenPassingOptions = true;
+      features.shotValue = 0.7;
 
       const command = { execute: sinon.spy() };
       sinon.stub(commandFactory, 'getCommand')
