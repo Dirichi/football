@@ -50,12 +50,12 @@ export const PLAYER_ROLES_CONFIGURATION: Map<PLAYER_ROLE, IRoleConfig> =
     } as IRoleConfig],
     [PLAYER_ROLE.LF, {
       defaultAttackingPosition: [0.8, 0.4, 0],
-      defaultDefensivePosition: [0.5, 0.4, 0],
+      defaultDefensivePosition: [0.46, 0.4, 0],
       type: PLAYER_ROLE_TYPE.FORWARD
     } as IRoleConfig],
     [PLAYER_ROLE.RF, {
       defaultAttackingPosition: [0.8, 0.6, 0],
-      defaultDefensivePosition: [0.5, 0.6, 0],
+      defaultDefensivePosition: [0.46, 0.6, 0],
       type: PLAYER_ROLE_TYPE.FORWARD
     } as IRoleConfig],
   ]);
