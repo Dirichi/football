@@ -4,6 +4,7 @@ import { IPositionValueCalculator } from "../interfaces/iposition_value_calculat
 import { IPositionValueSchema } from "../interfaces/iposition_value_schema";
 import { ITextSchema } from "../interfaces/itext_schema";
 import { Vector3D } from "../three_dimensional_vector";
+import { round } from "../utils/helper_functions";
 
 export class PositionValueDebugService {
   private positionValueCalculator: IPositionValueCalculator;
@@ -51,7 +52,8 @@ export class PositionValueDebugService {
 
   private buildPositionTextSchema(
     player: Player, position: Vector3D): ITextSchema {
-      const value = this.positionValueCalculator.evaluate(player, position);
+      let value = this.positionValueCalculator.evaluate(player, position);
+      value = round(value, 2);
 
       return {
         value: String(value),
