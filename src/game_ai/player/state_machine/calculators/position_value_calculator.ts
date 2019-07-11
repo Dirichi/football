@@ -37,7 +37,7 @@ export class PositionValueCalculator implements IPositionValueCalculator {
 
       const weightedScore =
         // TODO: Make these weights constants
-        (congestion * -0.2) + (shotValue * 0.4) + (trackingBall * 0.4);
+        (congestion * -0.1) +  (shotValue * 0.2) + (trackingBall * 0.2);
       return weightedScore;
   }
 
