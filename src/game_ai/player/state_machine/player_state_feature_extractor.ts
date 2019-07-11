@@ -46,7 +46,7 @@ export class PlayerStateFeatureExtractor implements IPlayerStateFeatureExtractor
 
   public bestPassingOption(player: Player): Player {
     return maximumBy(player.teamMates(), (teamMate: Player) => {
-      return this.passValueCalculator.valueFor(teamMate);
+      return this.passValueCalculator.evaluate(teamMate);
     });
   }
 

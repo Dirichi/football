@@ -26,7 +26,7 @@ describe('PlayerStateFeatureExtractor', () => {
     player = new Player(0, 0, 0, 0, 5);
     ball = new Ball(0, 0, 0, 0, 5);
     passValueCalculator = {
-      valueFor: (player: Player) => 0.5,
+      evaluate: (player: Player) => 0.5,
     }
     shotValueCalculator = {
       evaluate: (player: Player, shootingFrom?: Vector3D) => 0.5,
@@ -114,7 +114,7 @@ describe('PlayerStateFeatureExtractor', () => {
       const mateTwo = new Player(0, 0, 0, 0, 5);
       const team = new Team([mateOne, mateTwo, player]);
 
-      const passValueStub = sinon.stub(passValueCalculator, 'valueFor');
+      const passValueStub = sinon.stub(passValueCalculator, 'evaluate');
       passValueStub.withArgs(mateOne).returns(0);
       passValueStub.withArgs(mateTwo).returns(0.5);
 

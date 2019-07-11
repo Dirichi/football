@@ -45,23 +45,16 @@ export class ShotValueCalculator implements IShotValueCalculator {
       return  weightedProximityToPost - weightedInterceptionLikelihood;
   }
 
-  private proximityToPost(
-    player: Player, position: Vector3D): number {
-      const distance = player.getOpposingGoalPost().distanceTo(position);
-      if (distance <= this.idealDistanceFromGoal) {
-        return 1;
-      }
-      return scale(
-        distance,
-        this.idealDistanceFromGoal,
-        this.field.diagonalLength(),
-        1,
-        0
-      );
+  private proximityToPost(player: Player, position: Vector3D): number {
+    const distance = player.getOpposingGoalPost().distanceTo(position);
+    if (distance <= this.idealDistanceFromGoal) {
+      return 1;
+    }
+    return scale(
+      distance, this.idealDistanceFromGoal, this.field.diagonalLength(), 1, 0);
   }
 
-  private interceptionLikelihood(
-    player: Player, position: Vector3D): number {
+  private interceptionLikelihood(player: Player, position: Vector3D): number {
     // TODO: This should be all players, including the keeper.
     const opposition = player.getOpposingFieldPlayers();
     const target = player.getOpposingGoalPost().getMidPoint();
