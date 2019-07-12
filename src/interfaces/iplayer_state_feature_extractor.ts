@@ -6,6 +6,7 @@ export interface IPlayerStateFeatureExtractor {
   bestPositionOption(player: Player): Vector3D;
   hasBall(player: Player): boolean;
   isNearestTeamMateToBall(player: Player): boolean;
+  receivedWaitMessage(player: Player): boolean;
   shotValue(player: Player): number;
   teamInControl(player: Player): boolean;
 }
