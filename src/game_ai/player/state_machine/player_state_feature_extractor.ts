@@ -1,4 +1,4 @@
-import { POSITION_DELTA_FOR_POSITION_VALUE_CALCULATION } from "../../../constants";
+import { POSITION_DELTA_FOR_POSITION_VALUE_CALCULATION, STATE_MACHINE_COMMANDS } from "../../../constants";
 import { Ball } from "../../../game_objects/ball";
 import { Player } from "../../../game_objects/player";
 import { IBallPossessionService } from "../../../interfaces/iball_possession_service";
@@ -10,23 +10,12 @@ import { Vector3D } from "../../../three_dimensional_vector";
 import { maximumBy, minimumBy } from "../../../utils/helper_functions";
 
 export class PlayerStateFeatureExtractor implements IPlayerStateFeatureExtractor {
-  private ball: Ball;
-  private ballPossessionService: IBallPossessionService;
-  private passValueCalculator: IPassValueCalculator;
-  private shotValueCalculator: IShotValueCalculator;
-  private positionValueCalculator: IPositionValueCalculator;
-
   constructor(
-    ball: Ball,
-    ballPossessionService: IBallPossessionService,
-    passValueCalculator: IPassValueCalculator,
-    shotValueCalculator: IShotValueCalculator,
-    positionValueCalculator: IPositionValueCalculator) {
-      this.ball = ball;
-      this.ballPossessionService = ballPossessionService;
-      this.passValueCalculator = passValueCalculator;
-      this.shotValueCalculator = shotValueCalculator;
-      this.positionValueCalculator = positionValueCalculator;
+    private ball: Ball,
+    private ballPossessionService: IBallPossessionService,
+    private passValueCalculator: IPassValueCalculator,
+    private shotValueCalculator: IShotValueCalculator,
+    private positionValueCalculator: IPositionValueCalculator) {
   }
 
   public teamInControl(player: Player): boolean {
@@ -82,5 +71,9 @@ export class PlayerStateFeatureExtractor implements IPlayerStateFeatureExtractor
     });
 
     return closestTeamMate === player;
+  }
+
+  public receivedWaitMessage(player: Player): boolean {
+    return player.readAllMessages().includes(STATE_MACHINE_COMMANDS.WAIT);
   }
 }

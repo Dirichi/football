@@ -20,6 +20,7 @@ let extractor = {
   isNearestTeamMateToBall: (player: Player) => false,
   shotValue: (player: Player) => 0,
   teamInControl: (player: Player) => false,
+  receivedWaitMessage: (player: Player) => false,
 };
 
 describe('PlayerStateMachine', () => {
@@ -66,48 +67,6 @@ describe('PlayerStateMachine', () => {
 
       expect(ineligibleStateSpy).not.to.have.been.called;
       expect(eligibleStateSpy).to.have.been.calledWith(player, features);
-    });
-  });
-
-  describe('`handleMessage`', () => {
-    it('pushes a WAIT message unto `messages`', () => {
-      const stateA = {
-        eligibleFor: (features: IPlayerStateFeature) => { return false },
-        update: (player: Player, features: IPlayerStateFeature) => {},
-      };
-
-      const stateB = {
-        eligibleFor: (features: IPlayerStateFeature) => { return true },
-        update: (player: Player, features: IPlayerStateFeature) => {},
-      };
-
-      const machine = new PlayerStateMachine(player, [stateA, stateB]);
-      machine.setFeatureExtractor(extractor);
-      machine.handleMessage({details: STATE_MACHINE_COMMANDS.WAIT});
-
-      expect(machine.getMessages()).to.eql([STATE_MACHINE_COMMANDS.WAIT]);
-    });
-
-    it('removes WAIT messages when a NO_NEED_TO_WAIT message is received',
-      () => {
-        const stateA = {
-          eligibleFor: (features: IPlayerStateFeature) => { return false },
-          update: (player: Player, features: IPlayerStateFeature) => {},
-        };
-
-        const stateB = {
-          eligibleFor: (features: IPlayerStateFeature) => { return true },
-          update: (player: Player, features: IPlayerStateFeature) => {},
-        };
-
-        const machine = new PlayerStateMachine(player, [stateA, stateB]);
-        machine.setFeatureExtractor(extractor);
-        machine.handleMessage({details: STATE_MACHINE_COMMANDS.WAIT});
-        machine.handleMessage({details: STATE_MACHINE_COMMANDS.WAIT});
-        machine.handleMessage(
-            {details: STATE_MACHINE_COMMANDS.NO_NEED_TO_WAIT});
-
-        expect(machine.getMessages()).to.eql([]);
     });
   });
 });

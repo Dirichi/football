@@ -29,10 +29,6 @@ export class PlayerHumanController implements IPlayerController {
     }
   }
 
-  public handleMessage(message: {details: string}): void {
-    return;
-  }
-
   public enable(): void {
     this.enabled = true;
   }

@@ -1,6 +1,5 @@
 import { Ball } from '../../src/game_objects/ball';
 import { Player } from '../../src/game_objects/player';
-import { IPlayerController } from '../../src/interfaces/iplayer_controller';
 import { IPlayerBallInteractionMediator } from '../../src/interfaces/iplayer_ball_interaction_mediator';
 import { Team } from '../../src/game_objects/team';
 import { EventQueue } from '../../src/event_queue';
@@ -49,26 +48,15 @@ describe('Player', () => {
   });
 
   describe('`setMessageQueue`', () => {
-    it('passes player messages to its controller', () => {
-      class TestController implements IPlayerController {
-        update() {}
-        handleMessage(message: {details: string}) {}
-        enable() {}
-        disable() {}
-      }
-
+    it('stores messages', () => {
       const queue = new EventQueue();
       const player = new Player(0, 0, 0, 0, 5);
-      const controller = new TestController();
-      player.setController(controller);
       player.setMessageQueue(queue);
-      sinon.spy(controller, 'handleMessage');
 
       queue.trigger(`player.${player.getGameObjectId()}.messaged`,
         {details: 'message'});
 
-      expect(controller.handleMessage).to.have.been.calledWith(
-        {details: 'message'});
+      expect(player.getMessages()).to.eql(['message']);
     });
   });
 

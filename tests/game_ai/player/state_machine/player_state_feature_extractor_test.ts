@@ -9,7 +9,7 @@ import { TestBallPossessionService } from '../../../helpers/test_ball_possession
 import { Vector3D } from '../../../../src/three_dimensional_vector';
 import * as chai from 'chai';
 import * as sinon from 'sinon';
-import { COMMAND_ID } from '../../../../src/constants';
+import { COMMAND_ID, STATE_MACHINE_COMMANDS } from '../../../../src/constants';
 
 const sinonChai = require('sinon-chai');
 const expect = chai.expect;
@@ -162,6 +162,37 @@ describe('PlayerStateFeatureExtractor', () => {
         );
 
         expect(extractor.isNearestTeamMateToBall(otherPlayer)).to.be.false;
+    });
+  });
+
+  describe('`receivedWaitMessage`', () => {
+    it('returns true if the player has WAIT messages', () => {
+      sinon.stub(player, 'readAllMessages').returns(
+        [STATE_MACHINE_COMMANDS.WAIT]);
+      const possessionService = new TestBallPossessionService();
+      const extractor = new PlayerStateFeatureExtractor(
+        ball,
+        possessionService,
+        passValueCalculator,
+        shotValueCalculator,
+        positionValueCalculator
+      );
+
+      expect(extractor.receivedWaitMessage(player)).to.be.true;
+    });
+
+    it('returns false if the player does not have WAIT messages', () => {
+      sinon.stub(player, 'getMessages').returns([]);
+      const possessionService = new TestBallPossessionService();
+      const extractor = new PlayerStateFeatureExtractor(
+        ball,
+        possessionService,
+        passValueCalculator,
+        shotValueCalculator,
+        positionValueCalculator
+      );
+
+      expect(extractor.receivedWaitMessage(player)).to.be.false;
     });
   });
 });

@@ -36,49 +36,67 @@ describe('WaitingState', () => {
 
   describe('`update`', () => {
     it('executes a stop command if eligilble', () => {
-        const state = new WaitingState(commandFactory);
-        const features = getNewFeatures();
-        features.hasWaitMessages = true;
-        features.hasBall = false;
-        features.teamInControl = true;
+      const state = new WaitingState(commandFactory);
+      const features = getNewFeatures();
+      features.hasWaitMessages = true;
+      features.hasBall = false;
+      features.teamInControl = true;
 
-        const command = { execute: sinon.spy() };
-        sinon.stub(commandFactory, 'getCommand')
-          .withArgs(COMMAND_ID.STOP)
-          .returns(command);
+      const command = { execute: sinon.spy() };
+      // HACK: silence errors arising because player has no event_queue.
+      sinon.stub(player, 'sendMessage');
+      sinon.stub(commandFactory, 'getCommand')
+        .withArgs(COMMAND_ID.STOP)
+        .returns(command);
 
-        state.update(player, features);
-        expect(command.execute).to.have.been.calledWith(player);
+      state.update(player, features);
+
+      expect(command.execute).to.have.been.calledWith(player);
     });
 
-    it('tells the player to stop waiting if the player has the ball',
-        () => {
-          const state = new WaitingState(commandFactory);
-          const features = getNewFeatures();
-          features.hasWaitMessages = true;
-          features.hasBall = true;
-          features.teamInControl = true;
+    it('sends a wait message to the player if eligible', () => {
+      const state = new WaitingState(commandFactory);
+      const features = getNewFeatures();
+      features.hasWaitMessages = true;
+      features.hasBall = false;
+      features.teamInControl = true;
 
-          const sendMessageStub = sinon.stub(player, 'sendMessage');
+      const command = { execute: sinon.spy() };
+      sinon.stub(player, 'sendMessage');
+      sinon.stub(commandFactory, 'getCommand')
+        .withArgs(COMMAND_ID.STOP)
+        .returns(command);
 
-          state.update(player, features);
-          expect(sendMessageStub).to.have.been.calledWith(
-            player, {details: STATE_MACHINE_COMMANDS.NO_NEED_TO_WAIT});
+      state.update(player, features);
+
+      expect(player.sendMessage).to.have.been.calledWith(
+        player, {details: STATE_MACHINE_COMMANDS.WAIT});
     });
 
-    it('tells the player to stop waiting if its team looses control',
-        () => {
-          const state = new WaitingState(commandFactory);
-          const features = getNewFeatures();
-          features.hasWaitMessages = true;
-          features.hasBall = false;
-          features.teamInControl = false;
+    it('does not send a wait message if the player has the ball', () => {
+      const state = new WaitingState(commandFactory);
+      const features = getNewFeatures();
+      features.hasWaitMessages = true;
+      features.hasBall = true;
+      features.teamInControl = true;
 
-          const sendMessageStub = sinon.stub(player, 'sendMessage');
+      const sendMessageStub = sinon.stub(player, 'sendMessage');
 
-          state.update(player, features);
-          expect(sendMessageStub).to.have.been.calledWith(
-            player, {details: STATE_MACHINE_COMMANDS.NO_NEED_TO_WAIT});
+      state.update(player, features);
+      expect(sendMessageStub).not.to.have.been.called;
+    });
+
+    it('doesn\'t send a wait message if player\'s team looses control', () => {
+      const state = new WaitingState(commandFactory);
+      const features = getNewFeatures();
+      features.hasWaitMessages = true;
+      features.hasBall = false;
+      features.teamInControl = false;
+
+      const sendMessageStub = sinon.stub(player, 'sendMessage');
+
+      state.update(player, features);
+      expect(sendMessageStub).not.to.have.been.called;
     });
 
     it('does not call a command if the player\'s team looses control', () => {

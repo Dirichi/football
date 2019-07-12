@@ -25,28 +25,10 @@ export class PlayerStateMachine implements IPlayerController {
   public update() {
     if (!this.enabled) { return; }
 
-    const features = this.getFeatures();
+    const features = this.getFeatures(this.player);
     const eligibleState = this.states.find(
         (state) => state.eligibleFor(features));
     eligibleState.update(this.player, features);
-  }
-
-  public handleMessage(message: {details: string}): void {
-    const instruction = message.details;
-
-    if (instruction === STATE_MACHINE_COMMANDS.WAIT) {
-      this.messages.push(instruction);
-      return;
-    }
-
-    if (instruction === STATE_MACHINE_COMMANDS.NO_NEED_TO_WAIT) {
-      this.clearWaitMessages();
-      return;
-    }
-  }
-
-  public getMessages() {
-    return [...this.messages];
   }
 
   public setFeatureExtractor(extractor: IPlayerStateFeatureExtractor) {
@@ -61,24 +43,15 @@ export class PlayerStateMachine implements IPlayerController {
     this.enabled = false;
   }
 
-  private getFeatures(): IPlayerStateFeature {
+  private getFeatures(player: Player): IPlayerStateFeature {
     return {
-      bestPassingOption: this.extractor.bestPassingOption(this.player),
-      bestPositionOption: this.extractor.bestPositionOption(this.player),
-      hasBall: this.extractor.hasBall(this.player),
-      hasWaitMessages: this.hasWaitMessages(),
-      isNearestTeamMateToBall: this.extractor.isNearestTeamMateToBall(this.player),
-      shotValue: this.extractor.shotValue(this.player),
-      teamInControl: this.extractor.teamInControl(this.player),
+      bestPassingOption: this.extractor.bestPassingOption(player),
+      bestPositionOption: this.extractor.bestPositionOption(player),
+      hasBall: this.extractor.hasBall(player),
+      hasWaitMessages: this.extractor.receivedWaitMessage(player),
+      isNearestTeamMateToBall: this.extractor.isNearestTeamMateToBall(player),
+      shotValue: this.extractor.shotValue(player),
+      teamInControl: this.extractor.teamInControl(player),
     };
-  }
-
-  private hasWaitMessages(): boolean {
-    return this.messages.includes(STATE_MACHINE_COMMANDS.WAIT);
-  }
-
-  private clearWaitMessages(): void {
-    this.messages = this.messages.filter(
-      (message) => message !== STATE_MACHINE_COMMANDS.WAIT);
   }
 }

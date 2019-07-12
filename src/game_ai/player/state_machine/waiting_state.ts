@@ -13,24 +13,14 @@ export class WaitingState implements IPlayerState {
   }
 
   public eligibleFor(features: IPlayerStateFeature): boolean {
-    return features.hasWaitMessages;
+    const waitingNoLongerValid = features.hasBall || !features.teamInControl;
+    return features.hasWaitMessages && !waitingNoLongerValid;
   }
 
   public update(player: Player, features: IPlayerStateFeature): void {
-    if (!this.eligibleFor(features)) {
-      return;
-    }
+    if (!this.eligibleFor(features)) { return; }
 
-    if (this.waitingNoLongerValidFor(features)) {
-      player.sendMessage(player,
-        {details: STATE_MACHINE_COMMANDS.NO_NEED_TO_WAIT});
-      return;
-    }
-
+    player.sendMessage(player, {details: STATE_MACHINE_COMMANDS.WAIT});
     this.commandFactory.getCommand(COMMAND_ID.STOP).execute(player);
-  }
-
-  private waitingNoLongerValidFor(features: IPlayerStateFeature): boolean {
-    return features.hasBall || !features.teamInControl;
   }
 }

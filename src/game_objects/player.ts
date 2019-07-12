@@ -34,6 +34,7 @@ export class Player implements ICollidable {
   private messageQueue?: EventQueue;
   private ballInteractionMediator?: IPlayerBallInteractionMediator;
   private role?: PlayerRole;
+  private messages: string[];
 
   constructor(x: number, y: number, vx: number, vy: number, diameter: number) {
       this.id = v4(); // Randomly generated id
@@ -46,6 +47,7 @@ export class Player implements ICollidable {
       // Like a PhysicalRepresentation or something like that. So that we can
       // swap representations out as we see fit.
       this.colors = [0, 0, 225];
+      this.messages = [];
   }
 
   public update(): void {
@@ -240,6 +242,16 @@ export class Player implements ICollidable {
     this.ballInteractionMediator.chaseBall(this);
   }
 
+  public getMessages(): string[] {
+    return [...this.messages];
+  }
+
+  public readAllMessages(): string[] {
+    const messages = this.messages;
+    this.messages = [];
+    return messages;
+  }
+
   private attackingPosition(): Vector3D {
     return this.role.getDefaultAttackingPosition(this.team.getSide());
   }
@@ -255,7 +267,7 @@ export class Player implements ICollidable {
   private listenForMessages(): void {
     this.messageQueue.when(
       `player.${this.id}.messaged`, (message: {details: string}) => {
-        this.controller.handleMessage(message);
+        this.messages.push(message.details);
       });
   }
 
