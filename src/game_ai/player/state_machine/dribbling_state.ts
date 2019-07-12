@@ -12,12 +12,12 @@ export class DribblingState implements IPlayerState {
   }
 
   public eligibleFor(features: IPlayerStateFeature): boolean {
-    return features.hasBall;
+    return features.hasBall && features.shouldDribble;
   }
 
   public update(player: Player, features: IPlayerStateFeature): void {
     if (this.eligibleFor(features)) {
-      this.commandFactory.getCommand(COMMAND_ID.DRIBBLE).execute(player);
+      player.moveTowards(features.bestDribblingOption);
     }
   }
 }

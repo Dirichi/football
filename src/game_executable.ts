@@ -2,6 +2,7 @@ import { GameStateMachine } from "./game_ai/game/game_state_machine";
 import { KickOffState } from "./game_ai/game/kickoff_state";
 import { AttackingRunState } from "./game_ai/player/state_machine/attacking_run_state";
 import { CongestionCalculator } from "./game_ai/player/state_machine/calculators/congestion_calculator";
+import { DribblingValueCalculator } from "./game_ai/player/state_machine/calculators/dribbling_value_calculator";
 import { InterceptionCalculator } from "./game_ai/player/state_machine/calculators/interception_calculator";
 import { PassValueCalculator } from "./game_ai/player/state_machine/calculators/pass_value_calculator";
 import { PositionValueCalculator } from "./game_ai/player/state_machine/calculators/position_value_calculator";
@@ -209,8 +210,8 @@ const PLAYER_STATES: IPlayerState[] = [
   new DefensiveRunState(commandFactory),
   new ChasingBallState(commandFactory),
   new ShootingState(commandFactory),
-  new PassingState(commandFactory),
   new DribblingState(commandFactory),
+  new PassingState(commandFactory),
 ];
 const interceptionCalculator = new InterceptionCalculator();
 const shotValueCalculator =
@@ -221,6 +222,8 @@ const positionValueCalculator = new PositionValueCalculator(
     ball, field, congestionCalculator, shotValueCalculator);
 const passValueCalculator = new PassValueCalculator(
   ball, interceptionCalculator, positionValueCalculator);
+const dribblingValueCalculator =
+  new DribblingValueCalculator(positionValueCalculator, interceptionCalculator);
 
 const positionValueDebugService =
   new PositionValueDebugService(positionValueCalculator, defaultPlayers);
@@ -231,7 +234,8 @@ const featureExtractor =
     ballPossessionService,
     passValueCalculator,
     shotValueCalculator,
-    positionValueCalculator);
+    positionValueCalculator,
+    dribblingValueCalculator);
 
 const buildStateMachine = (player: Player) => {
   const machine = new PlayerStateMachine(player, PLAYER_STATES);

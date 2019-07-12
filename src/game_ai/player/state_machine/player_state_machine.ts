@@ -63,12 +63,16 @@ export class PlayerStateMachine implements IPlayerController {
 
   private getFeatures(): IPlayerStateFeature {
     return {
+      bestDribbleValue: this.extractor.bestDribbleValue(this.player),
+      bestDribblingOption: this.extractor.bestDribblingOption(this.player),
+      bestPassValue: this.extractor.bestPassValue(this.player),
       bestPassingOption: this.extractor.bestPassingOption(this.player),
       bestPositionOption: this.extractor.bestPositionOption(this.player),
       hasBall: this.extractor.hasBall(this.player),
       hasWaitMessages: this.hasWaitMessages(),
       isNearestTeamMateToBall: this.extractor.isNearestTeamMateToBall(this.player),
       shotValue: this.extractor.shotValue(this.player),
+      shouldDribble: this.extractor.shouldDribble(this.player),
       teamInControl: this.extractor.teamInControl(this.player),
     };
   }

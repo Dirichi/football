@@ -7,7 +7,6 @@ import { Vector3D } from "../../../../three_dimensional_vector";
 import { InterceptionCalculator } from "./interception_calculator";
 
 export class PassValueCalculator implements IPassValueCalculator {
-
   constructor(
     private ball: Ball,
     private interceptionCalculator: InterceptionCalculator,

@@ -26,14 +26,15 @@ export class PositionValueCalculator implements IPositionValueCalculator {
 
   public evaluate(
     player: Player,
-    position: Vector3D = player.getPosition()): number {
+    position: Vector3D = player.getPosition(),
+    withBall: boolean = false): number {
       if (!this.field.containsPoint(position)) {
         return 0;
       }
 
       const congestion = this.congestionScore(player, position);
       const shotValue = this.shotValueScore(player, position);
-      const trackingBall = this.trackingBallScore(player, position);
+      const trackingBall = this.trackingBallScore(player, position, withBall);
 
       const weightedScore =
         // TODO: Make these weights constants
@@ -50,7 +51,12 @@ export class PositionValueCalculator implements IPositionValueCalculator {
     return this.shotValueCalculator.evaluate(player, position);
   }
 
-  private trackingBallScore(player: Player, position: Vector3D): number {
+  private trackingBallScore(
+    player: Player, position: Vector3D, withBall: boolean): number {
+
+    if (withBall) {
+      return 1;
+    }
     const distanceToBall = position.distanceTo(this.ball.getPosition());
     return scale(distanceToBall, 0, this.field.diagonalLength(), 1, 0);
   }
