@@ -1,25 +1,28 @@
 import { CommandFactory } from '../../../../src/commands/command_factory';
-import { IPlayerStateFeature } from '../../../../src/interfaces/iplayer_state_feature';
+import { IPlayerStateFeatureExtractor } from '../../../../src/interfaces/iplayer_state_feature_extractor';
 import { PassingState } from '../../../../src/game_ai/player/state_machine/passing_state';
 import { Player } from '../../../../src/game_objects/player';
 import * as chai from 'chai';
 import * as sinon from 'sinon';
 import { COMMAND_ID } from '../../../../src/constants';
+import { Vector3D } from '../../../../src/three_dimensional_vector';
 
 const sinonChai = require('sinon-chai');
 const expect = chai.expect;
 chai.use(sinonChai);
 
+const bestPassOption = new Player(0, 0, 0, 0, 5);
 let commandFactory: CommandFactory;
-let getNewFeatures = () => {
+let getNewExtractor = () => {
   return {
-    bestPassingOption: new Player(0, 0, 0, 0, 5),
-    hasBall: false,
-    hasWaitMessages: false,
-    isNearestTeamMateToBall: false,
-    shotValue: 0,
-    teamInControl: false,
-  } as IPlayerStateFeature;
+    bestPositionOption: (player: Player) => new Vector3D(0, 0, 0),
+    bestPassingOption: (player: Player) => bestPassOption,
+    hasBall: (player: Player) => false,
+    receivedWaitMessage: (player: Player) => false,
+    isNearestTeamMateToBall: (player: Player) => false,
+    shotValue: (player: Player) => 0,
+    teamInControl: (player: Player) => false,
+  } as IPlayerStateFeatureExtractor;
 };
 let player: Player;
 
@@ -36,31 +39,30 @@ describe('PassingState', () => {
 
   describe('`update`', () => {
     it('executes a pass command if eligilble', () => {
-        const state = new PassingState(commandFactory);
-        const features = getNewFeatures();
-        features.hasBall = true;
-
-        const command = { execute: sinon.spy() };
-        sinon.stub(commandFactory, 'getCommand')
-          .withArgs(COMMAND_ID.PASS_BALL)
-          .returns(command);
-
-        state.update(player, features);
-        expect(command.execute).to.have.been.calledWith(
-          player, features.bestPassingOption);
-    });
-
-    it('does nothing if the player does not have the ball', () => {
-      const state = new PassingState(commandFactory);
-      const features = getNewFeatures();
-      features.hasBall = false;
+      const extractor = getNewExtractor();
+      sinon.stub(extractor, 'hasBall').returns(true);
+      const state = new PassingState(commandFactory, extractor);
 
       const command = { execute: sinon.spy() };
       sinon.stub(commandFactory, 'getCommand')
         .withArgs(COMMAND_ID.PASS_BALL)
         .returns(command);
 
-      state.update(player, features);
+      state.update(player);
+      expect(command.execute).to.have.been.calledWith(player, bestPassOption);
+    });
+
+    it('does nothing if the player does not have the ball', () => {
+      const extractor = getNewExtractor();
+      sinon.stub(extractor, 'hasBall').returns(false);
+      const state = new PassingState(commandFactory, extractor);
+
+      const command = { execute: sinon.spy() };
+      sinon.stub(commandFactory, 'getCommand')
+        .withArgs(COMMAND_ID.PASS_BALL)
+        .returns(command);
+
+      state.update(player);
       expect(command.execute).not.to.have.been.called;
     });
   });

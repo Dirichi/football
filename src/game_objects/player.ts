@@ -246,10 +246,8 @@ export class Player implements ICollidable {
     return [...this.messages];
   }
 
-  public readAllMessages(): string[] {
-    const messages = this.messages;
-    this.messages = [];
-    return messages;
+  public clearMessage(messageTitle: string): void {
+    this.messages = this.messages.filter((message) => message !== messageTitle);
   }
 
   private attackingPosition(): Vector3D {

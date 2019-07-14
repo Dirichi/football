@@ -167,7 +167,7 @@ describe('PlayerStateFeatureExtractor', () => {
 
   describe('`receivedWaitMessage`', () => {
     it('returns true if the player has WAIT messages', () => {
-      sinon.stub(player, 'readAllMessages').returns(
+      sinon.stub(player, 'getMessages').returns(
         [STATE_MACHINE_COMMANDS.WAIT]);
       const possessionService = new TestBallPossessionService();
       const extractor = new PlayerStateFeatureExtractor(

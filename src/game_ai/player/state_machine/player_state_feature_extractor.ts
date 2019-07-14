@@ -74,6 +74,6 @@ export class PlayerStateFeatureExtractor implements IPlayerStateFeatureExtractor
   }
 
   public receivedWaitMessage(player: Player): boolean {
-    return player.readAllMessages().includes(STATE_MACHINE_COMMANDS.WAIT);
+    return player.getMessages().includes(STATE_MACHINE_COMMANDS.WAIT);
   }
 }

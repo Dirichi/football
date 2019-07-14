@@ -1,25 +1,27 @@
 import { CommandFactory } from '../../../../src/commands/command_factory';
 import { COMMAND_ID, STATE_MACHINE_COMMANDS } from '../../../../src/constants';
-import { IPlayerStateFeature } from '../../../../src/interfaces/iplayer_state_feature';
+import { IPlayerStateFeatureExtractor } from '../../../../src/interfaces/iplayer_state_feature_extractor';
 import { WaitingState } from '../../../../src/game_ai/player/state_machine/waiting_state';
 import { Player } from '../../../../src/game_objects/player';
 import * as chai from 'chai';
 import * as sinon from 'sinon';
+import { Vector3D } from '../../../../src/three_dimensional_vector';
 
 const sinonChai = require('sinon-chai');
 const expect = chai.expect;
 chai.use(sinonChai);
 
 let commandFactory: CommandFactory;
-let getNewFeatures = () => {
+let getNewExtractor = () => {
   return {
-    bestPassingOption: new Player(0, 0, 0, 0, 5),
-    hasBall: false,
-    hasWaitMessages: false,
-    isNearestTeamMateToBall: false,
-    shotValue: 0,
-    teamInControl: false,
-  } as IPlayerStateFeature;
+    bestPositionOption: (player: Player) => new Vector3D(0, 0, 0),
+    bestPassingOption: (player: Player) => new Player(0, 0, 0, 0, 5),
+    hasBall: (player: Player) => false,
+    receivedWaitMessage: (player: Player) => false,
+    isNearestTeamMateToBall: (player: Player) => false,
+    shotValue: (player: Player) => 0,
+    teamInControl: (player: Player) => false,
+  } as IPlayerStateFeatureExtractor;
 };
 let player: Player;
 
@@ -36,113 +38,85 @@ describe('WaitingState', () => {
 
   describe('`update`', () => {
     it('executes a stop command if eligilble', () => {
-      const state = new WaitingState(commandFactory);
-      const features = getNewFeatures();
-      features.hasWaitMessages = true;
-      features.hasBall = false;
-      features.teamInControl = true;
+      const extractor = getNewExtractor();
+      sinon.stub(extractor, 'receivedWaitMessage').returns(true);
+      sinon.stub(extractor, 'hasBall').returns(false);
+      sinon.stub(extractor, 'teamInControl').returns(true);
+      const state = new WaitingState(commandFactory, extractor);
 
       const command = { execute: sinon.spy() };
-      // HACK: silence errors arising because player has no event_queue.
-      sinon.stub(player, 'sendMessage');
       sinon.stub(commandFactory, 'getCommand')
         .withArgs(COMMAND_ID.STOP)
         .returns(command);
 
-      state.update(player, features);
+      state.update(player);
 
       expect(command.execute).to.have.been.calledWith(player);
     });
 
-    it('sends a wait message to the player if eligible', () => {
-      const state = new WaitingState(commandFactory);
-      const features = getNewFeatures();
-      features.hasWaitMessages = true;
-      features.hasBall = false;
-      features.teamInControl = true;
-
-      const command = { execute: sinon.spy() };
-      sinon.stub(player, 'sendMessage');
-      sinon.stub(commandFactory, 'getCommand')
-        .withArgs(COMMAND_ID.STOP)
-        .returns(command);
-
-      state.update(player, features);
-
-      expect(player.sendMessage).to.have.been.calledWith(
-        player, {details: STATE_MACHINE_COMMANDS.WAIT});
-    });
-
-    it('does not send a wait message if the player has the ball', () => {
-      const state = new WaitingState(commandFactory);
-      const features = getNewFeatures();
-      features.hasWaitMessages = true;
-      features.hasBall = true;
-      features.teamInControl = true;
-
-      const sendMessageStub = sinon.stub(player, 'sendMessage');
-
-      state.update(player, features);
-      expect(sendMessageStub).not.to.have.been.called;
-    });
-
-    it('doesn\'t send a wait message if player\'s team looses control', () => {
-      const state = new WaitingState(commandFactory);
-      const features = getNewFeatures();
-      features.hasWaitMessages = true;
-      features.hasBall = false;
-      features.teamInControl = false;
-
-      const sendMessageStub = sinon.stub(player, 'sendMessage');
-
-      state.update(player, features);
-      expect(sendMessageStub).not.to.have.been.called;
-    });
-
     it('does not call a command if the player\'s team looses control', () => {
-      const state = new WaitingState(commandFactory);
-      const features = getNewFeatures();
-      features.hasWaitMessages = true;
-      features.hasBall = false;
-      features.teamInControl = false;
+      const extractor = getNewExtractor();
+      sinon.stub(extractor, 'receivedWaitMessage').returns(true);
+      sinon.stub(extractor, 'hasBall').returns(false);
+      sinon.stub(extractor, 'teamInControl').returns(false);
+      const state = new WaitingState(commandFactory, extractor);
 
-      // silence errors related to a null messaeQueue
-      sinon.stub(player, 'sendMessage');
-
-      const getCommandStub = sinon.stub(commandFactory, 'getCommand')
-      state.update(player, features);
+      const getCommandStub = sinon.stub(commandFactory, 'getCommand');
+      state.update(player);
 
       expect(getCommandStub).not.to.have.been.called;
+    });
+
+    it('clears wait messages if the player\'s team looses control', () => {
+      const extractor = getNewExtractor();
+      sinon.stub(extractor, 'receivedWaitMessage').returns(true);
+      sinon.stub(extractor, 'hasBall').returns(false);
+      sinon.stub(extractor, 'teamInControl').returns(false);
+      const state = new WaitingState(commandFactory, extractor);
+      sinon.spy(player, 'clearMessage');
+
+      state.update(player);
+
+      expect(player.clearMessage).to.have.been.calledWith(
+        STATE_MACHINE_COMMANDS.WAIT);
     });
 
     it('does not call a command if the player has the ball', () => {
-      const state = new WaitingState(commandFactory);
-      const features = getNewFeatures();
-      features.hasWaitMessages = true;
-      features.hasBall = true;
-      features.teamInControl = false;
+      const extractor = getNewExtractor();
+      sinon.stub(extractor, 'receivedWaitMessage').returns(true);
+      sinon.stub(extractor, 'hasBall').returns(true);
+      sinon.stub(extractor, 'teamInControl').returns(true);
+      const state = new WaitingState(commandFactory, extractor);
+      sinon.stub(commandFactory, 'getCommand');
 
-      // silence errors related to a null messaeQueue
-      sinon.stub(player, 'sendMessage');
+      state.update(player);
 
-      const getCommandStub = sinon.stub(commandFactory, 'getCommand')
-      state.update(player, features);
+      expect(commandFactory.getCommand).not.to.have.been.called;
+    });
 
-      expect(getCommandStub).not.to.have.been.called;
+    it('clears wait messages if the player has the ball', () => {
+      const extractor = getNewExtractor();
+      sinon.stub(extractor, 'receivedWaitMessage').returns(true);
+      sinon.stub(extractor, 'hasBall').returns(true);
+      sinon.stub(extractor, 'teamInControl').returns(true);
+      const state = new WaitingState(commandFactory, extractor);
+      sinon.spy(player, 'clearMessage');
+
+      state.update(player);
+
+      expect(player.clearMessage).to.have.been.calledWith(
+        STATE_MACHINE_COMMANDS.WAIT);
     });
 
     it('does nothing if the player does not have wait messages', () => {
-      const state = new WaitingState(commandFactory);
-      const features = getNewFeatures();
-      features.hasWaitMessages = false;
+      const extractor = getNewExtractor();
+      sinon.stub(extractor, 'receivedWaitMessage').returns(false);
+      const state = new WaitingState(commandFactory, extractor);
 
-      const command = { execute: sinon.spy() };
-      sinon.stub(commandFactory, 'getCommand')
-        .withArgs(COMMAND_ID.STOP)
-        .returns(command);
+      sinon.stub(commandFactory, 'getCommand');
+      state.update(player);
 
-      state.update(player, features);
-      expect(command.execute).not.to.have.been.called;
+      expect(commandFactory.getCommand).not.to.have.been.called;
     });
   });
 });

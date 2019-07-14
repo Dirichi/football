@@ -183,35 +183,6 @@ teamA.setRoles(teamAroles);
 teamB.setRoles(teamBroles);
 collisionNotificationService.registerCollisionGroup([ball, ...defaultPlayers]);
 
-const moveCommand = new MoveCommand();
-const chaseBallCommand = new ChaseBallCommand();
-const passBallCommand = new PassBallCommand();
-const stopCommand = new StopCommand();
-const shootBallCommand = new ShootBallCommand();
-const moveToAttackingPositionCommand = new MoveToAttackingPositionCommand();
-const moveToDefensivePositionCommand = new MoveToDefensivePositionCommand();
-
-const COMMAND_ID_TO_COMMAND_MAPPING = new Map<COMMAND_ID, ICommand>([
-  [COMMAND_ID.MOVE, moveCommand],
-  [COMMAND_ID.CHASE_BALL, chaseBallCommand],
-  [COMMAND_ID.SHOOT_BALL, shootBallCommand],
-  [COMMAND_ID.PASS_BALL, passBallCommand],
-  [COMMAND_ID.STOP, stopCommand],
-  [COMMAND_ID.MOVE_TO_ATTACKING_POSITION, moveToAttackingPositionCommand],
-  [COMMAND_ID.MOVE_TO_DEFENSIVE_POSITION, moveToDefensivePositionCommand],
-]);
-
-const commandFactory = new CommandFactory(COMMAND_ID_TO_COMMAND_MAPPING);
-
-const PLAYER_STATES: IPlayerState[] = [
-  new WaitingState(commandFactory),
-  new AttackingRunState(commandFactory),
-  new DefensiveRunState(commandFactory),
-  new ChasingBallState(commandFactory),
-  new ShootingState(commandFactory),
-  new PassingState(commandFactory),
-  new DribblingState(commandFactory),
-];
 const interceptionCalculator = new InterceptionCalculator();
 const shotValueCalculator =
   new ShotValueCalculator(ball, field, interceptionCalculator);
@@ -233,9 +204,30 @@ const featureExtractor =
     shotValueCalculator,
     positionValueCalculator);
 
+const COMMAND_ID_TO_COMMAND_MAPPING = new Map<COMMAND_ID, ICommand>([
+      [COMMAND_ID.MOVE, new MoveCommand()],
+      [COMMAND_ID.CHASE_BALL, new ChaseBallCommand()],
+      [COMMAND_ID.SHOOT_BALL, new ShootBallCommand()],
+      [COMMAND_ID.PASS_BALL, new PassBallCommand()],
+      [COMMAND_ID.STOP, new StopCommand()],
+      [COMMAND_ID.MOVE_TO_ATTACKING_POSITION, new MoveToAttackingPositionCommand()],
+      [COMMAND_ID.MOVE_TO_DEFENSIVE_POSITION, new MoveToDefensivePositionCommand()],
+    ]);
+
+const commandFactory = new CommandFactory(COMMAND_ID_TO_COMMAND_MAPPING);
+
+const PLAYER_STATES: IPlayerState[] = [
+      new WaitingState(commandFactory, featureExtractor),
+      new AttackingRunState(commandFactory, featureExtractor),
+      new DefensiveRunState(commandFactory, featureExtractor),
+      new ChasingBallState(commandFactory, featureExtractor),
+      new ShootingState(commandFactory, featureExtractor),
+      new PassingState(commandFactory, featureExtractor),
+      new DribblingState(commandFactory, featureExtractor),
+    ];
+
 const buildStateMachine = (player: Player) => {
   const machine = new PlayerStateMachine(player, PLAYER_STATES);
-  machine.setFeatureExtractor(featureExtractor);
   return machine;
 };
 
