@@ -1,7 +1,7 @@
 import { Player } from "../game_objects/player";
-import { IPlayerStateFeature } from "./iplayer_state_feature";
+import { IPlayerStateFeatureExtractor } from "./iplayer_state_feature_extractor";
 
 export interface IPlayerState {
-  eligibleFor(features: IPlayerStateFeature): boolean;
-  update(player: Player, features: IPlayerStateFeature): void;
+  eligibleFor(player: Player): boolean;
+  update(player: Player): void;
 }
