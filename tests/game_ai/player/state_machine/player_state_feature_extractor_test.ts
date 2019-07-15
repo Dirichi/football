@@ -2,6 +2,7 @@ import { Ball } from '../../../../src/game_objects/ball';
 import { IPassValueCalculator } from '../../../../src/interfaces/ipass_value_calculator';
 import { IPositionValueCalculator } from '../../../../src/interfaces/iposition_value_calculator';
 import { IShotValueCalculator } from '../../../../src/interfaces/ishot_value_calculator';
+import { IDribbleValueCalculator } from '../../../../src/interfaces/idribble_value_calculator';
 import { Player } from '../../../../src/game_objects/player';
 import { PlayerStateFeatureExtractor } from '../../../../src/game_ai/player/state_machine/player_state_feature_extractor';
 import { Team } from '../../../../src/game_objects/team';
@@ -20,6 +21,7 @@ let ball: Ball;
 let passValueCalculator: IPassValueCalculator;
 let shotValueCalculator: IShotValueCalculator;
 let positionValueCalculator: IPositionValueCalculator;
+let dribbleValueCalculator: IDribbleValueCalculator;
 
 describe('PlayerStateFeatureExtractor', () => {
   beforeEach(() => {
@@ -34,6 +36,11 @@ describe('PlayerStateFeatureExtractor', () => {
     positionValueCalculator = {
       evaluate: (player: Player, position?: Vector3D) => 0.5,
     }
+
+    dribbleValueCalculator = {
+      evaluate: (
+        player: Player, endPositon: Vector3D, startPosition: Vector3D) => 0.5,
+    }
   });
 
   afterEach(() => {
@@ -42,6 +49,7 @@ describe('PlayerStateFeatureExtractor', () => {
     passValueCalculator = null;
     shotValueCalculator = null;
     positionValueCalculator = null;
+    dribbleValueCalculator = null;
   });
 
   describe('`hasBall`', () => {
@@ -53,7 +61,8 @@ describe('PlayerStateFeatureExtractor', () => {
         possessionService,
         passValueCalculator,
         shotValueCalculator,
-        positionValueCalculator
+        positionValueCalculator,
+        dribbleValueCalculator
       );
       expect(extractor.hasBall(player)).to.be.true;
     });
@@ -66,7 +75,8 @@ describe('PlayerStateFeatureExtractor', () => {
         possessionService,
         passValueCalculator,
         shotValueCalculator,
-        positionValueCalculator
+        positionValueCalculator,
+        dribbleValueCalculator
       );
       expect(extractor.hasBall(player)).to.be.false;
     });
@@ -84,7 +94,8 @@ describe('PlayerStateFeatureExtractor', () => {
           possessionService,
           passValueCalculator,
           shotValueCalculator,
-          positionValueCalculator
+          positionValueCalculator,
+          dribbleValueCalculator
         );
         expect(extractor.teamInControl(player)).to.be.true;
     });
@@ -102,7 +113,8 @@ describe('PlayerStateFeatureExtractor', () => {
           possessionService,
           passValueCalculator,
           shotValueCalculator,
-          positionValueCalculator
+          positionValueCalculator,
+          dribbleValueCalculator
         );
         expect(extractor.teamInControl(player)).to.be.false;
     });
@@ -124,7 +136,8 @@ describe('PlayerStateFeatureExtractor', () => {
         possessionService,
         passValueCalculator,
         shotValueCalculator,
-        positionValueCalculator
+        positionValueCalculator,
+        dribbleValueCalculator
       );
       expect(extractor.bestPassingOption(player)).to.equal(mateTwo);
     });
@@ -141,7 +154,8 @@ describe('PlayerStateFeatureExtractor', () => {
         possessionService,
         passValueCalculator,
         shotValueCalculator,
-        positionValueCalculator
+        positionValueCalculator,
+        dribbleValueCalculator
       );
 
       expect(extractor.isNearestTeamMateToBall(player)).to.be.true;
@@ -158,7 +172,8 @@ describe('PlayerStateFeatureExtractor', () => {
           possessionService,
           passValueCalculator,
           shotValueCalculator,
-          positionValueCalculator
+          positionValueCalculator,
+          dribbleValueCalculator
         );
 
         expect(extractor.isNearestTeamMateToBall(otherPlayer)).to.be.false;
@@ -175,7 +190,8 @@ describe('PlayerStateFeatureExtractor', () => {
         possessionService,
         passValueCalculator,
         shotValueCalculator,
-        positionValueCalculator
+        positionValueCalculator,
+        dribbleValueCalculator
       );
 
       expect(extractor.receivedWaitMessage(player)).to.be.true;
@@ -189,7 +205,8 @@ describe('PlayerStateFeatureExtractor', () => {
         possessionService,
         passValueCalculator,
         shotValueCalculator,
-        positionValueCalculator
+        positionValueCalculator,
+        dribbleValueCalculator
       );
 
       expect(extractor.receivedWaitMessage(player)).to.be.false;
