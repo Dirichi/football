@@ -2,6 +2,7 @@ import { GameStateMachine } from "./game_ai/game/game_state_machine";
 import { KickOffState } from "./game_ai/game/kickoff_state";
 import { AttackingRunState } from "./game_ai/player/state_machine/attacking_run_state";
 import { CongestionCalculator } from "./game_ai/player/state_machine/calculators/congestion_calculator";
+import { DribbleValueCalculator } from "./game_ai/player/state_machine/calculators/dribble_value_calculator";
 import { InterceptionCalculator } from "./game_ai/player/state_machine/calculators/interception_calculator";
 import { PassValueCalculator } from "./game_ai/player/state_machine/calculators/pass_value_calculator";
 import { PositionValueCalculator } from "./game_ai/player/state_machine/calculators/position_value_calculator";
@@ -189,9 +190,11 @@ const shotValueCalculator =
 const congestionCalculator =
   new CongestionCalculator(defaultPlayers, RADIUS_FOR_CONGESTION);
 const positionValueCalculator = new PositionValueCalculator(
-    ball, field, congestionCalculator, shotValueCalculator);
+  ball, field, congestionCalculator, shotValueCalculator);
 const passValueCalculator = new PassValueCalculator(
   ball, interceptionCalculator, positionValueCalculator);
+const dribbleValueCalculator =
+  new DribbleValueCalculator(positionValueCalculator, interceptionCalculator);
 
 const positionValueDebugService =
   new PositionValueDebugService(positionValueCalculator, defaultPlayers);
@@ -202,7 +205,8 @@ const featureExtractor =
     ballPossessionService,
     passValueCalculator,
     shotValueCalculator,
-    positionValueCalculator);
+    positionValueCalculator,
+    dribbleValueCalculator);
 
 const COMMAND_ID_TO_COMMAND_MAPPING = new Map<COMMAND_ID, ICommand>([
       [COMMAND_ID.MOVE, new MoveCommand()],
@@ -222,8 +226,8 @@ const PLAYER_STATES: IPlayerState[] = [
       new DefensiveRunState(commandFactory, featureExtractor),
       new ChasingBallState(commandFactory, featureExtractor),
       new ShootingState(commandFactory, featureExtractor),
-      new PassingState(commandFactory, featureExtractor),
       new DribblingState(commandFactory, featureExtractor),
+      new PassingState(commandFactory, featureExtractor),
     ];
 
 const buildStateMachine = (player: Player) => {
