@@ -2,6 +2,7 @@ import { POSITION_DELTA_FOR_POSITION_VALUE_CALCULATION, STATE_MACHINE_COMMANDS }
 import { Ball } from "../../../game_objects/ball";
 import { Player } from "../../../game_objects/player";
 import { IBallPossessionService } from "../../../interfaces/iball_possession_service";
+import { IDribbleValueCalculator } from "../../../interfaces/idribble_value_calculator";
 import { IPassValueCalculator } from "../../../interfaces/ipass_value_calculator";
 import { IPlayerStateFeatureExtractor } from "../../../interfaces/iplayer_state_feature_extractor";
 import { IPositionValueCalculator } from "../../../interfaces/iposition_value_calculator";
@@ -15,7 +16,8 @@ export class PlayerStateFeatureExtractor implements IPlayerStateFeatureExtractor
     private ballPossessionService: IBallPossessionService,
     private passValueCalculator: IPassValueCalculator,
     private shotValueCalculator: IShotValueCalculator,
-    private positionValueCalculator: IPositionValueCalculator) {
+    private positionValueCalculator: IPositionValueCalculator,
+    private dribbleValueCalculator: IDribbleValueCalculator) {
   }
 
   public teamInControl(player: Player): boolean {
@@ -39,24 +41,29 @@ export class PlayerStateFeatureExtractor implements IPlayerStateFeatureExtractor
     });
   }
 
+  public bestDribbleOption(player: Player): Vector3D {
+    const positions = this.positionOptions(player);
+    return maximumBy(positions, (position) => {
+      return this.dribbleValueCalculator.evaluate(player, position);
+    });
+  }
+
+  public bestPassValue(player: Player): number {
+    const bestPassOption = this.bestPassingOption(player);
+    return this.passValueCalculator.evaluate(bestPassOption);
+  }
+
+  public bestDribbleValue(player: Player): number {
+    const bestDribbleOption = this.bestDribbleOption(player);
+    return this.dribbleValueCalculator.evaluate(player, bestDribbleOption);
+  }
+
   public shotValue(player: Player): number {
     return this.shotValueCalculator.evaluate(player);
   }
 
   public bestPositionOption(player: Player): Vector3D {
-    const delta = POSITION_DELTA_FOR_POSITION_VALUE_CALCULATION;
-    const positionDiffs = [
-      new Vector3D(delta, 0, 0),
-      new Vector3D(-delta, 0, 0),
-      new Vector3D(0, delta, 0),
-      new Vector3D(0, -delta, 0),
-      new Vector3D(0, 0, 0),
-    ];
-
-    const positions = positionDiffs.map((position) => {
-      return player.getPosition().add(position);
-    });
-
+    const positions = this.positionOptions(player);
     return maximumBy(positions, (position) => {
       return this.positionValueCalculator.evaluate(player, position);
     });
@@ -75,5 +82,20 @@ export class PlayerStateFeatureExtractor implements IPlayerStateFeatureExtractor
 
   public receivedWaitMessage(player: Player): boolean {
     return player.getMessages().includes(STATE_MACHINE_COMMANDS.WAIT);
+  }
+
+  private positionOptions(player: Player): Vector3D[] {
+    const delta = POSITION_DELTA_FOR_POSITION_VALUE_CALCULATION;
+    const positionDiffs = [
+      new Vector3D(delta, 0, 0),
+      new Vector3D(-delta, 0, 0),
+      new Vector3D(0, delta, 0),
+      new Vector3D(0, -delta, 0),
+      new Vector3D(0, 0, 0),
+    ];
+
+    return positionDiffs.map((position) => {
+      return player.getPosition().add(position);
+    });
   }
 }
