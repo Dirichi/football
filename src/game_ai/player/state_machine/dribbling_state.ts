@@ -11,12 +11,14 @@ export class DribblingState implements IPlayerState {
   }
 
   public eligibleFor(player: Player): boolean {
-    return this.extractor.hasBall(player);
+    return this.extractor.hasBall(player) &&
+      (this.extractor.bestDribbleValue(player) >
+        this.extractor.bestPassValue(player));
   }
 
   public update(player: Player): void {
     if (this.eligibleFor(player)) {
-      this.commandFactory.getCommand(COMMAND_ID.DRIBBLE).execute(player);
+      player.moveTowards(this.extractor.bestDribbleOption(player));
     }
   }
 }
