@@ -21,6 +21,7 @@ let getNewExtractor = () => {
     isNearestTeamMateToBall: (player: Player) => false,
     shotValue: (player: Player) => 0,
     teamInControl: (player: Player) => false,
+    expectedPassInterceptedOrCompleted: (player: Player) => false,
   } as IPlayerStateFeatureExtractor;
 };
 let player: Player;
@@ -40,8 +41,7 @@ describe('WaitingState', () => {
     it('executes a stop command if eligilble', () => {
       const extractor = getNewExtractor();
       sinon.stub(extractor, 'receivedWaitMessage').returns(true);
-      sinon.stub(extractor, 'hasBall').returns(false);
-      sinon.stub(extractor, 'teamInControl').returns(true);
+      sinon.stub(extractor, 'expectedPassInterceptedOrCompleted').returns(false);
       const state = new WaitingState(commandFactory, extractor);
 
       const command = { execute: sinon.spy() };
@@ -54,57 +54,29 @@ describe('WaitingState', () => {
       expect(command.execute).to.have.been.calledWith(player);
     });
 
-    it('does not call a command if the player\'s team looses control', () => {
-      const extractor = getNewExtractor();
-      sinon.stub(extractor, 'receivedWaitMessage').returns(true);
-      sinon.stub(extractor, 'hasBall').returns(false);
-      sinon.stub(extractor, 'teamInControl').returns(false);
-      const state = new WaitingState(commandFactory, extractor);
+    it('does not call a command if the the expected pass was intercepted',
+      () => {
+        const extractor = getNewExtractor();
+        sinon.stub(extractor, 'receivedWaitMessage').returns(true);
+        sinon.stub(extractor, 'expectedPassInterceptedOrCompleted').returns(true);
+        const state = new WaitingState(commandFactory, extractor);
 
-      const getCommandStub = sinon.stub(commandFactory, 'getCommand');
-      state.update(player);
+        const getCommandStub = sinon.stub(commandFactory, 'getCommand');
+        state.update(player);
 
-      expect(getCommandStub).not.to.have.been.called;
+        expect(getCommandStub).not.to.have.been.called;
     });
 
-    it('clears wait messages if the player\'s team looses control', () => {
+    it('clears wait messages if the the expected pass was intercepted', () => {
       const extractor = getNewExtractor();
       sinon.stub(extractor, 'receivedWaitMessage').returns(true);
-      sinon.stub(extractor, 'hasBall').returns(false);
-      sinon.stub(extractor, 'teamInControl').returns(false);
+      sinon.stub(extractor, 'expectedPassInterceptedOrCompleted').returns(true);
       const state = new WaitingState(commandFactory, extractor);
-      sinon.spy(player, 'clearMessage');
+      sinon.spy(player, 'clearMessagesByTitle');
 
       state.update(player);
 
-      expect(player.clearMessage).to.have.been.calledWith(
-        STATE_MACHINE_COMMANDS.WAIT);
-    });
-
-    it('does not call a command if the player has the ball', () => {
-      const extractor = getNewExtractor();
-      sinon.stub(extractor, 'receivedWaitMessage').returns(true);
-      sinon.stub(extractor, 'hasBall').returns(true);
-      sinon.stub(extractor, 'teamInControl').returns(true);
-      const state = new WaitingState(commandFactory, extractor);
-      sinon.stub(commandFactory, 'getCommand');
-
-      state.update(player);
-
-      expect(commandFactory.getCommand).not.to.have.been.called;
-    });
-
-    it('clears wait messages if the player has the ball', () => {
-      const extractor = getNewExtractor();
-      sinon.stub(extractor, 'receivedWaitMessage').returns(true);
-      sinon.stub(extractor, 'hasBall').returns(true);
-      sinon.stub(extractor, 'teamInControl').returns(true);
-      const state = new WaitingState(commandFactory, extractor);
-      sinon.spy(player, 'clearMessage');
-
-      state.update(player);
-
-      expect(player.clearMessage).to.have.been.calledWith(
+      expect(player.clearMessagesByTitle).to.have.been.calledWith(
         STATE_MACHINE_COMMANDS.WAIT);
     });
 

@@ -1,6 +1,7 @@
 import { Ball } from '../../../../src/game_objects/ball';
 import { IPassValueCalculator } from '../../../../src/interfaces/ipass_value_calculator';
 import { IPositionValueCalculator } from '../../../../src/interfaces/iposition_value_calculator';
+import { IPlayerMessage } from '../../../../src/interfaces/iplayer_message';
 import { IShotValueCalculator } from '../../../../src/interfaces/ishot_value_calculator';
 import { IDribbleValueCalculator } from '../../../../src/interfaces/idribble_value_calculator';
 import { Player } from '../../../../src/game_objects/player';
@@ -182,8 +183,11 @@ describe('PlayerStateFeatureExtractor', () => {
 
   describe('`receivedWaitMessage`', () => {
     it('returns true if the player has WAIT messages', () => {
-      sinon.stub(player, 'getMessages').returns(
-        [STATE_MACHINE_COMMANDS.WAIT]);
+      const message = {
+        title: STATE_MACHINE_COMMANDS.WAIT,
+        sender: new Player(0, 0, 0, 0, 0),
+      } as IPlayerMessage;
+      sinon.stub(player, 'getMessages').returns([message]);
       const possessionService = new TestBallPossessionService();
       const extractor = new PlayerStateFeatureExtractor(
         ball,
@@ -210,6 +214,119 @@ describe('PlayerStateFeatureExtractor', () => {
       );
 
       expect(extractor.receivedWaitMessage(player)).to.be.false;
+    });
+  });
+
+  describe('`expectedPassInterceptedOrCompleted`', () => {
+    context('when the player has wait messages', () => {
+      it('returns true if the player is in possesion (pass completed)', () => {
+        const sender = new Player(0, 0, 0, 0, 0);
+        const message = {
+          title: STATE_MACHINE_COMMANDS.WAIT,
+          sender: sender,
+        } as IPlayerMessage;
+        sinon.stub(player, 'getMessages').returns([message]);
+        const possessionService = new TestBallPossessionService();
+        sinon.stub(possessionService, 'getCurrentPlayerInPossessionOrNull')
+          .returns(player);
+        const extractor = new PlayerStateFeatureExtractor(
+          ball,
+          possessionService,
+          passValueCalculator,
+          shotValueCalculator,
+          positionValueCalculator,
+          dribbleValueCalculator
+        );
+
+        expect(extractor.expectedPassInterceptedOrCompleted(player)).to.be.true;
+      });
+
+      it('returns true if another player is in possesion (pass intercepted)', () => {
+        const sender = new Player(0, 0, 0, 0, 0);
+        const interceptor = new Player(0, 0, 0, 0, 0);
+        const message = {
+          title: STATE_MACHINE_COMMANDS.WAIT,
+          sender: sender,
+        } as IPlayerMessage;
+        sinon.stub(player, 'getMessages').returns([message]);
+        const possessionService = new TestBallPossessionService();
+        sinon.stub(possessionService, 'getCurrentPlayerInPossessionOrNull')
+          .returns(interceptor);
+        const extractor = new PlayerStateFeatureExtractor(
+          ball,
+          possessionService,
+          passValueCalculator,
+          shotValueCalculator,
+          positionValueCalculator,
+          dribbleValueCalculator
+        );
+
+        expect(extractor.expectedPassInterceptedOrCompleted(player)).to.be.true;
+      });
+
+      it('returns false if the sender is with the ball', () => {
+        const sender = new Player(0, 0, 0, 0, 0);
+        const message = {
+          title: STATE_MACHINE_COMMANDS.WAIT,
+          sender: sender,
+        } as IPlayerMessage;
+        sinon.stub(player, 'getMessages').returns([message]);
+        const possessionService = new TestBallPossessionService();
+        sinon.stub(possessionService, 'getCurrentPlayerInPossessionOrNull')
+          .returns(sender);
+        const extractor = new PlayerStateFeatureExtractor(
+          ball,
+          possessionService,
+          passValueCalculator,
+          shotValueCalculator,
+          positionValueCalculator,
+          dribbleValueCalculator
+        );
+
+        expect(
+          extractor.expectedPassInterceptedOrCompleted(player)).to.be.false;
+      });
+
+      it('returns false if no player is currently in possession', () => {
+        const sender = new Player(0, 0, 0, 0, 0);
+        const message = {
+          title: STATE_MACHINE_COMMANDS.WAIT,
+          sender: sender,
+        } as IPlayerMessage;
+        sinon.stub(player, 'getMessages').returns([message]);
+        const possessionService = new TestBallPossessionService();
+        sinon.stub(possessionService, 'getCurrentPlayerInPossessionOrNull')
+          .returns(null);
+        const extractor = new PlayerStateFeatureExtractor(
+          ball,
+          possessionService,
+          passValueCalculator,
+          shotValueCalculator,
+          positionValueCalculator,
+          dribbleValueCalculator
+        );
+
+        expect(
+          extractor.expectedPassInterceptedOrCompleted(player)).to.be.false;
+      });
+    });
+
+    context('when the player has no wait messages', () => {
+      it('returns false', () => {
+        sinon.stub(player, 'getMessages').returns([]);
+        const possessionService = new TestBallPossessionService();
+        const extractor = new PlayerStateFeatureExtractor(
+          ball,
+          possessionService,
+          passValueCalculator,
+          shotValueCalculator,
+          positionValueCalculator,
+          dribbleValueCalculator
+        );
+
+        expect(
+          extractor.expectedPassInterceptedOrCompleted(player)).to.be.false;
+        });
     });
   });
 });

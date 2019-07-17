@@ -17,7 +17,7 @@ export class PlayerStateMachine implements IPlayerController {
     this.enabled = true;
   }
 
-  public update() {
+  public update(): void {
     if (!this.enabled) { return; }
 
     const eligibleState =

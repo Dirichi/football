@@ -12,4 +12,5 @@ export interface IPlayerStateFeatureExtractor {
   receivedWaitMessage(player: Player): boolean;
   shotValue(player: Player): number;
   teamInControl(player: Player): boolean;
+  expectedPassInterceptedOrCompleted(player: Player): boolean;
 }

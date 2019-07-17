@@ -81,7 +81,20 @@ export class PlayerStateFeatureExtractor implements IPlayerStateFeatureExtractor
   }
 
   public receivedWaitMessage(player: Player): boolean {
-    return player.getMessages().includes(STATE_MACHINE_COMMANDS.WAIT);
+    return player.getMessages()
+      .map((message) => message.title)
+      .includes(STATE_MACHINE_COMMANDS.WAIT);
+  }
+
+  public expectedPassInterceptedOrCompleted(player: Player): boolean {
+    const waitMessage = player.getMessages().find(
+      (message) => message.title === STATE_MACHINE_COMMANDS.WAIT);
+
+    if (!waitMessage) { return false; }
+    const currentPlayerInPossession =
+      this.ballPossessionService.getCurrentPlayerInPossessionOrNull();
+
+    return ![null, waitMessage.sender].includes(currentPlayerInPossession);
   }
 
   private positionOptions(player: Player): Vector3D[] {

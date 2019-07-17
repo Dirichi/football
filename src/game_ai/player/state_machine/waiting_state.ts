@@ -16,12 +16,19 @@ export class WaitingState implements IPlayerState {
   }
 
   public update(player: Player): void {
-    if (!this.eligibleFor(player)) { return; }
+    if (!this.eligibleFor(player)) {
+      return;
+     }
 
-    // TODO: Document this behavior or test it: Why can't this exot condition
-    // be added to the eligibility check?.
+    // We do not use `waitingStillValid` in `eligibleFor` because we would
+    // have to do work in the eligibility function
+    // (i.e. clear messages if waiting is not valid). If we did not do that work
+    // in the eligibility function and handled it in the update function, we
+    // would get a bug where players continuously wait whenever
+    // `waitingStillValid` is true, because we would never get to clear the old
+    // wait messages.
     if (this.waitingNoLongerValid(player)) {
-      player.clearMessage(STATE_MACHINE_COMMANDS.WAIT);
+      player.clearMessagesByTitle(STATE_MACHINE_COMMANDS.WAIT);
       return;
     }
 
@@ -29,6 +36,6 @@ export class WaitingState implements IPlayerState {
   }
 
   private waitingNoLongerValid(player: Player): boolean {
-    return this.extractor.hasBall(player) || !this.extractor.teamInControl(player);
+    return this.extractor.expectedPassInterceptedOrCompleted(player);
   }
 }
