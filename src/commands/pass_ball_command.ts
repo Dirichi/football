@@ -7,7 +7,10 @@ export class PassBallCommand implements ICommand {
     if (sender.kickBall(receiver.getPosition())) {
       // TODO: This message is only used by the state machine so it may have to
       // be moved out of the command
-      sender.sendMessage(receiver, {details: STATE_MACHINE_COMMANDS.WAIT});
+      sender.sendMessage(receiver, {
+        sender,
+        title: STATE_MACHINE_COMMANDS.WAIT,
+      });
     }
   }
 }

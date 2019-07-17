@@ -59,11 +59,11 @@ describe('Player', () => {
       const queue = new EventQueue();
       const player = new Player(0, 0, 0, 0, 5);
       player.setMessageQueue(queue);
+      const message = {title: 'messageTitle', sender: player};
 
-      queue.trigger(`player.${player.getGameObjectId()}.messaged`,
-        {details: 'message'});
+      queue.trigger(`player.${player.getGameObjectId()}.messaged`, message);
 
-      expect(player.getMessages()).to.eql(['message']);
+      expect(player.getMessages()).to.eql([message]);
     });
   });
 

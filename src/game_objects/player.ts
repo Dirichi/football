@@ -7,6 +7,7 @@ import { ICircle } from "../interfaces/icircle";
 import { ICollidable } from "../interfaces/icollidable";
 import { IPlayerBallInteractionMediator } from "../interfaces/iplayer_ball_interaction_mediator";
 import { IPlayerController } from "../interfaces/iplayer_controller";
+import { IPlayerMessage } from "../interfaces/iplayer_message";
 import { IPlayerSchema } from "../interfaces/iplayer_schema";
 import { PlayerPhysics } from "../physics/player_physics";
 import { Vector3D } from "../three_dimensional_vector";
@@ -34,7 +35,7 @@ export class Player implements ICollidable {
   private messageQueue?: EventQueue;
   private ballInteractionMediator?: IPlayerBallInteractionMediator;
   private role?: PlayerRole;
-  private messages: string[];
+  private messages: IPlayerMessage[];
   private ballControlEnabled: boolean;
 
   constructor(x: number, y: number, vx: number, vy: number, diameter: number) {
@@ -201,7 +202,7 @@ export class Player implements ICollidable {
     this.moveTowards(this.defendingPosition());
   }
 
-  public sendMessage(player: Player, message: {details: string}): void {
+  public sendMessage(player: Player, message: IPlayerMessage): void {
     this.messageQueue.trigger(
       `player.${player.getGameObjectId()}.messaged`, message);
   }
@@ -248,12 +249,15 @@ export class Player implements ICollidable {
     this.ballInteractionMediator.chaseBall(this);
   }
 
-  public getMessages(): string[] {
-    return [...this.messages];
+  public getMessages(): IPlayerMessage[] {
+    return this.messages.map((message) => {
+      return {...message};
+    });
   }
 
-  public clearMessage(messageTitle: string): void {
-    this.messages = this.messages.filter((message) => message !== messageTitle);
+  public clearMessagesByTitle(messageTitle: string): void {
+    this.messages =
+      this.messages.filter((message) => message.title !== messageTitle);
   }
 
   private attackingPosition(): Vector3D {
@@ -270,8 +274,8 @@ export class Player implements ICollidable {
 
   private listenForMessages(): void {
     this.messageQueue.when(
-      `player.${this.id}.messaged`, (message: {details: string}) => {
-        this.messages.push(message.details);
+      `player.${this.id}.messaged`, (message: IPlayerMessage) => {
+        this.messages.push(message);
       });
   }
 
