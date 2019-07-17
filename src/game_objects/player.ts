@@ -35,6 +35,7 @@ export class Player implements ICollidable {
   private ballInteractionMediator?: IPlayerBallInteractionMediator;
   private role?: PlayerRole;
   private messages: string[];
+  private ballControlEnabled: boolean;
 
   constructor(x: number, y: number, vx: number, vy: number, diameter: number) {
       this.id = v4(); // Randomly generated id
@@ -48,6 +49,7 @@ export class Player implements ICollidable {
       // swap representations out as we see fit.
       this.colors = [0, 0, 225];
       this.messages = [];
+      this.ballControlEnabled = true;
   }
 
   public update(): void {
@@ -205,10 +207,12 @@ export class Player implements ICollidable {
   }
 
   public enableControls(): void {
+    this.ballControlEnabled = true;
     this.controller.enable();
   }
 
   public disableControls(): void {
+    this.ballControlEnabled = false;
     this.controller.disable();
   }
 
@@ -235,6 +239,8 @@ export class Player implements ICollidable {
   }
 
   public controlBall(): boolean {
+    if (!this.ballControlEnabled) { return false; }
+
     return this.ballInteractionMediator.controlBall(this);
   }
 
