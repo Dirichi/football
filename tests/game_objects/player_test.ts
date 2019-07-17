@@ -1,6 +1,7 @@
 import { Ball } from '../../src/game_objects/ball';
 import { Player } from '../../src/game_objects/player';
 import { IPlayerBallInteractionMediator } from '../../src/interfaces/iplayer_ball_interaction_mediator';
+import { IPlayerController } from '../../src/interfaces/iplayer_controller';
 import { Team } from '../../src/game_objects/team';
 import { EventQueue } from '../../src/event_queue';
 import { Vector3D } from '../../src/three_dimensional_vector';
@@ -25,6 +26,12 @@ class TestPlayerBallInteractionMediator implements IPlayerBallInteractionMediato
   }
 
   chaseBall(player: Player): void {}
+}
+
+class TestController implements IPlayerController {
+  update() {}
+  enable() {}
+  disable() {}
 }
 
 describe('Player', () => {
@@ -91,6 +98,80 @@ describe('Player', () => {
       sinon.stub(mediator, 'kickBall').returns(false);
 
       expect(player.kickBall(destination)).to.be.false;
+    });
+  });
+
+  describe('`controlBall`', () => {
+    it('delegates ball control to the ballInteractionMediator', () => {
+      const player = new Player(0, 0, 0, 0, 5);
+      const mediator = new TestPlayerBallInteractionMediator();
+      player.setBallInteractionMediator(mediator);
+      sinon.stub(mediator, 'controlBall').returns(true);
+
+      expect(player.controlBall()).to.be.true;
+    });
+
+    it('does not call the mediator if ball control is disabled', () => {
+      const player = new Player(0, 0, 0, 0, 5);
+      const controller = new TestController();
+      const mediator = new TestPlayerBallInteractionMediator();
+      player.setController(controller);
+      player.setBallInteractionMediator(mediator);
+      player.disableControls();
+      sinon.stub(mediator, 'controlBall');
+
+      player.controlBall();
+
+      expect(mediator.controlBall).not.to.have.been.called;
+    });
+
+    it('returns false if controls are disabled', () => {
+      const player = new Player(0, 0, 0, 0, 5);
+      const controller = new TestController();
+      const mediator = new TestPlayerBallInteractionMediator();
+      player.setController(controller);
+      player.setBallInteractionMediator(mediator);
+      player.disableControls();
+
+      expect(player.controlBall()).to.be.false;
+    });
+
+    it('is re-enabled when controls are re-enabled', () => {
+      const player = new Player(0, 0, 0, 0, 5);
+      const mediator = new TestPlayerBallInteractionMediator();
+      const controller = new TestController();
+      player.setController(controller);
+      player.setBallInteractionMediator(mediator);
+      sinon.stub(mediator, 'controlBall').returns(true);
+      player.disableControls();
+      player.enableControls();
+
+      expect(player.controlBall()).to.be.true;
+    });
+  });
+
+  describe('`disableControls`', () => {
+    it('disables the controller', () => {
+      const player = new Player(0, 0, 0, 0, 5);
+      const controller = new TestController();
+      player.setController(controller);
+      sinon.stub(controller, 'disable');
+      player.disableControls();
+
+      expect(controller.disable).to.have.been.called;
+    });
+  });
+
+  describe('`enableControls`', () => {
+    it('enables the controller', () => {
+      const player = new Player(0, 0, 0, 0, 5);
+      const controller = new TestController();
+      player.setController(controller);
+      sinon.stub(controller, 'enable');
+
+      player.enableControls();
+
+      expect(controller.enable).to.have.been.called;
     });
   });
 });
