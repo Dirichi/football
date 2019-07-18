@@ -30,8 +30,15 @@ export class Post {
   // service and this piece of code is here. Will change this to use that
   // service later.
   public containsBall(ball: Ball): boolean {
-    const withinXBounds = this.x < ball.x && ball.x < (this.x  + this.xlength);
-    const withinYBounds = this.y < ball.y && ball.y < (this.y  + this.ylength);
+    return this.containsPoint(ball.getPosition());
+  }
+
+  // TODO: Duplication betwen field and post. Consider consolidating.
+  public containsPoint(point: Vector3D): boolean {
+    const withinXBounds =
+      this.x < point.x && point.x < (this.x  + this.xlength);
+    const withinYBounds =
+      this.y < point.y && point.y < (this.y  + this.ylength);
 
     return withinXBounds && withinYBounds;
   }

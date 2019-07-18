@@ -35,18 +35,25 @@ export class ShotValueCalculator implements IShotValueCalculator {
   }
 
   public evaluate(
-    player: Player, position: Vector3D = player.getPosition()): number {
+    player: Player,
+    target: Vector3D,
+    shootingFrom: Vector3D = player.getPosition()): number {
+      // TODO: Make sure to return 0 is the target is not within the post
+      // if (!player.getOpposingGoalPost().containsPoint(target)) { return 0; }
+
       const weightedInterceptionLikelihood =
-        this.interceptionLikelihood(player, position) *
+        this.interceptionLikelihood(player, target, shootingFrom) *
         this.interceptionLikelihoodWeight;
       const weightedProximityToPost =
-        this.proximityToPost(player, position) * this.proximityToPostWeight;
+        this.proximityToPost(player, target, shootingFrom) *
+          this.proximityToPostWeight;
 
       return  weightedProximityToPost - weightedInterceptionLikelihood;
   }
 
-  private proximityToPost(player: Player, position: Vector3D): number {
-    const distance = player.getOpposingGoalPost().distanceTo(position);
+  private proximityToPost(
+    player: Player, target: Vector3D, shootingFrom: Vector3D): number {
+    const distance = target.distanceTo(shootingFrom);
     if (distance <= this.idealDistanceFromGoal) {
       return 1;
     }
@@ -54,10 +61,9 @@ export class ShotValueCalculator implements IShotValueCalculator {
       distance, this.idealDistanceFromGoal, this.field.diagonalLength(), 1, 0);
   }
 
-  private interceptionLikelihood(player: Player, position: Vector3D): number {
-    // TODO: This should be all players, including the keeper.
-    const opposition = player.getOpposingFieldPlayers();
-    const target = player.getOpposingGoalPost().getMidPoint();
+  private interceptionLikelihood(
+    player: Player, target: Vector3D, position: Vector3D): number {
+    const opposition = player.getOpposingPlayers();
     const speed = this.ball.getMaximumSpeed();
 
     const likely = this.interceptionCalculator.canAnyIntercept(
