@@ -1,4 +1,7 @@
-import { POSITION_DELTA_FOR_POSITION_VALUE_CALCULATION, STATE_MACHINE_COMMANDS } from "../../../constants";
+import {
+  NUM_SHOT_TARGETS,
+  POSITION_DELTA_FOR_POSITION_VALUE_CALCULATION,
+  STATE_MACHINE_COMMANDS } from "../../../constants";
 import { Ball } from "../../../game_objects/ball";
 import { Player } from "../../../game_objects/player";
 import { IBallPossessionService } from "../../../interfaces/iball_possession_service";
@@ -8,7 +11,7 @@ import { IPlayerStateFeatureExtractor } from "../../../interfaces/iplayer_state_
 import { IPositionValueCalculator } from "../../../interfaces/iposition_value_calculator";
 import { IShotValueCalculator } from "../../../interfaces/ishot_value_calculator";
 import { Vector3D } from "../../../three_dimensional_vector";
-import { maximumBy, minimumBy } from "../../../utils/helper_functions";
+import { maximumBy, minimumBy, range } from "../../../utils/helper_functions";
 
 export class PlayerStateFeatureExtractor implements IPlayerStateFeatureExtractor {
   constructor(
@@ -59,11 +62,15 @@ export class PlayerStateFeatureExtractor implements IPlayerStateFeatureExtractor
   }
 
   public bestShotValue(player: Player): number {
-    return this.shotValueCalculator.evaluate(player);
+    const bestShotTargetOption = this.bestShotTargetOption(player);
+    return this.shotValueCalculator.evaluate(player, bestShotTargetOption);
   }
 
   public bestShotTargetOption(player: Player): Vector3D {
-    return player.getOpposingGoalPost().getMidPoint();
+    const shotTargets = this.shotTargetOptions(player);
+    return maximumBy(shotTargets, (shotTarget) => {
+      return this.shotValueCalculator.evaluate(player, shotTarget);
+    });
   }
 
   public bestPositionOption(player: Player): Vector3D {
@@ -113,6 +120,16 @@ export class PlayerStateFeatureExtractor implements IPlayerStateFeatureExtractor
 
     return positionDiffs.map((position) => {
       return player.getPosition().add(position);
+    });
+  }
+
+  private shotTargetOptions(player: Player): Vector3D[] {
+    const post = player.getOpposingGoalPost();
+    const targetDelta = post.ylength / (NUM_SHOT_TARGETS - 1);
+
+    return range(NUM_SHOT_TARGETS).map((index) => {
+      const yPosition = post.y + (index * targetDelta);
+      return new Vector3D(post.x, yPosition, 0);
     });
   }
 }
