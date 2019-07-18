@@ -6,24 +6,14 @@ import * as chai from 'chai';
 import * as sinon from 'sinon';
 import { COMMAND_ID } from '../../../../src/constants';
 import { Vector3D } from '../../../../src/three_dimensional_vector';
+import { TestPlayerStateFeatureExtractor } from "../../../helpers/test_player_state_feature_extractor";
+
 
 const sinonChai = require('sinon-chai');
 const expect = chai.expect;
 chai.use(sinonChai);
 
-const bestPassOption = new Player(0, 0, 0, 0, 5);
 let commandFactory: CommandFactory;
-let getNewExtractor = () => {
-  return {
-    bestPositionOption: (player: Player) => new Vector3D(0, 0, 0),
-    bestPassingOption: (player: Player) => bestPassOption,
-    hasBall: (player: Player) => false,
-    receivedWaitMessage: (player: Player) => false,
-    isNearestTeamMateToBall: (player: Player) => false,
-    shotValue: (player: Player) => 0,
-    teamInControl: (player: Player) => false,
-  } as IPlayerStateFeatureExtractor;
-};
 let player: Player;
 
 describe('PassingState', () => {
@@ -39,21 +29,24 @@ describe('PassingState', () => {
 
   describe('`update`', () => {
     it('executes a pass command if eligilble', () => {
-      const extractor = getNewExtractor();
+      const bestPassOption = new Player(0, 0, 0, 0, 5);
+      const extractor = new TestPlayerStateFeatureExtractor();
       sinon.stub(extractor, 'hasBall').returns(true);
-      const state = new PassingState(commandFactory, extractor);
+      sinon.stub(extractor, 'bestPassingOption').returns(bestPassOption);
 
       const command = { execute: sinon.spy() };
       sinon.stub(commandFactory, 'getCommand')
         .withArgs(COMMAND_ID.PASS_BALL)
         .returns(command);
+      const state = new PassingState(commandFactory, extractor);
 
       state.update(player);
+
       expect(command.execute).to.have.been.calledWith(player, bestPassOption);
     });
 
     it('does nothing if the player does not have the ball', () => {
-      const extractor = getNewExtractor();
+      const extractor = new TestPlayerStateFeatureExtractor();
       sinon.stub(extractor, 'hasBall').returns(false);
       const state = new PassingState(commandFactory, extractor);
 
@@ -63,6 +56,7 @@ describe('PassingState', () => {
         .returns(command);
 
       state.update(player);
+
       expect(command.execute).not.to.have.been.called;
     });
   });

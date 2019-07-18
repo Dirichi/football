@@ -6,25 +6,14 @@ import { Vector3D } from '../../../../src/three_dimensional_vector';
 import * as chai from 'chai';
 import * as sinon from 'sinon';
 import { COMMAND_ID } from '../../../../src/constants';
+import { TestPlayerStateFeatureExtractor } from "../../../helpers/test_player_state_feature_extractor";
 
 const sinonChai = require('sinon-chai');
 const expect = chai.expect;
 chai.use(sinonChai);
 
-const bestPosition = new Vector3D(0, 0, 0);
 let commandFactory: CommandFactory;
 let player: Player;
-let getNewExtractor = () => {
-  return {
-    bestPositionOption: (player: Player) => bestPosition,
-    bestPassingOption: (player: Player) => new Player(0, 0, 0, 0, 5),
-    hasBall: (player: Player) => false,
-    receivedWaitMessage: (player: Player) => false,
-    isNearestTeamMateToBall: (player: Player) => false,
-    shotValue: (player: Player) => 0,
-    teamInControl: (player: Player) => false,
-  } as IPlayerStateFeatureExtractor;
-};
 
 describe('AttackingRunState', () => {
   beforeEach(() => {
@@ -39,9 +28,11 @@ describe('AttackingRunState', () => {
 
   describe('`update`', () => {
     it('executes a moveTowardsAttackingPosition command if eligilble', () => {
-      const extractor = getNewExtractor();
+      const bestPosition = new Vector3D(1, 1, 1);
+      const extractor = new TestPlayerStateFeatureExtractor();
       sinon.stub(extractor, 'teamInControl').returns(true);
       sinon.stub(extractor, 'hasBall').returns(false);
+      sinon.stub(extractor, 'bestPositionOption').returns(bestPosition);
       sinon.spy(player, 'moveTowards');
       const state = new AttackingRunState(commandFactory, extractor);
 
@@ -51,7 +42,7 @@ describe('AttackingRunState', () => {
     });
 
     it('does nothing if the team does not have the ball', () => {
-      const extractor = getNewExtractor();
+      const extractor = new TestPlayerStateFeatureExtractor();
       sinon.stub(extractor, 'teamInControl').returns(false);
       sinon.stub(extractor, 'hasBall').returns(false);
       sinon.stub(player, 'moveTowards');
@@ -63,7 +54,7 @@ describe('AttackingRunState', () => {
     });
 
     it('does nothing if the player is with the ball', () => {
-      const extractor = getNewExtractor();
+      const extractor = new TestPlayerStateFeatureExtractor();
       sinon.stub(extractor, 'teamInControl').returns(true);
       sinon.stub(extractor, 'hasBall').returns(true);
       sinon.stub(player, 'moveTowards');

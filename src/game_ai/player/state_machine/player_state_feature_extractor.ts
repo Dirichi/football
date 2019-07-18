@@ -58,8 +58,12 @@ export class PlayerStateFeatureExtractor implements IPlayerStateFeatureExtractor
     return this.dribbleValueCalculator.evaluate(player, bestDribbleOption);
   }
 
-  public shotValue(player: Player): number {
+  public bestShotValue(player: Player): number {
     return this.shotValueCalculator.evaluate(player);
+  }
+
+  public bestShotTargetOption(player: Player): Vector3D {
+    return player.getOpposingGoalPost().getMidPoint();
   }
 
   public bestPositionOption(player: Player): Vector3D {

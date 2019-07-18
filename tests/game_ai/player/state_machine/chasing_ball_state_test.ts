@@ -3,6 +3,7 @@ import { ChasingBallState } from '../../../../src/game_ai/player/state_machine/c
 import { IPlayerStateFeatureExtractor } from '../../../../src/interfaces/iplayer_state_feature_extractor';
 import { Player } from '../../../../src/game_objects/player';
 import { Vector3D } from '../../../../src/three_dimensional_vector';
+import { TestPlayerStateFeatureExtractor } from "../../../helpers/test_player_state_feature_extractor";
 
 import * as chai from 'chai';
 import * as sinon from 'sinon';
@@ -14,17 +15,6 @@ chai.use(sinonChai);
 
 let commandFactory: CommandFactory;
 let player: Player;
-let getNewExtractor = () => {
-  return {
-    bestPositionOption: (player: Player) => new Vector3D(0, 0, 0),
-    bestPassingOption: (player: Player) => new Player(0, 0, 0, 0, 5),
-    hasBall: (player: Player) => false,
-    receivedWaitMessage: (player: Player) => false,
-    isNearestTeamMateToBall: (player: Player) => false,
-    shotValue: (player: Player) => 0,
-    teamInControl: (player: Player) => false,
-  } as IPlayerStateFeatureExtractor;
-};
 
 describe('ChasingBallState', () => {
   beforeEach(() => {
@@ -39,7 +29,7 @@ describe('ChasingBallState', () => {
 
   describe('`update`', () => {
     it('executes a ChaseBallCommand if eligilble', () => {
-        const extractor = getNewExtractor();
+        const extractor = new TestPlayerStateFeatureExtractor();
         sinon.stub(extractor, 'teamInControl').returns(false)
         sinon.stub(extractor, 'isNearestTeamMateToBall').returns(true)
         const state = new ChasingBallState(commandFactory, extractor);
@@ -54,7 +44,7 @@ describe('ChasingBallState', () => {
     });
 
     it('does nothing if the team has the ball', () => {
-      const extractor = getNewExtractor();
+      const extractor = new TestPlayerStateFeatureExtractor();
       sinon.stub(extractor, 'teamInControl').returns(true);
       sinon.stub(extractor, 'isNearestTeamMateToBall').returns(false);
       const state = new ChasingBallState(commandFactory, extractor);
@@ -69,7 +59,7 @@ describe('ChasingBallState', () => {
     });
 
     it('does nothing if the player is not the nearest to the ball', () => {
-      const extractor = getNewExtractor();
+      const extractor = new TestPlayerStateFeatureExtractor();
       sinon.stub(extractor, 'teamInControl').returns(false);
       sinon.stub(extractor, 'isNearestTeamMateToBall').returns(false);
       const state = new ChasingBallState(commandFactory, extractor);

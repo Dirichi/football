@@ -3,6 +3,7 @@ import { Player } from "../../../game_objects/player";
 import { ICommandFactory } from "../../../interfaces/icommand_factory";
 import { IPlayerState } from "../../../interfaces/iplayer_state";
 import { IPlayerStateFeatureExtractor } from "../../../interfaces/iplayer_state_feature_extractor";
+import { Vector3D } from "../../../three_dimensional_vector";
 
 export class ShootingState implements IPlayerState {
   constructor(
@@ -13,12 +14,15 @@ export class ShootingState implements IPlayerState {
   public eligibleFor(player: Player): boolean {
     // TODO: Better eligibility function
     return this.extractor.hasBall(player)
-      && this.extractor.shotValue(player) >= this.shotValueThreshold;
+      && this.extractor.bestShotValue(player) >= this.shotValueThreshold;
   }
 
   public update(player: Player): void {
     if (this.eligibleFor(player)) {
-      this.commandFactory.getCommand(COMMAND_ID.SHOOT_BALL).execute(player);
+      const target = this.extractor.bestShotTargetOption(player);
+      this.commandFactory
+        .getCommand(COMMAND_ID.SHOOT_BALL)
+        .execute(player, target);
     }
   }
 }

@@ -6,23 +6,13 @@ import * as chai from 'chai';
 import * as sinon from 'sinon';
 import { COMMAND_ID } from '../../../../src/constants';
 import { Vector3D } from '../../../../src/three_dimensional_vector';
+import { TestPlayerStateFeatureExtractor } from "../../../helpers/test_player_state_feature_extractor";
 
 const sinonChai = require('sinon-chai');
 const expect = chai.expect;
 chai.use(sinonChai);
 
 let commandFactory: CommandFactory;
-let getNewExtractor = () => {
-  return {
-    bestPositionOption: (player: Player) => new Vector3D(0, 0, 0),
-    bestPassingOption: (player: Player) => new Player(0, 0, 0, 0, 5),
-    hasBall: (player: Player) => false,
-    receivedWaitMessage: (player: Player) => false,
-    isNearestTeamMateToBall: (player: Player) => false,
-    shotValue: (player: Player) => 0,
-    teamInControl: (player: Player) => false,
-  } as IPlayerStateFeatureExtractor;
-};
 let player: Player;
 
 describe('ShootingState', () => {
@@ -38,24 +28,11 @@ describe('ShootingState', () => {
 
   describe('`update`', () => {
     it('executes a shoot command if eligilble', () => {
-      const extractor = getNewExtractor();
-        sinon.stub(extractor, 'hasBall').returns(true);
-        sinon.stub(extractor, 'shotValue').returns(0.9); // 0.9 > threshold (0.8)
-        const state = new ShootingState(commandFactory, extractor, 0.8);
-
-        const command = { execute: sinon.spy() };
-        sinon.stub(commandFactory, 'getCommand')
-          .withArgs(COMMAND_ID.SHOOT_BALL)
-          .returns(command);
-
-        state.update(player);
-        expect(command.execute).to.have.been.calledWith(player);
-    });
-
-    it('does nothing if the player does not have the ball', () => {
-      const extractor = getNewExtractor();
-      sinon.stub(extractor, 'hasBall').returns(false);
-      sinon.stub(extractor, 'shotValue').returns(0.9);
+      const shotTarget = new Vector3D(1, 1, 1);
+      const extractor = new TestPlayerStateFeatureExtractor();
+      sinon.stub(extractor, 'bestShotTargetOption').returns(shotTarget);
+      sinon.stub(extractor, 'hasBall').returns(true);
+      sinon.stub(extractor, 'bestShotValue').returns(0.9); // 0.9 > threshold (0.8)
       const state = new ShootingState(commandFactory, extractor, 0.8);
 
       const command = { execute: sinon.spy() };
@@ -64,13 +41,30 @@ describe('ShootingState', () => {
         .returns(command);
 
       state.update(player);
+
+      expect(command.execute).to.have.been.calledWith(player, shotTarget);
+    });
+
+    it('does nothing if the player does not have the ball', () => {
+      const extractor = new TestPlayerStateFeatureExtractor();
+      sinon.stub(extractor, 'hasBall').returns(false);
+      sinon.stub(extractor, 'bestShotValue').returns(0.9);
+      const state = new ShootingState(commandFactory, extractor, 0.8);
+
+      const command = { execute: sinon.spy() };
+      sinon.stub(commandFactory, 'getCommand')
+        .withArgs(COMMAND_ID.SHOOT_BALL)
+        .returns(command);
+
+      state.update(player);
+
       expect(command.execute).not.to.have.been.called;
     });
 
     it('does nothing if the shotValue is below the specified threshold', () => {
-      const extractor = getNewExtractor();
+      const extractor = new TestPlayerStateFeatureExtractor();
       sinon.stub(extractor, 'hasBall').returns(true);
-      sinon.stub(extractor, 'shotValue').returns(0.7);
+      sinon.stub(extractor, 'bestShotValue').returns(0.7);
       const state = new ShootingState(commandFactory, extractor, 0.8);
 
       const command = { execute: sinon.spy() };
@@ -79,6 +73,7 @@ describe('ShootingState', () => {
         .returns(command);
 
       state.update(player);
+
       expect(command.execute).not.to.have.been.called;
     });
   });

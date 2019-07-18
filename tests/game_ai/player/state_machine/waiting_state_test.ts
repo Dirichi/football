@@ -6,24 +6,13 @@ import { Player } from '../../../../src/game_objects/player';
 import * as chai from 'chai';
 import * as sinon from 'sinon';
 import { Vector3D } from '../../../../src/three_dimensional_vector';
+import { TestPlayerStateFeatureExtractor } from "../../../helpers/test_player_state_feature_extractor";
 
 const sinonChai = require('sinon-chai');
 const expect = chai.expect;
 chai.use(sinonChai);
 
 let commandFactory: CommandFactory;
-let getNewExtractor = () => {
-  return {
-    bestPositionOption: (player: Player) => new Vector3D(0, 0, 0),
-    bestPassingOption: (player: Player) => new Player(0, 0, 0, 0, 5),
-    hasBall: (player: Player) => false,
-    receivedWaitMessage: (player: Player) => false,
-    isNearestTeamMateToBall: (player: Player) => false,
-    shotValue: (player: Player) => 0,
-    teamInControl: (player: Player) => false,
-    expectedPassInterceptedOrCompleted: (player: Player) => false,
-  } as IPlayerStateFeatureExtractor;
-};
 let player: Player;
 
 describe('WaitingState', () => {
@@ -39,7 +28,7 @@ describe('WaitingState', () => {
 
   describe('`update`', () => {
     it('executes a stop command if eligilble', () => {
-      const extractor = getNewExtractor();
+      const extractor = new TestPlayerStateFeatureExtractor();
       sinon.stub(extractor, 'receivedWaitMessage').returns(true);
       sinon.stub(extractor, 'expectedPassInterceptedOrCompleted').returns(false);
       const state = new WaitingState(commandFactory, extractor);
@@ -56,7 +45,7 @@ describe('WaitingState', () => {
 
     it('does not call a command if the the expected pass was intercepted',
       () => {
-        const extractor = getNewExtractor();
+        const extractor = new TestPlayerStateFeatureExtractor();
         sinon.stub(extractor, 'receivedWaitMessage').returns(true);
         sinon.stub(extractor, 'expectedPassInterceptedOrCompleted').returns(true);
         const state = new WaitingState(commandFactory, extractor);
@@ -68,7 +57,7 @@ describe('WaitingState', () => {
     });
 
     it('clears wait messages if the the expected pass was intercepted', () => {
-      const extractor = getNewExtractor();
+      const extractor = new TestPlayerStateFeatureExtractor();
       sinon.stub(extractor, 'receivedWaitMessage').returns(true);
       sinon.stub(extractor, 'expectedPassInterceptedOrCompleted').returns(true);
       const state = new WaitingState(commandFactory, extractor);
@@ -81,7 +70,7 @@ describe('WaitingState', () => {
     });
 
     it('does nothing if the player does not have wait messages', () => {
-      const extractor = getNewExtractor();
+      const extractor = new TestPlayerStateFeatureExtractor();
       sinon.stub(extractor, 'receivedWaitMessage').returns(false);
       const state = new WaitingState(commandFactory, extractor);
 
