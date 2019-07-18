@@ -1,6 +1,6 @@
 import { Ball } from '../../../../src/game_objects/ball';
 import { IPassValueCalculator } from '../../../../src/interfaces/ipass_value_calculator';
-import { IPositionValueCalculator } from '../../../../src/interfaces/iposition_value_calculator';
+import { IAttackingPositionValueCalculator } from '../../../../src/interfaces/iattacking_position_value_calculator';
 import { IPlayerMessage } from '../../../../src/interfaces/iplayer_message';
 import { IShotValueCalculator } from '../../../../src/interfaces/ishot_value_calculator';
 import { IDribbleValueCalculator } from '../../../../src/interfaces/idribble_value_calculator';
@@ -21,7 +21,7 @@ let player: Player;
 let ball: Ball;
 let passValueCalculator: IPassValueCalculator;
 let shotValueCalculator: IShotValueCalculator;
-let positionValueCalculator: IPositionValueCalculator;
+let positionValueCalculator: IAttackingPositionValueCalculator;
 let dribbleValueCalculator: IDribbleValueCalculator;
 
 describe('PlayerStateFeatureExtractor', () => {

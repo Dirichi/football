@@ -1,11 +1,13 @@
 import { GameStateMachine } from "./game_ai/game/game_state_machine";
 import { KickOffState } from "./game_ai/game/kickoff_state";
 import { AttackingRunState } from "./game_ai/player/state_machine/attacking_run_state";
+import {
+  AttackingPositionValueCalculator
+} from "./game_ai/player/state_machine/calculators/attacking_position_value_calculator";
 import { CongestionCalculator } from "./game_ai/player/state_machine/calculators/congestion_calculator";
 import { DribbleValueCalculator } from "./game_ai/player/state_machine/calculators/dribble_value_calculator";
 import { InterceptionCalculator } from "./game_ai/player/state_machine/calculators/interception_calculator";
 import { PassValueCalculator } from "./game_ai/player/state_machine/calculators/pass_value_calculator";
-import { PositionValueCalculator } from "./game_ai/player/state_machine/calculators/position_value_calculator";
 import { ShotValueCalculator } from "./game_ai/player/state_machine/calculators/shot_value_calculator";
 import { ChasingBallState } from "./game_ai/player/state_machine/chasing_ball_state";
 import { DefensiveRunState } from "./game_ai/player/state_machine/defensive_run_state";
@@ -189,7 +191,7 @@ const shotValueCalculator =
   new ShotValueCalculator(ball, field, interceptionCalculator);
 const congestionCalculator =
   new CongestionCalculator(defaultPlayers, RADIUS_FOR_CONGESTION);
-const positionValueCalculator = new PositionValueCalculator(
+const positionValueCalculator = new AttackingPositionValueCalculator(
   ball, field, congestionCalculator, shotValueCalculator);
 const passValueCalculator = new PassValueCalculator(
   ball, interceptionCalculator, positionValueCalculator);

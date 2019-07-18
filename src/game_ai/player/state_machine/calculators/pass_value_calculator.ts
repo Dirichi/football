@@ -1,8 +1,8 @@
 import { TEAM_SIDES } from "../../../../constants";
 import { Ball } from "../../../../game_objects/ball";
 import { Player } from "../../../../game_objects/player";
+import { IAttackingPositionValueCalculator } from "../../../../interfaces/iattacking_position_value_calculator";
 import { IPassValueCalculator } from "../../../../interfaces/ipass_value_calculator";
-import { IPositionValueCalculator } from "../../../../interfaces/iposition_value_calculator";
 import { IShotValueCalculator } from "../../../../interfaces/ishot_value_calculator";
 import { Vector3D } from "../../../../three_dimensional_vector";
 import { InterceptionCalculator } from "./interception_calculator";
@@ -12,7 +12,7 @@ export class PassValueCalculator implements IPassValueCalculator {
   constructor(
     private ball: Ball,
     private interceptionCalculator: InterceptionCalculator,
-    private positionValueCalculator: IPositionValueCalculator) {
+    private positionValueCalculator: IAttackingPositionValueCalculator) {
   }
 
   // TODO: Consider passing in a Pass object
