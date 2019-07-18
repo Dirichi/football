@@ -36,7 +36,7 @@ describe('PassBallCommand', () => {
       command.execute(sender, receiver);
 
       expect(sender.sendMessage).to.have.been.calledWith(receiver,
-        {details: STATE_MACHINE_COMMANDS.WAIT});
+        {sender: sender, title: STATE_MACHINE_COMMANDS.WAIT});
     });
 
     it('does not send stop to the receiver if the ball was not kicked', () => {

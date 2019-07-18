@@ -6,24 +6,13 @@ import * as chai from 'chai';
 import * as sinon from 'sinon';
 import { COMMAND_ID } from '../../../../src/constants';
 import { Vector3D } from '../../../../src/three_dimensional_vector';
+import { TestPlayerStateFeatureExtractor } from "../../../helpers/test_player_state_feature_extractor";
 
 const sinonChai = require('sinon-chai');
 const expect = chai.expect;
 chai.use(sinonChai);
 
 let commandFactory: CommandFactory;
-let getNewExtractor = () => {
-  return {
-    bestPositionOption: (player: Player) => new Vector3D(0, 0, 0),
-    bestPassingOption: (player: Player) => new Player(0, 0, 0, 0, 5),
-    hasBall: (player: Player) => false,
-    receivedWaitMessage: (player: Player) => false,
-    isNearestTeamMateToBall: (player: Player) => false,
-    shotValue: (player: Player) => 0,
-    teamInControl: (player: Player) => false,
-  } as IPlayerStateFeatureExtractor;
-};
-
 let player: Player;
 
 describe('DefensiveRunState', () => {
@@ -39,7 +28,7 @@ describe('DefensiveRunState', () => {
 
   describe('`update`', () => {
     it('executes a moveTowardsDefensivePosition command if eligilble', () => {
-        const extractor = getNewExtractor();
+        const extractor = new TestPlayerStateFeatureExtractor();
         sinon.stub(extractor, 'teamInControl').returns(false);
         sinon.stub(extractor, 'isNearestTeamMateToBall').returns(false);
         const state = new DefensiveRunState(commandFactory, extractor);
@@ -54,7 +43,7 @@ describe('DefensiveRunState', () => {
     });
 
     it('does nothing if the team has the ball', () => {
-      const extractor = getNewExtractor();
+      const extractor = new TestPlayerStateFeatureExtractor();
       sinon.stub(extractor, 'teamInControl').returns(true);
       sinon.stub(extractor, 'isNearestTeamMateToBall').returns(false);
       const state = new DefensiveRunState(commandFactory, extractor);
@@ -69,7 +58,7 @@ describe('DefensiveRunState', () => {
     });
 
     it('does nothing if the player is the nearest to the ball', () => {
-      const extractor = getNewExtractor();
+      const extractor = new TestPlayerStateFeatureExtractor();
       sinon.stub(extractor, 'teamInControl').returns(false);
       sinon.stub(extractor, 'isNearestTeamMateToBall').returns(true);
       const state = new DefensiveRunState(commandFactory, extractor);

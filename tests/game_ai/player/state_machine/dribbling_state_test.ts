@@ -6,27 +6,13 @@ import * as chai from 'chai';
 import * as sinon from 'sinon';
 import { COMMAND_ID } from '../../../../src/constants';
 import { Vector3D } from '../../../../src/three_dimensional_vector';
+import { TestPlayerStateFeatureExtractor } from "../../../helpers/test_player_state_feature_extractor";
 
 const sinonChai = require('sinon-chai');
 const expect = chai.expect;
 chai.use(sinonChai);
 
-const bestDribbleOption = new Vector3D(0, 0, 0);
 let commandFactory: CommandFactory;
-let getNewExtractor = () => {
-  return {
-    bestDribbleValue: (player: Player) => 0.5,
-    bestDribbleOption: (player: Player) => bestDribbleOption,
-    bestPassValue: (player: Player) => 0.5,
-    bestPositionOption: (player: Player) => new Vector3D(0, 0, 0),
-    bestPassingOption: (player: Player) => new Player(0, 0, 0, 0, 5),
-    hasBall: (player: Player) => false,
-    receivedWaitMessage: (player: Player) => false,
-    isNearestTeamMateToBall: (player: Player) => false,
-    shotValue: (player: Player) => 0,
-    teamInControl: (player: Player) => false,
-  } as IPlayerStateFeatureExtractor;
-};
 let player: Player;
 
 describe('DribblingState', () => {
@@ -42,9 +28,11 @@ describe('DribblingState', () => {
 
   describe('`update`', () => {
     it('moves the player towards the best dribbling option', () => {
-      const extractor = getNewExtractor();
+      const extractor = new TestPlayerStateFeatureExtractor();
       sinon.stub(extractor, 'hasBall').returns(true);
       sinon.stub(extractor, 'bestDribbleValue').returns(0.8);
+      const bestDribbleOption = new Vector3D(1, 1, 1);
+      sinon.stub(extractor, 'bestDribbleOption').returns(bestDribbleOption);
       sinon.stub(extractor, 'bestPassValue').returns(0.7);
       sinon.spy(player, 'moveTowards');
       const state = new DribblingState(commandFactory, extractor);
@@ -55,7 +43,7 @@ describe('DribblingState', () => {
     });
 
     it('does nothing if the player does not have the ball', () => {
-      const extractor = getNewExtractor();
+      const extractor = new TestPlayerStateFeatureExtractor();
       sinon.stub(extractor, 'hasBall').returns(false);
       const state = new DribblingState(commandFactory, extractor);
       sinon.spy(player, 'moveTowards');
@@ -66,7 +54,7 @@ describe('DribblingState', () => {
     });
 
     it('does nothing if passing is objectively better than dribbling', () => {
-      const extractor = getNewExtractor();
+      const extractor = new TestPlayerStateFeatureExtractor();
       sinon.stub(extractor, 'hasBall').returns(true);
       sinon.stub(extractor, 'bestDribbleValue').returns(0.7);
       sinon.stub(extractor, 'bestPassValue').returns(0.8);
