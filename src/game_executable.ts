@@ -190,7 +190,7 @@ const interceptionCalculator = new InterceptionCalculator();
 const shotValueCalculator =
   new ShotValueCalculator(ball, field, interceptionCalculator);
 const congestionCalculator =
-  new CongestionCalculator(defaultPlayers, RADIUS_FOR_CONGESTION);
+  new CongestionCalculator(RADIUS_FOR_CONGESTION);
 const positionValueCalculator = new AttackingPositionValueCalculator(
   ball, field, congestionCalculator, shotValueCalculator);
 const passValueCalculator = new PassValueCalculator(

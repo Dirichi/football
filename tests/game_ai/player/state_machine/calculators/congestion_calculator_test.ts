@@ -17,10 +17,10 @@ describe('CongestionCalculator', () => {
         const playerC = new Player(0, 0, 0, 0, 5);
         const players = [playerA, playerB, playerC];
         const radiusOfInterest = 1;
-        const calculator = new CongestionCalculator(players, radiusOfInterest);
+        const calculator = new CongestionCalculator(radiusOfInterest);
         const positionToEvaluate = new Vector3D(2, 2, 0);
 
-        expect(calculator.evaluate(positionToEvaluate)).to.equal(1);
+        expect(calculator.evaluate(positionToEvaluate, players)).to.equal(1);
     });
   });
 });
