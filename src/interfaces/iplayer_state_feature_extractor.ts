@@ -2,6 +2,7 @@ import { Player } from "../game_objects/player";
 import { Vector3D } from "../three_dimensional_vector";
 
 export interface IPlayerStateFeatureExtractor {
+  bestDefencePositionOption(player: Player): Vector3D;
   bestDribbleOption(player: Player): Vector3D;
   bestDribbleValue(player: Player): number;
   bestPassingOption(player: Player): Player;
