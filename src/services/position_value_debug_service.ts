@@ -1,18 +1,18 @@
 import { POSITION_DELTA_FOR_POSITION_VALUE_CALCULATION } from "../constants";
 import { Player } from "../game_objects/player";
-import { IAttackingPositionValueCalculator } from "../interfaces/iattacking_position_value_calculator";
+import { IAttackPositionValueCalculator } from "../interfaces/iattack_position_value_calculator";
 import { IPositionValueSchema } from "../interfaces/iposition_value_schema";
 import { ITextSchema } from "../interfaces/itext_schema";
 import { Vector3D } from "../three_dimensional_vector";
 import { round } from "../utils/helper_functions";
 
 export class PositionValueDebugService {
-  private positionValueCalculator: IAttackingPositionValueCalculator;
+  private positionValueCalculator: IAttackPositionValueCalculator;
   private players: Player[];
   private enabled: boolean;
 
   constructor(
-    positionValueCalculator: IAttackingPositionValueCalculator,
+    positionValueCalculator: IAttackPositionValueCalculator,
     players: Player[],
     enabled: boolean = false) {
       this.positionValueCalculator = positionValueCalculator;

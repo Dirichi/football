@@ -4,7 +4,7 @@ import {
   STATE_MACHINE_COMMANDS } from "../../../constants";
 import { Ball } from "../../../game_objects/ball";
 import { Player } from "../../../game_objects/player";
-import { IAttackingPositionValueCalculator } from "../../../interfaces/iattacking_position_value_calculator";
+import { IAttackPositionValueCalculator } from "../../../interfaces/iattack_position_value_calculator";
 import { IBallPossessionService } from "../../../interfaces/iball_possession_service";
 import { IDribbleValueCalculator } from "../../../interfaces/idribble_value_calculator";
 import { IPassValueCalculator } from "../../../interfaces/ipass_value_calculator";
@@ -19,7 +19,7 @@ export class PlayerStateFeatureExtractor implements IPlayerStateFeatureExtractor
     private ballPossessionService: IBallPossessionService,
     private passValueCalculator: IPassValueCalculator,
     private shotValueCalculator: IShotValueCalculator,
-    private positionValueCalculator: IAttackingPositionValueCalculator,
+    private positionValueCalculator: IAttackPositionValueCalculator,
     private dribbleValueCalculator: IDribbleValueCalculator) {
   }
 
