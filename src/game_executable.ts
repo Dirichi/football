@@ -22,8 +22,6 @@ import { CommandFactory } from "./commands/command_factory";
 import { GenericRemoteCommandRequestHandler } from "./commands/generic_remote_command_request_handler";
 import { MoveCommand } from "./commands/move_command";
 import { MovePlayerRemoteCommandRequestHandler } from "./commands/move_player_remote_command_request_handler";
-import { MoveToAttackingPositionCommand } from "./commands/move_to_attacking_position_command";
-import { MoveToDefensivePositionCommand } from "./commands/move_to_defensive_position_command";
 import { PassBallCommand } from "./commands/pass_ball_command";
 import { PassBallRemoteCommandRequestHandler } from "./commands/pass_ball_remote_command_request_handler";
 import { ShootBallCommand } from "./commands/shoot_ball_command";
@@ -216,8 +214,6 @@ const COMMAND_ID_TO_COMMAND_MAPPING = new Map<COMMAND_ID, ICommand>([
       [COMMAND_ID.SHOOT_BALL, new ShootBallCommand()],
       [COMMAND_ID.PASS_BALL, new PassBallCommand()],
       [COMMAND_ID.STOP, new StopCommand()],
-      [COMMAND_ID.MOVE_TO_ATTACKING_POSITION, new MoveToAttackingPositionCommand()],
-      [COMMAND_ID.MOVE_TO_DEFENSIVE_POSITION, new MoveToDefensivePositionCommand()],
     ]);
 
 const commandFactory = new CommandFactory(COMMAND_ID_TO_COMMAND_MAPPING);

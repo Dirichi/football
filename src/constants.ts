@@ -69,8 +69,6 @@ export enum COMMAND_ID {
   MOVE_PLAYER_LOWER_RIGHT = "move.player.down.right",
   MOVE_PLAYER_LEFT = "move.player.left",
   MOVE_PLAYER_RIGHT = "move.player.right",
-  MOVE_TO_ATTACKING_POSITION = "move.player.to.attacking.position",
-  MOVE_TO_DEFENSIVE_POSITION = "move.player.to.defensive.position",
   MOVE_PLAYER_UP = "move.player.up",
   MOVE_PLAYER_UPPER_LEFT = "move.player.up.left",
   MOVE_PLAYER_UPPER_RIGHT = "move.player.up.right",
