@@ -4,6 +4,7 @@ import { Field } from "../../../../game_objects/field";
 import { Player } from "../../../../game_objects/player";
 import { IAttackPositionValueCalculator } from "../../../../interfaces/iattack_position_value_calculator";
 import { Vector3D } from "../../../../three_dimensional_vector";
+import { shotTargetOptions } from "../../../../utils/game_functions";
 import { range, round, scale } from "../../../../utils/helper_functions";
 import { CongestionCalculator } from "./congestion_calculator";
 import { ShotValueCalculator } from "./shot_value_calculator";
@@ -47,9 +48,7 @@ export class AttackPositionValueCalculator implements IAttackPositionValueCalcul
   }
 
   private bestShotValueScore(player: Player, position: Vector3D): number {
-    // TODO: This is duplicated from the PlayerStateFeatureExtractor.
-    // Consider deduplicating.
-    const targetOptions = this.shotTargetOptions(player);
+    const targetOptions = shotTargetOptions(player);
     const shotValueScores = targetOptions.map((target) => {
       return this.shotValueCalculator.evaluate(player, target, position);
     });
@@ -72,15 +71,5 @@ export class AttackPositionValueCalculator implements IAttackPositionValueCalcul
       }
       return scale(
         distanceToPost, this.idealDistanceFromGoal, this.field.xlength, 1, 0);
-  }
-
-  private shotTargetOptions(player: Player): Vector3D[] {
-    const post = player.getOpposingGoalPost();
-    const targetDelta = post.ylength / (NUM_SHOT_TARGETS - 1);
-
-    return range(NUM_SHOT_TARGETS).map((index) => {
-      const yPosition = post.y + (index * targetDelta);
-      return new Vector3D(post.x, yPosition, 0);
-    });
   }
 }
