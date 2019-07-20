@@ -13,6 +13,7 @@ import { IPassValueCalculator } from "../../../interfaces/ipass_value_calculator
 import { IPlayerStateFeatureExtractor } from "../../../interfaces/iplayer_state_feature_extractor";
 import { IShotValueCalculator } from "../../../interfaces/ishot_value_calculator";
 import { Vector3D } from "../../../three_dimensional_vector";
+import { distanceAheadOfBall, shotTargetOptions } from "../../../utils/game_functions";
 import { maximumBy, minimumBy, range } from "../../../utils/helper_functions";
 
 export class PlayerStateFeatureExtractor implements IPlayerStateFeatureExtractor {
@@ -70,7 +71,7 @@ export class PlayerStateFeatureExtractor implements IPlayerStateFeatureExtractor
   }
 
   public bestShotTargetOption(player: Player): Vector3D {
-    const shotTargets = this.shotTargetOptions(player);
+    const shotTargets = shotTargetOptions(player);
     return maximumBy(shotTargets, (shotTarget) => {
       return this.shotValueCalculator.evaluate(player, shotTarget);
     });
@@ -104,17 +105,6 @@ export class PlayerStateFeatureExtractor implements IPlayerStateFeatureExtractor
     });
   }
 
-  private isNearestTeamMateToBall(player: Player): boolean {
-    const ballPosition = this.ball.getPosition();
-    const players = player.getTeam().getPlayers();
-
-    const closestTeamMate = minimumBy(players, (teamMate: Player) => {
-      return teamMate.getPosition().distanceTo(ballPosition);
-    });
-
-    return closestTeamMate === player;
-  }
-
   public receivedWaitMessage(player: Player): boolean {
     return player.getMessages()
       .map((message) => message.title)
@@ -132,22 +122,23 @@ export class PlayerStateFeatureExtractor implements IPlayerStateFeatureExtractor
     return ![null, waitMessage.sender].includes(currentPlayerInPossession);
   }
 
+  private isNearestTeamMateToBall(player: Player): boolean {
+    const ballPosition = this.ball.getPosition();
+    const players = player.getTeam().getPlayers();
+
+    const closestTeamMate = minimumBy(players, (teamMate: Player) => {
+      return teamMate.getPosition().distanceTo(ballPosition);
+    });
+
+    return closestTeamMate === player;
+  }
+
   private teamPlayersAheadOfBall(
     player: Player, referencePost: Post): Player[] {
     return player.getTeam().getPlayers().filter((eachPlayer) => {
       const position = eachPlayer.getPosition();
-      return this.distanceAheadOfBall(position, referencePost) >= 0;
+      return distanceAheadOfBall(position, this.ball, referencePost) >= 0;
     });
-  }
-
-  // TODO: Repitition; used in defenceValueCalculator
-  private distanceAheadOfBall(position: Vector3D, referencePost: Post): number {
-    const postPosition = referencePost.getMidPoint();
-    const distanceToPost = Math.abs(position.x - postPosition.x);
-    const ballDistanceToPost =
-      Math.abs(this.ball.getPosition().x - postPosition.x);
-
-    return ballDistanceToPost - distanceToPost;
   }
 
   private positionOptions(player: Player): Vector3D[] {
@@ -162,16 +153,6 @@ export class PlayerStateFeatureExtractor implements IPlayerStateFeatureExtractor
 
     return positionDiffs.map((position) => {
       return player.getPosition().add(position);
-    });
-  }
-
-  private shotTargetOptions(player: Player): Vector3D[] {
-    const post = player.getOpposingGoalPost();
-    const targetDelta = post.ylength / (NUM_SHOT_TARGETS - 1);
-
-    return range(NUM_SHOT_TARGETS).map((index) => {
-      const yPosition = post.y + (index * targetDelta);
-      return new Vector3D(post.x, yPosition, 0);
     });
   }
 }

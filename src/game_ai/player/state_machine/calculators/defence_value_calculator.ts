@@ -4,6 +4,7 @@ import { Field } from "../../../../game_objects/field";
 import { Player } from "../../../../game_objects/player";
 import { Post } from "../../../../game_objects/post";
 import { Vector3D } from "../../../../three_dimensional_vector";
+import { distanceAheadOfBall } from "../../../../utils/game_functions";
 import { minimumBy, scale } from "../../../../utils/helper_functions";
 import { CongestionCalculator } from "./congestion_calculator";
 
@@ -29,8 +30,8 @@ export class DefenceValueCalculator {
 
   private aheadOfBallScore(player: Player, position: Vector3D): number {
     const post = player.getGoalPost();
-    const distanceAheadOfBall = this.distanceAheadOfBall(position, post);
-    const cappedDistance = Math.min(0, distanceAheadOfBall);
+    const distance = distanceAheadOfBall(position, this.ball, post);
+    const cappedDistance = Math.min(0, distance);
     return scale(cappedDistance, -this.field.xlength, 0, 0, 1);
   }
 
@@ -61,19 +62,9 @@ export class DefenceValueCalculator {
   private isUnhandledThreat(opponent: Player, team: Player[]): boolean {
     const opponentPosition = opponent.getPosition();
     const post = opponent.getOpposingGoalPost();
-    const distanceAheadOfBall =
-      this.distanceAheadOfBall(opponentPosition, post);
-    const isAheadOfBall = distanceAheadOfBall >= 0;
+    const distance = distanceAheadOfBall(opponentPosition, this.ball, post);
+    const isAheadOfBall = distance >= 0;
     return isAheadOfBall && !this.opponentNeutralized(opponent, team);
-  }
-
-  private distanceAheadOfBall(position: Vector3D, referencePost: Post): number {
-    const postPosition = referencePost.getMidPoint();
-    const distanceToPost = Math.abs(position.x - postPosition.x);
-    const ballDistanceToPost =
-      Math.abs(this.ball.getPosition().x - postPosition.x);
-
-    return ballDistanceToPost - distanceToPost;
   }
 
   private opponentNeutralized(opponent: Player, mates: Player[]): boolean {
