@@ -28,18 +28,18 @@ describe('DefensiveRunState', () => {
 
   describe('`update`', () => {
     it('executes a moveTowardsDefensivePosition command if eligilble', () => {
-        const extractor = new TestPlayerStateFeatureExtractor();
-        sinon.stub(extractor, 'teamInControl').returns(false);
-        sinon.stub(extractor, 'isNearestTeamMateToBall').returns(false);
-        const state = new DefensiveRunState(commandFactory, extractor);
+      const bestDefencePositionOption = new Vector3D(5, 5, 5);
+      const extractor = new TestPlayerStateFeatureExtractor();
+      sinon.stub(extractor, 'teamInControl').returns(false);
+      sinon.stub(extractor, 'isNearestTeamMateToBall').returns(false);
+      sinon.stub(extractor, 'bestDefencePositionOption')
+        .returns(bestDefencePositionOption);
+      const state = new DefensiveRunState(commandFactory, extractor);
+      sinon.stub(player, 'moveTowards');
 
-        const command = { execute: sinon.spy() };
-        sinon.stub(commandFactory, 'getCommand')
-          .withArgs(COMMAND_ID.MOVE_TO_DEFENSIVE_POSITION)
-          .returns(command);
-
-        state.update(player);
-        expect(command.execute).to.have.been.calledWith(player);
+      state.update(player);
+      expect(player.moveTowards).to.have.been.calledWith(
+        bestDefencePositionOption);
     });
 
     it('does nothing if the team has the ball', () => {
@@ -47,14 +47,10 @@ describe('DefensiveRunState', () => {
       sinon.stub(extractor, 'teamInControl').returns(true);
       sinon.stub(extractor, 'isNearestTeamMateToBall').returns(false);
       const state = new DefensiveRunState(commandFactory, extractor);
-
-      const command = { execute: sinon.spy() };
-      sinon.stub(commandFactory, 'getCommand')
-        .withArgs(COMMAND_ID.MOVE_TO_DEFENSIVE_POSITION)
-        .returns(command);
+      sinon.stub(player, 'moveTowards');
 
       state.update(player);
-      expect(command.execute).not.to.have.been.called;
+      expect(player.moveTowards).not.to.have.been.called;
     });
 
     it('does nothing if the player is the nearest to the ball', () => {
@@ -62,14 +58,10 @@ describe('DefensiveRunState', () => {
       sinon.stub(extractor, 'teamInControl').returns(false);
       sinon.stub(extractor, 'isNearestTeamMateToBall').returns(true);
       const state = new DefensiveRunState(commandFactory, extractor);
-
-      const command = { execute: sinon.spy() };
-      sinon.stub(commandFactory, 'getCommand')
-        .withArgs(COMMAND_ID.MOVE_TO_DEFENSIVE_POSITION)
-        .returns(command);
+      sinon.stub(player, 'moveTowards');
 
       state.update(player);
-      expect(command.execute).not.to.have.been.called;
+      expect(player.moveTowards).not.to.have.been.called;
     });
   });
 });

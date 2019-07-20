@@ -80,6 +80,10 @@ export class PlayerStateFeatureExtractor implements IPlayerStateFeatureExtractor
     });
   }
 
+  public bestDefencePositionOption(player: Player): Vector3D {
+    return player.defendingPosition();
+  }
+
   public isNearestTeamMateToBall(player: Player): boolean {
     const ballPosition = this.ball.getPosition();
     const players = player.getTeam().getPlayers();

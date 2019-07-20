@@ -5,12 +5,18 @@ import { Vector3D } from "../../src/three_dimensional_vector";
 export class TestPlayerStateFeatureExtractor
   implements IPlayerStateFeatureExtractor {
 
+    public bestDefencePositionOption(player: Player): Vector3D {
+      return new Vector3D(0, 0, 0);
+    }
+
     public bestDribbleOption(player: Player): Vector3D {
       return new Vector3D(0, 0, 0);
     }
+
     public bestDribbleValue(player: Player): number {
       return 0
     }
+
     public bestPassingOption(player: Player): Player {
       return new Player(0, 0, 0, 0, 0);
     }

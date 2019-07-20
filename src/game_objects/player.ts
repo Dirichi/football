@@ -260,12 +260,12 @@ export class Player implements ICollidable {
       this.messages.filter((message) => message.title !== messageTitle);
   }
 
-  private attackingPosition(): Vector3D {
-    return this.role.getDefaultAttackingPosition(this.team.getSide());
+  public defendingPosition(): Vector3D {
+    return this.role.getDefaultDefendingPosition(this.team.getSide());
   }
 
-  private defendingPosition(): Vector3D {
-    return this.role.getDefaultDefendingPosition(this.team.getSide());
+  private attackingPosition(): Vector3D {
+    return this.role.getDefaultAttackingPosition(this.team.getSide());
   }
 
   private kickOffPosition(): Vector3D {
