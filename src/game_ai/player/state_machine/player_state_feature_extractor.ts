@@ -6,6 +6,7 @@ import { Ball } from "../../../game_objects/ball";
 import { Player } from "../../../game_objects/player";
 import { IAttackPositionValueCalculator } from "../../../interfaces/iattack_position_value_calculator";
 import { IBallPossessionService } from "../../../interfaces/iball_possession_service";
+import { IDefenceValueCalculator } from "../../../interfaces/idefence_value_calculator";
 import { IDribbleValueCalculator } from "../../../interfaces/idribble_value_calculator";
 import { IPassValueCalculator } from "../../../interfaces/ipass_value_calculator";
 import { IPlayerStateFeatureExtractor } from "../../../interfaces/iplayer_state_feature_extractor";
@@ -20,7 +21,8 @@ export class PlayerStateFeatureExtractor implements IPlayerStateFeatureExtractor
     private passValueCalculator: IPassValueCalculator,
     private shotValueCalculator: IShotValueCalculator,
     private positionValueCalculator: IAttackPositionValueCalculator,
-    private dribbleValueCalculator: IDribbleValueCalculator) {
+    private dribbleValueCalculator: IDribbleValueCalculator,
+    private defenceValueCalculator: IDefenceValueCalculator) {
   }
 
   public teamInControl(player: Player): boolean {
@@ -81,7 +83,10 @@ export class PlayerStateFeatureExtractor implements IPlayerStateFeatureExtractor
   }
 
   public bestDefencePositionOption(player: Player): Vector3D {
-    return player.defendingPosition();
+    const positions = this.positionOptions(player);
+    return maximumBy(positions, (position) => {
+      return this.defenceValueCalculator.evaluate(player, position);
+    });
   }
 
   public isNearestTeamMateToBall(player: Player): boolean {

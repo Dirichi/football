@@ -5,6 +5,7 @@ import {
   AttackPositionValueCalculator
 } from "./game_ai/player/state_machine/calculators/attack_position_value_calculator";
 import { CongestionCalculator } from "./game_ai/player/state_machine/calculators/congestion_calculator";
+import { DefenceValueCalculator } from "./game_ai/player/state_machine/calculators/defence_value_calculator";
 import { DribbleValueCalculator } from "./game_ai/player/state_machine/calculators/dribble_value_calculator";
 import { InterceptionCalculator } from "./game_ai/player/state_machine/calculators/interception_calculator";
 import { PassValueCalculator } from "./game_ai/player/state_machine/calculators/pass_value_calculator";
@@ -195,6 +196,7 @@ const passValueCalculator = new PassValueCalculator(
   ball, interceptionCalculator, positionValueCalculator);
 const dribbleValueCalculator =
   new DribbleValueCalculator(positionValueCalculator, interceptionCalculator);
+const defenceValueCalculator = new DefenceValueCalculator(ball, field);
 
 const positionValueDebugService =
   new PositionValueDebugService(positionValueCalculator, defaultPlayers);
@@ -206,7 +208,8 @@ const featureExtractor =
     passValueCalculator,
     shotValueCalculator,
     positionValueCalculator,
-    dribbleValueCalculator);
+    dribbleValueCalculator,
+    defenceValueCalculator);
 
 const COMMAND_ID_TO_COMMAND_MAPPING = new Map<COMMAND_ID, ICommand>([
       [COMMAND_ID.MOVE, new MoveCommand()],
