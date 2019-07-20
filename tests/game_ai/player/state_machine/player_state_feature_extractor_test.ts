@@ -124,24 +124,6 @@ describe('PlayerStateFeatureExtractor', () => {
     });
   });
 
-  describe('`isNearestTeamMateToBall`', () => {
-    it('returns true if the player is the closest teamMate to the ball', () => {
-      const otherPlayer = new Player(5, 5, 0, 0, 5);
-      // create team and setTeam in one line
-      const team = new Team([player, otherPlayer]);
-
-      expect(extractor.isNearestTeamMateToBall(player)).to.be.true;
-    });
-
-    it('returns false if the player is not the closest teamMate to the ball',
-        () => {
-        const otherPlayer = new Player(5, 5, 0, 0, 5);
-        // create team and setTeam in one line
-        const team = new Team([player, otherPlayer]);
-
-        expect(extractor.isNearestTeamMateToBall(otherPlayer)).to.be.false;
-    });
-  });
 
   describe('`receivedWaitMessage`', () => {
     it('returns true if the player has WAIT messages', () => {

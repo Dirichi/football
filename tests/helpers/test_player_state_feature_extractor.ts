@@ -41,10 +41,6 @@ export class TestPlayerStateFeatureExtractor
       return false;
     }
 
-    public isNearestTeamMateToBall(player: Player): boolean {
-      return false;
-    }
-
     public receivedWaitMessage(player: Player): boolean {
       return false;
     }
@@ -54,6 +50,10 @@ export class TestPlayerStateFeatureExtractor
     }
 
     public expectedPassInterceptedOrCompleted(player: Player): boolean {
+      return false;
+    }
+
+    public isEligibleToMark(player: Player): boolean {
       return false;
     }
 }

@@ -31,7 +31,7 @@ describe('ChasingBallState', () => {
     it('executes a ChaseBallCommand if eligilble', () => {
         const extractor = new TestPlayerStateFeatureExtractor();
         sinon.stub(extractor, 'teamInControl').returns(false)
-        sinon.stub(extractor, 'isNearestTeamMateToBall').returns(true)
+        sinon.stub(extractor, 'isEligibleToMark').returns(true)
         const state = new ChasingBallState(commandFactory, extractor);
 
         const command = { execute: sinon.spy() };
@@ -46,7 +46,7 @@ describe('ChasingBallState', () => {
     it('does nothing if the team has the ball', () => {
       const extractor = new TestPlayerStateFeatureExtractor();
       sinon.stub(extractor, 'teamInControl').returns(true);
-      sinon.stub(extractor, 'isNearestTeamMateToBall').returns(false);
+      sinon.stub(extractor, 'isEligibleToMark').returns(false);
       const state = new ChasingBallState(commandFactory, extractor);
 
       const command = { execute: sinon.spy() };
@@ -61,7 +61,7 @@ describe('ChasingBallState', () => {
     it('does nothing if the player is not the nearest to the ball', () => {
       const extractor = new TestPlayerStateFeatureExtractor();
       sinon.stub(extractor, 'teamInControl').returns(false);
-      sinon.stub(extractor, 'isNearestTeamMateToBall').returns(false);
+      sinon.stub(extractor, 'isEligibleToMark').returns(false);
       const state = new ChasingBallState(commandFactory, extractor);
 
       const command = { execute: sinon.spy() };

@@ -4,6 +4,7 @@ import {
   STATE_MACHINE_COMMANDS } from "../../../constants";
 import { Ball } from "../../../game_objects/ball";
 import { Player } from "../../../game_objects/player";
+import { Post } from "../../../game_objects/post";
 import { IAttackPositionValueCalculator } from "../../../interfaces/iattack_position_value_calculator";
 import { IBallPossessionService } from "../../../interfaces/iball_possession_service";
 import { IDefenceValueCalculator } from "../../../interfaces/idefence_value_calculator";
@@ -82,6 +83,20 @@ export class PlayerStateFeatureExtractor implements IPlayerStateFeatureExtractor
     });
   }
 
+  public isEligibleToMark(player: Player): boolean {
+    const post = player.getGoalPost();
+    const players = this.teamPlayersAheadOfBall(player, post);
+    if (!players.length) {
+      return this.isNearestTeamMateToBall(player);
+    }
+
+    const eligibleMarker = minimumBy(players, (eachPlayer) => {
+      return eachPlayer.getPosition().distanceTo(this.ball.getPosition());
+    });
+
+    return player === eligibleMarker;
+  }
+
   public bestDefencePositionOption(player: Player): Vector3D {
     const positions = this.positionOptions(player);
     return maximumBy(positions, (position) => {
@@ -89,7 +104,7 @@ export class PlayerStateFeatureExtractor implements IPlayerStateFeatureExtractor
     });
   }
 
-  public isNearestTeamMateToBall(player: Player): boolean {
+  private isNearestTeamMateToBall(player: Player): boolean {
     const ballPosition = this.ball.getPosition();
     const players = player.getTeam().getPlayers();
 
@@ -115,6 +130,24 @@ export class PlayerStateFeatureExtractor implements IPlayerStateFeatureExtractor
       this.ballPossessionService.getCurrentPlayerInPossessionOrNull();
 
     return ![null, waitMessage.sender].includes(currentPlayerInPossession);
+  }
+
+  private teamPlayersAheadOfBall(
+    player: Player, referencePost: Post): Player[] {
+    return player.getTeam().getPlayers().filter((eachPlayer) => {
+      const position = eachPlayer.getPosition();
+      return this.distanceAheadOfBall(position, referencePost) >= 0;
+    });
+  }
+
+  // TODO: Repitition; used in defenceValueCalculator
+  private distanceAheadOfBall(position: Vector3D, referencePost: Post): number {
+    const postPosition = referencePost.getMidPoint();
+    const distanceToPost = Math.abs(position.x - postPosition.x);
+    const ballDistanceToPost =
+      Math.abs(this.ball.getPosition().x - postPosition.x);
+
+    return ballDistanceToPost - distanceToPost;
   }
 
   private positionOptions(player: Player): Vector3D[] {

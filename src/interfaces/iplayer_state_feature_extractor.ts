@@ -11,7 +11,7 @@ export interface IPlayerStateFeatureExtractor {
   bestShotValue(player: Player): number;
   bestShotTargetOption(player: Player): Vector3D;
   hasBall(player: Player): boolean;
-  isNearestTeamMateToBall(player: Player): boolean;
+  isEligibleToMark(player: Player): boolean;
   receivedWaitMessage(player: Player): boolean;
   teamInControl(player: Player): boolean;
   expectedPassInterceptedOrCompleted(player: Player): boolean;

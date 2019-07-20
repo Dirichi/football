@@ -12,7 +12,7 @@ export class DefensiveRunState implements IPlayerState {
 
   public eligibleFor(player: Player): boolean {
     return !this.extractor.teamInControl(player)
-      && !this.extractor.isNearestTeamMateToBall(player);
+      && !this.extractor.isEligibleToMark(player);
   }
 
   public update(player: Player): void {
