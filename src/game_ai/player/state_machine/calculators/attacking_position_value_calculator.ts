@@ -38,7 +38,10 @@ export class AttackingPositionValueCalculator implements IAttackingPositionValue
   }
 
   private congestionScore(player: Player, position: Vector3D): number {
-    const congestion = this.congestionCalculator.evaluate(position);
+    const playersToMonitor =
+      [...player.teamMates(), ...player.getOpposingPlayers()];
+    const congestion =
+      this.congestionCalculator.evaluate(position, playersToMonitor);
     return congestion;
   }
 
