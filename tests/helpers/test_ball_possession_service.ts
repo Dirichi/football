@@ -10,11 +10,11 @@ export class TestBallPossessionService implements IBallPossessionService {
     this.last = last;
   }
 
-  public getCurrentPlayerInPossessionOrNull() {
+  public getCurrentPlayerInPossessionOrNull(): Player | null {
     return this.current;
   }
 
-  public getLastPlayerInPossession() {
+  public getLastPlayerInPossession(): Player | null {
     return this.last;
   }
 }

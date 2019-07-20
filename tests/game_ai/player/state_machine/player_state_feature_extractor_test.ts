@@ -4,6 +4,7 @@ import { IAttackPositionValueCalculator } from '../../../../src/interfaces/iatta
 import { IPlayerMessage } from '../../../../src/interfaces/iplayer_message';
 import { IShotValueCalculator } from '../../../../src/interfaces/ishot_value_calculator';
 import { IDribbleValueCalculator } from '../../../../src/interfaces/idribble_value_calculator';
+import { IDefenceValueCalculator } from '../../../../src/interfaces/idefence_value_calculator';
 import { Player } from '../../../../src/game_objects/player';
 import { PlayerStateFeatureExtractor } from '../../../../src/game_ai/player/state_machine/player_state_feature_extractor';
 import { Team } from '../../../../src/game_objects/team';
@@ -23,6 +24,9 @@ let passValueCalculator: IPassValueCalculator;
 let shotValueCalculator: IShotValueCalculator;
 let positionValueCalculator: IAttackPositionValueCalculator;
 let dribbleValueCalculator: IDribbleValueCalculator;
+let defenceValueCalculator: IDefenceValueCalculator;
+let possessionService: TestBallPossessionService;
+let extractor: PlayerStateFeatureExtractor;
 
 describe('PlayerStateFeatureExtractor', () => {
   beforeEach(() => {
@@ -42,6 +46,21 @@ describe('PlayerStateFeatureExtractor', () => {
       evaluate: (
         player: Player, endPositon: Vector3D, startPosition: Vector3D) => 0.5,
     }
+
+    defenceValueCalculator = {
+      evaluate: (player: Player, position: Vector3D) => 0.5,
+    }
+
+    possessionService = new TestBallPossessionService();
+    extractor = new PlayerStateFeatureExtractor(
+      ball,
+      possessionService,
+      passValueCalculator,
+      shotValueCalculator,
+      positionValueCalculator,
+      dribbleValueCalculator,
+      defenceValueCalculator
+    );
   });
 
   afterEach(() => {
@@ -51,34 +70,19 @@ describe('PlayerStateFeatureExtractor', () => {
     shotValueCalculator = null;
     positionValueCalculator = null;
     dribbleValueCalculator = null;
+    defenceValueCalculator = null;
+    possessionService = null;
+    extractor = null;
   });
 
   describe('`hasBall`', () => {
     it('returns true if the player hasBall', () => {
       sinon.stub(player, 'hasBall').returns(true);
-      const possessionService = new TestBallPossessionService();
-      const extractor = new PlayerStateFeatureExtractor(
-        ball,
-        possessionService,
-        passValueCalculator,
-        shotValueCalculator,
-        positionValueCalculator,
-        dribbleValueCalculator
-      );
       expect(extractor.hasBall(player)).to.be.true;
     });
 
     it('returns false if the player does not have the ball', () => {
       sinon.stub(player, 'hasBall').returns(false);
-      const possessionService = new TestBallPossessionService();
-      const extractor = new PlayerStateFeatureExtractor(
-        ball,
-        possessionService,
-        passValueCalculator,
-        shotValueCalculator,
-        positionValueCalculator,
-        dribbleValueCalculator
-      );
       expect(extractor.hasBall(player)).to.be.false;
     });
   });
@@ -89,15 +93,8 @@ describe('PlayerStateFeatureExtractor', () => {
         const otherPlayer = new Player(0, 0, 0, 0, 5);
         const team = new Team([]);
         [player, otherPlayer].forEach((element) => element.setTeam(team));
-        const possessionService = new TestBallPossessionService(player, player);
-        const extractor = new PlayerStateFeatureExtractor(
-          ball,
-          possessionService,
-          passValueCalculator,
-          shotValueCalculator,
-          positionValueCalculator,
-          dribbleValueCalculator
-        );
+        sinon.stub(
+          possessionService, 'getLastPlayerInPossession').returns(player);
         expect(extractor.teamInControl(player)).to.be.true;
     });
 
@@ -107,16 +104,8 @@ describe('PlayerStateFeatureExtractor', () => {
         [player, otherPlayer].forEach((element) => {
           element.setTeam(new Team([]))
         });
-        const possessionService = new TestBallPossessionService(
-          otherPlayer, otherPlayer);
-        const extractor = new PlayerStateFeatureExtractor(
-          ball,
-          possessionService,
-          passValueCalculator,
-          shotValueCalculator,
-          positionValueCalculator,
-          dribbleValueCalculator
-        );
+        sinon.stub(
+          possessionService, 'getLastPlayerInPossession').returns(otherPlayer);
         expect(extractor.teamInControl(player)).to.be.false;
     });
   });
@@ -131,15 +120,6 @@ describe('PlayerStateFeatureExtractor', () => {
       passValueStub.withArgs(mateOne).returns(0);
       passValueStub.withArgs(mateTwo).returns(0.5);
 
-      const possessionService = new TestBallPossessionService();
-      const extractor = new PlayerStateFeatureExtractor(
-        ball,
-        possessionService,
-        passValueCalculator,
-        shotValueCalculator,
-        positionValueCalculator,
-        dribbleValueCalculator
-      );
       expect(extractor.bestPassingOption(player)).to.equal(mateTwo);
     });
   });
@@ -149,15 +129,6 @@ describe('PlayerStateFeatureExtractor', () => {
       const otherPlayer = new Player(5, 5, 0, 0, 5);
       // create team and setTeam in one line
       const team = new Team([player, otherPlayer]);
-      const possessionService = new TestBallPossessionService();
-      const extractor = new PlayerStateFeatureExtractor(
-        ball,
-        possessionService,
-        passValueCalculator,
-        shotValueCalculator,
-        positionValueCalculator,
-        dribbleValueCalculator
-      );
 
       expect(extractor.isNearestTeamMateToBall(player)).to.be.true;
     });
@@ -167,15 +138,6 @@ describe('PlayerStateFeatureExtractor', () => {
         const otherPlayer = new Player(5, 5, 0, 0, 5);
         // create team and setTeam in one line
         const team = new Team([player, otherPlayer]);
-        const possessionService = new TestBallPossessionService();
-        const extractor = new PlayerStateFeatureExtractor(
-          ball,
-          possessionService,
-          passValueCalculator,
-          shotValueCalculator,
-          positionValueCalculator,
-          dribbleValueCalculator
-        );
 
         expect(extractor.isNearestTeamMateToBall(otherPlayer)).to.be.false;
     });
@@ -188,30 +150,12 @@ describe('PlayerStateFeatureExtractor', () => {
         sender: new Player(0, 0, 0, 0, 0),
       } as IPlayerMessage;
       sinon.stub(player, 'getMessages').returns([message]);
-      const possessionService = new TestBallPossessionService();
-      const extractor = new PlayerStateFeatureExtractor(
-        ball,
-        possessionService,
-        passValueCalculator,
-        shotValueCalculator,
-        positionValueCalculator,
-        dribbleValueCalculator
-      );
 
       expect(extractor.receivedWaitMessage(player)).to.be.true;
     });
 
     it('returns false if the player does not have WAIT messages', () => {
       sinon.stub(player, 'getMessages').returns([]);
-      const possessionService = new TestBallPossessionService();
-      const extractor = new PlayerStateFeatureExtractor(
-        ball,
-        possessionService,
-        passValueCalculator,
-        shotValueCalculator,
-        positionValueCalculator,
-        dribbleValueCalculator
-      );
 
       expect(extractor.receivedWaitMessage(player)).to.be.false;
     });
@@ -226,17 +170,8 @@ describe('PlayerStateFeatureExtractor', () => {
           sender: sender,
         } as IPlayerMessage;
         sinon.stub(player, 'getMessages').returns([message]);
-        const possessionService = new TestBallPossessionService();
         sinon.stub(possessionService, 'getCurrentPlayerInPossessionOrNull')
           .returns(player);
-        const extractor = new PlayerStateFeatureExtractor(
-          ball,
-          possessionService,
-          passValueCalculator,
-          shotValueCalculator,
-          positionValueCalculator,
-          dribbleValueCalculator
-        );
 
         expect(extractor.expectedPassInterceptedOrCompleted(player)).to.be.true;
       });
@@ -249,17 +184,8 @@ describe('PlayerStateFeatureExtractor', () => {
           sender: sender,
         } as IPlayerMessage;
         sinon.stub(player, 'getMessages').returns([message]);
-        const possessionService = new TestBallPossessionService();
         sinon.stub(possessionService, 'getCurrentPlayerInPossessionOrNull')
           .returns(interceptor);
-        const extractor = new PlayerStateFeatureExtractor(
-          ball,
-          possessionService,
-          passValueCalculator,
-          shotValueCalculator,
-          positionValueCalculator,
-          dribbleValueCalculator
-        );
 
         expect(extractor.expectedPassInterceptedOrCompleted(player)).to.be.true;
       });
@@ -271,17 +197,8 @@ describe('PlayerStateFeatureExtractor', () => {
           sender: sender,
         } as IPlayerMessage;
         sinon.stub(player, 'getMessages').returns([message]);
-        const possessionService = new TestBallPossessionService();
         sinon.stub(possessionService, 'getCurrentPlayerInPossessionOrNull')
           .returns(sender);
-        const extractor = new PlayerStateFeatureExtractor(
-          ball,
-          possessionService,
-          passValueCalculator,
-          shotValueCalculator,
-          positionValueCalculator,
-          dribbleValueCalculator
-        );
 
         expect(
           extractor.expectedPassInterceptedOrCompleted(player)).to.be.false;
@@ -294,17 +211,8 @@ describe('PlayerStateFeatureExtractor', () => {
           sender: sender,
         } as IPlayerMessage;
         sinon.stub(player, 'getMessages').returns([message]);
-        const possessionService = new TestBallPossessionService();
         sinon.stub(possessionService, 'getCurrentPlayerInPossessionOrNull')
           .returns(null);
-        const extractor = new PlayerStateFeatureExtractor(
-          ball,
-          possessionService,
-          passValueCalculator,
-          shotValueCalculator,
-          positionValueCalculator,
-          dribbleValueCalculator
-        );
 
         expect(
           extractor.expectedPassInterceptedOrCompleted(player)).to.be.false;
@@ -314,15 +222,6 @@ describe('PlayerStateFeatureExtractor', () => {
     context('when the player has no wait messages', () => {
       it('returns false', () => {
         sinon.stub(player, 'getMessages').returns([]);
-        const possessionService = new TestBallPossessionService();
-        const extractor = new PlayerStateFeatureExtractor(
-          ball,
-          possessionService,
-          passValueCalculator,
-          shotValueCalculator,
-          positionValueCalculator,
-          dribbleValueCalculator
-        );
 
         expect(
           extractor.expectedPassInterceptedOrCompleted(player)).to.be.false;
