@@ -29,7 +29,7 @@ app.set("view engine", "ejs");
 app.use(express.static(path.join(__dirname, "public")));
 
 app.get("/", (req, res) => {
-  res.render("index");
+  res.render("game");
 });
 
 // start the Express server
@@ -37,17 +37,10 @@ httpServer.listen(port, () => {
   // tslint:disable-next-line:no-console
   console.log(`server started at http://localhost:${port}`);
 });
-let clientSize = 0;
 
 io.on("connection", (socket) => {
   const wrappedSocket = new WrappedSocket(socket);
   const client = new GameClient(wrappedSocket);
-  // client.configure();
-  // TODO: Hacky way to implement room size limit / timeout. Will be replaced.
-  clientSize += 1;
-  setTimeout(() => { room.startGame(); }, 3000);
   room.addClient(client);
-  if (clientSize === 2) {
-    room.startGame();
-  }
+  room.startGame();
 });
