@@ -2,13 +2,13 @@ import { IDEAL_DISTANCE_FROM_GOAL, NUM_SHOT_TARGETS } from "../../../../constant
 import { Ball } from "../../../../game_objects/ball";
 import { Field } from "../../../../game_objects/field";
 import { Player } from "../../../../game_objects/player";
-import { IAttackingPositionValueCalculator } from "../../../../interfaces/iattacking_position_value_calculator";
+import { IAttackPositionValueCalculator } from "../../../../interfaces/iattack_position_value_calculator";
 import { Vector3D } from "../../../../three_dimensional_vector";
 import { range, round, scale } from "../../../../utils/helper_functions";
 import { CongestionCalculator } from "./congestion_calculator";
 import { ShotValueCalculator } from "./shot_value_calculator";
 
-export class AttackingPositionValueCalculator implements IAttackingPositionValueCalculator {
+export class AttackPositionValueCalculator implements IAttackPositionValueCalculator {
   constructor(
     private ball: Ball,
     private field: Field,

@@ -1,6 +1,6 @@
 import { Player } from "../../../../../src/game_objects/player";
 import { Vector3D } from "../../../../../src/three_dimensional_vector";
-import { IAttackingPositionValueCalculator } from "../../../../interfaces/iattacking_position_value_calculator";
+import { IAttackPositionValueCalculator } from "../../../../interfaces/iattack_position_value_calculator";
 import { IDribbleValueCalculator } from "../../../../interfaces/idribble_value_calculator";
 import { scale } from "../../../../utils/helper_functions";
 import { InterceptionCalculator } from "./interception_calculator";
@@ -14,7 +14,7 @@ interface IDribble {
 
 export class DribbleValueCalculator implements IDribbleValueCalculator {
   constructor(
-    private positionValueCalculator: IAttackingPositionValueCalculator,
+    private positionValueCalculator: IAttackPositionValueCalculator,
     private interceptionCalculator: InterceptionCalculator) {}
 
     public evaluate(
