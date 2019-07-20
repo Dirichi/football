@@ -11,8 +11,9 @@ export class CongestionCalculator {
     this.radiusOfInterest = radiusOfInterest;
   }
 
-  public evaluate(position: Vector3D): number {
-    return this.players.reduce((totalCongestion, player) => {
+  public evaluate(
+    position: Vector3D, players: Player[] = this.players): number {
+    return players.reduce((totalCongestion, player) => {
       totalCongestion += this.individualContributionToCongestion(
         player, position);
       return totalCongestion;

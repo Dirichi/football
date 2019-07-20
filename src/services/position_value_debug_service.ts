@@ -1,18 +1,20 @@
 import { POSITION_DELTA_FOR_POSITION_VALUE_CALCULATION } from "../constants";
+import {
+   DefendingPositionValueCalculator
+} from "../game_ai/player/state_machine/calculators/defending_position_value_calculator";
 import { Player } from "../game_objects/player";
-import { IAttackingPositionValueCalculator } from "../interfaces/iattacking_position_value_calculator";
 import { IPositionValueSchema } from "../interfaces/iposition_value_schema";
 import { ITextSchema } from "../interfaces/itext_schema";
 import { Vector3D } from "../three_dimensional_vector";
 import { round } from "../utils/helper_functions";
 
 export class PositionValueDebugService {
-  private positionValueCalculator: IAttackingPositionValueCalculator;
+  private positionValueCalculator: DefendingPositionValueCalculator;
   private players: Player[];
   private enabled: boolean;
 
   constructor(
-    positionValueCalculator: IAttackingPositionValueCalculator,
+    positionValueCalculator: DefendingPositionValueCalculator,
     players: Player[],
     enabled: boolean = false) {
       this.positionValueCalculator = positionValueCalculator;
@@ -28,6 +30,7 @@ export class PositionValueDebugService {
     });
   }
 
+  // TODO: Duplicated in the player state feature extractor.
   private buildPositionValues(player: Player): IPositionValueSchema {
     const delta = POSITION_DELTA_FOR_POSITION_VALUE_CALCULATION;
     const potentialPositionDiffs = [

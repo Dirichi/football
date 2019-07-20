@@ -12,6 +12,7 @@ export class Team {
   private opposingGoalPost?: Post;
   private kickOffStartingPlayer?: Player;
   private kickOffSupportingPlayer?: Player;
+  private goalPost?: Post;
 
   constructor(players: Player[]) {
     this.players = players;
@@ -32,6 +33,10 @@ export class Team {
     });
   }
 
+  public getGoalPost(): Post {
+    return this.goalPost;
+  }
+
   public getOpposition(): Team {
     return this.opposition;
   }
@@ -44,6 +49,11 @@ export class Team {
   public setOpposingGoalPost(post: Post): Team {
     this.opposingGoalPost = post;
     this.players.forEach((player) => player.setOpposingGoalPost(post));
+    return this;
+  }
+
+  public setGoalPost(post: Post): Team {
+    this.goalPost = post;
     return this;
   }
 

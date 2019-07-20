@@ -2,6 +2,9 @@ import {
   NUM_SHOT_TARGETS,
   POSITION_DELTA_FOR_POSITION_VALUE_CALCULATION,
   STATE_MACHINE_COMMANDS } from "../../../constants";
+import {
+  DefendingPositionValueCalculator
+} from "../../../game_ai/player/state_machine/calculators/defending_position_value_calculator";
 import { Ball } from "../../../game_objects/ball";
 import { Player } from "../../../game_objects/player";
 import { IAttackingPositionValueCalculator } from "../../../interfaces/iattacking_position_value_calculator";
@@ -20,7 +23,8 @@ export class PlayerStateFeatureExtractor implements IPlayerStateFeatureExtractor
     private passValueCalculator: IPassValueCalculator,
     private shotValueCalculator: IShotValueCalculator,
     private positionValueCalculator: IAttackingPositionValueCalculator,
-    private dribbleValueCalculator: IDribbleValueCalculator) {
+    private dribbleValueCalculator: IDribbleValueCalculator,
+    private defensePositionValueCalculator: DefendingPositionValueCalculator) {
   }
 
   public teamInControl(player: Player): boolean {
@@ -80,6 +84,13 @@ export class PlayerStateFeatureExtractor implements IPlayerStateFeatureExtractor
     });
   }
 
+  public bestDefensivePositionOption(player: Player): Vector3D {
+    const positions = this.positionOptions(player);
+    return maximumBy(positions, (position) => {
+      return this.defensePositionValueCalculator.evaluate(player, position);
+    });
+  }
+
   public isNearestTeamMateToBall(player: Player): boolean {
     const ballPosition = this.ball.getPosition();
     const players = player.getTeam().getPlayers();
@@ -88,7 +99,8 @@ export class PlayerStateFeatureExtractor implements IPlayerStateFeatureExtractor
       return teamMate.getPosition().distanceTo(ballPosition);
     });
 
-    return closestTeamMate === player;
+    return (player.getPosition().distanceTo(this.ball.getPosition()) <= player.diameter * 4) ||
+      (player === closestTeamMate);
   }
 
   public receivedWaitMessage(player: Player): boolean {
@@ -108,8 +120,9 @@ export class PlayerStateFeatureExtractor implements IPlayerStateFeatureExtractor
     return ![null, waitMessage.sender].includes(currentPlayerInPossession);
   }
 
-  private positionOptions(player: Player): Vector3D[] {
-    const delta = POSITION_DELTA_FOR_POSITION_VALUE_CALCULATION;
+  private positionOptions(
+    player: Player,
+    delta = POSITION_DELTA_FOR_POSITION_VALUE_CALCULATION): Vector3D[] {
     const positionDiffs = [
       new Vector3D(delta, 0, 0),
       new Vector3D(-delta, 0, 0),

@@ -17,9 +17,10 @@ export class DefensiveRunState implements IPlayerState {
 
   public update(player: Player): void {
     if (this.eligibleFor(player)) {
-      this.commandFactory
-        .getCommand(COMMAND_ID.MOVE_TO_DEFENSIVE_POSITION)
-        .execute(player);
+      player.moveTowards(this.extractor.bestDefensivePositionOption(player));
+      // this.commandFactory
+      //   .getCommand(COMMAND_ID.MOVE_TO_DEFENSIVE_POSITION)
+      //   .execute(player);
     }
   }
 }

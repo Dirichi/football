@@ -98,6 +98,10 @@ export class Player implements ICollidable {
     return this.opposingGoalPost;
   }
 
+  public getTeamGoalPost(): Post {
+    return this.team.getGoalPost();
+  }
+
   public getOpposingFieldPlayers(): Player[] {
     return this.getTeam().getOpposition().getFieldPlayers();
   }
@@ -260,12 +264,12 @@ export class Player implements ICollidable {
       this.messages.filter((message) => message.title !== messageTitle);
   }
 
-  private attackingPosition(): Vector3D {
-    return this.role.getDefaultAttackingPosition(this.team.getSide());
+  public defendingPosition(): Vector3D {
+    return this.role.getDefaultDefendingPosition(this.team.getSide());
   }
 
-  private defendingPosition(): Vector3D {
-    return this.role.getDefaultDefendingPosition(this.team.getSide());
+  private attackingPosition(): Vector3D {
+    return this.role.getDefaultAttackingPosition(this.team.getSide());
   }
 
   private kickOffPosition(): Vector3D {

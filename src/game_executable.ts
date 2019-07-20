@@ -5,6 +5,9 @@ import {
   AttackingPositionValueCalculator
 } from "./game_ai/player/state_machine/calculators/attacking_position_value_calculator";
 import { CongestionCalculator } from "./game_ai/player/state_machine/calculators/congestion_calculator";
+import {
+  DefendingPositionValueCalculator
+} from "./game_ai/player/state_machine/calculators/defending_position_value_calculator";
 import { DribbleValueCalculator } from "./game_ai/player/state_machine/calculators/dribble_value_calculator";
 import { InterceptionCalculator } from "./game_ai/player/state_machine/calculators/interception_calculator";
 import { PassValueCalculator } from "./game_ai/player/state_machine/calculators/pass_value_calculator";
@@ -141,6 +144,7 @@ const teamB = new Team(teamBPlayers);
 
 const teams = [teamA, teamB];
 teamA.setSide(TEAM_SIDES.LEFT)
+  .setGoalPost(postA)
   .setOpposition(teamB)
   .setOpposingGoalPost(postB)
   .setColors([0, 0, 225])
@@ -148,6 +152,7 @@ teamA.setSide(TEAM_SIDES.LEFT)
   .setKickOffSupportingPlayer(teamAPlayers[teamSize - 2]);
 
 teamB.setSide(TEAM_SIDES.RIGHT)
+  .setGoalPost(postB)
   .setOpposition(teamA)
   .setOpposingGoalPost(postA)
   .setColors([225, 0, 0])
@@ -198,8 +203,12 @@ const passValueCalculator = new PassValueCalculator(
 const dribbleValueCalculator =
   new DribbleValueCalculator(positionValueCalculator, interceptionCalculator);
 
+const defensePositionValueCalculator =
+  new DefendingPositionValueCalculator(ball, field, congestionCalculator);
+
 const positionValueDebugService =
-  new PositionValueDebugService(positionValueCalculator, defaultPlayers);
+  new PositionValueDebugService(
+    defensePositionValueCalculator, defaultPlayers);
 
 const featureExtractor =
   new PlayerStateFeatureExtractor(
@@ -208,7 +217,8 @@ const featureExtractor =
     passValueCalculator,
     shotValueCalculator,
     positionValueCalculator,
-    dribbleValueCalculator);
+    dribbleValueCalculator,
+    defensePositionValueCalculator);
 
 const COMMAND_ID_TO_COMMAND_MAPPING = new Map<COMMAND_ID, ICommand>([
       [COMMAND_ID.MOVE, new MoveCommand()],
