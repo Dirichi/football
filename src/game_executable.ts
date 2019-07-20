@@ -141,6 +141,7 @@ const teamB = new Team(teamBPlayers);
 const teams = [teamA, teamB];
 teamA.setSide(TEAM_SIDES.LEFT)
   .setOpposition(teamB)
+  .setGoalPost(postA)
   .setOpposingGoalPost(postB)
   .setColors([0, 0, 225])
   .setKickOffStartingPlayer(teamAPlayers[teamSize - 1])
@@ -148,6 +149,7 @@ teamA.setSide(TEAM_SIDES.LEFT)
 
 teamB.setSide(TEAM_SIDES.RIGHT)
   .setOpposition(teamA)
+  .setGoalPost(postB)
   .setOpposingGoalPost(postA)
   .setColors([225, 0, 0])
   .setKickOffStartingPlayer(teamBPlayers[teamSize - 1])
@@ -196,7 +198,8 @@ const passValueCalculator = new PassValueCalculator(
   ball, interceptionCalculator, positionValueCalculator);
 const dribbleValueCalculator =
   new DribbleValueCalculator(positionValueCalculator, interceptionCalculator);
-const defenceValueCalculator = new DefenceValueCalculator(ball, field);
+const defenceValueCalculator =
+  new DefenceValueCalculator(ball, field, congestionCalculator);
 
 const positionValueDebugService =
   new PositionValueDebugService(positionValueCalculator, defaultPlayers);
