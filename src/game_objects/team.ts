@@ -10,6 +10,7 @@ export class Team {
   private opposition?: Team;
   private side?: TEAM_SIDES;
   private opposingGoalPost?: Post;
+  private goalPost?: Post;
   private kickOffStartingPlayer?: Player;
   private kickOffSupportingPlayer?: Player;
 
@@ -47,6 +48,11 @@ export class Team {
     return this;
   }
 
+  public setGoalPost(post: Post): Team {
+    this.goalPost = post;
+    return this;
+  }
+
   public setOpposition(opposition: Team): Team {
     this.opposition = opposition;
     return this;
@@ -64,6 +70,10 @@ export class Team {
 
   public getOpposingGoalPost(): Post {
     return this.opposingGoalPost;
+  }
+
+  public getGoalPost(): Post {
+    return this.goalPost;
   }
 
   public setColors(colors: [number, number, number]): Team {

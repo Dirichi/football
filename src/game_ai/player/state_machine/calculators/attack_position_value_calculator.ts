@@ -33,7 +33,8 @@ export class AttackPositionValueCalculator implements IAttackPositionValueCalcul
 
       const weightedScore =
         // TODO: Make these weights constants
-        (congestion * -0.1) +  (proximity * 0.2) + (trackingBall * 0.2) + (shotValue * 0.2);
+        (congestion * -0.03) +  (proximity * 0.2) + (trackingBall * 0.2)
+        + (shotValue * 0.2);
       return weightedScore;
   }
 
