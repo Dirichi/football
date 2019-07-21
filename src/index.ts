@@ -1,7 +1,11 @@
 import bodyParser from "body-parser";
+import connectRedis = require("connect-redis");
 import express from "express";
+import session from "express-session";
+import sharedSession from "express-socket.io-session";
 import * as http from "http";
 import path from "path";
+import redis from "redis";
 import socketIo from "socket.io";
 import v4 from "uuid/v4";
 
@@ -17,7 +21,16 @@ const httpServer = http.createServer(app);
 const urlencodedParser = bodyParser.urlencoded({ extended: false });
 const io = socketIo(httpServer);
 const port = 3000;
-// TODO: Create a game room on authenticated user request;
+// TODO Provide the configuration of the redis client
+const redisClient = redis.createClient();
+const RedisStore = connectRedis(session);
+const sessionMiddleWare = session({
+  cookie: { maxAge: 60000 },
+  resave: false,
+  saveUninitialized: true,
+  secret: "MAKE THIS AN ENV VARIABLE",
+  store: new RedisStore({client: redisClient})
+});
 
 const forker = new WrappedProcessForker();
 
@@ -26,39 +39,23 @@ room.setProcessForker(forker);
 room.setGameExecutablePath(path.join(__dirname, GAME_EXECUTABLE_FILE));
 room.save();
 
-interface ILocalStorageSession {
-  id: string;
-}
-
-const userSessions: ILocalStorageSession[] = [];
-
-const createSession = (): ILocalStorageSession => {
-  const session = { id: v4() };
-  userSessions.push(session);
-  return session;
-};
-
 // Configure Express to use EJS
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 
 app.use(express.static(path.join(__dirname, "public")));
+app.use(sessionMiddleWare);
 
 app.get("/", (req, res) => {
-  const session = createSession();
-  // TODO: Encrypt sessionId before sending it accross;
-  res.render("index", {
-    localSessionId: session.id,
-    roleTypes: ROLE_TYPE_CHOICE_MAP
-  });
-});
-
-app.get("/game", (req, res) => {
-  res.render("game");
+  res.render("index", { roleTypes: ROLE_TYPE_CHOICE_MAP });
 });
 
 app.post("/search", urlencodedParser, (req, res) => {
   res.redirect("/game");
+});
+
+app.get("/game", (req, res) => {
+  res.render("game");
 });
 
 httpServer.listen(port, () => {
@@ -66,6 +63,7 @@ httpServer.listen(port, () => {
   console.log(`server started at http://localhost:${port}`);
 });
 
+io.use(sharedSession(sessionMiddleWare, { autoSave: true }));
 io.on("connection", (socket) => {
   const wrappedSocket = new WrappedSocket(socket);
   const client = new GameClient(wrappedSocket);

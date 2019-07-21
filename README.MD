@@ -8,6 +8,8 @@ Some prerequistes before running the game locally:
 - Install git and update it if you haven't already. Instructions [here](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git).
 - Install npm and/or node and update them if you haven't already. Instructions [here](https://www.npmjs.com/get-npm).
 
+- Install redis (An in-memory database). Instructions [here](https://redis.io/topics/quickstart).
+
 To get the game running locally, open your terminal / command line. Then clone this repository to get all the code, by typing in the following command:
 
 > ```git clone https://github.com/Dirichi/football.git```
@@ -22,7 +24,15 @@ Then run the following command to download all the dependencies required by the 
 
 When all the above commands complete without any errors, to get the game going, run the following command:
 
-> ```npm run dev```
+> ```redis-server & npm run dev && fg```
+
+or you can use the tiny bash script written to do just that:
+
+> ```./run_dev.sh```
+
+if you get any permission denied errors when running the bash script, provide the script permission to be executed by running:
+
+> ```chmod 755 run_dev.sh```
 
 You should see some output on your terminal while the app compiles in preparation for running. Eventually you see something like `server started at http://localhost:3000`.
 
