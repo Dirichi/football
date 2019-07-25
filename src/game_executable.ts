@@ -26,6 +26,7 @@ import { MovePlayerRemoteCommandRequestHandler } from "./commands/move_player_re
 import { PassBallCommand } from "./commands/pass_ball_command";
 import { PassBallRemoteCommandRequestHandler } from "./commands/pass_ball_remote_command_request_handler";
 import { ShootBallCommand } from "./commands/shoot_ball_command";
+import { ShootBallRemoteCommandRequestHandler } from "./commands/shoot_ball_remote_command_request_handler";
 import { StopCommand } from "./commands/stop_command";
 // TODO: This is starting to look ugly
 import { BALL_INITIAL_ARGS, BOX18A_INITIAL_COORDINATES,
@@ -248,14 +249,14 @@ defaultPlayers.forEach((player) => {
 ballPossessionService.enable();
 collisionDetectionService.setCollisionMarginFactor(COLLISION_MARGIN_FACTOR);
 
-const genericHandler =
-  new GenericRemoteCommandRequestHandler(commandFactory);
-const passHandler =
-  new PassBallRemoteCommandRequestHandler(commandFactory);
+const genericHandler = new GenericRemoteCommandRequestHandler(commandFactory);
+const passHandler = new PassBallRemoteCommandRequestHandler(commandFactory);
+const shootHandler = new ShootBallRemoteCommandRequestHandler(commandFactory);
 const moveHandler = new MovePlayerRemoteCommandRequestHandler(commandFactory);
 
 const commandHandlerRouter = new Map<string, ICommandRequestHandler>([
   [COMMAND_ID.PASS_BALL as string, passHandler],
+  [COMMAND_ID.SHOOT_BALL as string, shootHandler],
   ["move.player.*", moveHandler],
   [".*", genericHandler],
 ]);
