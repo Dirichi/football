@@ -15,7 +15,7 @@ function create {
 }
 
 function setup {
-  psql football -a -f src/storage/setup_tables.sql
+  psql -v ON_ERROR_STOP=1 -d football -a -f src/storage/setup_tables.sql
   echo -e "${GREEN}Successfully created the football database tables${PLAIN}"
 }
 
@@ -38,5 +38,5 @@ case ${1} in
   create) create ;;
   setup) setup ;;
   drop) drop ;;
-  help) help ;;
+  *) help ;;
 esac

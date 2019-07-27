@@ -10,12 +10,8 @@
         <div><%= error %></div>
       <% }); %>
     <% } %>
-    <form action="/search" method="post">
-      <select name="preferredRoleType">
-        <% roleTypes.forEach((value, representation) => { %>
-          <option value=<%= value %>><%= representation %></option>
-         <% }); %>
-      </select>
+    <form action="/login" method="post">
+      <input type="text" name="nickName" value="">
       <input type="submit">
     </form>
   </body>

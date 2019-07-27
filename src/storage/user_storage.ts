@@ -12,17 +12,42 @@ interface IQuery<T> {
 export class UserStorage {
   constructor(private pool: Pool) {}
 
+  public find(id: number): Promise<User> {
+    const queryTemplate = `SELECT * FROM users WHERE id = $1 LIMIT 1`;
+    return this.pool.query(queryTemplate, [id]).then((queryResult) => {
+      return this.buildUserFromDb(queryResult.rows[0]);
+    });
+  }
+
+  public findOrCreateBy(attributes: IUserSchema): Promise<User> {
+    return this.findBy(attributes).then((maybeUser) => {
+      if (!maybeUser) {
+        return this.create(attributes);
+      }
+
+      return maybeUser;
+    });
+  }
+
+  public findBy(attributes: IUserSchema): Promise<User|null> {
+    const {template, parameters} = this.generateFilterQuery(attributes);
+    const queryTemplate = `SELECT * FROM users WHERE ${template} LIMIT 1`;
+
+    return this.pool.query(queryTemplate, parameters).then((queryResult) => {
+      if (queryResult.rows.length === 0) { return null; }
+      return this.buildUserFromDb(queryResult.rows[0]);
+    });
+  }
+
   public create(attributes: IUserSchema): Promise<User> {
-    const query = this.generateCreateQuery(attributes);
+    const query = this.generateInsertQuery(attributes);
     return this.pool.query(query.template, query.parameters)
       .then((queryResult) => {
-        const savedAttributes =
-          this.dbAttributesToModelAttributes(queryResult.rows[0]);
-        return new User(savedAttributes);
+          return this.buildUserFromDb(queryResult.rows[0]);
       });
   }
 
-  private generateCreateQuery(attributes: IUserSchema): IQuery<IUserSchema> {
+  private generateInsertQuery(attributes: IUserSchema): IQuery<IUserSchema> {
     const [changedAttributes, newValues] = this.getKeysAndValues(attributes);
     const attributesString = changedAttributes.map(camelToSnakeCase).join(", ");
     const parameterStrings = range(changedAttributes.length)
@@ -30,11 +55,25 @@ export class UserStorage {
       .join(", ");
 
     const queryTemplate =
-      `INSERT INTO USERS(${attributesString}) values(${parameterStrings}) \
+      `INSERT INTO users(${attributesString}) values(${parameterStrings}) \
        RETURNING *`;
     return {
       parameters: newValues,
       template: queryTemplate,
+    };
+  }
+
+  private generateFilterQuery(attributes: IUserSchema): IQuery<IUserSchema> {
+    const [filterKeys, filterValues] = this.getKeysAndValues(attributes);
+    const dbFilterKeys = filterKeys.map(camelToSnakeCase);
+    const template = dbFilterKeys.reduce((accumulator, key, index) => {
+      const filter = `${key} = $${index + 1}`;
+      return accumulator.length > 0 ? `${accumulator} AND ${filter}` : filter;
+    }, "");
+
+    return {
+      parameters: filterValues,
+      template,
     };
   }
 
@@ -46,7 +85,7 @@ export class UserStorage {
     ];
   }
 
-  private dbAttributesToModelAttributes(dbAttributes: object): IUserSchema {
+  private buildUserFromDb(dbAttributes: object): User {
     const entries = Object.entries(dbAttributes);
     const attributes = entries.reduce(
       (modelAttributes: {[k: string]: any}, [key, value]) => {
@@ -55,6 +94,6 @@ export class UserStorage {
       return modelAttributes;
     }, {});
 
-    return attributes as IUserSchema;
+    return new User(attributes);
   }
 }
