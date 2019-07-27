@@ -1,10 +1,12 @@
 import bodyParser from "body-parser";
 import connectRedis = require("connect-redis");
+import dotenv from "dotenv";
 import express from "express";
 import session from "express-session";
 import sharedSession from "express-socket.io-session";
 import * as http from "http";
 import path from "path";
+import { Client, Pool } from "pg";
 import redis from "redis";
 import socketIo from "socket.io";
 import v4 from "uuid/v4";
@@ -13,9 +15,12 @@ import { GAME_EXECUTABLE_FILE, ROLE_TYPE_CHOICE_MAP } from "./constants";
 import { EventQueue } from "./event_queue";
 import { GameClient } from "./game_client";
 import { GameRoom } from "./game_room";
+import { UserStorage } from "./storage/user_storage";
 import { WrappedProcessForker } from "./wrapped_process_forker";
 import { WrappedSocket } from "./wrapped_socket";
 
+dotenv.config();
+const pool = new Pool();
 const app = express();
 const httpServer = http.createServer(app);
 const urlencodedParser = bodyParser.urlencoded({ extended: false });
@@ -32,7 +37,10 @@ const sessionMiddleWare = session({
   store: new RedisStore({client: redisClient})
 });
 
+pool.connect();
+
 const forker = new WrappedProcessForker();
+const userStorage = new UserStorage(pool);
 
 const room = new GameRoom();
 room.setProcessForker(forker);
@@ -47,11 +55,18 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(sessionMiddleWare);
 
 app.get("/", (req, res) => {
-  res.render("index", { roleTypes: ROLE_TYPE_CHOICE_MAP });
+  res.render("index", { roleTypes: ROLE_TYPE_CHOICE_MAP, errors: [] });
 });
 
 app.post("/search", urlencodedParser, (req, res) => {
-  res.redirect("/game");
+  userStorage
+    .create({nickName: req.body.nickName})
+    .then((user) => {
+      res.redirect("/game");
+    }).catch((err) => {
+      const error = "An error occured while creating a user";
+      res.render("index", { roleTypes: ROLE_TYPE_CHOICE_MAP, errors: [error] });
+    });
 });
 
 app.get("/game", (req, res) => {
