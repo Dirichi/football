@@ -5,8 +5,13 @@
     <title></title>
   </head>
   <body>
+    <% if (errors.length > 0) { %>
+      <% errors.forEach((error) => { %>
+        <div><%= error %></div>
+      <% }); %>
+    <% } %>
     <form action="/search" method="post">
-      <input type="text" name="name" value="">
+      <input type="text" name="nickName" value="">
       <select name="preferredRoleType">
         <% roleTypes.forEach((value, representation) => { %>
           <option value=<%= value %>><%= representation %></option>

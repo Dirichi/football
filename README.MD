@@ -10,6 +10,8 @@ Some prerequistes before running the game locally:
 
 - Install redis (An in-memory database). Instructions [here](https://redis.io/topics/quickstart).
 
+- Install postgresql. Follow Instructions [here](https://www.postgresql.org/download/).
+
 To get the game running locally, open your terminal / command line. Then clone this repository to get all the code, by typing in the following command:
 
 > ```git clone https://github.com/Dirichi/football.git```
@@ -21,6 +23,8 @@ Next, cd into the directory where the code has been downloaded
 Then run the following command to download all the dependencies required by the project
 
 > ```npm install```
+
+Also ensure that you have postgres up and running. Instructions [here](https://www.postgresql.org/docs/9.1/server-start.html).
 
 When all the above commands complete without any errors, to get the game going, run the following command:
 

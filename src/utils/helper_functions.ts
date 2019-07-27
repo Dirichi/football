@@ -47,3 +47,15 @@ export const round = (value: number, decimalPlaces: number): number => {
   const factor = Math.pow(10, decimalPlaces);
   return Math.round(value * factor) / factor;
 };
+
+export function camelToSnakeCase(value: string): string {
+  return value.replace(/([A-Z])/g, (match) => {
+     return "_" + match.toLowerCase();
+   });
+}
+
+export function snakeToCamelCase(value: string): string {
+  return value.replace(/_([a-z])/g, (match) => {
+    return match.toUpperCase();
+  });
+}
