@@ -47,6 +47,22 @@ room.setProcessForker(forker);
 room.setGameExecutablePath(path.join(__dirname, GAME_EXECUTABLE_FILE));
 room.save();
 
+function requiresLogin(
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction): void {
+    if (!isLoggedIn(req)) {
+      res.redirect("login");
+    } else {
+      next();
+    }
+}
+
+function isLoggedIn(req: express.Request): boolean {
+  const userId = req.session.userId;
+  return !!userId;
+}
+
 // Configure Express to use EJS
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
@@ -54,22 +70,32 @@ app.set("view engine", "ejs");
 app.use(express.static(path.join(__dirname, "public")));
 app.use(sessionMiddleWare);
 
-app.get("/", (req, res) => {
+app.get("/login", (req, res) => {
+  isLoggedIn(req) ? res.redirect("/") : res.render("login", { errors: [] });
+});
+
+app.post("/login", urlencodedParser, (req, res) => {
+  const nickName = req.body.nickName;
+  userStorage.findOrCreateBy({ nickName }).then((user) => {
+    req.session.userId = user.id;
+    res.redirect("/");
+  }).catch((err) => {
+    // tslint:disable-next-line:no-console
+    console.log(err);
+    const error = "An error occurred while logging in.";
+    res.render("login", { errors: [error] });
+  });
+});
+
+app.get("/", requiresLogin, (req, res) => {
   res.render("index", { roleTypes: ROLE_TYPE_CHOICE_MAP, errors: [] });
 });
 
-app.post("/search", urlencodedParser, (req, res) => {
-  userStorage
-    .create({nickName: req.body.nickName})
-    .then((user) => {
-      res.redirect("/game");
-    }).catch((err) => {
-      const error = "An error occured while creating a user";
-      res.render("index", { roleTypes: ROLE_TYPE_CHOICE_MAP, errors: [error] });
-    });
+app.post("/search", urlencodedParser, requiresLogin, (req, res) => {
+  res.redirect("/game");
 });
 
-app.get("/game", (req, res) => {
+app.get("/game", requiresLogin, (req, res) => {
   res.render("game");
 });
 
