@@ -37,7 +37,7 @@ CREATE TABLE game_session_participations (
 -- Touch updated_at every time any redord is updated.
 DO $$DECLARE r record;
 BEGIN
-    FOR r IN SELECT table_schema, table_name FROM information_schema.columns
+    FOR r IN SELECT table_name FROM information_schema.columns
              WHERE column_name = 'updated_at' AND table_schema = 'public'
     LOOP
         EXECUTE 'CREATE TRIGGER touch_' || quote_ident(r.table_name)

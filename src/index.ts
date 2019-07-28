@@ -15,12 +15,12 @@ import { GAME_EXECUTABLE_FILE, ROLE_TYPE_CHOICE_MAP } from "./constants";
 import { EventQueue } from "./event_queue";
 import { GameClient } from "./game_client";
 import { GameRoom } from "./game_room";
+import { isLoggedIn, LoginService, requiresLogin } from "./server_services/login_service";
 import { UserStorage } from "./storage/user_storage";
 import { WrappedProcessForker } from "./wrapped_process_forker";
 import { WrappedSocket } from "./wrapped_socket";
 
 dotenv.config();
-const pool = new Pool();
 const app = express();
 const httpServer = http.createServer(app);
 const urlencodedParser = bodyParser.urlencoded({ extended: false });
@@ -36,32 +36,16 @@ const sessionMiddleWare = session({
   secret: "MAKE THIS AN ENV VARIABLE",
   store: new RedisStore({client: redisClient})
 });
-
+const pool = new Pool();
 pool.connect();
-
 const forker = new WrappedProcessForker();
 const userStorage = new UserStorage(pool);
+const loginService = new LoginService(userStorage);
 
 const room = new GameRoom();
 room.setProcessForker(forker);
 room.setGameExecutablePath(path.join(__dirname, GAME_EXECUTABLE_FILE));
 room.save();
-
-function requiresLogin(
-  req: express.Request,
-  res: express.Response,
-  next: express.NextFunction): void {
-    if (!isLoggedIn(req)) {
-      res.redirect("login");
-    } else {
-      next();
-    }
-}
-
-function isLoggedIn(req: express.Request): boolean {
-  const userId = req.session.userId;
-  return !!userId;
-}
 
 // Configure Express to use EJS
 app.set("views", path.join(__dirname, "views"));
@@ -75,15 +59,12 @@ app.get("/login", (req, res) => {
 });
 
 app.post("/login", urlencodedParser, (req, res) => {
-  const nickName = req.body.nickName;
-  userStorage.findOrCreateBy({ nickName }).then((user) => {
-    req.session.userId = user.id;
+  loginService.login(req).then((_) => {
     res.redirect("/");
   }).catch((err) => {
     // tslint:disable-next-line:no-console
     console.log(err);
-    const error = "An error occurred while logging in.";
-    res.render("login", { errors: [error] });
+    res.render("login", { errors: ["An error occured."] });
   });
 });
 

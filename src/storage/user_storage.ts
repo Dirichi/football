@@ -12,9 +12,10 @@ interface IQuery<T> {
 export class UserStorage {
   constructor(private pool: Pool) {}
 
-  public find(id: number): Promise<User> {
+  public find(id: number): Promise<User|null> {
     const queryTemplate = `SELECT * FROM users WHERE id = $1 LIMIT 1`;
     return this.pool.query(queryTemplate, [id]).then((queryResult) => {
+      if (queryResult.rowCount === 0) { return null; }
       return this.buildUserFromDb(queryResult.rows[0]);
     });
   }
@@ -34,7 +35,7 @@ export class UserStorage {
     const queryTemplate = `SELECT * FROM users WHERE ${template} LIMIT 1`;
 
     return this.pool.query(queryTemplate, parameters).then((queryResult) => {
-      if (queryResult.rows.length === 0) { return null; }
+      if (queryResult.rowCount === 0) { return null; }
       return this.buildUserFromDb(queryResult.rows[0]);
     });
   }
