@@ -13,6 +13,16 @@ export function requiresLogin(
     }
 }
 
+export function authenticate(req: express.Request): Promise<boolean> {
+  const userId = req.session.userId;
+  if (!userid) { return Promise.resolve(false); }
+  User.find(userId).then((user) => {
+    if (!user) { return false; }
+    req.user = user;
+    return true;
+  });
+}
+
 // TODO: Validate if the userid is actually exists in the database.
 export function isLoggedIn(req: express.Request): boolean {
   const userId = req.session.userId;

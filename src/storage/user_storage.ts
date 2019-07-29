@@ -13,11 +13,7 @@ export class UserStorage {
   constructor(private pool: Pool) {}
 
   public find(id: number): Promise<User|null> {
-    const queryTemplate = `SELECT * FROM users WHERE id = $1 LIMIT 1`;
-    return this.pool.query(queryTemplate, [id]).then((queryResult) => {
-      if (queryResult.rowCount === 0) { return null; }
-      return this.buildUserFromDb(queryResult.rows[0]);
-    });
+    return this.findBy({id});
   }
 
   public findOrCreateBy(attributes: IUserSchema): Promise<User> {

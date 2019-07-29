@@ -16,6 +16,7 @@ import { EventQueue } from "./event_queue";
 import { GameClient } from "./game_client";
 import { GameRoom } from "./game_room";
 import { isLoggedIn, LoginService, requiresLogin } from "./server_services/login_service";
+import { MatchMakerService } from "./server_services/match_maker_service";
 import { UserStorage } from "./storage/user_storage";
 import { WrappedProcessForker } from "./wrapped_process_forker";
 import { WrappedSocket } from "./wrapped_socket";
@@ -41,6 +42,7 @@ pool.connect();
 const forker = new WrappedProcessForker();
 const userStorage = new UserStorage(pool);
 const loginService = new LoginService(userStorage);
+const matchMaker = new MatchMakerService();
 
 const room = new GameRoom();
 room.setProcessForker(forker);
@@ -73,10 +75,10 @@ app.get("/", requiresLogin, (req, res) => {
 });
 
 app.post("/search", urlencodedParser, requiresLogin, (req, res) => {
-  res.redirect("/game");
+  res.redirect("/games/1");
 });
 
-app.get("/game", requiresLogin, (req, res) => {
+app.get("/games/:id", requiresLogin, (req, res) => {
   res.render("game");
 });
 
