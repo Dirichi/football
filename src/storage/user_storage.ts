@@ -2,6 +2,7 @@ import { Pool } from "pg";
 import { IUserSchema } from "../interfaces/iuser_schema";
 import { User } from "../models/user";
 import { camelToSnakeCase, range, snakeToCamelCase } from "../utils/helper_functions";
+import { getConnectionPool } from "./connection_pool";
 
 type ValueOf<T> = T[keyof T];
 interface IQuery<T> {
@@ -10,7 +11,7 @@ interface IQuery<T> {
 }
 
 export class UserStorage {
-  constructor(private pool: Pool) {}
+  constructor(private pool: Pool = getConnectionPool()) {}
 
   public find(id: number): Promise<User|null> {
     return this.findBy({id});

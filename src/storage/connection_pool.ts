@@ -1,5 +1,5 @@
 import { Pool } from "pg";
-let pool = null;
+let pool: Pool = null;
 
 export function getConnectionPool(): Pool {
   if (!pool) {
