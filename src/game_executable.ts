@@ -308,8 +308,16 @@ interface IAssignControllerRequest {
 
 const handleAssignControllerRequest = (request: IAssignControllerRequest ) => {
   const selectedPlayer = playersAvailableForRemoteControl.find((player) => {
+    // tslint:disable-next-line:no-console
     return player.getRoleType() === request.role;
   });
+  if (!selectedPlayer) {
+    // TODO: Consider throwing an error here i.e. if we were unable to assign
+    // a role to a player.
+    // tslint:disable-next-line:no-console
+    console.log(`Could not find a position for client ${request.clientId}`);
+    return;
+  }
   const controller =
     new PlayerHumanController(selectedPlayer, commandHandlerRouter);
   controller.setRemoteClientId(request.clientId);

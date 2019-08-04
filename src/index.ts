@@ -72,7 +72,7 @@ app.get("/", requiresLogin, (req, res) => {
 });
 
 app.post("/search", urlencodedParser, requiresLogin, (req, res) => {
-  const roleType = req.body.preferredRoleType;
+  const roleType = parseInt(req.body.preferredRoleType, 10);
   matchMaker.match({user: req.user, roleType}).then((matchedRoom) => {
     res.redirect(`/games/${matchedRoom.getId()}`);
   }).catch((err) => {

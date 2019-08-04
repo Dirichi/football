@@ -30,8 +30,6 @@ export class GameClient implements IGameClient {
   }
 
   public getPreferredRoleType(): PLAYER_ROLE_TYPE {
-    // TODO: Implement a way to return this property instead of KEEPER
-    // return this.preferredRoleType;
-    return PLAYER_ROLE_TYPE.KEEPER;
+    return this.socket.getParticipation().roleType;
   }
 }
