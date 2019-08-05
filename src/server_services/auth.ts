@@ -1,6 +1,8 @@
 import express from "express";
 import { Socket } from "socket.io";
 import { GameRoom } from "../game_room";
+import { ICustomizedRequest } from "../interfaces/icustomized_request";
+import { ICustomizedSocket } from "../interfaces/icustomized_socket";
 import { User } from "../models/user";
 
 export function requiresLogin(
@@ -20,7 +22,8 @@ export function authenticateSocket(
     User.find(userId).then((user) => {
       const allowedSocket = user && authorizeParticipation(user, intendedRoom);
       if (!allowedSocket) { return; }
-      [socket.user, socket.gameRoom] = [user, intendedRoom];
+      const customizedSocket = socket as ICustomizedSocket;
+      [customizedSocket.user, customizedSocket.gameRoom] = [user, intendedRoom];
       next();
     });
 }
@@ -30,7 +33,7 @@ export function authenticateRequest(req: express.Request): Promise<boolean> {
   if (!userId) { return Promise.resolve(false); }
   return User.find(userId).then((user) => {
     if (!user) { return false; }
-    req.user = user;
+    (req as ICustomizedRequest).user = user;
     return true;
   });
 }
@@ -39,7 +42,7 @@ export function login(req: express.Request): Promise<User> {
   const nickName = req.body.nickName;
   return User.findOrCreateBy({ nickName }).then((user) => {
     req.session.userId = user.id;
-    req.user = user;
+    (req as ICustomizedRequest).user = user;
     return user;
   });
 }

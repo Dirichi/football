@@ -14,6 +14,8 @@ import { GAME_EXECUTABLE_FILE, ROLE_TYPE_CHOICE_MAP } from "./constants";
 import { EventQueue } from "./event_queue";
 import { GameClient } from "./game_client";
 import { GameRoom } from "./game_room";
+import { ICustomizedRequest } from "./interfaces/icustomized_request";
+import { ICustomizedSocket } from "./interfaces/icustomized_socket";
 import { User } from "./models/user";
 import {
   authenticateRequest,
@@ -73,7 +75,8 @@ app.get("/", requiresLogin, (req, res) => {
 
 app.post("/search", urlencodedParser, requiresLogin, (req, res) => {
   const roleType = parseInt(req.body.preferredRoleType, 10);
-  matchMaker.match({user: req.user, roleType}).then((matchedRoom) => {
+  const customReq = req as ICustomizedRequest;
+  matchMaker.match({user: customReq.user, roleType}).then((matchedRoom) => {
     res.redirect(`/games/${matchedRoom.getId()}`);
   }).catch((err) => {
     // tslint:disable-next-line:no-console
@@ -84,7 +87,8 @@ app.post("/search", urlencodedParser, requiresLogin, (req, res) => {
 
 app.get("/games/:roomId", requiresLogin, (req, res) => {
   const gameRoom = GameRoom.find(req.params.roomId);
-  const authorized = authorizeParticipation(req.user, gameRoom);
+  const customReq = req as ICustomizedRequest;
+  const authorized = authorizeParticipation(customReq.user, gameRoom);
 
   authorized ? res.render("game") : res.render("error");
 });

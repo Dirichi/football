@@ -1,13 +1,13 @@
-import { Socket } from "socket.io";
 import { GameRoom } from "./game_room";
+import { ICustomizedSocket } from "./interfaces/icustomized_socket";
 import { IWebSocket } from "./interfaces/iweb_socket";
 import { Participation } from "./models/participation";
 import { User } from "./models/user";
 
 export class WrappedSocket implements IWebSocket {
-  private socket: Socket;
+  private socket: ICustomizedSocket;
 
-  constructor(socket: Socket) {
+  constructor(socket: ICustomizedSocket) {
     this.socket = socket;
   }
 
