@@ -228,7 +228,7 @@ export enum PLAYER_ROLE_TYPE {
   FORWARD = 3,
 }
 
-export const GAME_EXECUTABLE_FILE = "game_executable.js";
+export const GAME_EXECUTABLE_FILE = "dist/game_executable.js";
 export const IDEAL_DISTANCE_FROM_GOAL = constants.FIELD_INITIAL_XLENGTH / 3;
 export const SHOT_VALUE_PROXIMITY_TO_POST_WEIGHT = 0.7;
 export const SHOT_VALUE_INTERCEPTION_LIKELIHOOD_WEIGHT = 0.3;

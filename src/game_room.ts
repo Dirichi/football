@@ -5,9 +5,10 @@ import { IGameClient } from "./interfaces/igame_client";
 import { IProcess } from "./interfaces/iprocess";
 import { IProcessForker } from "./interfaces/iprocess_forker";
 import { IProcessMessage } from "./interfaces/iprocess_message";
+import { Participation } from "./models/participation";
 
 export class GameRoom {
-
+  // TODO: Store GameRoom in postgres. Also move class to models.
   public static find(id: string): GameRoom | null {
     return GameRoom.records.get(id) || null;
   }
@@ -21,15 +22,19 @@ export class GameRoom {
   }
 
   private static records = new Map<string, GameRoom>();
+  public participations: Participation[];
   private id: string;
   private clients: Set<IGameClient>;
   private gameProcess?: IProcess;
   private forker?: IProcessForker;
   private gameExecutablePath?: string;
 
+  // TODO: Create a worker which runs every X seconds, inspects GameRooms that
+  // have not started and then starts them automatically.
   constructor(id?: string) {
     this.id = id || v4();
     this.clients = new Set([]);
+    this.participations = [];
   }
 
   public getId(): string {
@@ -38,6 +43,10 @@ export class GameRoom {
 
   public getClients(): IGameClient[] {
     return [...this.clients];
+  }
+
+  public addParticipation(participation: Participation): void {
+    this.participations.push(participation);
   }
 
   public addClient(client: IGameClient): void {

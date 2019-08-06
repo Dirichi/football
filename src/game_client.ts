@@ -2,10 +2,11 @@ import { COMMAND_ID, IO_MESSAGE_TYPE, PLAYER_ROLE_TYPE } from "./constants";
 import { ICommandRequest } from "./interfaces/icommand_request";
 import { IGameClient } from "./interfaces/igame_client";
 import { IWebSocket } from "./interfaces/iweb_socket";
+import { User } from "./models/user";
 
 export class GameClient implements IGameClient {
+  private user: User;
   private socket: IWebSocket;
-  private preferredRoleType?: PLAYER_ROLE_TYPE;
 
   constructor(socket: IWebSocket) {
     this.socket = socket;
@@ -29,8 +30,6 @@ export class GameClient implements IGameClient {
   }
 
   public getPreferredRoleType(): PLAYER_ROLE_TYPE {
-    // TODO: Implement a way to return this property instead of KEEPER
-    // return this.preferredRoleType;
-    return PLAYER_ROLE_TYPE.KEEPER;
+    return this.socket.getParticipation().roleType;
   }
 }

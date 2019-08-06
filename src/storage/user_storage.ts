@@ -2,6 +2,7 @@ import { Pool } from "pg";
 import { IUserSchema } from "../interfaces/iuser_schema";
 import { User } from "../models/user";
 import { camelToSnakeCase, range, snakeToCamelCase } from "../utils/helper_functions";
+import { getConnectionPool } from "./connection_pool";
 
 type ValueOf<T> = T[keyof T];
 interface IQuery<T> {
@@ -10,14 +11,10 @@ interface IQuery<T> {
 }
 
 export class UserStorage {
-  constructor(private pool: Pool) {}
+  constructor(private pool: Pool = getConnectionPool()) {}
 
   public find(id: number): Promise<User|null> {
-    const queryTemplate = `SELECT * FROM users WHERE id = $1 LIMIT 1`;
-    return this.pool.query(queryTemplate, [id]).then((queryResult) => {
-      if (queryResult.rowCount === 0) { return null; }
-      return this.buildUserFromDb(queryResult.rows[0]);
-    });
+    return this.findBy({id});
   }
 
   public findOrCreateBy(attributes: IUserSchema): Promise<User> {
