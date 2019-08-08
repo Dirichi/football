@@ -32,4 +32,9 @@ export class GameClient implements IGameClient {
   public getPreferredRoleType(): PLAYER_ROLE_TYPE {
     return this.socket.getParticipation().roleType;
   }
+
+  public getCursorColor(): [number, number, number] {
+    // TODO: Select at gameRoom join time from a pool of available colors
+    return [255 * Math.random(), 255 * Math.random(), 255 * Math.random()];
+  }
 }

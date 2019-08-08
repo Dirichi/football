@@ -5,6 +5,7 @@ import { Post } from "../game_objects/post";
 import { IAnimationEngine } from "../interfaces/ianimation_engine";
 import { IBallSchema } from "../interfaces/iball_schema";
 import { IBoxSchema } from "../interfaces/ibox_schema";
+import { ICursor } from "../interfaces/icursor";
 import { IFieldRegionSchema } from "../interfaces/ifield_region_schema";
 import { IPlayerSchema } from "../interfaces/iplayer_schema";
 import { IPositionValueSchema } from "../interfaces/iposition_value_schema";
@@ -89,6 +90,7 @@ export class P5AnimationEngine implements IAnimationEngine {
     this.animator.push();
     this.animator.fill(player.colors);
     this.animator.circle(player.x, player.y, player.diameter);
+    this.displayCursor(player.cursor);
     this.animator.pop();
   }
 
@@ -104,6 +106,15 @@ export class P5AnimationEngine implements IAnimationEngine {
       this.animator.line(currX, currY, positionText.x, positionText.y);
       this.displayText(positionText, 32);
     });
+    this.animator.pop();
+  }
+
+  private displayCursor(cursor: ICursor): void {
+    if (!cursor) { return; }
+
+    this.animator.push();
+    this.animator.fill(cursor.colors);
+    this.animator.circle(cursor.x, cursor.y, cursor.diameter);
     this.animator.pop();
   }
 

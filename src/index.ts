@@ -40,7 +40,7 @@ const sessionMiddleWare = session({
   cookie: { maxAge: 60000 },
   resave: false,
   saveUninitialized: true,
-  secret: "MAKE THIS AN ENV VARIABLE",
+  secret: process.env.SESSION_SECRET,
   store: new RedisStore({client: redisClient})
 });
 

@@ -32,10 +32,10 @@ import { StopCommand } from "./commands/stop_command";
 import { BALL_INITIAL_ARGS, BOX18A_INITIAL_COORDINATES,
   BOX18B_INITIAL_COORDINATES, BOX6A_INITIAL_COORDINATES,
   BOX6B_INITIAL_COORDINATES, COLLISION_MARGIN_FACTOR, COMMAND_ID, constants,
-  EVENTS, FIELD_INITIAL_COORDINATES, PLAYER_INITIAL_ARGS,
-  PLAYER_ROLE, PLAYER_ROLE_TYPE, POSTA_INITIAL_COORDINATES,
-  POSTB_INITIAL_COORDINATES, PROCESS_MESSAGE_TYPE, RADIUS_FOR_CONGESTION,
-  TEAM_SIDES
+  CURSOR_DIAMETER, EVENTS, FIELD_INITIAL_COORDINATES,
+  PLAYER_INITIAL_ARGS, PLAYER_ROLE, PLAYER_ROLE_TYPE,
+  POSTA_INITIAL_COORDINATES, POSTB_INITIAL_COORDINATES, PROCESS_MESSAGE_TYPE,
+  RADIUS_FOR_CONGESTION, TEAM_SIDES
   } from "./constants";
 import { EventQueue } from "./event_queue";
 import { Game } from "./game";
@@ -303,6 +303,7 @@ const remoteControllers: PlayerHumanController[] = [];
 
 interface IAssignControllerRequest {
   clientId: string;
+  cursorColor: [number, number, number];
   role: PLAYER_ROLE_TYPE;
 }
 
@@ -320,9 +321,15 @@ const handleAssignControllerRequest = (request: IAssignControllerRequest ) => {
   }
   const controller =
     new PlayerHumanController(selectedPlayer, commandHandlerRouter);
+  const cursor = {
+    colors: request.cursorColor,
+    diameter: CURSOR_DIAMETER,
+    x: selectedPlayer.getPosition().x,
+    y: selectedPlayer.getPosition().y,
+  };
   controller.setRemoteClientId(request.clientId);
   selectedPlayer.disableControls();
-  selectedPlayer.setController(controller);
+  selectedPlayer.setController(controller).setCursor(cursor);
   remoteControllers.push(controller);
 };
 
