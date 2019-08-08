@@ -6,5 +6,4 @@ export interface IGameClient {
   updateGameState(payload: object): void;
   onCommandRequest(callback: (request: ICommandRequest) => void): void;
   getPreferredRoleType(): PLAYER_ROLE_TYPE;
-  getCursorColor(): [number, number, number];
 }
