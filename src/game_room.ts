@@ -6,6 +6,7 @@ import { IProcess } from "./interfaces/iprocess";
 import { IProcessForker } from "./interfaces/iprocess_forker";
 import { IProcessMessage } from "./interfaces/iprocess_message";
 import { Participation } from "./models/participation";
+import { range } from "./utils/helper_functions";
 
 export class GameRoom {
   // TODO: Store GameRoom in postgres. Also move class to models.
@@ -104,10 +105,12 @@ export class GameRoom {
 
   private assignControllerToClient(client: IGameClient): void {
     // TODO: Test that each client is assigned a controller in the game.
+    // TODO: Choose from a pool of colors for this.
+    const cursorColor = range(3).map((_) => Math.random() * 255);
     const message = {
       data: {
         clientId: client.getId(),
-        cursorColor: client.getCursorColor(),
+        cursorColor,
         role: client.getPreferredRoleType(),
        },
       messageType: PROCESS_MESSAGE_TYPE.ASSIGN_CONTROLLER,
