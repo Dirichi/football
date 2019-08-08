@@ -42,7 +42,7 @@ export class PlayerHumanController implements IPlayerController {
     this.commandRequestList.push(commandRequest);
   }
 
-  public setRemoteClientId(clientId: string) {
+  public setRemoteClientId(clientId: string): void {
     this.remoteClientId = clientId;
   }
 

@@ -1,6 +1,7 @@
 import { EVENTS } from "../constants";
 import { EventQueue } from "../event_queue";
 import { IAnimationEngine } from "../interfaces/ianimation_engine";
+import { ICursor } from "../interfaces/icursor";
 import { IPlayerSchema } from "../interfaces/iplayer_schema";
 
 export class PlayerGraphics {
@@ -40,11 +41,26 @@ export class PlayerGraphics {
 
     return {
       colors: data.colors,
+      cursor: this.scaleCursor(data.cursor),
       diameter: (data.diameter * yrange),
       vx: data.vx * xrange,
       vy: data.vy * yrange,
       x: (data.x * xrange) + xmin,
       y: (data.y * yrange) + ymin,
     } as IPlayerSchema;
+  }
+
+  private scaleCursor(cursor: ICursor | null): ICursor | null {
+    if (!cursor) { return null; }
+
+    const [xmin, ymin, xmax, ymax] = this.scale;
+    const xrange = xmax - xmin;
+    const yrange = ymax - ymin;
+    return {
+      colors: cursor.colors,
+      diameter: (cursor.diameter * yrange),
+      x: (cursor.x * xrange) + xmin,
+      y: (cursor.y * yrange) + ymin,
+    };
   }
 }
