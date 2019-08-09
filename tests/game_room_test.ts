@@ -43,6 +43,8 @@ describe('GameRoom', () => {
     it('adds the client to the room', () => {
       const client = new TestGameClient('1');
       const room = new GameRoom();
+      // Prevent setTimeout calls;
+      sinon.useFakeTimers();
       room.addClient(client);
 
       expect(room.getClients()).to.eql([client]);
@@ -54,11 +56,12 @@ describe('GameRoom', () => {
       const forker = new TestProcessForker();
       const testProcess = new TestProcess();
 
+      // Prevent setTimeout calls;
+      sinon.useFakeTimers();
+      sinon.stub(forker, 'fork').returns(testProcess);
       room.addClient(client);
       room.setGameExecutablePath('fake/executable/path.js');
       room.setProcessForker(forker);
-
-      sinon.stub(forker, 'fork').returns(testProcess);
 
       room.startGame();
       sinon.spy(testProcess, 'send');
@@ -67,6 +70,39 @@ describe('GameRoom', () => {
         data: { clientId: '1', commandId: COMMAND_ID.STOP },
         messageType: PROCESS_MESSAGE_TYPE.COMMAND,
       });
+    });
+
+    it('starts a timeout to begin the game when the first client joins', () => {
+      const clock = sinon.useFakeTimers();
+      const client = new TestGameClient('1');
+      const room = new GameRoom();
+      const forker = new TestProcessForker();
+      room.setProcessForker(forker);
+      room.setGameExecutablePath('fake/executable/path.js');
+      room.setStartGameTimeout(5000);
+      sinon.spy(forker, 'fork');
+
+      room.addClient(client);
+      clock.tick(5001);
+      expect(forker.fork).to.have.been.called;
+    });
+
+    it('does not start a timeout to begin the game when other clients join' +
+      ' after the first', () => {
+        const clock = sinon.useFakeTimers();
+        const room = new GameRoom();
+        const forker = new TestProcessForker();
+        room.setProcessForker(forker);
+        room.setGameExecutablePath('fake/executable/path.js');
+        room.setStartGameTimeout(5000);
+        sinon.spy(forker, 'fork');
+
+        room.addClient(new TestGameClient('1'));
+        clock.tick(5001);
+        room.addClient(new TestGameClient('2'));
+        clock.tick(5001);
+
+        expect(forker.fork).to.have.been.calledOnce;
     });
   });
 
@@ -104,14 +140,15 @@ describe('GameRoom', () => {
       const testProcess = new TestProcess();
       const clients = ['1', '2'].map((id) => new TestGameClient(id));
 
+      sinon.stub(forker, 'fork')
+        .withArgs('fake/executable/path.js')
+        .returns(testProcess);
+
       clients.forEach((client) => room.addClient(client));
       room.setProcessForker(forker);
       room.setGameExecutablePath('fake/executable/path.js');
 
       clients.forEach((client) => sinon.stub(client, 'updateGameState'));
-      sinon.stub(forker, 'fork')
-        .withArgs('fake/executable/path.js')
-        .returns(testProcess);
 
       room.startGame();
       testProcess.sendMessageToMainProcess({

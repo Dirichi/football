@@ -1,6 +1,6 @@
 import path from "path";
 import v4 from "uuid/v4";
-import { COMMAND_ID, GAME_EXECUTABLE_FILE, PROCESS_MESSAGE_TYPE } from "./constants";
+import { COMMAND_ID, DEFAULT_START_GAME_TIMEOUT, GAME_EXECUTABLE_FILE, PROCESS_MESSAGE_TYPE } from "./constants";
 import { IGameClient } from "./interfaces/igame_client";
 import { IProcess } from "./interfaces/iprocess";
 import { IProcessForker } from "./interfaces/iprocess_forker";
@@ -29,6 +29,7 @@ export class GameRoom {
   private gameProcess?: IProcess;
   private forker?: IProcessForker;
   private gameExecutablePath?: string;
+  private startGameTimeout: number;
 
   // TODO: Create a worker which runs every X seconds, inspects GameRooms that
   // have not started and then starts them automatically.
@@ -36,6 +37,7 @@ export class GameRoom {
     this.id = id || v4();
     this.clients = new Set([]);
     this.participations = [];
+    this.startGameTimeout = DEFAULT_START_GAME_TIMEOUT;
   }
 
   public getId(): string {
@@ -53,6 +55,9 @@ export class GameRoom {
   public addClient(client: IGameClient): void {
     this.clients.add(client);
     this.routeClientCommandsToGameProcess(client);
+    if (!this.gameProcess && this.clients.size === 1) {
+      setTimeout(() => this.startGame(), this.startGameTimeout);
+    }
   }
 
   public setProcessForker(forker: IProcessForker): void {
@@ -61,6 +66,10 @@ export class GameRoom {
 
   public setGameExecutablePath(executablePath: string): void {
     this.gameExecutablePath = executablePath;
+  }
+
+  public setStartGameTimeout(timeout: number): void {
+    this.startGameTimeout = timeout;
   }
 
   public save(): void {
