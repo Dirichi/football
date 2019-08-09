@@ -27,6 +27,12 @@ describe('PlayerGraphics', () => {
           vy: 0.4,
           diameter: 0.5,
           colors: [200, 0, 0],
+          cursor: {
+            x: 0.1,
+            y: 0.1,
+            colors: [200, 0, 0],
+            diameter: 0.5,
+          }
         };
         queue.trigger(EVENTS.PLAYER_DATA, [playerData]);
 
@@ -47,6 +53,12 @@ describe('PlayerGraphics', () => {
             vy: 0.4,
             diameter: 0.5,
             colors: [200, 0, 0],
+            cursor: {
+              x: 0.3,
+              y: 0.1,
+              colors: [200, 200, 0],
+              diameter: 0.5,
+            }
           };
           queue.trigger(EVENTS.PLAYER_DATA, [playerData]);
 
@@ -57,7 +69,12 @@ describe('PlayerGraphics', () => {
               assertApproximatelyEqual(playerArgument.vx, 0.6, 0.001);
               assertApproximatelyEqual(playerArgument.vy, 1.2, 0.001);
               assertApproximatelyEqual(playerArgument.diameter, 1.5, 0.001);
+              assertApproximatelyEqual(playerArgument.cursor.x, 1.6, 0.001);
+              assertApproximatelyEqual(playerArgument.cursor.y, 2.3, 0.001);
+              assertApproximatelyEqual(
+                  playerArgument.cursor.diameter, 1.5, 0.001);
               expect(playerArgument.colors).to.eql([200, 0, 0]);
+              expect(playerArgument.cursor.colors).to.eql([200, 200, 0]);
           });
           graphics.animate();
         });

@@ -102,8 +102,6 @@ io.use(sharedSession(sessionMiddleWare, { autoSave: true }));
 io.use(authenticateSocket);
 io.on("connection", (socket) => {
   const wrappedSocket = new WrappedSocket(socket);
-  const room = wrappedSocket.getGameRoom();
   const client = new GameClient(wrappedSocket);
-  room.addClient(client);
-  room.startGame();
+  client.joinAssignedRoom();
 });

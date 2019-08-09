@@ -244,3 +244,4 @@ export const ROLE_TYPE_CHOICE_MAP = new Map([
   ["midfielder", PLAYER_ROLE_TYPE.MIDFIELDER],
   ["forward", PLAYER_ROLE_TYPE.FORWARD],
 ]);
+export const DEFAULT_START_GAME_TIMEOUT = 5000;

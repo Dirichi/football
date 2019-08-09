@@ -32,4 +32,9 @@ export class GameClient implements IGameClient {
   public getPreferredRoleType(): PLAYER_ROLE_TYPE {
     return this.socket.getParticipation().roleType;
   }
+
+  public joinAssignedRoom(): void {
+    const room = this.socket.getGameRoom();
+    room.addClient(this);
+  }
 }
