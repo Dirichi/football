@@ -1,0 +1,9 @@
+.cache
+.dockerignore
+.git
+dist
+.example_env
+Dockerfile
+node_modules
+commit.template
+dump.rdb

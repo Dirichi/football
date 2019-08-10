@@ -34,7 +34,9 @@ const urlencodedParser = bodyParser.urlencoded({ extended: false });
 const io = socketIo(httpServer);
 const port = 3000;
 // TODO Provide the configuration of the redis client
-const redisClient = redis.createClient();
+const redisClient = redis.createClient({
+  host: process.env.REDIS_HOST
+});
 const RedisStore = connectRedis(session);
 const sessionMiddleWare = session({
   cookie: { maxAge: 60000 },
