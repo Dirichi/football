@@ -1,5 +1,4 @@
-rm -rf football
-git clone git@github.com:Dirichi/football.git
 cd football
+git pull origin master
 docker build .
 docker-compose up
