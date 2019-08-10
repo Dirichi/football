@@ -1,0 +1,29 @@
+version: '3.7'
+
+services:
+  db:
+    image: postgres
+    restart: always
+    volumes:
+      - ./postgres/setup_tables.sql:/setup_tables.sql
+      - ./postgres/scripts/prepare.sh:/docker-entrypoint-initdb.d/prepare.sh
+      - ./postgres/scripts/commands.sh:/docker-entrypoint-initdb.d/commands.sh
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+  redis:
+    image: redis:alpine
+  web_service:
+    build: .
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - 3000:3000
+      - 9229:9229
+    command: npm run dev
+    depends_on:
+      - db
+      - redis
