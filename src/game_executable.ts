@@ -33,9 +33,9 @@ import { BALL_INITIAL_ARGS, BOX18A_INITIAL_COORDINATES,
   BOX18B_INITIAL_COORDINATES, BOX6A_INITIAL_COORDINATES,
   BOX6B_INITIAL_COORDINATES, COLLISION_MARGIN_FACTOR, COMMAND_ID, constants,
   CURSOR_DIAMETER, EVENTS, FIELD_INITIAL_COORDINATES,
-  PLAYER_INITIAL_ARGS, PLAYER_ROLE, PLAYER_ROLE_TYPE,
-  POSTA_INITIAL_COORDINATES, POSTB_INITIAL_COORDINATES, PROCESS_MESSAGE_TYPE,
-  RADIUS_FOR_CONGESTION, TEAM_SIDES
+  GAME_STATE_UPDATE_DELAY, PLAYER_INITIAL_ARGS, PLAYER_ROLE,
+  PLAYER_ROLE_TYPE, POSTA_INITIAL_COORDINATES, POSTB_INITIAL_COORDINATES,
+  PROCESS_MESSAGE_TYPE, RADIUS_FOR_CONGESTION, TEAM_SIDES
   } from "./constants";
 import { EventQueue } from "./event_queue";
 import { Game } from "./game";
@@ -286,17 +286,28 @@ const mediator =
 
 defaultPlayers.forEach((player) => player.setBallInteractionMediator(mediator));
 
+const sendGameState = () => {
+  process.send({
+    data: game.getState(),
+    messageType: PROCESS_MESSAGE_TYPE.GAME_STATE,
+  });
+};
+
+const sendGameOver = () => {
+  process.send({
+    data: {},
+    messageType: PROCESS_MESSAGE_TYPE.GAME_OVER,
+  });
+};
+
 setInterval(() => {
   tickService.tick();
   ballPossessionService.update();
   collisionNotificationService.update();
   game.update();
-
-  process.send({
-    data: game.getState(),
-    messageType: PROCESS_MESSAGE_TYPE.GAME_STATE,
-  });
-}, 20);
+  sendGameState();
+  if (game.isReadyToExit()) { sendGameOver(); }
+}, GAME_STATE_UPDATE_DELAY);
 
 const playersAvailableForRemoteControl = [...defaultPlayers];
 const remoteControllers: PlayerHumanController[] = [];

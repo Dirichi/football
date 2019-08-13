@@ -160,5 +160,27 @@ describe('GameRoom', () => {
         expect(client.updateGameState).to.have.been.calledWith({ alive: true });
       });
     });
+
+    it('kills the gameProcess when the game is over', () => {
+      const room = new GameRoom();
+      const forker = new TestProcessForker();
+      const testProcess = new TestProcess();
+
+      sinon.stub(forker, 'fork')
+        .withArgs('fake/executable/path.js')
+        .returns(testProcess);
+
+      room.setProcessForker(forker);
+      room.setGameExecutablePath('fake/executable/path.js');
+
+      room.startGame();
+      sinon.stub(testProcess, 'termintate');
+      testProcess.sendMessageToMainProcess({
+        messageType: PROCESS_MESSAGE_TYPE.GAME_OVER,
+        data: {},
+      });
+
+      expect(testProcess.termintate).to.have.been.called;
+    });
   });
 });

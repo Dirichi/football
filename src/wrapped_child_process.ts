@@ -9,10 +9,20 @@ export class WrappedChildProcess implements IProcess {
   }
 
   public send(message: any): void {
+    if (this.rawProcess.killed) {
+      // tslint:disable-next-line:no-console
+      console.log(`Cannot send messages to gameProcess with \
+        pid: ${this.rawProcess.pid} since it has been killed.`);
+      return;
+    }
     this.rawProcess.send(message);
   }
 
   public on(event: string, callback: (payload: object) => void): void {
     this.rawProcess.on(event, callback);
+  }
+
+  public termintate(): void {
+    this.rawProcess.kill("SIGTERM");
   }
 }
