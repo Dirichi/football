@@ -100,6 +100,10 @@ export class GameRoom {
         client.updateGameState(message.data);
       });
     }
+
+    if (message.messageType === PROCESS_MESSAGE_TYPE.GAME_OVER) {
+      this.gameProcess.termintate();
+    }
   }
 
   private routeClientCommandsToGameProcess(client: IGameClient): void {

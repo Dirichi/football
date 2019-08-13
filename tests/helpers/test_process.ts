@@ -19,4 +19,8 @@ export class TestProcess implements IProcess {
   public sendMessageToMainProcess(message: object) {
     this.queue.trigger("message", message);
   }
+
+  public termintate(): void {
+    return;
+  }
 }

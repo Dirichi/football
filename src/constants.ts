@@ -202,9 +202,10 @@ export enum IO_MESSAGE_TYPE {
 }
 
 export enum PROCESS_MESSAGE_TYPE {
-  ASSIGN_CONTROLLER = "assign.controller",
-  COMMAND = "command",
-  GAME_STATE = "state.changed",
+  ASSIGN_CONTROLLER = 0,
+  COMMAND = 1,
+  GAME_OVER = 2,
+  GAME_STATE = 3,
 }
 
 export enum PLAYER_ROLE {
@@ -245,3 +246,4 @@ export const ROLE_TYPE_CHOICE_MAP = new Map([
   ["forward", PLAYER_ROLE_TYPE.FORWARD],
 ]);
 export const DEFAULT_START_GAME_TIMEOUT = 5000;
+export const GAME_STATE_UPDATE_DELAY = 20; // milliseconds

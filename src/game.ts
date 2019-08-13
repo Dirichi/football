@@ -129,6 +129,13 @@ export class Game {
     return this.timer.isFinished();
   }
 
+  public isReadyToExit(): boolean {
+    // TODO: Make game states an enum;
+    // This is an indirect way of checking the state. Perhaps allow the state
+    // to say when it is done.
+    return this.stateText === "GAME OVER";
+  }
+
   public prepareForKickOff(): void {
     this.ball.prepareForKickOff();
     this.teams.forEach((team) => team.prepareForKickOff());
