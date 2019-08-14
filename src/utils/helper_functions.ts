@@ -49,8 +49,11 @@ export const round = (value: number, decimalPlaces: number): number => {
 };
 
 export function camelToSnakeCase(value: string): string {
-  return value.replace(/([A-Z])/g, (match) => {
-     return "_" + match.toLowerCase();
+  return value.replace(/([A-Z])/g, (...args) => {
+    const match = args[0];
+    const offset = args[args.length - 2];
+    const prefix = offset > 0 ? "_" : "";
+    return prefix + match.toLowerCase();
    });
 }
 

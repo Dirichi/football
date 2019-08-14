@@ -31,6 +31,7 @@ export class EventQueue implements IEventQueue {
   }
 
   private handleOneTimeEvent(event: string): void {
+    // TODO: Implementation of EventEmitter deletes the listener, not the event.
     if (this.oneTimeEvents.delete(event)) {
       this.events.delete(event);
     }

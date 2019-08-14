@@ -1,25 +1,23 @@
-import { IUserSchema } from "../interfaces/iuser_schema";
-import { UserStorage } from "../storage/user_storage";
+import { IUserAttributes } from "../interfaces/iuser_attributes";
+import { StorageService } from "../storage/storage_service";
 
 export class User {
-
   get id(): number {
     return this.attributes.id;
   }
 
-  public static find(
-    id: number, store: UserStorage = new UserStorage()): Promise<User> {
-      return store.find(id);
+  public static store = new StorageService(User);
+  public static find(id: number): Promise<User> {
+    return this.store.find(id);
   }
 
   public static findOrCreateBy(
-    attributes: IUserSchema,
-    store: UserStorage = new UserStorage()): Promise<User> {
-      return store.findOrCreateBy(attributes);
+    attributes: Partial<IUserAttributes>): Promise<User> {
+      return this.store.findOrCreateBy(attributes);
   }
-  private attributes: IUserSchema;
+  private attributes: IUserAttributes;
 
-  constructor(attributes: IUserSchema) {
+  constructor(attributes: IUserAttributes) {
     this.attributes = {...attributes};
   }
 }
