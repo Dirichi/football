@@ -1,8 +1,8 @@
-import { EVENTS } from "../constants";
-import { EventQueue } from "../event_queue";
-import { Post } from "../game_objects/post";
-import { IAnimationEngine } from "../interfaces/ianimation_engine";
-import { IBoxSchema } from "../interfaces/ibox_schema";
+import { EVENTS } from "../../constants";
+import { EventQueue } from "../../event_queue";
+import { Post } from "../../game_objects/post";
+import { IAnimationEngine } from "../../interfaces/ianimation_engine";
+import { IBoxSchema } from "../../interfaces/ibox_schema";
 
 export class PostGraphics {
   public engine: IAnimationEngine;

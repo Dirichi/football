@@ -1,18 +1,18 @@
 import io from 'socket.io-client';
 import p5 from "p5";
 import { constants, IO_MESSAGE_TYPE } from "../../constants";
-import { BallGraphics } from "../../graphics/ball_graphics";
-import { BoxGraphics } from "../../graphics/box_graphics";
+import { BallGraphics } from "../../client/graphics/ball_graphics";
+import { BoxGraphics } from "../../client/graphics/box_graphics";
 import { EventQueue } from '../../event_queue';
-import { FieldGraphics } from "../../graphics/field_graphics";
-import { FieldRegionGraphics } from "../../graphics/field_region_graphics";
+import { FieldGraphics } from "../../client/graphics/field_graphics";
+import { FieldRegionGraphics } from "../../client/graphics/field_region_graphics";
 import { ManualInputHandler } from "../../client/manual_input_handler";
 import { P5AnimationEngine } from "../../client/p5_animation_engine";
-import { PlayerGraphics } from "../../graphics/player_graphics";
-import { PostGraphics } from "../../graphics/post_graphics";
-import { GameStateTextGraphics } from "../../graphics/game_state_text_graphics";
-import { ScoresPanelGraphics } from "../../graphics/scores_panel_graphics";
-import { PositionValueDebugGraphics } from "../../graphics/position_value_debug_graphics";
+import { PlayerGraphics } from "../../client/graphics/player_graphics";
+import { PostGraphics } from "../../client/graphics/post_graphics";
+import { GameStateTextGraphics } from "../../client/graphics/game_state_text_graphics";
+import { ScoresPanelGraphics } from "../../client/graphics/scores_panel_graphics";
+import { PositionValueDebugGraphics } from "../../client/graphics/position_value_debug_graphics";
 
 const socket = io();
 const queue = new EventQueue();

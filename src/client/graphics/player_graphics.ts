@@ -1,8 +1,8 @@
-import { EVENTS } from "../constants";
-import { EventQueue } from "../event_queue";
-import { IAnimationEngine } from "../interfaces/ianimation_engine";
-import { ICursor } from "../interfaces/icursor";
-import { IPlayerSchema } from "../interfaces/iplayer_schema";
+import { EVENTS } from "../../constants";
+import { EventQueue } from "../../event_queue";
+import { IAnimationEngine } from "../../interfaces/ianimation_engine";
+import { ICursor } from "../../interfaces/icursor";
+import { IPlayerSchema } from "../../interfaces/iplayer_schema";
 
 export class PlayerGraphics {
   public engine: IAnimationEngine;

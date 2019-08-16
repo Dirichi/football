@@ -1,7 +1,7 @@
-import { EVENTS } from "../constants";
-import { EventQueue } from "../event_queue";
-import { IAnimationEngine } from "../interfaces/ianimation_engine";
-import { ITextSchema } from "../interfaces/itext_schema";
+import { EVENTS } from "../../constants";
+import { EventQueue } from "../../event_queue";
+import { IAnimationEngine } from "../../interfaces/ianimation_engine";
+import { ITextSchema } from "../../interfaces/itext_schema";
 
 export class GameStateTextGraphics {
   public engine: IAnimationEngine;

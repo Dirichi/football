@@ -1,7 +1,7 @@
-import { EVENTS } from "../constants";
-import { EventQueue } from "../event_queue";
-import { IAnimationEngine } from "../interfaces/ianimation_engine";
-import { IFieldRegionSchema } from "../interfaces/ifield_region_schema";
+import { EVENTS } from "../../constants";
+import { EventQueue } from "../../event_queue";
+import { IAnimationEngine } from "../../interfaces/ianimation_engine";
+import { IFieldRegionSchema } from "../../interfaces/ifield_region_schema";
 
 export class FieldRegionGraphics {
   public engine: IAnimationEngine;
