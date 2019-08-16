@@ -11,15 +11,27 @@ interface IQuery<T> {
 
 export class StorageService<A extends {id: number}, M> {
   constructor(
-    private modelKlass: new (attribues: A) => M,
+    private modelKlass: new (attributes: A) => M,
     private tableName: string = `${camelToSnakeCase(modelKlass.name)}s`,
     private pool: Pool = getConnectionPool()
   ) {}
 
   public find(id: number): Promise<M|null> {
     // HACK: Shouldn't have to coerce the type here.
-    const attribues = {id} as Partial<A>;
-    return this.findBy(attribues);
+    const attributes = {id} as Partial<A>;
+    return this.findBy(attributes);
+  }
+
+  public where(attributes: Partial<A>, limit: number = null): Promise<M[]> {
+    const {template, parameters} = this.generateFilterQuery(attributes);
+    let queryTemplate = `SELECT * FROM ${this.tableName} WHERE ${template}`;
+    if (limit !== null) {
+      queryTemplate = `${queryTemplate} LIMIT ${limit}`;
+    }
+
+    return this.pool.query(queryTemplate, parameters).then((queryResult) => {
+      return queryResult.rows.map((row) => this.buildModelFromDb(row));
+    });
   }
 
   public findOrCreateBy(attributes: Partial<A>): Promise<M> {
@@ -32,22 +44,16 @@ export class StorageService<A extends {id: number}, M> {
     });
   }
 
-  public findBy(attributes: Partial<A>): Promise<M|null> {
-    const {template, parameters} = this.generateFilterQuery(attributes);
-    const queryTemplate =
-      `SELECT * FROM ${this.tableName} WHERE ${template} LIMIT 1`;
-
-    return this.pool.query(queryTemplate, parameters).then((queryResult) => {
-      if (queryResult.rowCount === 0) { return null; }
-      return this.buildUserFromDb(queryResult.rows[0]);
-    });
+  public async findBy(attributes: Partial<A>): Promise<M|null> {
+    const records = await this.where(attributes, 1);
+    return records[0] || null;
   }
 
   public create(attributes: Partial<A>): Promise<M> {
     const query = this.generateInsertQuery(attributes);
     return this.pool.query(query.template, query.parameters)
       .then((queryResult) => {
-          return this.buildUserFromDb(queryResult.rows[0]);
+          return this.buildModelFromDb(queryResult.rows[0]);
       });
   }
 
@@ -84,7 +90,7 @@ export class StorageService<A extends {id: number}, M> {
     ];
   }
 
-  private buildUserFromDb(dbAttributes: object): M {
+  private buildModelFromDb(dbAttributes: object): M {
     const entries = Object.entries(dbAttributes);
     const attributes = entries.reduce(
       (modelAttributes: {[k: string]: any}, [key, value]) => {
