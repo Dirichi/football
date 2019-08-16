@@ -1,7 +1,7 @@
-import { EVENTS } from "../constants";
-import { EventQueue } from "../event_queue";
-import { IAnimationEngine } from "../interfaces/ianimation_engine";
-import { IPositionValueSchema } from "../interfaces/iposition_value_schema";
+import { EVENTS } from "../../constants";
+import { EventQueue } from "../../event_queue";
+import { IAnimationEngine } from "../../interfaces/ianimation_engine";
+import { IPositionValueSchema } from "../../interfaces/iposition_value_schema";
 
 export class PositionValueDebugGraphics {
   public engine: IAnimationEngine;

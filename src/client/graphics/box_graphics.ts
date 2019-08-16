@@ -1,8 +1,8 @@
-import { EVENTS } from "../constants";
-import { EventQueue } from "../event_queue";
-import { Field } from "../game_objects/field";
-import { IAnimationEngine } from "../interfaces/ianimation_engine";
-import { IBoxSchema } from "../interfaces/ibox_schema";
+import { EVENTS } from "../../constants";
+import { EventQueue } from "../../event_queue";
+import { Field } from "../../game_objects/field";
+import { IAnimationEngine } from "../../interfaces/ianimation_engine";
+import { IBoxSchema } from "../../interfaces/ibox_schema";
 
 export class BoxGraphics {
   public engine: IAnimationEngine;

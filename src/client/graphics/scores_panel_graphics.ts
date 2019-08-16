@@ -1,7 +1,7 @@
-import { EVENTS } from "../constants";
-import { EventQueue } from "../event_queue";
-import { IAnimationEngine } from "../interfaces/ianimation_engine";
-import { IScoresPanelSchema } from "../interfaces/iscores_panel_schema";
+import { EVENTS } from "../../constants";
+import { EventQueue } from "../../event_queue";
+import { IAnimationEngine } from "../../interfaces/ianimation_engine";
+import { IScoresPanelSchema } from "../../interfaces/iscores_panel_schema";
 
 export class ScoresPanelGraphics {
   public engine: IAnimationEngine;

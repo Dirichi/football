@@ -1,7 +1,7 @@
-import { EVENTS } from "../constants";
-import { EventQueue } from "../event_queue";
-import { IAnimationEngine } from "../interfaces/ianimation_engine";
-import { IBallSchema } from "../interfaces/iball_schema";
+import { EVENTS } from "../../constants";
+import { EventQueue } from "../../event_queue";
+import { IAnimationEngine } from "../../interfaces/ianimation_engine";
+import { IBallSchema } from "../../interfaces/iball_schema";
 
 export class BallGraphics {
   public engine: IAnimationEngine;

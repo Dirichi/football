@@ -1,11 +1,11 @@
-import { assertApproximatelyEqual } from '../helpers/custom_assertions';
+import { assertApproximatelyEqual } from '../../helpers/custom_assertions';
 import * as chai from 'chai';
 import * as sinon from 'sinon';
-import { PlayerGraphics } from '../../src/graphics/player_graphics';
-import { constants, EVENTS } from '../../src/constants';
-import { EventQueue } from "../../src/event_queue";
-import { IPlayerSchema } from '../../src/interfaces/iplayer_schema';
-import { TestAnimationEngine } from "../helpers/test_animation_engine";
+import { PlayerGraphics } from '../../../src/client/graphics/player_graphics';
+import { constants, EVENTS } from '../../../src/constants';
+import { EventQueue } from "../../../src/event_queue";
+import { IPlayerSchema } from '../../../src/interfaces/iplayer_schema';
+import { TestAnimationEngine } from "../../helpers/test_animation_engine";
 
 const sinonChai = require('sinon-chai');
 const expect = chai.expect;
