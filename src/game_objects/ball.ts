@@ -30,7 +30,7 @@ export class Ball implements ICollidable {
     this.physics.update();
   }
 
-  public moveTowards(target: Vector3D) {
+  public moveTowards(target: Vector3D): void {
     // this should be the responsibility of physics
     const position = new Vector3D(this.x, this.y, 0);
     const unitDelta = target.minus(position).unit();
@@ -39,16 +39,16 @@ export class Ball implements ICollidable {
     [this.vx, this.vy] = [velocity.x, velocity.y];
   }
 
-  public setPhysics(physics: BallPhysics) {
+  public setPhysics(physics: BallPhysics): void {
     this.physics = physics;
     this.physics.setBall(this);
   }
 
-  public setMaximumSpeed(speed: number) {
+  public setMaximumSpeed(speed: number): void {
     this.maximumSpeed = speed;
   }
 
-  public setKickOffPosition(position: Vector3D) {
+  public setKickOffPosition(position: Vector3D): void {
     this.kickOffPosition = position;
   }
 

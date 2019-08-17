@@ -20,7 +20,9 @@ export class PlayerGraphics {
   }
 
   public animate() {
-    this.players.forEach((player) => this.engine.drawPlayer(player));
+    this.players.forEach((player) => {
+      this.engine.drawPlayer(player);
+    });
   }
 
   public setScale(scale: number[]) {
@@ -43,6 +45,7 @@ export class PlayerGraphics {
       colors: data.colors,
       cursor: this.scaleCursor(data.cursor),
       diameter: (data.diameter * yrange),
+      state: data.state,
       vx: data.vx * xrange,
       vy: data.vy * yrange,
       x: (data.x * xrange) + xmin,

@@ -1,3 +1,4 @@
+import { PLAYER_ANIMATION_STATE } from "../constants";
 import { ICursor } from "./icursor";
 
 export interface IPlayerSchema {
@@ -10,4 +11,5 @@ export interface IPlayerSchema {
   // TODO: this piece of data may not need to be streamed everytime. Consier
   // removing.
   diameter: number;
+  state: PLAYER_ANIMATION_STATE;
 }
