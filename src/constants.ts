@@ -247,3 +247,11 @@ export const ROLE_TYPE_CHOICE_MAP = new Map([
 ]);
 export const DEFAULT_START_GAME_TIMEOUT = 5000;
 export const GAME_STATE_UPDATE_DELAY = 20; // milliseconds
+export enum SOUND_ID {
+  KICK = 1,
+}
+
+export enum PLAYER_ANIMATION_STATE {
+  NONE = 0,
+  KICKING = 1,
+}

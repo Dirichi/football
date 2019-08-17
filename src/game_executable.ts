@@ -29,14 +29,15 @@ import { ShootBallCommand } from "./commands/shoot_ball_command";
 import { ShootBallRemoteCommandRequestHandler } from "./commands/shoot_ball_remote_command_request_handler";
 import { StopCommand } from "./commands/stop_command";
 // TODO: This is starting to look ugly
-import { BALL_INITIAL_ARGS, BOX18A_INITIAL_COORDINATES,
+import {
+  BALL_INITIAL_ARGS, BOX18A_INITIAL_COORDINATES,
   BOX18B_INITIAL_COORDINATES, BOX6A_INITIAL_COORDINATES,
   BOX6B_INITIAL_COORDINATES, COLLISION_MARGIN_FACTOR, COMMAND_ID, constants,
   CURSOR_DIAMETER, EVENTS, FIELD_INITIAL_COORDINATES,
   GAME_STATE_UPDATE_DELAY, PLAYER_INITIAL_ARGS, PLAYER_ROLE,
   PLAYER_ROLE_TYPE, POSTA_INITIAL_COORDINATES, POSTB_INITIAL_COORDINATES,
   PROCESS_MESSAGE_TYPE, RADIUS_FOR_CONGESTION, TEAM_SIDES
-  } from "./constants";
+} from "./constants";
 import { EventQueue } from "./event_queue";
 import { Game } from "./game";
 import { PlayerHumanController } from "./game_ai/player/human_controller/player_human_controller";
@@ -216,24 +217,24 @@ const featureExtractor =
     defenceValueCalculator);
 
 const COMMAND_ID_TO_COMMAND_MAPPING = new Map<COMMAND_ID, ICommand>([
-      [COMMAND_ID.MOVE, new MoveCommand()],
-      [COMMAND_ID.CHASE_BALL, new ChaseBallCommand()],
-      [COMMAND_ID.SHOOT_BALL, new ShootBallCommand()],
-      [COMMAND_ID.PASS_BALL, new PassBallCommand()],
-      [COMMAND_ID.STOP, new StopCommand()],
-    ]);
+  [COMMAND_ID.MOVE, new MoveCommand()],
+  [COMMAND_ID.CHASE_BALL, new ChaseBallCommand()],
+  [COMMAND_ID.SHOOT_BALL, new ShootBallCommand()],
+  [COMMAND_ID.PASS_BALL, new PassBallCommand()],
+  [COMMAND_ID.STOP, new StopCommand()],
+]);
 
 const commandFactory = new CommandFactory(COMMAND_ID_TO_COMMAND_MAPPING);
 
 const PLAYER_STATES: IPlayerState[] = [
-      new WaitingState(commandFactory, featureExtractor),
-      new AttackingRunState(commandFactory, featureExtractor),
-      new DefensiveRunState(commandFactory, featureExtractor),
-      new ChasingBallState(commandFactory, featureExtractor),
-      new ShootingState(commandFactory, featureExtractor),
-      new DribblingState(commandFactory, featureExtractor),
-      new PassingState(commandFactory, featureExtractor),
-    ];
+  new WaitingState(commandFactory, featureExtractor),
+  new AttackingRunState(commandFactory, featureExtractor),
+  new DefensiveRunState(commandFactory, featureExtractor),
+  new ChasingBallState(commandFactory, featureExtractor),
+  new ShootingState(commandFactory, featureExtractor),
+  new DribblingState(commandFactory, featureExtractor),
+  new PassingState(commandFactory, featureExtractor),
+];
 
 const buildStateMachine = (player: Player) => {
   const machine = new PlayerStateMachine(player, PLAYER_STATES);
@@ -318,7 +319,7 @@ interface IAssignControllerRequest {
   role: PLAYER_ROLE_TYPE;
 }
 
-const handleAssignControllerRequest = (request: IAssignControllerRequest ) => {
+const handleAssignControllerRequest = (request: IAssignControllerRequest) => {
   const selectedPlayer = playersAvailableForRemoteControl.find((player) => {
     // tslint:disable-next-line:no-console
     return player.getRoleType() === request.role;

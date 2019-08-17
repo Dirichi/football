@@ -13,13 +13,18 @@ import { PostGraphics } from "../../client/graphics/post_graphics";
 import { GameStateTextGraphics } from "../../client/graphics/game_state_text_graphics";
 import { ScoresPanelGraphics } from "../../client/graphics/scores_panel_graphics";
 import { PositionValueDebugGraphics } from "../../client/graphics/position_value_debug_graphics";
+import { SoundPlayer } from "../../client/sound_player";
+import { SOUND_ID } from "../../constants";
 
 const socket = io();
 const queue = new EventQueue();
 const manualInputHandler = new ManualInputHandler(socket);
+const kickSoundFile = { id: SOUND_ID.KICK, filePath: "/resources/kick.mp3" };
+const soundPlayer = new SoundPlayer([kickSoundFile]);
 
 const sketch = (p: p5) => {
-  const animationEngine = new P5AnimationEngine(p);
+  soundPlayer.load();
+  const animationEngine = new P5AnimationEngine(p, soundPlayer);
   const fieldGraphics = new FieldGraphics(animationEngine, queue);
   const postGraphics = new PostGraphics(animationEngine, queue);
   const boxGraphics = new BoxGraphics(animationEngine, queue);

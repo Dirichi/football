@@ -2,7 +2,7 @@ import { assertApproximatelyEqual } from '../../helpers/custom_assertions';
 import * as chai from 'chai';
 import * as sinon from 'sinon';
 import { PlayerGraphics } from '../../../src/client/graphics/player_graphics';
-import { constants, EVENTS } from '../../../src/constants';
+import { constants, EVENTS, PLAYER_ANIMATION_STATE } from '../../../src/constants';
 import { EventQueue } from "../../../src/event_queue";
 import { IPlayerSchema } from '../../../src/interfaces/iplayer_schema';
 import { TestAnimationEngine } from "../../helpers/test_animation_engine";
@@ -13,7 +13,7 @@ chai.use(sinonChai);
 
 describe('PlayerGraphics', () => {
   describe('`animate`', () => {
-    it('displays a players with data received from the queue with default scale',
+    it('displays players with data received from the queue with default scale',
       () => {
         const engine = new TestAnimationEngine();
         const queue = new EventQueue();
@@ -32,7 +32,8 @@ describe('PlayerGraphics', () => {
             y: 0.1,
             colors: [200, 0, 0],
             diameter: 0.5,
-          }
+          },
+          state: PLAYER_ANIMATION_STATE.NONE,
         };
         queue.trigger(EVENTS.PLAYER_DATA, [playerData]);
 
@@ -58,7 +59,8 @@ describe('PlayerGraphics', () => {
               y: 0.1,
               colors: [200, 200, 0],
               diameter: 0.5,
-            }
+            },
+            state: PLAYER_ANIMATION_STATE.NONE,
           };
           queue.trigger(EVENTS.PLAYER_DATA, [playerData]);
 
@@ -75,6 +77,7 @@ describe('PlayerGraphics', () => {
                   playerArgument.cursor.diameter, 1.5, 0.001);
               expect(playerArgument.colors).to.eql([200, 0, 0]);
               expect(playerArgument.cursor.colors).to.eql([200, 200, 0]);
+              expect(playerArgument.state).to.eql(PLAYER_ANIMATION_STATE.NONE);
           });
           graphics.animate();
         });

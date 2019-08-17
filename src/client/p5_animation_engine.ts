@@ -1,5 +1,6 @@
 import p5 from "p5";
 import { constants } from "../constants";
+import { PLAYER_ANIMATION_STATE, SOUND_ID } from "../constants";
 import { Box } from "../game_objects/box";
 import { Post } from "../game_objects/post";
 import { IAnimationEngine } from "../interfaces/ianimation_engine";
@@ -11,13 +12,10 @@ import { IPlayerSchema } from "../interfaces/iplayer_schema";
 import { IPositionValueSchema } from "../interfaces/iposition_value_schema";
 import { IScoresPanelSchema } from "../interfaces/iscores_panel_schema";
 import { ITextSchema } from "../interfaces/itext_schema";
+import { SoundPlayer } from "./sound_player";
 
 export class P5AnimationEngine implements IAnimationEngine {
-  public animator: p5;
-
-  constructor(animator: p5) {
-    this.animator = animator;
-  }
+  constructor(private animator: p5, private soundPlayer: SoundPlayer) {}
 
   public displayText(text: ITextSchema, size: number = 64) {
     this.animator.push();
@@ -91,6 +89,9 @@ export class P5AnimationEngine implements IAnimationEngine {
     this.animator.fill(player.colors);
     this.animator.circle(player.x, player.y, player.diameter);
     this.displayCursor(player.cursor);
+    if (player.state === PLAYER_ANIMATION_STATE.KICKING) {
+      this.soundPlayer.play(SOUND_ID.KICK);
+    }
     this.animator.pop();
   }
 
