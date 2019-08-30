@@ -253,5 +253,23 @@ export enum SOUND_ID {
 
 export enum PLAYER_ANIMATION_STATE {
   NONE = 0,
-  KICKING = 1,
+  IDLE = 1,
+  RUNNING = 2,
+  KICKING = 3,
+}
+
+export enum TEAM_ID {
+  NONE = 0,
+  WHITE = 1,
+  RED = 2,
+}
+
+export enum ANIMATION_ID {
+  NONE = 0,
+  RED_PLAYER_IDLE = 1,
+  WHITE_PLAYER_IDLE = 2,
+  RED_PLAYER_RUNNING = 3,
+  WHITE_PLAYER_RUNNING = 4,
+  RED_PLAYER_KICKING = 5,
+  WHITE_PLAYER_KICKING = 6,
 }

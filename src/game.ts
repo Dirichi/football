@@ -7,7 +7,6 @@ import { Player } from "./game_objects/player";
 import { Post } from "./game_objects/post";
 import { Team } from "./game_objects/team";
 import { IGameStateMachine } from "./interfaces/igame_state_machine";
-import { IPositionValueSchema } from "./interfaces/iposition_value_schema";
 import { IScoresPanelSchema } from "./interfaces/iscores_panel_schema";
 import { ITextSchema } from "./interfaces/itext_schema";
 import { GoalDetectionService } from "./services/goal_detection_service";

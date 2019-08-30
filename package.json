@@ -61,7 +61,7 @@
     "dev": "nodemon --watch src -e ts,ejs --exec npm run dev:start",
     "dev:start": "npm-run-all build start",
     "lint": "tslint -c tslint.json -p tsconfig.json --fix",
-    "parcel": "parcel build src/public/**/* -d dist/public/",
+    "parcel": "parcel build \"src/public/**/*.*\" -d dist/public/",
     "start": "node .",
     "test": "mocha -r ts-node/register 'tests/**/*_test.ts'",
     "tsc": "tsc"

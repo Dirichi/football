@@ -1,9 +1,5 @@
 import v4 from "uuid/v4";
-import {
-  BALL_CONTROL_REFRESH_TIME,
-  constants, EVENTS, PLAYER_ANIMATION_STATE, PLAYER_ROLE_TYPE,
-  Y_BALL_MARGIN_FOR_KICKOFF_SUPPORT
-} from "../constants";
+import { PLAYER_ROLE_TYPE, Y_BALL_MARGIN_FOR_KICKOFF_SUPPORT } from "../constants";
 import { EventQueue } from "../event_queue";
 import { ICircle } from "../interfaces/icircle";
 import { ICollidable } from "../interfaces/icollidable";
@@ -32,7 +28,6 @@ export class Player implements ICollidable {
   private physics?: PlayerPhysics;
   private maximumSpeed?: number;
   private id: string;
-  private colors: [number, number, number];
   private team?: Team;
   private controller?: IPlayerController;
   private messageQueue?: EventQueue;
@@ -41,7 +36,6 @@ export class Player implements ICollidable {
   private messages: IPlayerMessage[];
   private ballControlEnabled: boolean;
   private cursor: ICursor;
-  private animationState: PLAYER_ANIMATION_STATE;
 
   constructor(x: number, y: number, vx: number, vy: number, diameter: number) {
     this.id = v4(); // Randomly generated id
@@ -53,14 +47,11 @@ export class Player implements ICollidable {
     // TODO: Details like this should maybe be hidden away in another object
     // Like a PhysicalRepresentation or something like that. So that we can
     // swap representations out as we see fit.
-    this.colors = [0, 0, 225];
     this.messages = [];
     this.ballControlEnabled = true;
-    this.animationState = PLAYER_ANIMATION_STATE.NONE;
   }
 
   public update(): void {
-    this.resetAnimationState();
     this.controlBall();
     this.physics.update();
     this.controller.update();
@@ -123,11 +114,6 @@ export class Player implements ICollidable {
     return this;
   }
 
-  public setColors(colors: [number, number, number]): Player {
-    this.colors = colors;
-    return this;
-  }
-
   public setCursor(cursor: ICursor): Player {
     this.cursor = cursor;
     return this;
@@ -140,10 +126,10 @@ export class Player implements ICollidable {
 
   public serialized(): IPlayerSchema {
     return {
-      colors: this.colors,
       cursor: this.cursor,
       diameter: this.diameter,
-      state: this.animationState,
+      id: this.id,
+      teamId: this.team.getId(),
       vx: this.vx,
       vy: this.vy,
       x: this.x,
@@ -257,7 +243,6 @@ export class Player implements ICollidable {
 
   public kickBall(destination: Vector3D): boolean {
     const kicked = this.ballInteractionMediator.kickBall(this, destination);
-    if (kicked) { this.animationState = PLAYER_ANIMATION_STATE.KICKING; }
     return kicked;
   }
 
@@ -307,9 +292,5 @@ export class Player implements ICollidable {
 
   private setVelocity(velocity: Vector3D): void {
     [this.vx, this.vy] = [velocity.x, velocity.y];
-  }
-
-  private resetAnimationState(): void {
-    this.animationState = PLAYER_ANIMATION_STATE.NONE;
   }
 }

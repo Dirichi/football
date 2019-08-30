@@ -4,7 +4,6 @@ interface ISoundFile {
   id: SOUND_ID;
   filePath: string;
   audioElement?: HTMLAudioElement;
-  playing: boolean;
 }
 
 export class SoundPlayer {
@@ -19,7 +18,7 @@ export class SoundPlayer {
     this.files.map((file) => file.audioElement.load());
   }
 
-  public play(id: number): void {
+  public play(id: SOUND_ID): void {
     const fileToPlay = this.files.find((file) => file.id === id);
     if (!fileToPlay) { return; }
     fileToPlay.audioElement.play();

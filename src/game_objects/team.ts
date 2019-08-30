@@ -1,5 +1,4 @@
-import { PLAYER_ROLE_TYPE, TEAM_SIDES } from "../constants";
-import { minimumBy } from "../utils/helper_functions";
+import { PLAYER_ROLE_TYPE, TEAM_ID, TEAM_SIDES } from "../constants";
 import { Ball } from "./ball";
 import { Player } from "./player";
 import { PlayerRole } from "./player_role";
@@ -13,6 +12,7 @@ export class Team {
   private goalPost?: Post;
   private kickOffStartingPlayer?: Player;
   private kickOffSupportingPlayer?: Player;
+  private id?: TEAM_ID;
 
   constructor(players: Player[]) {
     this.players = players;
@@ -35,6 +35,15 @@ export class Team {
 
   public getOpposition(): Team {
     return this.opposition;
+  }
+
+  public getId(): TEAM_ID {
+    return this.id;
+  }
+
+  public setId(id: TEAM_ID): Team {
+    this.id = id;
+    return this;
   }
 
   public setSide(side: TEAM_SIDES): Team {
@@ -74,11 +83,6 @@ export class Team {
 
   public getGoalPost(): Post {
     return this.goalPost;
-  }
-
-  public setColors(colors: [number, number, number]): Team {
-    this.players.forEach((player) => player.setColors(colors));
-    return this;
   }
 
   public update(): void {
