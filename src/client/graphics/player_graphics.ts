@@ -1,28 +1,25 @@
 import { EVENTS } from "../../constants";
 import { EventQueue } from "../../event_queue";
-import { IAnimationEngine } from "../../interfaces/ianimation_engine";
 import { ICursor } from "../../interfaces/icursor";
 import { IPlayerSchema } from "../../interfaces/iplayer_schema";
+import { PlayerSpriteManager } from "../player_sprite_manager";
 
 export class PlayerGraphics {
-  public engine: IAnimationEngine;
   public queue: EventQueue;
-
-  private players: IPlayerSchema[];
   private scale: number[];
+  private spriteManager: PlayerSpriteManager;
 
-  constructor(engine: IAnimationEngine, queue: EventQueue) {
-    this.engine = engine;
-    this.players = [];
+  constructor(
+    spriteManager: PlayerSpriteManager,
+    queue: EventQueue) {
     this.queue = queue;
     this.scale = [0, 0, 1, 1]; // default scale
+    this.spriteManager = spriteManager;
     this.configureListeners();
   }
 
   public animate() {
-    this.players.forEach((player) => {
-      this.engine.drawPlayer(player);
-    });
+    this.spriteManager.getAll().map((sprite) => sprite.animate());
   }
 
   public setScale(scale: number[]) {
@@ -32,7 +29,8 @@ export class PlayerGraphics {
   private configureListeners() {
     this.queue.when(EVENTS.PLAYER_DATA, (data) => {
       const deserializedData = data as IPlayerSchema[];
-      this.players = deserializedData.map((player) => this.toScale(player));
+      const players = deserializedData.map((player) => this.toScale(player));
+      players.forEach((player) => this.spriteManager.createOrUpdate(player));
     });
   }
 
@@ -42,10 +40,10 @@ export class PlayerGraphics {
     const yrange = ymax - ymin;
 
     return {
-      colors: data.colors,
       cursor: this.scaleCursor(data.cursor),
       diameter: (data.diameter * yrange),
-      state: data.state,
+      id: data.id,
+      teamId: data.teamId,
       vx: data.vx * xrange,
       vy: data.vy * yrange,
       x: (data.x * xrange) + xmin,

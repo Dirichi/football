@@ -1,7 +1,10 @@
-import io from 'socket.io-client';
+import io from "socket.io-client";
 import p5 from "p5";
-import { constants, IO_MESSAGE_TYPE } from "../../constants";
+import { IO_MESSAGE_TYPE, SOUND_ID, ANIMATION_ID } from "../../constants";
 import { BallGraphics } from "../../client/graphics/ball_graphics";
+import { IdleState } from "../../client/animation_states/idle_state";
+import { KickingState } from "../../client/animation_states/kicking_state";
+import { RunningState } from "../../client/animation_states/running_state";
 import { BoxGraphics } from "../../client/graphics/box_graphics";
 import { EventQueue } from '../../event_queue';
 import { FieldGraphics } from "../../client/graphics/field_graphics";
@@ -14,22 +17,39 @@ import { GameStateTextGraphics } from "../../client/graphics/game_state_text_gra
 import { ScoresPanelGraphics } from "../../client/graphics/scores_panel_graphics";
 import { PositionValueDebugGraphics } from "../../client/graphics/position_value_debug_graphics";
 import { SoundPlayer } from "../../client/sound_player";
-import { SOUND_ID } from "../../constants";
+import { PlayerSpriteManager } from "../../client/player_sprite_manager";
+import { AnimationStore } from "../../client/animation_store";
+import { PlayerAnimationController } from "../../client/animation_states/player_animation_controller";
 
 const socket = io();
 const queue = new EventQueue();
 const manualInputHandler = new ManualInputHandler(socket);
-const kickSoundFile = { id: SOUND_ID.KICK, filePath: "/resources/kick.mp3" };
+const kickSoundFile =
+  { id: SOUND_ID.KICK, filePath: "/resources/kick.mp3" };
 const soundPlayer = new SoundPlayer([kickSoundFile]);
 
 const sketch = (p: p5) => {
   soundPlayer.load();
-  const animationEngine = new P5AnimationEngine(p, soundPlayer);
+  const animationEngine = new P5AnimationEngine(p);
   const fieldGraphics = new FieldGraphics(animationEngine, queue);
   const postGraphics = new PostGraphics(animationEngine, queue);
   const boxGraphics = new BoxGraphics(animationEngine, queue);
   const ballGraphics = new BallGraphics(animationEngine, queue);
-  const playerGraphics = new PlayerGraphics(animationEngine, queue);
+  const animationStore = new AnimationStore(animationEngine);
+  const animationControllerFactory: () => PlayerAnimationController = () => {
+    const states = [
+      new IdleState(animationStore),
+      new KickingState(animationStore),
+      new RunningState(animationStore),
+    ]
+
+    const controller = new PlayerAnimationController(states);
+    controller.configure();
+    return controller;
+  }
+  const spriteManager = new PlayerSpriteManager(animationControllerFactory);
+  const playerGraphics =
+    new PlayerGraphics(spriteManager, queue);
   const fieldRegionGraphics = new FieldRegionGraphics(animationEngine, queue);
   const gameStateTextGraphics =
     new GameStateTextGraphics(animationEngine, queue);
@@ -53,7 +73,55 @@ const sketch = (p: p5) => {
     scoresPanelGraphics,
   ];
 
-  const fieldCoordinates = [];
+  p.preload = () => {
+    animationStore.addAnimation(ANIMATION_ID.WHITE_PLAYER_IDLE, {
+      basePath: "/resources/player_2/idle_2_",
+      extension: "png",
+      loop: true,
+      numberOfFrames: 4,
+      speed: 0.1,
+    });
+
+    animationStore.addAnimation(ANIMATION_ID.WHITE_PLAYER_RUNNING, {
+      basePath: "/resources/player_2/run_2_",
+      extension: "png",
+      loop: true,
+      numberOfFrames: 10,
+      speed: 0.1,
+    });
+
+    animationStore.addAnimation(ANIMATION_ID.WHITE_PLAYER_KICKING, {
+      basePath: "/resources/player_2/shoot_2_",
+      extension: "png",
+      loop: false,
+      numberOfFrames: 9,
+      speed: 0.1,
+    });
+
+    animationStore.addAnimation(ANIMATION_ID.RED_PLAYER_IDLE, {
+      basePath: "/resources/player_1/idle_1_",
+      extension: "png",
+      loop: true,
+      numberOfFrames: 4,
+      speed: 0.1,
+    });
+
+    animationStore.addAnimation(ANIMATION_ID.RED_PLAYER_RUNNING, {
+      basePath: "/resources/player_1/run_1_",
+      extension: "png",
+      loop: true,
+      numberOfFrames: 10,
+      speed: 0.1,
+    });
+
+    animationStore.addAnimation(ANIMATION_ID.RED_PLAYER_KICKING, {
+      basePath: "/resources/player_1/shoot_1_",
+      extension: "png",
+      loop: false,
+      numberOfFrames: 9,
+      speed: 0.1,
+    });
+  }
 
   p.setup = () => {
     // TODO: These calls to p5 should be hidden inside the p5AnimationEngine or
@@ -70,8 +138,8 @@ const sketch = (p: p5) => {
 };
 
 // TODO: Socket configuration could be encapsulated in another class
-socket.on(IO_MESSAGE_TYPE.GAME_STATE, (data) => {
-  Object.keys(data).forEach((event) {
+socket.on(IO_MESSAGE_TYPE.GAME_STATE, (data: { [x: string]: any; }) => {
+  Object.keys(data).forEach((event) => {
     const payload = data[event];
     queue.trigger(event, payload);
   });
@@ -85,4 +153,4 @@ document.onkeyup = (event: KeyboardEvent) => {
   manualInputHandler.handleKeyUp(event);
 };
 
-const psketch = new p5(sketch);
+new p5(sketch);

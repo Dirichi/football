@@ -33,16 +33,15 @@ import {
   BALL_INITIAL_ARGS, BOX18A_INITIAL_COORDINATES,
   BOX18B_INITIAL_COORDINATES, BOX6A_INITIAL_COORDINATES,
   BOX6B_INITIAL_COORDINATES, COLLISION_MARGIN_FACTOR, COMMAND_ID, constants,
-  CURSOR_DIAMETER, EVENTS, FIELD_INITIAL_COORDINATES,
+  CURSOR_DIAMETER, FIELD_INITIAL_COORDINATES,
   GAME_STATE_UPDATE_DELAY, PLAYER_INITIAL_ARGS, PLAYER_ROLE,
   PLAYER_ROLE_TYPE, POSTA_INITIAL_COORDINATES, POSTB_INITIAL_COORDINATES,
-  PROCESS_MESSAGE_TYPE, RADIUS_FOR_CONGESTION, TEAM_SIDES
+  PROCESS_MESSAGE_TYPE, RADIUS_FOR_CONGESTION, TEAM_ID, TEAM_SIDES
 } from "./constants";
 import { EventQueue } from "./event_queue";
 import { Game } from "./game";
 import { PlayerHumanController } from "./game_ai/player/human_controller/player_human_controller";
 import { PlayerStateMachine } from "./game_ai/player/state_machine/player_state_machine";
-import { PLAYER_ROLES_CONFIGURATION } from "./game_configs/player_roles_config";
 import { Ball } from "./game_objects/ball";
 import { Box } from "./game_objects/box";
 import { Field } from "./game_objects/field";
@@ -145,7 +144,7 @@ teamA.setSide(TEAM_SIDES.LEFT)
   .setOpposition(teamB)
   .setGoalPost(postA)
   .setOpposingGoalPost(postB)
-  .setColors([0, 0, 225])
+  .setId(TEAM_ID.WHITE)
   .setKickOffStartingPlayer(teamAPlayers[teamSize - 1])
   .setKickOffSupportingPlayer(teamAPlayers[teamSize - 2]);
 
@@ -153,7 +152,7 @@ teamB.setSide(TEAM_SIDES.RIGHT)
   .setOpposition(teamA)
   .setGoalPost(postB)
   .setOpposingGoalPost(postA)
-  .setColors([225, 0, 0])
+  .setId(TEAM_ID.RED)
   .setKickOffStartingPlayer(teamBPlayers[teamSize - 1])
   .setKickOffSupportingPlayer(teamBPlayers[teamSize - 2]);
 

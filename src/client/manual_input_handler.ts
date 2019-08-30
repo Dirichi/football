@@ -8,15 +8,12 @@ export class ManualInputHandler {
   private settings: Map<COMMAND_ID, INPUT_KEY[]>;
   private socket: IWebSocket;
 
-  constructor(
-    socket: IWebSocket,
-    allowedInputKeys?: Set<INPUT_KEY>,
-    settings?: Map<COMMAND_ID, INPUT_KEY[]>) {
-      this.inputKeysSet = new Set([]);
-      this.socket = socket;
-      this.settings = settings || COMMAND_ID_TO_KEY_COMBINATION;
-      const allowedKeysList = [...this.settings.values()].flat();
-      this.allowedInputKeysSet = new Set(allowedKeysList);
+  constructor(socket: IWebSocket, settings?: Map<COMMAND_ID, INPUT_KEY[]>) {
+    this.inputKeysSet = new Set([]);
+    this.socket = socket;
+    this.settings = settings || COMMAND_ID_TO_KEY_COMBINATION;
+    const allowedKeysList = [...this.settings.values()].flat();
+    this.allowedInputKeysSet = new Set(allowedKeysList);
   }
 
   public sendInput(): void {

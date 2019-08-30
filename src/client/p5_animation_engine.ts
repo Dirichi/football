@@ -1,21 +1,24 @@
 import p5 from "p5";
 import { constants } from "../constants";
-import { PLAYER_ANIMATION_STATE, SOUND_ID } from "../constants";
-import { Box } from "../game_objects/box";
 import { Post } from "../game_objects/post";
 import { IAnimationEngine } from "../interfaces/ianimation_engine";
 import { IBallSchema } from "../interfaces/iball_schema";
 import { IBoxSchema } from "../interfaces/ibox_schema";
-import { ICursor } from "../interfaces/icursor";
 import { IFieldRegionSchema } from "../interfaces/ifield_region_schema";
-import { IPlayerSchema } from "../interfaces/iplayer_schema";
 import { IPositionValueSchema } from "../interfaces/iposition_value_schema";
 import { IScoresPanelSchema } from "../interfaces/iscores_panel_schema";
 import { ITextSchema } from "../interfaces/itext_schema";
-import { SoundPlayer } from "./sound_player";
+
+export interface IAnimationConfig {
+  basePath: string;
+  numberOfFrames: number;
+  extension: string;
+  speed: number;
+  loop: boolean;
+}
 
 export class P5AnimationEngine implements IAnimationEngine {
-  constructor(private animator: p5, private soundPlayer: SoundPlayer) {}
+  constructor(private animator: p5) { }
 
   public displayText(text: ITextSchema, size: number = 64) {
     this.animator.push();
@@ -84,17 +87,6 @@ export class P5AnimationEngine implements IAnimationEngine {
     this.animator.pop();
   }
 
-  public drawPlayer(player: IPlayerSchema) {
-    this.animator.push();
-    this.animator.fill(player.colors);
-    this.animator.circle(player.x, player.y, player.diameter);
-    this.displayCursor(player.cursor);
-    if (player.state === PLAYER_ANIMATION_STATE.KICKING) {
-      this.soundPlayer.play(SOUND_ID.KICK);
-    }
-    this.animator.pop();
-  }
-
   public displayPositionValues(values: IPositionValueSchema) {
     const currX = values.currentPositionX;
     const currY = values.currentPositionY;
@@ -110,13 +102,22 @@ export class P5AnimationEngine implements IAnimationEngine {
     this.animator.pop();
   }
 
-  private displayCursor(cursor: ICursor): void {
-    if (!cursor) { return; }
-
+  public drawImage(
+    image: p5.Image, x: number, y: number, w: number, h: number): void {
     this.animator.push();
-    this.animator.fill(cursor.colors);
-    this.animator.circle(cursor.x, cursor.y, cursor.diameter);
+    this.animator.imageMode(this.animator.CENTER);
+    this.animator.image(image, x, y, 3 * w, 3 * h);
     this.animator.pop();
+  }
+
+  public loadImage(filePath: string): Promise<p5.Image> {
+    return new Promise((resolve, reject) => {
+      this.animator.loadImage(filePath, (image) => {
+        resolve(image);
+      }, (error) => {
+        reject(error);
+      });
+    });
   }
 
   private drawCenterCircle(field: IBoxSchema) {

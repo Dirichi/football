@@ -8,7 +8,6 @@ import * as http from "http";
 import path from "path";
 import redis from "redis";
 import socketIo from "socket.io";
-import v4 from "uuid/v4";
 
 import {
   authenticateRequest,
@@ -19,12 +18,9 @@ import {
 } from "./app_services/auth";
 import { MatchMakerService } from "./app_services/match_maker_service";
 import { ROLE_TYPE_CHOICE_MAP } from "./constants";
-import { EventQueue } from "./event_queue";
 import { GameClient } from "./game_client";
 import { GameRoom } from "./game_room";
 import { ICustomizedRequest } from "./interfaces/icustomized_request";
-import { ICustomizedSocket } from "./interfaces/icustomized_socket";
-import { User } from "./models/user";
 import { WrappedSocket } from "./wrapped_socket";
 
 dotenv.config();
