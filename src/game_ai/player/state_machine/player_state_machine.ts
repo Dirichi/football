@@ -1,8 +1,6 @@
-import { STATE_MACHINE_COMMANDS } from "../../../constants";
 import { Player } from "../../../game_objects/player";
 import { IPlayerController } from "../../../interfaces/iplayer_controller";
 import { IPlayerState } from "../../../interfaces/iplayer_state";
-import { minimumBy } from "../../../utils/helper_functions";
 
 // TODO: A case could be made to separate the state machine from the concept
 // of the controller.

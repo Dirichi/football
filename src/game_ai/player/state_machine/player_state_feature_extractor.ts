@@ -1,6 +1,4 @@
-import {
-  NUM_SHOT_TARGETS,
-  POSITION_DELTA_FOR_POSITION_VALUE_CALCULATION,
+import { POSITION_DELTA_FOR_POSITION_VALUE_CALCULATION,
   STATE_MACHINE_COMMANDS } from "../../../constants";
 import { Ball } from "../../../game_objects/ball";
 import { Player } from "../../../game_objects/player";
@@ -14,7 +12,7 @@ import { IPlayerStateFeatureExtractor } from "../../../interfaces/iplayer_state_
 import { IShotValueCalculator } from "../../../interfaces/ishot_value_calculator";
 import { Vector3D } from "../../../three_dimensional_vector";
 import { distanceAheadOfBall, shotTargetOptions } from "../../../utils/game_functions";
-import { maximumBy, minimumBy, range } from "../../../utils/helper_functions";
+import { maximumBy, minimumBy } from "../../../utils/helper_functions";
 
 export class PlayerStateFeatureExtractor implements IPlayerStateFeatureExtractor {
   constructor(

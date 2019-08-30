@@ -2,7 +2,6 @@ import { MARKING_MARGIN } from "../../../../constants";
 import { Ball } from "../../../../game_objects/ball";
 import { Field } from "../../../../game_objects/field";
 import { Player } from "../../../../game_objects/player";
-import { Post } from "../../../../game_objects/post";
 import { Vector3D } from "../../../../three_dimensional_vector";
 import { distanceAheadOfBall } from "../../../../utils/game_functions";
 import { minimumBy, scale } from "../../../../utils/helper_functions";
