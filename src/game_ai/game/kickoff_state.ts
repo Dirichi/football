@@ -16,6 +16,7 @@ export class KickOffState implements IGameState {
   public enter(game: Game): void {
     this.animationTimer = this.animationDuration;
     game.disableControls();
+    game.stopPlayers();
     game.prepareForKickOff();
   }
 

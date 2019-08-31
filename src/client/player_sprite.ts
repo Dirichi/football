@@ -17,7 +17,11 @@ export class PlayerSprite {
 
   public isMoving(): boolean {
     const velocityVectors = [this.attributes.vx, this.attributes.vy];
-    return velocityVectors.some((vector) => vector > 0);
+    return velocityVectors.some((vector) => Math.abs(vector) > 0);
+  }
+
+  public isKicking(): boolean {
+    return false;
   }
 
   public getTeamId(): TEAM_ID {
@@ -38,5 +42,13 @@ export class PlayerSprite {
 
   public getHeight(): number {
     return this.attributes.diameter;
+  }
+
+  public getVx(): number {
+    return this.attributes.vx;
+  }
+
+  public getVy(): number {
+    return this.attributes.vy;
   }
 }

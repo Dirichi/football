@@ -1,5 +1,7 @@
+import { PlayerSprite } from "../client/player_sprite";
+
 export interface IAnimation {
-  render(x: number, y: number, w: number, h: number): void;
+  render(sprite: PlayerSprite): void;
   reset(): void;
   copy(): IAnimation;
 }

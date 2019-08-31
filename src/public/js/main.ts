@@ -1,6 +1,6 @@
 import io from "socket.io-client";
 import p5 from "p5";
-import { IO_MESSAGE_TYPE, SOUND_ID, ANIMATION_ID } from "../../constants";
+import { IO_MESSAGE_TYPE, SOUND_ID, ANIMATION_ID, IMAGE_TRANSPOSE_OPERATION_ID } from "../../constants";
 import { BallGraphics } from "../../client/graphics/ball_graphics";
 import { IdleState } from "../../client/animation_states/idle_state";
 import { KickingState } from "../../client/animation_states/kicking_state";
@@ -19,6 +19,7 @@ import { PositionValueDebugGraphics } from "../../client/graphics/position_value
 import { SoundPlayer } from "../../client/sound_player";
 import { PlayerSpriteManager } from "../../client/player_sprite_manager";
 import { AnimationStore } from "../../client/animation_store";
+import { FlipLeftToRightOperator } from "../../client/flip_left_to_right_operator";
 import { PlayerAnimationController } from "../../client/animation_states/player_animation_controller";
 
 const socket = io();
@@ -74,52 +75,66 @@ const sketch = (p: p5) => {
   ];
 
   p.preload = () => {
-    animationStore.addAnimation(ANIMATION_ID.WHITE_PLAYER_IDLE, {
+    const flipLeftToRight = new FlipLeftToRightOperator(animationEngine);
+
+    animationStore.addAnimation({
       basePath: "/resources/player_2/idle_2_",
       extension: "png",
+      id: ANIMATION_ID.WHITE_PLAYER_IDLE,
       loop: true,
       numberOfFrames: 4,
       speed: 0.1,
+      transformations: [flipLeftToRight],
     });
 
-    animationStore.addAnimation(ANIMATION_ID.WHITE_PLAYER_RUNNING, {
+    animationStore.addAnimation({
       basePath: "/resources/player_2/run_2_",
       extension: "png",
+      id: ANIMATION_ID.WHITE_PLAYER_RUNNING,
       loop: true,
       numberOfFrames: 10,
       speed: 0.1,
+      transformations: [flipLeftToRight],
     });
 
-    animationStore.addAnimation(ANIMATION_ID.WHITE_PLAYER_KICKING, {
+    animationStore.addAnimation({
       basePath: "/resources/player_2/shoot_2_",
       extension: "png",
+      id: ANIMATION_ID.WHITE_PLAYER_KICKING,
       loop: false,
       numberOfFrames: 9,
       speed: 0.1,
+      transformations: [flipLeftToRight],
     });
 
-    animationStore.addAnimation(ANIMATION_ID.RED_PLAYER_IDLE, {
+    animationStore.addAnimation({
       basePath: "/resources/player_1/idle_1_",
       extension: "png",
+      id: ANIMATION_ID.RED_PLAYER_IDLE,
       loop: true,
       numberOfFrames: 4,
       speed: 0.1,
+      transformations: [flipLeftToRight],
     });
 
-    animationStore.addAnimation(ANIMATION_ID.RED_PLAYER_RUNNING, {
+    animationStore.addAnimation({
       basePath: "/resources/player_1/run_1_",
       extension: "png",
+      id: ANIMATION_ID.RED_PLAYER_RUNNING,
       loop: true,
       numberOfFrames: 10,
       speed: 0.1,
+      transformations: [flipLeftToRight],
     });
 
-    animationStore.addAnimation(ANIMATION_ID.RED_PLAYER_KICKING, {
+    animationStore.addAnimation({
       basePath: "/resources/player_1/shoot_1_",
       extension: "png",
+      id: ANIMATION_ID.RED_PLAYER_KICKING,
       loop: false,
       numberOfFrames: 9,
       speed: 0.1,
+      transformations: [flipLeftToRight],
     });
   }
 

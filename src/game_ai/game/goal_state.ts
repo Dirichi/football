@@ -15,6 +15,7 @@ export class GoalState implements IGameState {
 
   public enter(game: Game): void {
     game.disableControls();
+    game.stopPlayers();
     this.animationTimer = this.animationDuration;
   }
 

@@ -15,6 +15,8 @@ export class PlayerAnimationController {
   }
 
   public animate(playerSprite: PlayerSprite): void {
+    // This looks a little confusing because one might assume that only state[0]
+    // is ever evaluated
     const nextState = this.states[0].animate(playerSprite);
     if (this.currentState && nextState !== this.currentState) {
       this.currentState.exit();

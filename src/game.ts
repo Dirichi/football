@@ -141,6 +141,10 @@ export class Game {
     this.teamToStartKickOff().prepareToStartKickOff(this.ball);
   }
 
+  public stopPlayers(): void {
+    this.players().map((player) => player.stop());
+  }
+
   public getState() {
     return {
       [EVENTS.GAME_STATE_TEXT_DATA]: this.buildStateText(),
