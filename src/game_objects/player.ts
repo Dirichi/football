@@ -3,7 +3,6 @@ import { PLAYER_ROLE_TYPE, Y_BALL_MARGIN_FOR_KICKOFF_SUPPORT } from "../constant
 import { EventQueue } from "../event_queue";
 import { ICircle } from "../interfaces/icircle";
 import { ICollidable } from "../interfaces/icollidable";
-import { ICursor } from "../interfaces/icursor";
 import { IPlayerBallInteractionMediator } from "../interfaces/iplayer_ball_interaction_mediator";
 import { IPlayerController } from "../interfaces/iplayer_controller";
 import { IPlayerMessage } from "../interfaces/iplayer_message";
@@ -35,7 +34,6 @@ export class Player implements ICollidable {
   private role?: PlayerRole;
   private messages: IPlayerMessage[];
   private ballControlEnabled: boolean;
-  private cursor: ICursor;
 
   constructor(x: number, y: number, vx: number, vy: number, diameter: number) {
     this.id = v4(); // Randomly generated id
@@ -55,7 +53,6 @@ export class Player implements ICollidable {
     this.controlBall();
     this.physics.update();
     this.controller.update();
-    this.updateCursor();
   }
 
   public moveInDirection(direction: Vector3D): void {
@@ -114,19 +111,8 @@ export class Player implements ICollidable {
     return this;
   }
 
-  public setCursor(cursor: ICursor): Player {
-    this.cursor = cursor;
-    return this;
-  }
-
-  public updateCursor(): void {
-    if (!this.cursor) { return; }
-    [this.cursor.x, this.cursor.y] = [this.x, this.y];
-  }
-
   public serialized(): IPlayerSchema {
     return {
-      cursor: this.cursor,
       diameter: this.diameter,
       id: this.id,
       teamId: this.team.getId(),

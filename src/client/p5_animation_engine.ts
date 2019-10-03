@@ -1,5 +1,5 @@
 import p5 from "p5";
-import { ANIMATION_ID, constants } from "../constants";
+import { constants } from "../constants";
 import { Post } from "../game_objects/post";
 import { IAnimationEngine } from "../interfaces/ianimation_engine";
 import { IBallSchema } from "../interfaces/iball_schema";
@@ -7,7 +7,6 @@ import { IBoxSchema } from "../interfaces/ibox_schema";
 import { IFieldRegionSchema } from "../interfaces/ifield_region_schema";
 import { IPositionValueSchema } from "../interfaces/iposition_value_schema";
 import { IScoresPanelSchema } from "../interfaces/iscores_panel_schema";
-import { ISpriteImageTransposeOperator } from "../interfaces/isprite_image_transpose_operator";
 import { ITextSchema } from "../interfaces/itext_schema";
 import { SpriteImage } from "./sprite_image";
 

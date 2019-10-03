@@ -1,6 +1,5 @@
 import { EVENTS } from "../../constants";
 import { EventQueue } from "../../event_queue";
-import { ICursor } from "../../interfaces/icursor";
 import { IPlayerSchema } from "../../interfaces/iplayer_schema";
 import { PlayerSpriteManager } from "../player_sprite_manager";
 
@@ -40,7 +39,6 @@ export class PlayerGraphics {
     const yrange = ymax - ymin;
 
     return {
-      cursor: this.scaleCursor(data.cursor),
       diameter: (data.diameter * yrange),
       id: data.id,
       teamId: data.teamId,
@@ -49,19 +47,5 @@ export class PlayerGraphics {
       x: (data.x * xrange) + xmin,
       y: (data.y * yrange) + ymin,
     } as IPlayerSchema;
-  }
-
-  private scaleCursor(cursor: ICursor | null): ICursor | null {
-    if (!cursor) { return null; }
-
-    const [xmin, ymin, xmax, ymax] = this.scale;
-    const xrange = xmax - xmin;
-    const yrange = ymax - ymin;
-    return {
-      colors: cursor.colors,
-      diameter: (cursor.diameter * yrange),
-      x: (cursor.x * xrange) + xmin,
-      y: (cursor.y * yrange) + ymin,
-    };
   }
 }
