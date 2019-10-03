@@ -11,16 +11,13 @@ export class KickingState implements IPlayerAnimationState {
   constructor(private animationStore: AnimationStore) {}
 
   public animate(sprite: PlayerSprite): IPlayerAnimationState {
-    if (!this.animation) {
-      this.initializeAnimation(sprite);
-    }
+    if (!this.animation) { this.initializeAnimation(sprite); }
 
-    if (sprite.isMoving() && this.nextState) {
+    if (!sprite.isKicking() && this.nextState) {
       return this.nextState.animate(sprite);
     }
 
-    this.animation.render(
-      sprite.getX(), sprite.getY(), sprite.getWidth(), sprite.getHeight());
+    this.animation.render(sprite);
     return this;
   }
 

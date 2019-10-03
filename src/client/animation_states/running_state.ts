@@ -11,16 +11,13 @@ export class RunningState implements IPlayerAnimationState {
   constructor(private animationStore: AnimationStore) {}
 
   public animate(sprite: PlayerSprite): IPlayerAnimationState {
-    if (!this.animation) {
-      this.initializeAnimation(sprite);
-    }
+    if (!this.animation) { this.initializeAnimation(sprite); }
 
     if (!sprite.isMoving() && this.nextState) {
       return this.nextState.animate(sprite);
     }
 
-    this.animation.render(
-     sprite.getX(), sprite.getY(), sprite.getWidth(), sprite.getHeight());
+    this.animation.render(sprite);
     return this;
   }
 
@@ -34,7 +31,8 @@ export class RunningState implements IPlayerAnimationState {
 
   private initializeAnimation(sprite: PlayerSprite): void {
     this.animation = sprite.getTeamId() === TEAM_ID.WHITE ?
-      this.animationStore.getAnimation(ANIMATION_ID.WHITE_PLAYER_RUNNING).copy() :
-      this.animationStore.getAnimation(ANIMATION_ID.RED_PLAYER_RUNNING).copy();
+      this.animationStore.getAnimation(ANIMATION_ID.WHITE_PLAYER_RUNNING).copy()
+      : this.animationStore.getAnimation(
+        ANIMATION_ID.RED_PLAYER_RUNNING).copy();
   }
 }

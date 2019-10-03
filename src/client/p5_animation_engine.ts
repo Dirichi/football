@@ -1,5 +1,5 @@
 import p5 from "p5";
-import { constants } from "../constants";
+import { ANIMATION_ID, constants } from "../constants";
 import { Post } from "../game_objects/post";
 import { IAnimationEngine } from "../interfaces/ianimation_engine";
 import { IBallSchema } from "../interfaces/iball_schema";
@@ -7,15 +7,9 @@ import { IBoxSchema } from "../interfaces/ibox_schema";
 import { IFieldRegionSchema } from "../interfaces/ifield_region_schema";
 import { IPositionValueSchema } from "../interfaces/iposition_value_schema";
 import { IScoresPanelSchema } from "../interfaces/iscores_panel_schema";
+import { ISpriteImageTransposeOperator } from "../interfaces/isprite_image_transpose_operator";
 import { ITextSchema } from "../interfaces/itext_schema";
-
-export interface IAnimationConfig {
-  basePath: string;
-  numberOfFrames: number;
-  extension: string;
-  speed: number;
-  loop: boolean;
-}
+import { SpriteImage } from "./sprite_image";
 
 export class P5AnimationEngine implements IAnimationEngine {
   constructor(private animator: p5) { }
@@ -103,10 +97,10 @@ export class P5AnimationEngine implements IAnimationEngine {
   }
 
   public drawImage(
-    image: p5.Image, x: number, y: number, w: number, h: number): void {
+    image: SpriteImage, x: number, y: number, w: number, h: number): void {
     this.animator.push();
     this.animator.imageMode(this.animator.CENTER);
-    this.animator.image(image, x, y, 3 * w, 3 * h);
+    this.animator.image(image.getBaseImage(), x, y, 3 * w, 3 * h);
     this.animator.pop();
   }
 
