@@ -300,6 +300,13 @@ const sendGameOver = () => {
   });
 };
 
+const sendControllerAssigned = (clientId: string, playerId: string) => {
+  process.send({
+    data: {clientId, playerId},
+    messageType: PROCESS_MESSAGE_TYPE.CONTROLLER_ASSIGNED,
+  });
+};
+
 setInterval(() => {
   tickService.tick();
   ballPossessionService.update();
@@ -332,16 +339,11 @@ const handleAssignControllerRequest = (request: IAssignControllerRequest) => {
   }
   const controller =
     new PlayerHumanController(selectedPlayer, commandHandlerRouter);
-  const cursor = {
-    colors: request.cursorColor,
-    diameter: CURSOR_DIAMETER,
-    x: selectedPlayer.getPosition().x,
-    y: selectedPlayer.getPosition().y,
-  };
   controller.setRemoteClientId(request.clientId);
   selectedPlayer.disableControls();
-  selectedPlayer.setController(controller).setCursor(cursor);
+  selectedPlayer.setController(controller);
   remoteControllers.push(controller);
+  sendControllerAssigned(request.clientId, selectedPlayer.getGameObjectId());
 };
 
 const handleCommandRequest = (request: ICommandRequest) => {

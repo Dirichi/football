@@ -3,6 +3,8 @@ import { PlayerAnimationController } from "./animation_states/player_animation_c
 import { PlayerSprite } from "./player_sprite";
 
 export class PlayerSpriteManager {
+  private locallyControlledSpriteId?: string;
+
   constructor(
     private animationControllerFactory: () => PlayerAnimationController,
     private spritesById: Map<string, PlayerSprite> = new Map([])) { }
@@ -21,7 +23,17 @@ export class PlayerSpriteManager {
     return sprite;
   }
 
-  public getAll(): PlayerSprite[] {
-    return [...this.spritesById.values()];
+  public setLocallyControlledSpriteId(id: string): void {
+    this.locallyControlledSpriteId = id;
+  }
+
+  public animateAll(): void {
+    [...this.spritesById.values()].map((sprite) => this.animate(sprite));
+  }
+
+  private animate(sprite: PlayerSprite): void {
+    const locallyControlled =
+      sprite.getId() === this.locallyControlledSpriteId;
+    sprite.setLocallyControlled(locallyControlled).animate();
   }
 }

@@ -25,6 +25,10 @@ export class TestGameClient implements IGameClient {
     this.queue.when(IO_MESSAGE_TYPE.COMMAND, callback);
   }
 
+  public assignControllerId(playerId: string): void {
+    this.queue.trigger(IO_MESSAGE_TYPE.CLIENT_ASSIGNED_PLAYER, {playerId});
+  }
+
   public simulateCommandRequest(request: {commandId: string}): void {
     const command = {...request, clientId: this.id}
     this.queue.trigger(IO_MESSAGE_TYPE.COMMAND, command);

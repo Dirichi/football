@@ -95,6 +95,15 @@ export class P5AnimationEngine implements IAnimationEngine {
     this.animator.pop();
   }
 
+  public displayPlayerSpriteCursor(
+    cursor: {x: number, y: number, w: number, h: number}): void {
+    this.animator.push();
+    this.animator.fill(0, 0, 255);
+    this.animator.rectMode(this.animator.CENTER);
+    this.animator.rect(cursor.x, cursor.y, cursor.w, cursor.h);
+    this.animator.pop();
+  }
+
   public drawImage(
     image: SpriteImage, x: number, y: number, w: number, h: number): void {
     this.animator.push();

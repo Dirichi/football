@@ -1,6 +1,5 @@
-import path from "path";
 import v4 from "uuid/v4";
-import { COMMAND_ID, DEFAULT_START_GAME_TIMEOUT, GAME_EXECUTABLE_FILE, PROCESS_MESSAGE_TYPE } from "./constants";
+import { DEFAULT_START_GAME_TIMEOUT, PROCESS_MESSAGE_TYPE } from "./constants";
 import { IGameClient } from "./interfaces/igame_client";
 import { IProcess } from "./interfaces/iprocess";
 import { IProcessForker } from "./interfaces/iprocess_forker";
@@ -99,6 +98,14 @@ export class GameRoom {
       this.clients.forEach((client) => {
         client.updateGameState(message.data);
       });
+    }
+
+    if (message.messageType === PROCESS_MESSAGE_TYPE.CONTROLLER_ASSIGNED) {
+      const {clientId, playerId} =
+        message.data as {clientId: string, playerId: string};
+      const assignedClient =
+        [...this.clients.values()].find((client) => client.getId() === clientId);
+      assignedClient.assignControllerId(playerId);
     }
 
     if (message.messageType === PROCESS_MESSAGE_TYPE.GAME_OVER) {

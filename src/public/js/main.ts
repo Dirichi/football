@@ -49,6 +49,10 @@ const sketch = (p: p5) => {
     return controller;
   }
   const spriteManager = new PlayerSpriteManager(animationControllerFactory);
+  socket.on(
+    IO_MESSAGE_TYPE.CLIENT_ASSIGNED_PLAYER, (data: { playerId: string }) => {
+      spriteManager.setLocallyControlledSpriteId(data.playerId);
+  });
   const playerGraphics =
     new PlayerGraphics(spriteManager, queue);
   const fieldRegionGraphics = new FieldRegionGraphics(animationEngine, queue);
@@ -58,9 +62,9 @@ const sketch = (p: p5) => {
   const positionValueDebugGraphics =
     new PositionValueDebugGraphics(animationEngine, queue);
 
-// DO NOT REORDER THIS
-// Maybe there should be a way to specify the order in which animations
-// should be drawn, other than this list. But that may be over-engineering.
+  // DO NOT REORDER THIS
+  // Maybe there should be a way to specify the order in which animations
+  // should be drawn, other than this list. But that may be over-engineering.
   const graphics = [
     fieldGraphics,
     // TODO: Toggle display of field region graphics with a switch on the client

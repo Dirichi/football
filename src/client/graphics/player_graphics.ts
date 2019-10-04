@@ -18,7 +18,7 @@ export class PlayerGraphics {
   }
 
   public animate() {
-    this.spriteManager.getAll().map((sprite) => sprite.animate());
+    this.spriteManager.animateAll();
   }
 
   public setScale(scale: number[]) {

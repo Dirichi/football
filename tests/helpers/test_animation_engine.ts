@@ -15,4 +15,6 @@ export class TestAnimationEngine implements IAnimationEngine {
   public drawFieldRegion(region: IFieldRegionSchema) {};
   public drawPost(post: IBoxSchema) {};
   public drawScoresPanel(panel: IScoresPanelSchema) {};
+  public displayPlayerSpriteCursor(
+    cursor: {x: number, y: number, w: number, h: number}) {};
 }
