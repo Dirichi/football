@@ -28,12 +28,14 @@ import { PassBallRemoteCommandRequestHandler } from "./commands/pass_ball_remote
 import { ShootBallCommand } from "./commands/shoot_ball_command";
 import { ShootBallRemoteCommandRequestHandler } from "./commands/shoot_ball_remote_command_request_handler";
 import { StopCommand } from "./commands/stop_command";
+import { Logger } from "./utils/logger";
+
 // TODO: This is starting to look ugly
 import {
   BALL_INITIAL_ARGS, BOX18A_INITIAL_COORDINATES,
   BOX18B_INITIAL_COORDINATES, BOX6A_INITIAL_COORDINATES,
   BOX6B_INITIAL_COORDINATES, COLLISION_MARGIN_FACTOR, COMMAND_ID, constants,
-  CURSOR_DIAMETER, FIELD_INITIAL_COORDINATES,
+  FIELD_INITIAL_COORDINATES,
   GAME_STATE_UPDATE_DELAY, PLAYER_INITIAL_ARGS, PLAYER_ROLE,
   PLAYER_ROLE_TYPE, POSTA_INITIAL_COORDINATES, POSTB_INITIAL_COORDINATES,
   PROCESS_MESSAGE_TYPE, RADIUS_FOR_CONGESTION, TEAM_ID, TEAM_SIDES
@@ -68,9 +70,7 @@ import { TickService } from "./services/tick_service";
 import { TimerService } from "./timer_service";
 import { range } from "./utils/helper_functions";
 
-// TODO: Alright we need to introduce proper logging.
-// tslint:disable-next-line:no-console
-console.log("started a new game process");
+Logger.log("started a new game process");
 
 const queue = new EventQueue();
 const collisionDetectionService = new CollisionDetectionService();
@@ -302,7 +302,7 @@ const sendGameOver = () => {
 
 const sendControllerAssigned = (clientId: string, playerId: string) => {
   process.send({
-    data: {clientId, playerId},
+    data: { clientId, playerId },
     messageType: PROCESS_MESSAGE_TYPE.CONTROLLER_ASSIGNED,
   });
 };
@@ -327,14 +327,12 @@ interface IAssignControllerRequest {
 
 const handleAssignControllerRequest = (request: IAssignControllerRequest) => {
   const selectedPlayer = playersAvailableForRemoteControl.find((player) => {
-    // tslint:disable-next-line:no-console
     return player.getRoleType() === request.role;
   });
   if (!selectedPlayer) {
     // TODO: Consider throwing an error here i.e. if we were unable to assign
     // a role to a player.
-    // tslint:disable-next-line:no-console
-    console.log(`Could not find a position for client ${request.clientId}`);
+    Logger.log(`Could not find a position for client ${request.clientId}`);
     return;
   }
   const controller =

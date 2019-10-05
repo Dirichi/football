@@ -4,6 +4,7 @@ import { GameRoom } from "../game_room";
 import { ICustomizedRequest } from "../interfaces/icustomized_request";
 import { ICustomizedSocket } from "../interfaces/icustomized_socket";
 import { User } from "../models/user";
+import { Logger } from "../utils/logger";
 
 export function requiresLogin(
   req: express.Request,
@@ -18,10 +19,18 @@ export function authenticateSocket(
   socket: Socket, next: (err?: any) => void): void {
     const userId = socket.handshake.session.userId;
     const intendedRoom = getIntendedRoomFromSocket(socket);
-    if (!(userId && intendedRoom)) { return; }
+    if (!(userId && intendedRoom)) {
+      Logger.log(
+        `User (${userId}) or room (${intendedRoom.getId()}) do not exist.`);
+      return;
+     }
     User.find(userId).then((user) => {
       const allowedSocket = user && authorizeParticipation(user, intendedRoom);
-      if (!allowedSocket) { return; }
+      if (!allowedSocket) {
+        Logger.log(
+          `User ${userId} not allowed to join room ${intendedRoom.getId()}`);
+        return;
+      }
       const customizedSocket = socket as ICustomizedSocket;
       [customizedSocket.user, customizedSocket.gameRoom] = [user, intendedRoom];
       next();
