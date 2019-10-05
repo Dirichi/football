@@ -1,16 +1,12 @@
 ## FOOTBALL
 
-This repository contains source code for a multiplayer, multi-process football game. It is multiplayer in the sense that multiple users can participate in a single game at the same time, and multi-process in the sense that the application can run multiple games concurrently. The project is written in Typescript, and is run on a node server with very few dependencies on the backend. A more in depth review of the architecture is not yet available but will be soon.
+This repository contains source code for a multiplayer, multi-process football game. It is multiplayer in the sense that multiple users can participate in a single game at the same time, and multi-process in the sense that the application can run multiple games concurrently. The project is written in Typescript, and is run on a node server with very few dependencies on the backend. A more in depth review of the architecture is not yet available.
 
 ### RUNNING LOCALLY
 
-Some prerequistes before running the game locally:
+Some prerequisites before running the game locally:
 - Install git and update it if you haven't already. Instructions [here](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git).
-- Install npm and/or node and update them if you haven't already. Instructions [here](https://www.npmjs.com/get-npm).
-
-- Install redis (An in-memory database). Instructions [here](https://redis.io/topics/quickstart).
-
-- Install postgresql. Follow Instructions [here](https://www.postgresql.org/download/).
+- Install docker. Instructions [here](https://docs.docker.com/v17.09/engine/installation/).
 
 To get the game running locally, open your terminal / command line. Then clone this repository to get all the code, by typing in the following command:
 
@@ -20,23 +16,15 @@ Next, cd into the directory where the code has been downloaded
 
 > ```cd football```
 
-Then run the following command to download all the dependencies required by the project
+Create a new file called .env and copy the contents of .example_env into it.
 
-> ```npm install```
+> ```cp .example_env .env```
 
-Also ensure that you have postgres up and running. Instructions [here](https://www.postgresql.org/docs/9.1/server-start.html).
+Feel free to change the passwords / secrets in .example_env to your own preferences.
 
-When all the above commands complete without any errors, to get the game going, run the following command:
+Then run the game using docker-compose.
 
-> ```redis-server & npm run dev && fg```
-
-or you can use the tiny bash script written to do just that:
-
-> ```./run_dev.sh```
-
-if you get any permission denied errors when running the bash script, provide the script permission to be executed by running:
-
-> ```chmod 755 run_dev.sh```
+> ```docker-compose up```
 
 You should see some output on your terminal while the app compiles in preparation for running. Eventually you see something like `server started at http://localhost:3000`.
 

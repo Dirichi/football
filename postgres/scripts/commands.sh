@@ -6,7 +6,7 @@ YELLOW='\033[0;33m'
 PLAIN='\033[0m'
 SCRIPT_PATH="$( cd "$(dirname "$0")" ; pwd -P )"
 SETUP_TABLES_SCRIPT_PATH="$(dirname "$SCRIPT_PATH")"
-PGUSER=postgres
+PGUSER=francois
 
 function create {
   createdb football -O ${PGUSER} -U ${PGUSER}

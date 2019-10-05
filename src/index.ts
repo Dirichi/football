@@ -1,6 +1,5 @@
 import bodyParser from "body-parser";
 import connectRedis = require("connect-redis");
-import dotenv from "dotenv";
 import express from "express";
 import session from "express-session";
 import sharedSession from "express-socket.io-session";
@@ -24,7 +23,6 @@ import { ICustomizedRequest } from "./interfaces/icustomized_request";
 import { Logger } from "./utils/logger";
 import { WrappedSocket } from "./wrapped_socket";
 
-dotenv.config();
 const app = express();
 const httpServer = http.createServer(app);
 const urlencodedParser = bodyParser.urlencoded({ extended: false });
