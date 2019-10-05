@@ -1,4 +1,3 @@
-import { Ball } from '../../src/game_objects/ball';
 import { Player } from '../../src/game_objects/player';
 import { IPlayerBallInteractionMediator } from '../../src/interfaces/iplayer_ball_interaction_mediator';
 import { IPlayerController } from '../../src/interfaces/iplayer_controller';

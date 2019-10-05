@@ -3,6 +3,8 @@ import { IPlayerSchema } from "../interfaces/iplayer_schema";
 import { PlayerAnimationController } from "./animation_states/player_animation_controller";
 
 export class PlayerSprite {
+  private locallyControlled: boolean = false;
+
   constructor(
     private attributes: IPlayerSchema,
     private animationController: PlayerAnimationController) {}
@@ -32,6 +34,15 @@ export class PlayerSprite {
     return this.attributes.x;
   }
 
+  public getCursor(): { x: number, y: number, w: number, h: number } {
+    return {
+      h: this.attributes.diameter / 2,
+      w: this.attributes.diameter / 2,
+      x: this.attributes.x,
+      y: this.attributes.y - (this.attributes.diameter * 1.5),
+    };
+  }
+
   public getY(): number {
     return this.attributes.y;
   }
@@ -50,5 +61,18 @@ export class PlayerSprite {
 
   public getVy(): number {
     return this.attributes.vy;
+  }
+
+  public isLocallyControled(): boolean {
+    return this.locallyControlled;
+  }
+
+  public setLocallyControlled(controlled: boolean): this {
+    this.locallyControlled = controlled;
+    return this;
+  }
+
+  public getId(): string {
+    return this.attributes.id;
   }
 }

@@ -2,10 +2,8 @@ import { COMMAND_ID, IO_MESSAGE_TYPE, PLAYER_ROLE_TYPE } from "./constants";
 import { ICommandRequest } from "./interfaces/icommand_request";
 import { IGameClient } from "./interfaces/igame_client";
 import { IWebSocket } from "./interfaces/iweb_socket";
-import { User } from "./models/user";
 
 export class GameClient implements IGameClient {
-  private user: User;
   private socket: IWebSocket;
 
   constructor(socket: IWebSocket) {
@@ -36,5 +34,9 @@ export class GameClient implements IGameClient {
   public joinAssignedRoom(): void {
     const room = this.socket.getGameRoom();
     room.addClient(this);
+  }
+
+  public assignControllerId(playerId: string): void {
+    this.socket.emit(IO_MESSAGE_TYPE.CLIENT_ASSIGNED_PLAYER, {playerId});
   }
 }

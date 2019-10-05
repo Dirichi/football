@@ -1,11 +1,11 @@
 import { ANIMATION_ID } from "../constants";
 import { IAnimation } from "../interfaces/ianimation";
+import { IAnimationConfig } from "../interfaces/ianimation_config";
 import { ISpriteImageTransposeOperator } from "../interfaces/isprite_image_transpose_operator";
 import { range } from "../utils/helper_functions";
 import { P5AnimationEngine } from "./p5_animation_engine";
 import { SpriteAnimation } from "./sprite_animation";
 import { SpriteImage } from "./sprite_image";
-import { IAnimationConfig } from "../interfaces/ianimation_config";
 
 export class AnimationStore {
   constructor(

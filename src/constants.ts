@@ -199,6 +199,7 @@ export enum IO_MESSAGE_TYPE {
   COMMAND = "command",
   GAME_STATE = "game.state",
   PREFFERD_ROLE_TYPE = "preferred.role.type",
+  CLIENT_ASSIGNED_PLAYER = "client.assigned.player",
 }
 
 export enum PROCESS_MESSAGE_TYPE {
@@ -206,6 +207,7 @@ export enum PROCESS_MESSAGE_TYPE {
   COMMAND = 1,
   GAME_OVER = 2,
   GAME_STATE = 3,
+  CONTROLLER_ASSIGNED = 4,
 }
 
 export enum PLAYER_ROLE {
