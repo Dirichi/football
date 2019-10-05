@@ -5,16 +5,19 @@ import { IFieldRegionSchema } from "../../src/interfaces/ifield_region_schema";
 import { IPositionValueSchema } from "../../src/interfaces/iposition_value_schema";
 import { ITextSchema } from "../../src/interfaces/itext_schema";
 import { IScoresPanelSchema } from "../../src/interfaces/iscores_panel_schema";
+import { SpriteImage } from "../../src/client/sprite_image";
 
 export class TestAnimationEngine implements IAnimationEngine {
-  public displayPositionValues(values: IPositionValueSchema) {};
-  public displayText(text: ITextSchema) {};
-  public drawBall(ball: IBallSchema) {};
-  public drawBox(box: IBoxSchema) {};
-  public drawField(field: IBoxSchema) {};
-  public drawFieldRegion(region: IFieldRegionSchema) {};
-  public drawPost(post: IBoxSchema) {};
-  public drawScoresPanel(panel: IScoresPanelSchema) {};
+  public drawImage(
+    image: SpriteImage, x: number, y: number, w: number, h: number): void { }
+  public displayPositionValues(values: IPositionValueSchema) { }
+  public displayText(text: ITextSchema) { }
+  public drawBall(ball: IBallSchema) { }
+  public drawBox(box: IBoxSchema) { }
+  public drawField(field: IBoxSchema) { }
+  public drawFieldRegion(region: IFieldRegionSchema) { }
+  public drawPost(post: IBoxSchema) { }
+  public drawScoresPanel(panel: IScoresPanelSchema) { }
   public displayPlayerSpriteCursor(
-    cursor: {x: number, y: number, w: number, h: number}) {};
+    cursor: { x: number, y: number, w: number, h: number }) { }
 }
