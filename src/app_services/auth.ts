@@ -20,8 +20,7 @@ export function authenticateSocket(
     const userId = socket.handshake.session.userId;
     const intendedRoom = getIntendedRoomFromSocket(socket);
     if (!(userId && intendedRoom)) {
-      Logger.log(
-        `User (${userId}) or room (${intendedRoom.getId()}) do not exist.`);
+      Logger.log(`User (${userId}) or room (${intendedRoom}) do not exist.`);
       return;
      }
     User.find(userId).then((user) => {
@@ -66,8 +65,7 @@ export function authorizeParticipation(
 
 function getIntendedRoomFromSocket(socket: Socket): GameRoom {
   const url = socket.handshake.headers.referer;
-  const host = "http://localhost:3000";
-  const match = url.match(`${host}/games/(.+)`, url);
+  const match = url.match(`.*/games/(.+)`, url);
   const roomId =  match ? match[1] : null;
   if (roomId) { return GameRoom.find(roomId); }
   return null;
