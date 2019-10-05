@@ -21,6 +21,7 @@ import { ROLE_TYPE_CHOICE_MAP } from "./constants";
 import { GameClient } from "./game_client";
 import { GameRoom } from "./game_room";
 import { ICustomizedRequest } from "./interfaces/icustomized_request";
+import { Logger } from "./utils/logger";
 import { WrappedSocket } from "./wrapped_socket";
 
 dotenv.config();
@@ -60,8 +61,7 @@ app.post("/login", urlencodedParser, (req, res) => {
   login(req).then((_) => {
     res.redirect("/");
   }).catch((err) => {
-    // tslint:disable-next-line:no-console
-    console.log(err);
+    Logger.log(err);
     res.render("login", { errors: ["An error occured."] });
   });
 });
@@ -75,10 +75,11 @@ app.post("/search", urlencodedParser, requiresLogin, (req, res) => {
   const roleType = parseInt(req.body.preferredRoleType, 10);
   const customReq = req as ICustomizedRequest;
   matchMaker.match({user: customReq.user, roleType}).then((matchedRoom) => {
+    Logger.log(
+      `matched user ${customReq.user.id} to room ${matchedRoom.getId()}`);
     res.redirect(`/games/${matchedRoom.getId()}`);
   }).catch((err) => {
-    // tslint:disable-next-line:no-console
-    console.log(err);
+    Logger.log(err);
     res.render("index", { roleTypes: ROLE_TYPE_CHOICE_MAP, errors: [":("] });
   });
 });
@@ -92,8 +93,7 @@ app.get("/games/:roomId", requiresLogin, (req, res) => {
 });
 
 httpServer.listen(port, () => {
-  // tslint:disable-next-line:no-console
-  console.log(`server started at http://localhost:${port}`);
+  Logger.log(`server started at http://localhost:${port}`);
 });
 
 io.use(sharedSession(sessionMiddleWare, { autoSave: true }));
