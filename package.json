@@ -62,7 +62,7 @@
     "dev:start": "npm-run-all build start",
     "lint": "tslint -c tslint.json -p tsconfig.json --fix",
     "parcel": "parcel build \"src/public/**/*.*\" -d dist/public/",
-    "start": "node .",
+    "start": "node -r dotenv/config .",
     "test": "mocha -r ts-node/register 'tests/**/*_test.ts'",
     "tsc": "tsc"
   }

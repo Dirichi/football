@@ -8,6 +8,11 @@ services:
       - ./postgres/setup_tables.sql:/setup_tables.sql
       - ./postgres/scripts/prepare.sh:/docker-entrypoint-initdb.d/prepare.sh
       - ./postgres/scripts/commands.sh:/docker-entrypoint-initdb.d/commands.sh
+    environment:
+      POSTGRES_HOST: ${PGHOST}
+      POSTGRES_PORT: ${PGPORT}
+      POSTGRES_USER: ${PGUSER}
+      POSTGRES_PASSWORD: ${PGPASSWORD}
   adminer:
     image: adminer
     restart: always
