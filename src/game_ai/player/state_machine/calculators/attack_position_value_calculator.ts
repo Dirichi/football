@@ -1,11 +1,11 @@
-import { IDEAL_DISTANCE_FROM_GOAL, NUM_SHOT_TARGETS } from "../../../../constants";
+import { IDEAL_DISTANCE_FROM_GOAL } from "../../../../constants";
 import { Ball } from "../../../../game_objects/ball";
 import { Field } from "../../../../game_objects/field";
 import { Player } from "../../../../game_objects/player";
 import { IAttackPositionValueCalculator } from "../../../../interfaces/iattack_position_value_calculator";
 import { Vector3D } from "../../../../three_dimensional_vector";
 import { shotTargetOptions } from "../../../../utils/game_functions";
-import { range, round, scale } from "../../../../utils/helper_functions";
+import { scale } from "../../../../utils/helper_functions";
 import { CongestionCalculator } from "./congestion_calculator";
 import { ShotValueCalculator } from "./shot_value_calculator";
 
@@ -30,7 +30,7 @@ export class AttackPositionValueCalculator implements IAttackPositionValueCalcul
       const proximity = this.proximityToOpposingPostScore(player, position);
       const shotValue = this.bestShotValueScore(player, position);
       const trackingBall =
-        this.trackingBallScore(player, position, ballPosition);
+        this.trackingBallScore(position, ballPosition);
 
       const weightedScore =
         // TODO: Make these weights constants
@@ -56,9 +56,9 @@ export class AttackPositionValueCalculator implements IAttackPositionValueCalcul
   }
 
   private trackingBallScore(
-    player: Player, position: Vector3D, ballPosition: Vector3D): number {
-    const distanceToBall = position.distanceTo(ballPosition);
-    return scale(distanceToBall, 0, this.field.diagonalLength(), 1, 0);
+    position: Vector3D, ballPosition: Vector3D): number {
+      const distanceToBall = position.distanceTo(ballPosition);
+      return scale(distanceToBall, 0, this.field.diagonalLength(), 1, 0);
   }
 
   private proximityToOpposingPostScore(

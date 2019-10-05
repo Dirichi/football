@@ -190,7 +190,7 @@ collisionNotificationService.registerCollisionGroup([ball, ...defaultPlayers]);
 
 const interceptionCalculator = new InterceptionCalculator();
 const shotValueCalculator =
-  new ShotValueCalculator(ball, field, interceptionCalculator);
+  new ShotValueCalculator(ball, interceptionCalculator);
 const congestionCalculator =
   new CongestionCalculator(RADIUS_FOR_CONGESTION);
 const positionValueCalculator = new AttackPositionValueCalculator(
