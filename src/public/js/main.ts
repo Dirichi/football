@@ -1,6 +1,6 @@
 import io from "socket.io-client";
 import p5 from "p5";
-import { IO_MESSAGE_TYPE, SOUND_ID, ANIMATION_ID, IMAGE_TRANSPOSE_OPERATION_ID } from "../../constants";
+import { IO_MESSAGE_TYPE, SOUND_ID, ANIMATION_ID, IMAGE_TRANSPOSE_OPERATION_ID, PLAYER_ANIMATION_STATE } from "../../constants";
 import { BallGraphics } from "../../client/graphics/ball_graphics";
 import { IdleState } from "../../client/animation_states/idle_state";
 import { KickingState } from "../../client/animation_states/kicking_state";
@@ -39,8 +39,8 @@ const sketch = (p: p5) => {
   const animationStore = new AnimationStore(animationEngine);
   const animationControllerFactory: () => PlayerAnimationController = () => {
     const states = [
+      new KickingState(animationStore, soundPlayer),
       new IdleState(animationStore),
-      new KickingState(animationStore),
       new RunningState(animationStore),
     ]
 

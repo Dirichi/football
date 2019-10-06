@@ -30,10 +30,11 @@ export class PlayerBallInteractionMediator
       this.possessionService.getCurrentPlayerInPossessionOrNull();
   }
 
-  public kickBall(player: Player, destination: Vector3D): boolean {
+  public kickBall(
+    player: Player, destination: Vector3D, callback?: () => void): boolean {
     if (!this.canKickBall(player)) { return false; }
 
-    this.temporarilyDisableKicking(player);
+    this.temporarilyDisableKicking(player, callback);
     this.ball.moveTowards(destination);
     return true;
   }
@@ -51,10 +52,12 @@ export class PlayerBallInteractionMediator
     player.moveTowards(this.ball.getPosition());
   }
 
-  private temporarilyDisableKicking(player: Player): void {
+  private temporarilyDisableKicking(
+    player: Player, callback?: () => void): void {
     this.kickBlackList.add(player);
     this.tickService.after(this.kickDisabledTimeout, () => {
       this.kickBlackList.delete(player);
+      if (callback) { callback.call(this); }
     });
   }
 

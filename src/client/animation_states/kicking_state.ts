@@ -1,14 +1,17 @@
-import { ANIMATION_ID, TEAM_ID } from "../../constants";
+import { ANIMATION_ID, SOUND_ID, TEAM_ID } from "../../constants";
 import { IAnimation } from "../../interfaces/ianimation";
 import { IPlayerAnimationState } from "../../interfaces/iplayer_animation_state";
 import { AnimationStore } from "../animation_store";
 import { PlayerSprite } from "../player_sprite";
+import { SoundPlayer } from "../sound_player";
 
 export class KickingState implements IPlayerAnimationState {
   private nextState: IPlayerAnimationState;
   private animation?: IAnimation;
 
-  constructor(private animationStore: AnimationStore) {}
+  constructor(
+    private animationStore: AnimationStore,
+    private soundPlayer: SoundPlayer) {}
 
   public animate(sprite: PlayerSprite): IPlayerAnimationState {
     if (!this.animation) { this.initializeAnimation(sprite); }
@@ -18,6 +21,7 @@ export class KickingState implements IPlayerAnimationState {
     }
 
     this.animation.render(sprite);
+    this.soundPlayer.play(SOUND_ID.KICK);
     return this;
   }
 
