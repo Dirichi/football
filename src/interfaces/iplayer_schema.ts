@@ -11,4 +11,5 @@ export interface IPlayerSchema {
   diameter: number;
   state: PLAYER_ANIMATION_STATE;
   teamId: TEAM_ID;
+  kicking: boolean;
 }

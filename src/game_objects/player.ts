@@ -34,6 +34,7 @@ export class Player implements ICollidable {
   private role?: PlayerRole;
   private messages: IPlayerMessage[];
   private ballControlEnabled: boolean;
+  private kicking: boolean;
 
   constructor(x: number, y: number, vx: number, vy: number, diameter: number) {
     this.id = v4(); // Randomly generated id
@@ -47,6 +48,7 @@ export class Player implements ICollidable {
     // swap representations out as we see fit.
     this.messages = [];
     this.ballControlEnabled = true;
+    this.kicking = false;
   }
 
   public update(): void {
@@ -115,6 +117,7 @@ export class Player implements ICollidable {
     return {
       diameter: this.diameter,
       id: this.id,
+      kicking: this.kicking,
       teamId: this.team.getId(),
       vx: this.vx,
       vy: this.vy,
@@ -228,8 +231,9 @@ export class Player implements ICollidable {
   }
 
   public kickBall(destination: Vector3D): boolean {
-    const kicked = this.ballInteractionMediator.kickBall(this, destination);
-    return kicked;
+    this.kicking = this.ballInteractionMediator.kickBall(
+      this, destination, () => this.resetKicking());
+    return this.kicking;
   }
 
   public hasBall(): boolean {
@@ -278,5 +282,9 @@ export class Player implements ICollidable {
 
   private setVelocity(velocity: Vector3D): void {
     [this.vx, this.vy] = [velocity.x, velocity.y];
+  }
+
+  private resetKicking(): void {
+    this.kicking = false;
   }
 }

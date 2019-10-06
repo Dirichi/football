@@ -41,6 +41,7 @@ export class PlayerGraphics {
     return {
       diameter: (data.diameter * yrange),
       id: data.id,
+      kicking: data.kicking,
       teamId: data.teamId,
       vx: data.vx * xrange,
       vy: data.vy * yrange,

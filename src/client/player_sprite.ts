@@ -23,7 +23,7 @@ export class PlayerSprite {
   }
 
   public isKicking(): boolean {
-    return false;
+    return this.attributes.kicking;
   }
 
   public getTeamId(): TEAM_ID {
