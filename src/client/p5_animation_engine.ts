@@ -14,6 +14,8 @@ export class P5AnimationEngine implements IAnimationEngine {
   constructor(private animator: p5) { }
 
   public displayText(text: ITextSchema, size: number = 64) {
+    if (!text.value) { return; }
+
     this.animator.push();
     this.animator.textAlign(this.animator.CENTER);
     this.animator.textSize(size);
