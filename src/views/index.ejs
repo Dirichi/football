@@ -11,6 +11,7 @@
       <% }); %>
     <% } %>
     <form action="/search" method="post">
+      <div>Choose a position to play in.</div>
       <select name="preferredRoleType">
         <% roleTypes.forEach((value, representation) => { %>
           <option value=<%= value %>><%= representation %></option>

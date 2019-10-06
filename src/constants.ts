@@ -198,7 +198,6 @@ export enum TEAM_SIDES {
 export enum IO_MESSAGE_TYPE {
   COMMAND = "command",
   GAME_STATE = "game.state",
-  PREFFERD_ROLE_TYPE = "preferred.role.type",
   CLIENT_ASSIGNED_PLAYER = "client.assigned.player",
 }
 
