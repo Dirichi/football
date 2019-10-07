@@ -13,7 +13,7 @@ import { ManualInputHandler } from "../../client/manual_input_handler";
 import { P5AnimationEngine } from "../../client/p5_animation_engine";
 import { PlayerGraphics } from "../../client/graphics/player_graphics";
 import { PostGraphics } from "../../client/graphics/post_graphics";
-import { GameStateTextGraphics } from "../../client/graphics/game_state_text_graphics";
+import { GameStatusGraphics } from "../../client/graphics/game_status_graphics";
 import { ScoresPanelGraphics } from "../../client/graphics/scores_panel_graphics";
 import { PositionValueDebugGraphics } from "../../client/graphics/position_value_debug_graphics";
 import { SoundPlayer } from "../../client/sound_player";
@@ -58,7 +58,7 @@ const sketch = (p: p5) => {
     new PlayerGraphics(spriteManager, queue);
   const fieldRegionGraphics = new FieldRegionGraphics(animationEngine, queue);
   const gameStateTextGraphics =
-    new GameStateTextGraphics(animationEngine, queue, soundPlayer);
+    new GameStatusGraphics(animationEngine, queue, soundPlayer);
   const scoresPanelGraphics = new ScoresPanelGraphics(animationEngine, queue);
   const positionValueDebugGraphics =
     new PositionValueDebugGraphics(animationEngine, queue);

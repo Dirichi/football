@@ -45,6 +45,7 @@ export enum EVENTS {
   SCORES_PANEL_DATA = "scores.panel.data",
   GAME_STATE_TEXT_DATA = "game.state.text.data",
   POSITION_VALUE_DEBUG_INFO = "position.debug.info",
+  GAME_STATUS = "game.status",
 }
 
 export enum DIRECTION {
@@ -285,4 +286,12 @@ export enum ANIMATION_ID {
 export enum IMAGE_TRANSPOSE_OPERATION_ID {
   NONE = 0,
   FLIP_LEFT_RIGHT = 1,
+}
+
+export enum GAME_STATUS {
+  NONE = 0,
+  IN_PLAY = 1,
+  KICKOFF = 2,
+  GOAL = 3,
+  GAME_OVER = 4,
 }

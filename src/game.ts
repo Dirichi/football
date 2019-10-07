@@ -1,4 +1,4 @@
-import { EVENTS } from "./constants";
+import { EVENTS, GAME_STATUS } from "./constants";
 import { Ball } from "./game_objects/ball";
 import { Box } from "./game_objects/box";
 import { Field } from "./game_objects/field";
@@ -8,7 +8,6 @@ import { Post } from "./game_objects/post";
 import { Team } from "./game_objects/team";
 import { IGameStateMachine } from "./interfaces/igame_state_machine";
 import { IScoresPanelSchema } from "./interfaces/iscores_panel_schema";
-import { ITextSchema } from "./interfaces/itext_schema";
 import { GoalDetectionService } from "./services/goal_detection_service";
 import { GoalRecordService } from "./services/goal_record_service";
 import { PositionValueDebugService } from "./services/position_value_debug_service";
@@ -23,8 +22,7 @@ export class Game {
   private posts: Post[];
   private stateMachine: IGameStateMachine;
   private teams: Team[];
-  // TODO: This should be moved into a different class
-  private stateText: string = "";
+  private status: GAME_STATUS = GAME_STATUS.NONE;
   private goalRecordService: GoalRecordService;
   private goalDetectionService: GoalDetectionService;
   private timer: TimerService;
@@ -105,19 +103,19 @@ export class Game {
   }
 
   public runGoalAnimation(): void {
-    this.stateText = "GOAL";
+    this.status = GAME_STATUS.GOAL;
   }
 
   public runKickOffAnimation(): void {
-    this.stateText = "KICK OFF";
+    this.status = GAME_STATUS.KICKOFF;
   }
 
   public runPlayAnimation(): void {
-    this.stateText = "";
+    this.status = GAME_STATUS.IN_PLAY;
   }
 
   public runGameOverAnimation(): void {
-    this.stateText = "GAME OVER";
+    this.status = GAME_STATUS.GAME_OVER;
   }
 
   public goalScored(): boolean {
@@ -129,10 +127,9 @@ export class Game {
   }
 
   public isReadyToExit(): boolean {
-    // TODO: Make game states an enum;
     // This is an indirect way of checking the state. Perhaps allow the state
     // to say when it is done.
-    return this.stateText === "GAME OVER";
+    return this.status === GAME_STATUS.GAME_OVER;
   }
 
   public prepareForKickOff(): void {
@@ -147,7 +144,7 @@ export class Game {
 
   public getState() {
     return {
-      [EVENTS.GAME_STATE_TEXT_DATA]: this.buildStateText(),
+      [EVENTS.GAME_STATUS]: { status: this.status },
       [EVENTS.BALL_DATA]: this.ball.serialized(),
       [EVENTS.BOXES_DATA]: this.boxes.map((box) => box.serialized()),
       [EVENTS.FIELD_DATA]: this.field.serialized(),
@@ -163,16 +160,6 @@ export class Game {
 
   private players(): Player[] {
     return this.teams.map((team) => team.getPlayers()).flat();
-  }
-
-  // TODO: Maybe this doesn't belong to `Game`
-  private buildStateText(): ITextSchema {
-    const midPoint = this.field.getMidPoint();
-    return {
-      value: this.stateText,
-      x: midPoint.x,
-      y: midPoint.y,
-    };
   }
 
   // TODO: This may not need to be here
