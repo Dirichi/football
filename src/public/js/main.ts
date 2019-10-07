@@ -13,7 +13,7 @@ import { ManualInputHandler } from "../../client/manual_input_handler";
 import { P5AnimationEngine } from "../../client/p5_animation_engine";
 import { PlayerGraphics } from "../../client/graphics/player_graphics";
 import { PostGraphics } from "../../client/graphics/post_graphics";
-import { GameStateTextGraphics } from "../../client/graphics/game_state_text_graphics";
+import { GameStatusGraphics } from "../../client/graphics/game_status_graphics";
 import { ScoresPanelGraphics } from "../../client/graphics/scores_panel_graphics";
 import { PositionValueDebugGraphics } from "../../client/graphics/position_value_debug_graphics";
 import { SoundPlayer } from "../../client/sound_player";
@@ -25,9 +25,10 @@ import { PlayerAnimationController } from "../../client/animation_states/player_
 const socket = io();
 const queue = new EventQueue();
 const manualInputHandler = new ManualInputHandler(socket);
-const kickSoundFile =
-  { id: SOUND_ID.KICK, filePath: "/resources/kick.mp3" };
-const soundPlayer = new SoundPlayer([kickSoundFile]);
+const soundPlayer = new SoundPlayer([
+  { id: SOUND_ID.KICK, filePath: "/resources/kick.mp3" },
+  { id: SOUND_ID.WHISTLE, filePath: "/resources/referee_whistle.mp3" }
+]);
 
 const sketch = (p: p5) => {
   soundPlayer.load();
@@ -52,12 +53,12 @@ const sketch = (p: p5) => {
   socket.on(
     IO_MESSAGE_TYPE.CLIENT_ASSIGNED_PLAYER, (data: { playerId: string }) => {
       spriteManager.setLocallyControlledSpriteId(data.playerId);
-  });
+    });
   const playerGraphics =
     new PlayerGraphics(spriteManager, queue);
   const fieldRegionGraphics = new FieldRegionGraphics(animationEngine, queue);
   const gameStateTextGraphics =
-    new GameStateTextGraphics(animationEngine, queue);
+    new GameStatusGraphics(animationEngine, queue, soundPlayer);
   const scoresPanelGraphics = new ScoresPanelGraphics(animationEngine, queue);
   const positionValueDebugGraphics =
     new PositionValueDebugGraphics(animationEngine, queue);
