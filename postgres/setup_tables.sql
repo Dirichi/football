@@ -13,15 +13,11 @@ CREATE TABLE users(
   updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
-CREATE TABLE game_rooms (
-  id SERIAL PRIMARY KEY,
-  created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-  updated_at TIMESTAMP NOT NULL DEFAULT NOW()
-);
-
 CREATE TABLE game_sessions (
   id SERIAL PRIMARY KEY,
-  game_room_id INT REFERENCES game_rooms,
+  game_room_id VARCHAR,
+  ended_at TIMESTAMP,
+  started_at TIMESTAMP,
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
