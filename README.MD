@@ -28,7 +28,7 @@ Then run the game using docker-compose.
 
 You should see some output on your terminal while the app compiles in preparation for running. Eventually you see something like `server started at http://localhost:3000`.
 
-When you see this, open chrome and visit localhost:3000. Wait for about 5 seconds for the game to actually start and try out the direction controls to control the keeper of the blue team. Enjoy!
+When you see this, open chrome and visit localhost:3000. Wait for about 5 seconds for the game to actually start and try out the direction controls to control whichever player has a blue cursor on their head!
 
 ### TESTING
 

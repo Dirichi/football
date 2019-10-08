@@ -28,7 +28,7 @@ services:
     ports:
       - 3000:3000
       - 9229:9229
-    command: npm run prod:start
+    command: npm run dev
     depends_on:
       - db
       - redis
