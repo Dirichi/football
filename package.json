@@ -60,6 +60,7 @@
     "copy-assets": "ts-node tools/copy_assets",
     "dev": "nodemon --watch src -e ts,ejs --exec npm run dev:start",
     "dev:start": "npm-run-all build start",
+    "prod:start": "npm-run-all build start",
     "lint": "tslint -c tslint.json -p tsconfig.json --fix",
     "parcel": "parcel build \"src/public/**/*.*\" -d dist/public/",
     "start": "node -r dotenv/config .",
