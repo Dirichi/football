@@ -26,6 +26,8 @@ export class WrappedSocket implements IWebSocket {
   public getParticipation(): Participation {
     // TODO: This should not have to be computed from the room and the player.
     // They should be set on the socket in the authorization flow.
+    // PART
+    // PARTFIX: Initialize the wrapped socket with the participation ?
     return this.socket.gameRoom.participations.find((participation) => {
       return participation.userId === this.socket.user.id;
     });

@@ -58,7 +58,7 @@ export function camelToSnakeCase(value: string): string {
 }
 
 export function snakeToCamelCase(value: string): string {
-  return value.replace(/_([a-z])/g, (match) => {
-    return match.toUpperCase();
+  return value.replace(/_([a-z])/g, (_, capturedGroup) => {
+    return capturedGroup.toUpperCase();
   });
 }
