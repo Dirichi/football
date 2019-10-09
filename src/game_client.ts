@@ -28,6 +28,8 @@ export class GameClient implements IGameClient {
   }
 
   public getPreferredRoleType(): PLAYER_ROLE_TYPE {
+    // PART
+    // PARTFIX: Ensure that participation is cached on the client on creation?
     return this.socket.getParticipation().roleType;
   }
 

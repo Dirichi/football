@@ -10,30 +10,32 @@ export function requiresLogin(
   req: express.Request,
   res: express.Response,
   next: express.NextFunction): void {
-    authenticateRequest(req).then((authenticated) => {
-      authenticated ? next() : res.redirect("/login");
-    });
+  authenticateRequest(req).then((authenticated) => {
+    authenticated ? next() : res.redirect("/login");
+  });
 }
 
 export function authenticateSocket(
   socket: Socket, next: (err?: any) => void): void {
-    const userId = socket.handshake.session.userId;
-    const intendedRoom = getIntendedRoomFromSocket(socket);
-    if (!(userId && intendedRoom)) {
-      Logger.log(`User (${userId}) or room (${intendedRoom}) do not exist.`);
+  const userId = socket.handshake.session.userId;
+  const intendedRoom = getIntendedRoomFromSocket(socket);
+  if (!(userId && intendedRoom)) {
+    Logger.log(`User (${userId}) or room (${intendedRoom}) do not exist.`);
+    return;
+  }
+  User.find(userId).then((user) => {
+    // PART
+    // PARTFIX: Replace with a a query like Participation.findBy({userId: , gameRoom:})
+    const allowedSocket = user && authorizeParticipation(user, intendedRoom);
+    if (!allowedSocket) {
+      Logger.log(
+        `User ${userId} not allowed to join room ${intendedRoom.getId()}`);
       return;
-     }
-    User.find(userId).then((user) => {
-      const allowedSocket = user && authorizeParticipation(user, intendedRoom);
-      if (!allowedSocket) {
-        Logger.log(
-          `User ${userId} not allowed to join room ${intendedRoom.getId()}`);
-        return;
-      }
-      const customizedSocket = socket as ICustomizedSocket;
-      [customizedSocket.user, customizedSocket.gameRoom] = [user, intendedRoom];
-      next();
-    });
+    }
+    const customizedSocket = socket as ICustomizedSocket;
+    [customizedSocket.user, customizedSocket.gameRoom] = [user, intendedRoom];
+    next();
+  });
 }
 
 export function authenticateRequest(req: express.Request): Promise<boolean> {
@@ -56,17 +58,18 @@ export function login(req: express.Request): Promise<User> {
 }
 
 // TODO: Promisify (?)
+// PART
 export function authorizeParticipation(
   user: User, intendedRoom: GameRoom): boolean {
-    return intendedRoom.participations.some((participation) => {
-      return participation.userId === user.id;
-    });
+  return intendedRoom.participations.some((participation) => {
+    return participation.userId === user.id;
+  });
 }
 
 function getIntendedRoomFromSocket(socket: Socket): GameRoom {
   const url = socket.handshake.headers.referer;
   const match = url.match(`.*/games/(.+)`, url);
-  const roomId =  match ? match[1] : null;
+  const roomId = match ? match[1] : null;
   if (roomId) { return GameRoom.find(roomId); }
   return null;
 }
