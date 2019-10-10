@@ -38,7 +38,7 @@ import {
   FIELD_INITIAL_COORDINATES,
   GAME_STATE_UPDATE_DELAY, PLAYER_INITIAL_ARGS, PLAYER_ROLE,
   PLAYER_ROLE_TYPE, POSTA_INITIAL_COORDINATES, POSTB_INITIAL_COORDINATES,
-  PROCESS_MESSAGE_TYPE, RADIUS_FOR_CONGESTION, TEAM_ID, TEAM_SIDES
+  PROCESS_MESSAGE_TYPE, RADIUS_FOR_CONGESTION, TEAM_ID, TEAM_SIDES, DEFAULT_TEAM_A_ROLES, DEFAULT_TEAM_B_ROLES
 } from "./constants";
 import { EventQueue } from "./event_queue";
 import { Game } from "./game";
@@ -156,33 +156,11 @@ teamB.setSide(TEAM_SIDES.RIGHT)
   .setKickOffStartingPlayer(teamBPlayers[teamSize - 1])
   .setKickOffSupportingPlayer(teamBPlayers[teamSize - 2]);
 
-const teamAroles = [
-  PlayerRole.get(PLAYER_ROLE.GK, field),
-  PlayerRole.get(PLAYER_ROLE.LB, field),
-  PlayerRole.get(PLAYER_ROLE.RB, field),
-  PlayerRole.get(PLAYER_ROLE.LCB, field),
-  PlayerRole.get(PLAYER_ROLE.RCB, field),
-  PlayerRole.get(PLAYER_ROLE.LM, field),
-  PlayerRole.get(PLAYER_ROLE.RM, field),
-  PlayerRole.get(PLAYER_ROLE.LCM, field),
-  PlayerRole.get(PLAYER_ROLE.RCM, field),
-  PlayerRole.get(PLAYER_ROLE.LF, field),
-  PlayerRole.get(PLAYER_ROLE.RF, field),
-];
-
-const teamBroles = [
-  PlayerRole.get(PLAYER_ROLE.GK, field),
-  PlayerRole.get(PLAYER_ROLE.LB, field),
-  PlayerRole.get(PLAYER_ROLE.RB, field),
-  PlayerRole.get(PLAYER_ROLE.LCB, field),
-  PlayerRole.get(PLAYER_ROLE.RCB, field),
-  PlayerRole.get(PLAYER_ROLE.LM, field),
-  PlayerRole.get(PLAYER_ROLE.RM, field),
-  PlayerRole.get(PLAYER_ROLE.LCM, field),
-  PlayerRole.get(PLAYER_ROLE.RCM, field),
-  PlayerRole.get(PLAYER_ROLE.LF, field),
-  PlayerRole.get(PLAYER_ROLE.RF, field),
-];
+// TODO: Pull these in from the gameSession that creates the executable.
+const teamAroles =
+  DEFAULT_TEAM_A_ROLES.map(roleId => PlayerRole.get(roleId, field));
+const teamBroles =
+  DEFAULT_TEAM_B_ROLES.map(roleId => PlayerRole.get(roleId, field));
 
 teamA.setRoles(teamAroles);
 teamB.setRoles(teamBroles);

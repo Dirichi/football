@@ -16,7 +16,7 @@ export class User {
   }
 
   private static store(): StorageService<IUserAttributes, User> {
-      return new StorageService(User);
+      return new StorageService(User, {});
   }
   private attributes: IUserAttributes;
 

@@ -26,7 +26,7 @@ export class GameSession {
   }
 
   private static store(): StorageService<IGameSessionAttributes, GameSession> {
-    return new StorageService(GameSession);
+    return new StorageService(GameSession, {});
   }
 
   private attributes: IGameSessionAttributes;

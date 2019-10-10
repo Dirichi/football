@@ -1,103 +1,63 @@
 import { Pool } from "pg";
-import { camelToSnakeCase, range, snakeToCamelCase } from "../utils/helper_functions";
+import { camelToSnakeCase, snakeToCamelCase } from "../utils/helper_functions";
 import { getConnectionPool } from "./connection_pool";
+import { QueryBuilder } from "./query_builder";
+import { ModelPartial } from "../custom_types/types";
+import { IModelConfig } from "../interfaces/imodel_config";
 
-type ValueOf<T> = T[keyof T];
+export class StorageService<A extends { id: number }, M> {
+  private tableName: string;
 
-interface IQuery<T> {
-  parameters: Array<ValueOf<T>>;
-  template: string;
-}
-
-export class StorageService<A extends {id: number}, M> {
   constructor(
     private modelKlass: new (attributes: A) => M,
-    private tableName: string = `${camelToSnakeCase(modelKlass.name)}s`,
+    private modelConfig: IModelConfig,
     private pool: Pool = getConnectionPool()
-  ) {}
+  ) {
+    this.tableName =
+      modelConfig.tableName || `${camelToSnakeCase(this.modelKlass.name)}s`;
+  }
 
-  public find(id: number): Promise<M|null> {
+  public find(id: number): Promise<M | null> {
     // HACK: Shouldn't have to coerce the type here.
-    const attributes = {id} as Partial<A>;
+    const attributes = { id } as ModelPartial<A>;
     return this.findBy(attributes);
   }
 
-  public where(attributes: Partial<A>, limit: number = null): Promise<M[]> {
-    const {template, parameters} = this.generateFilterQuery(attributes);
-    let queryTemplate = `SELECT * FROM ${this.tableName} WHERE ${template}`;
-    if (limit !== null) {
-      queryTemplate = `${queryTemplate} LIMIT ${limit}`;
+  public async where(
+    attributes: ModelPartial<A>, limit: number = null): Promise<M[]> {
+    const { template, parameters } =
+      QueryBuilder.generateFilterQuery(attributes, this.modelConfig, limit);
+    const queryResult = await this.pool.query(template, parameters);
+    return queryResult.rows.map((row) => this.buildModelFromDb(row));
+  }
+
+  public async findOrCreateBy(attributes: ModelPartial<A>): Promise<M> {
+    const maybeModel = await this.findBy(attributes);
+    if (!maybeModel) {
+      return this.create(attributes);
     }
-
-    return this.pool.query(queryTemplate, parameters).then((queryResult) => {
-      return queryResult.rows.map((row) => this.buildModelFromDb(row));
-    });
+    return maybeModel;
   }
 
-  public findOrCreateBy(attributes: Partial<A>): Promise<M> {
-    return this.findBy(attributes).then((maybeModel) => {
-      if (!maybeModel) {
-        return this.create(attributes);
-      }
-
-      return maybeModel;
-    });
-  }
-
-  public async findBy(attributes: Partial<A>): Promise<M|null> {
+  public async findBy(attributes: ModelPartial<A>): Promise<M | null> {
     const records = await this.where(attributes, 1);
     return records[0] || null;
   }
 
-  public create(attributes: Partial<A>): Promise<M> {
-    const query = this.generateInsertQuery(attributes);
-    return this.pool.query(query.template, query.parameters)
-      .then((queryResult) => {
-          return this.buildModelFromDb(queryResult.rows[0]);
-      });
-  }
-
-  private generateInsertQuery(attributes: Partial<A>): IQuery<A> {
-    const [columnsToChange, newValues] = this.getColumnsAndValues(attributes);
-    const parameterStrings = range(columnsToChange.length)
-      .map((index) => `$${index + 1}`)
-      .join(", ");
-
-    const queryTemplate =
-      `INSERT INTO ${this.tableName}(${columnsToChange.join(", ")}) \
-      values(${parameterStrings}) RETURNING *`;
-    return {
-      parameters: newValues,
-      template: queryTemplate,
-    };
-  }
-
-  private generateFilterQuery(attributes: Partial<A>): IQuery<A> {
-    const [columns, filterValues] = this.getColumnsAndValues(attributes);
-    const template =
-      columns.map((column, index) => `${column} = $${index + 1}`).join(" AND");
-    return {
-      parameters: filterValues,
-      template,
-    };
-  }
-
-  private getColumnsAndValues<T>(attributes: T): [string[], Array<ValueOf<T>>] {
-    const entries = Object.entries(attributes);
-    return [
-      entries.map((entry) => camelToSnakeCase(entry[0])),
-      entries.map((entry) => entry[1]),
-    ];
+  public async create(attributes: ModelPartial<A>): Promise<M> {
+    const query = QueryBuilder.generateInsertQuery(attributes, this.modelConfig);
+    const queryResult = await this.pool.query(query.template, query.parameters);
+    return this.buildModelFromDb(queryResult.rows[0]);
   }
 
   private buildModelFromDb(dbAttributes: object): M {
     const entries = Object.entries(dbAttributes);
     const attributes = entries.reduce(
-      (modelAttributes: {[k: string]: any}, [key, value]) => {
-      const modelKey = snakeToCamelCase(key);
-      modelAttributes[modelKey] = value;
-      return modelAttributes;
-    }, {});
+      (modelAttributes: { [k: string]: any }, [key, value]) => {
+        const modelKey = snakeToCamelCase(key);
+        modelAttributes[modelKey] = value;
+        return modelAttributes;
+      }, {});
 
     // HACK: We should not have to coerce the type
     return new this.modelKlass(attributes as A);

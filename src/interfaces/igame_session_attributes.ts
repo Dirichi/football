@@ -1,3 +1,5 @@
+import { IParticipationAttributes } from "./iparticipation_attributes";
+
 export interface IGameSessionAttributes {
   id: number;
   gameRoomId: string;
@@ -5,4 +7,5 @@ export interface IGameSessionAttributes {
   endedAt: number;
   createdAt: number;
   updatedAt: number;
+  participations: IParticipationAttributes[];
 }

@@ -23,7 +23,7 @@ export class Participation {
   }
 
   private static store(): StorageService<IParticipationAttributes, Participation> {
-    return new StorageService(Participation, "game_session_participations");
+    return new StorageService(Participation, { tableName: "game_session_participations" });
   }
 
   get userId(): number {
