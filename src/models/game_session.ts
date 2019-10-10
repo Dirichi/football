@@ -29,6 +29,12 @@ export class GameSession {
     return this.store().create(attributes);
   }
 
+  public static update(
+    id: number,
+    attributes: Partial<IGameSessionAttributes>): Promise<GameSession> {
+    return this.store().update(id, attributes);
+  }
+
   private static store(): StorageService<IGameSessionAttributes, GameSession> {
     return new StorageService(GameSession);
   }
