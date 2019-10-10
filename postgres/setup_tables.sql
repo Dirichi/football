@@ -25,6 +25,8 @@ CREATE TABLE game_sessions (
 CREATE TABLE game_session_participations (
   id SERIAL PRIMARY KEY,
   game_session_id INT REFERENCES game_sessions,
+  team_id INT,
+  role INT,
   user_id INT REFERENCES users,
   role_type INT,
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
