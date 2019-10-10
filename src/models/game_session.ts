@@ -6,6 +6,10 @@ export class GameSession {
     return this.attributes.id;
   }
 
+  get gameRoomId(): string {
+    return this.attributes.gameRoomId;
+  }
+
   public static find(id: number): Promise<GameSession> {
     return this.store().find(id);
   }
