@@ -1,10 +1,10 @@
 import v4 from "uuid/v4";
 import { DEFAULT_START_GAME_TIMEOUT, PROCESS_MESSAGE_TYPE } from "./constants";
 import { IGameClient } from "./interfaces/igame_client";
+import { IParticipationAttributes } from "./interfaces/iparticipation_attributes";
 import { IProcess } from "./interfaces/iprocess";
 import { IProcessForker } from "./interfaces/iprocess_forker";
 import { IProcessMessage } from "./interfaces/iprocess_message";
-import { Participation } from "./models/participation";
 
 export class GameRoom {
   // TODO: Store GameRoom in postgres. Also move class to models.
@@ -21,7 +21,7 @@ export class GameRoom {
   }
 
   private static records = new Map<string, GameRoom>();
-  public participations: Participation[];
+  public participations: IParticipationAttributes[];
   private id: string;
   private clients: Set<IGameClient>;
   private gameProcess?: IProcess;
@@ -46,7 +46,7 @@ export class GameRoom {
     return [...this.clients];
   }
 
-  public addParticipation(participation: Participation): void {
+  public addParticipation(participation: IParticipationAttributes): void {
     this.participations.push(participation);
   }
 

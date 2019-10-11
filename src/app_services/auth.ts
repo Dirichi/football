@@ -3,7 +3,8 @@ import { Socket } from "socket.io";
 import { GameRoom } from "../game_room";
 import { ICustomizedRequest } from "../interfaces/icustomized_request";
 import { ICustomizedSocket } from "../interfaces/icustomized_socket";
-import { User } from "../models/user";
+import { IUserAttributes } from "../interfaces/iuser_attributes";
+import { UserStore } from "../models/user_store";
 import { Logger } from "../utils/logger";
 
 export function requiresLogin(
@@ -23,7 +24,8 @@ export function authenticateSocket(
     Logger.log(`User (${userId}) or room (${intendedRoom}) do not exist.`);
     return;
   }
-  User.find(userId).then((user) => {
+  const userStore = new UserStore();
+  userStore.find(userId).then((user) => {
     // PART
     // PARTFIX: Replace with a a query like Participation.findBy({userId: , gameRoom:})
     const allowedSocket = user && authorizeParticipation(user, intendedRoom);
@@ -41,16 +43,18 @@ export function authenticateSocket(
 export function authenticateRequest(req: express.Request): Promise<boolean> {
   const userId = req.session.userId;
   if (!userId) { return Promise.resolve(false); }
-  return User.find(userId).then((user) => {
+  const userStore = new UserStore();
+  return userStore.find(userId).then((user) => {
     if (!user) { return false; }
     (req as ICustomizedRequest).user = user;
     return true;
   });
 }
 
-export function login(req: express.Request): Promise<User> {
+export function login(req: express.Request): Promise<IUserAttributes> {
   const nickName = req.body.nickName;
-  return User.findOrCreateBy({ nickName }).then((user) => {
+  const userStore = new UserStore();
+  return userStore.findOrCreateBy({ nickName }).then((user) => {
     req.session.userId = user.id;
     (req as ICustomizedRequest).user = user;
     return user;
@@ -60,7 +64,7 @@ export function login(req: express.Request): Promise<User> {
 // TODO: Promisify (?)
 // PART
 export function authorizeParticipation(
-  user: User, intendedRoom: GameRoom): boolean {
+  user: IUserAttributes, intendedRoom: GameRoom): boolean {
   return intendedRoom.participations.some((participation) => {
     return participation.userId === user.id;
   });

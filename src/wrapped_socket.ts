@@ -1,8 +1,8 @@
 import { GameRoom } from "./game_room";
 import { ICustomizedSocket } from "./interfaces/icustomized_socket";
+import { IParticipationAttributes } from "./interfaces/iparticipation_attributes";
+import { IUserAttributes } from "./interfaces/iuser_attributes";
 import { IWebSocket } from "./interfaces/iweb_socket";
-import { Participation } from "./models/participation";
-import { User } from "./models/user";
 
 export class WrappedSocket implements IWebSocket {
   private socket: ICustomizedSocket;
@@ -15,7 +15,7 @@ export class WrappedSocket implements IWebSocket {
     return this.socket.id;
   }
 
-  public getUser(): User {
+  public getUser(): IUserAttributes {
     return this.socket.user;
   }
 
@@ -23,7 +23,7 @@ export class WrappedSocket implements IWebSocket {
     return this.socket.gameRoom;
   }
 
-  public getParticipation(): Participation {
+  public getParticipation(): IParticipationAttributes {
     // TODO: This should not have to be computed from the room and the player.
     // They should be set on the socket in the authorization flow.
     // PART
