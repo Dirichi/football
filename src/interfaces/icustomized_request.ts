@@ -1,6 +1,6 @@
 import { Request } from "express";
-import { User } from "../models/user";
+import { IUserAttributes } from "./iuser_attributes";
 
 export interface ICustomizedRequest extends Request {
-  user?: User;
+  user?: IUserAttributes;
 }
