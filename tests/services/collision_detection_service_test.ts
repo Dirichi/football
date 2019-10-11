@@ -1,13 +1,10 @@
 import { CollisionDetectionService } from '../../src/services/collision_detection_service';
-import { EventQueue } from '../../src/event_queue';
 import { ICircle } from '../../src/interfaces/icircle';
-import { Shape } from '../../src/custom_types/shape';
 import { Vector3D } from '../../src/three_dimensional_vector';
 import { TestCollidable } from "../helpers/test_collidable";
 import * as chai from 'chai';
-import * as sinon from 'sinon';
 
-const sinonChai = require('sinon-chai');
+import sinonChai = require('sinon-chai');
 const expect = chai.expect;
 chai.use(sinonChai);
 

@@ -27,7 +27,7 @@ const app = express();
 const httpServer = http.createServer(app);
 const urlencodedParser = bodyParser.urlencoded({ extended: false });
 const io = socketIo(httpServer);
-const port = 3000;
+const port = process.env.PORT;
 // TODO Provide the configuration of the redis client
 const redisClient = redis.createClient({
   host: process.env.REDIS_HOST

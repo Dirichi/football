@@ -1,5 +1,5 @@
 import { ICollidable } from "../../src/interfaces/icollidable";
-import { Shape } from "../../src/custom_types/shape";
+import { Shape } from "../../src/custom_types/types";
 
 export class TestCollidable implements ICollidable {
   private gameObjectId: string;

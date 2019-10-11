@@ -1,5 +1,5 @@
 import { GameRoom } from '../src/game_room';
-import { IO_MESSAGE_TYPE, PROCESS_MESSAGE_TYPE, COMMAND_ID } from '../src/constants';
+import { PROCESS_MESSAGE_TYPE, COMMAND_ID } from '../src/constants';
 import { TestProcess } from './helpers/test_process';
 import { TestProcessForker } from './helpers/test_process_forker';
 import { TestGameClient } from './helpers/test_game_client';
