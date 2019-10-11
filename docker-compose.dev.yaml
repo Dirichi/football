@@ -26,7 +26,7 @@ services:
       - .:/usr/src/app
       - /usr/src/app/node_modules
     ports:
-      - 3000:3000
+      - ${PORT}:${PORT}
       - 9229:9229
     command: npm run dev
     depends_on:
