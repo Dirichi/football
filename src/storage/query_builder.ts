@@ -2,10 +2,6 @@ import { ValueOf } from "../custom_types/types";
 import { IQuery } from "../interfaces/iquery";
 import { camelToSnakeCase, range } from "../utils/helper_functions";
 
-interface IRecord {
-  id?: number;
-}
-
 export class QueryBuilder {
   public static withTable(tableName: string): QueryBuilder {
     return new QueryBuilder(tableName);
@@ -13,7 +9,7 @@ export class QueryBuilder {
 
   constructor(private tableName: string) { }
 
-  public generateInsertQuery<A extends IRecord>(attributes: A): IQuery<A> {
+  public generateInsertQuery<A>(attributes: A): IQuery<A> {
     const [columnsToChange, newValues] = this.getColumnsAndValues(attributes);
     const parameterStrings = range(columnsToChange.length)
       .map((index) => `$${index + 1}`)
@@ -25,7 +21,7 @@ export class QueryBuilder {
     return this.build(queryTemplate, newValues);
   }
 
-  public generateSelectQuery<A extends IRecord>(
+  public generateSelectQuery<A>(
     attributes: A, limit: number = null): IQuery<A> {
     const filterQuery = this.generateFilterQuery(attributes);
     let template =
@@ -36,7 +32,7 @@ export class QueryBuilder {
     return this.build(template, filterQuery.parameters);
   }
 
-  public generateUpdateQuery<A extends IRecord>(
+  public generateUpdateQuery<A>(
     id: number, attributes: A): IQuery<A> {
     const { parameters, template } =
       this.generateFilterQuery(attributes, ["id"]);
@@ -46,7 +42,7 @@ export class QueryBuilder {
     return this.build(updateTemplate, parameters);
   }
 
-  private generateFilterQuery<A extends IRecord>(
+  private generateFilterQuery<A>(
     attributes: A, exceptAttributeKeys: string[] = []): IQuery<A> {
     const [columns, values] =
       this.getColumnsAndValues(attributes, exceptAttributeKeys);
@@ -55,7 +51,7 @@ export class QueryBuilder {
     return this.build(filterExpressions.join(" AND "), values);
   }
 
-  private getColumnsAndValues<A extends IRecord>(
+  private getColumnsAndValues<A>(
     attributes: A,
     exceptAttributeKeys: string[] = []): [string[], Array<ValueOf<A>>] {
     const columns: string[] = [];
