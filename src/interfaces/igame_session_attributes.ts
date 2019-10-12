@@ -1,8 +1,8 @@
 export interface IGameSessionAttributes {
-  id: number;
+  id?: number;
   gameRoomId: string;
-  startedAt: Date;
-  endedAt: Date;
-  createdAt: Date;
-  updatedAt: Date;
+  startedAt?: Date;
+  endedAt?: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
 }

@@ -26,7 +26,8 @@ export class MatchMakerService {
   // the provided criteria which has not been locked, and if none found, create
   // a new one.
   public async match(request: IMatchRequest): Promise<GameRoom | null> {
-    const gameSession = await this.gameSessionStore.create({ gameRoomId: v4() });
+    const gameSession =
+      await this.gameSessionStore.create({ gameRoomId: v4() });
     const allParticipations = this.buildAllParticipations(gameSession.id);
     this.claimMatchingParticipation(allParticipations, request);
     const savedParticipations =
@@ -78,6 +79,7 @@ export class MatchMakerService {
     room.setProcessForker(new WrappedProcessForker());
     room.setGameExecutablePath(path.join(process.cwd(), GAME_EXECUTABLE_FILE));
     room.addParticipation(participation);
+    room.setGameSessionStore(this.gameSessionStore);
     room.save();
     return room;
   }

@@ -4,7 +4,7 @@ import { Logger } from "../utils/logger";
 import { getConnectionPool } from "./connection_pool";
 import { QueryBuilder } from "./query_builder";
 
-export class StorageService<A extends { id: number }> {
+export class StorageService<A extends { id?: number }> {
   constructor(
     private tableName: string,
     private pool: Pool = getConnectionPool()

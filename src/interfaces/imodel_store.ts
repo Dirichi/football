@@ -1,4 +1,4 @@
-export interface IModelStore<T extends {id: number} > {
+export interface IModelStore<T extends {id?: number} > {
   findBy(attributes: Partial<T>): Promise<T>;
   find(id: number): Promise<T>;
   create(attributes: Partial<T>): Promise<T>;
