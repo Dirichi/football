@@ -1,5 +1,5 @@
 import { Pool } from "pg";
-import { ModelFindOrSaveRequest, ModelSaveRequest } from "../custom_types/types";
+import { ModelFindOrSaveRequest } from "../custom_types/types";
 import { snakeToCamelCase } from "../utils/helper_functions";
 import { Logger } from "../utils/logger";
 import { getConnectionPool } from "./connection_pool";
@@ -39,7 +39,7 @@ export class StorageService<A extends { id?: number }> {
     return records[0] || null;
   }
 
-  public async create(attributes: ModelSaveRequest<A>): Promise<A> {
+  public async create(attributes: A): Promise<A> {
     const query =
       QueryBuilder.withTable(this.tableName).generateInsertQuery(attributes);
     Logger.log(query);

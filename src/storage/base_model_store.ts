@@ -1,4 +1,4 @@
-import { ModelFindOrSaveRequest, ModelSaveRequest } from "../custom_types/types";
+import { ModelFindOrSaveRequest } from "../custom_types/types";
 import { IModelStore } from "../interfaces/imodel_store";
 import { StorageService } from "./storage_service";
 
@@ -21,7 +21,7 @@ export class BaseModelStore<A extends {id?: number}> implements IModelStore<A> {
     return this.internalStore.findOrCreateBy(attributes);
   }
 
-  public async create(attributes: ModelSaveRequest<A>): Promise<A> {
+  public async create(attributes: A): Promise<A> {
     return this.internalStore.create(attributes);
   }
 
