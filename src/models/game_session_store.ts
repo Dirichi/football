@@ -1,4 +1,3 @@
-import { ModelSaveRequest } from "../custom_types/types";
 import { IGameSessionAttributes } from "../interfaces/igame_session_attributes";
 import { IModelStore } from "../interfaces/imodel_store";
 import { IParticipationAttributes } from "../interfaces/iparticipation_attributes";
@@ -14,7 +13,7 @@ export class GameSessionStore extends BaseModelStore<IGameSessionAttributes> {
   }
 
   public async create(
-    attributes: ModelSaveRequest<IGameSessionAttributes>
+    attributes: IGameSessionAttributes
   ): Promise<IGameSessionAttributes> {
     const { participations, ...rest } = attributes;
     const createdSession = await super.create(rest);
