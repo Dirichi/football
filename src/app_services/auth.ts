@@ -52,7 +52,7 @@ export function authenticateRequest(req: express.Request): Promise<boolean> {
 }
 
 export function login(req: express.Request): Promise<IUserAttributes> {
-  const nickName = req.body.nickName;
+  const nickName = req.body.nickName as string;
   const userStore = new UserStore();
   return userStore.findOrCreateBy({ nickName }).then((user) => {
     req.session.userId = user.id;

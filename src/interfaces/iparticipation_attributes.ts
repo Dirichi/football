@@ -1,10 +1,10 @@
 export interface IParticipationAttributes {
-  id: number;
-  userId: number;
-  gameSessionId: number;
+  id?: number;
+  userId?: number;
+  gameSessionId?: number;
   role: number;
   teamId: number;
   roleType: number;
-  createdAt: number;
-  updatedAt: number;
+  createdAt?: number;
+  updatedAt?: number;
 }

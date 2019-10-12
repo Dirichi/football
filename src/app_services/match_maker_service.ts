@@ -8,7 +8,6 @@ import { IModelStore } from "../interfaces/imodel_store";
 import { IParticipationAttributes } from "../interfaces/iparticipation_attributes";
 import { IUserAttributes } from "../interfaces/iuser_attributes";
 import { GameSessionStore } from "../models/game_session_store";
-import { ParticipationStore } from "../models/participation_store";
 import { WrappedProcessForker } from "../wrapped_process_forker";
 
 interface IMatchRequest {
@@ -18,45 +17,38 @@ interface IMatchRequest {
 
 export class MatchMakerService {
   constructor(
-    private gameSessionStore: IModelStore<IGameSessionAttributes> =
-      new GameSessionStore(),
-    private participationStore: IModelStore<IParticipationAttributes> =
-      new ParticipationStore()) { }
+    private gameSessionStore: IModelStore<IGameSessionAttributes> = new GameSessionStore()) { }
   // TODO: Do not create a GameRoom everytime. First search for one matching
   // the provided criteria which has not been locked, and if none found, create
   // a new one.
   public async match(request: IMatchRequest): Promise<GameRoom | null> {
-    const gameSession =
-      await this.gameSessionStore.create({ gameRoomId: v4() });
-    const allParticipations = this.buildAllParticipations(gameSession.id);
-    this.claimMatchingParticipation(allParticipations, request);
-    const savedParticipations =
-      await Promise.all(allParticipations.map((p) => {
-        return this.participationStore.create(p);
-      }));
+    const gameSession = await this.newGameSession(request);
     const matchedParticipation =
-      savedParticipations.find((p) => p.userId === request.user.id);
+      gameSession.participations.find((p) => p.userId === request.user.id);
     return this.buildRoom(gameSession, matchedParticipation);
   }
 
-  private buildAllParticipations(
-    gameSessionId: number): Array<Partial<IParticipationAttributes>> {
+  private async newGameSession(
+    request: IMatchRequest): Promise<IGameSessionAttributes> {
+    const participations = this.buildAllParticipations();
+    this.claimMatchingParticipation(participations, request);
+    return await this.gameSessionStore.create({
+      gameRoomId: v4(),
+      participations });
+  }
+
+  private buildAllParticipations(): IParticipationAttributes[] {
     const teamAParticipations =
-      this.buildDefaultParticipations(
-        DEFAULT_TEAM_A_ROLES, TEAM_ID.WHITE, gameSessionId);
+      this.buildDefaultParticipations(DEFAULT_TEAM_A_ROLES, TEAM_ID.WHITE);
     const teamBParticipations =
-      this.buildDefaultParticipations(
-        DEFAULT_TEAM_B_ROLES, TEAM_ID.RED, gameSessionId);
+      this.buildDefaultParticipations(DEFAULT_TEAM_B_ROLES, TEAM_ID.RED);
     return teamAParticipations.concat(teamBParticipations);
   }
 
   private buildDefaultParticipations(
-    roles: PLAYER_ROLE[],
-    teamId: TEAM_ID,
-    gameSessionId: number): Array<Partial<IParticipationAttributes>> {
+    roles: PLAYER_ROLE[], teamId: TEAM_ID): IParticipationAttributes[] {
     return roles.map((roleId) => {
       return {
-        gameSessionId,
         role: roleId,
         roleType: PLAYER_ROLES_CONFIGURATION.get(roleId).type,
         teamId,
@@ -65,8 +57,7 @@ export class MatchMakerService {
   }
 
   private claimMatchingParticipation(
-    participations: Array<Partial<IParticipationAttributes>>,
-    request: IMatchRequest) {
+    participations: IParticipationAttributes[], request: IMatchRequest): void {
     const participationToClaim =
       participations.find((p) => p.roleType === request.roleType);
     participationToClaim.userId = request.user.id;

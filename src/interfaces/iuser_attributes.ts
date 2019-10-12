@@ -1,6 +1,6 @@
 export interface IUserAttributes {
-  id: number;
+  id?: number;
   nickName: string;
-  createdAt: number;
-  updatedAt: number;
+  createdAt?: number;
+  updatedAt?: number;
 }
