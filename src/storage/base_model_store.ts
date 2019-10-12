@@ -1,9 +1,9 @@
 import { IModelStore } from "../interfaces/imodel_store";
 import { StorageService } from "./storage_service";
 
-export class BaseModelStore<A extends {id: number}> implements IModelStore<A> {
+export class BaseModelStore<A extends {id?: number}> implements IModelStore<A> {
   private internalStore: StorageService<A>;
-  constructor(private tableName: string) {
+  constructor(tableName: string) {
     this.internalStore = new StorageService(tableName);
   }
 

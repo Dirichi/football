@@ -1,6 +1,8 @@
 import v4 from "uuid/v4";
 import { DEFAULT_START_GAME_TIMEOUT, PROCESS_MESSAGE_TYPE } from "./constants";
 import { IGameClient } from "./interfaces/igame_client";
+import { IGameSessionAttributes } from "./interfaces/igame_session_attributes";
+import { IModelStore } from "./interfaces/imodel_store";
 import { IParticipationAttributes } from "./interfaces/iparticipation_attributes";
 import { IProcess } from "./interfaces/iprocess";
 import { IProcessForker } from "./interfaces/iprocess_forker";
@@ -28,6 +30,7 @@ export class GameRoom {
   private forker?: IProcessForker;
   private gameExecutablePath?: string;
   private startGameTimeout: number;
+  private gameSessionStore: IModelStore<IGameSessionAttributes>;
 
   // TODO: Create a worker which runs every X seconds, inspects GameRooms that
   // have not started and then starts them automatically.
@@ -50,11 +53,14 @@ export class GameRoom {
     this.participations.push(participation);
   }
 
-  public addClient(client: IGameClient): void {
+  public async addClient(client: IGameClient): Promise<void> {
     this.clients.add(client);
     this.routeClientCommandsToGameProcess(client);
-    if (!this.gameProcess && this.clients.size === 1) {
-      setTimeout(() => this.startGame(), this.startGameTimeout);
+    if (this.clients.size === 1) {
+      const _ = await new Promise((resolve) => {
+        return setTimeout(resolve, this.startGameTimeout);
+      });
+      return await this.startGame();
     }
   }
 
@@ -64,6 +70,10 @@ export class GameRoom {
 
   public setGameExecutablePath(executablePath: string): void {
     this.gameExecutablePath = executablePath;
+  }
+
+  public setGameSessionStore(store: IModelStore<IGameSessionAttributes>): void {
+    this.gameSessionStore = store;
   }
 
   public setStartGameTimeout(timeout: number): void {
@@ -78,8 +88,11 @@ export class GameRoom {
     return this.gameProcess || null;
   }
 
-  public startGame(): void {
+  public async startGame(): Promise<void> {
     if (this.gameProcess) { return; }
+    const savedGameSession =
+      await this.gameSessionStore.findBy({ gameRoomId: this.id });
+    await this.gameSessionStore.update(savedGameSession.id, { startedAt: new Date() });
 
     this.gameProcess = this.forker.fork(this.gameExecutablePath);
     // TODO: We will need an abstraction on the raw process to be able to handle
@@ -100,8 +113,8 @@ export class GameRoom {
     }
 
     if (message.messageType === PROCESS_MESSAGE_TYPE.CONTROLLER_ASSIGNED) {
-      const {clientId, playerId} =
-        message.data as {clientId: string, playerId: string};
+      const { clientId, playerId } =
+        message.data as { clientId: string, playerId: string };
       const assignedClient =
         [...this.clients.values()].find((client) => client.getId() === clientId);
       assignedClient.assignControllerId(playerId);
@@ -129,7 +142,7 @@ export class GameRoom {
       data: {
         clientId: client.getId(),
         role: client.getPreferredRoleType(),
-       },
+      },
       messageType: PROCESS_MESSAGE_TYPE.ASSIGN_CONTROLLER,
     };
     this.gameProcess.send(message);
