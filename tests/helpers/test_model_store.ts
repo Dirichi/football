@@ -1,4 +1,5 @@
 import { IModelStore } from "../../src/interfaces/imodel_store";
+import { ModelSaveRequest, ModelFindOrSaveRequest } from "../../src/custom_types/types";
 export class TestModelStore<T extends { id?: number }> implements IModelStore<T> {
 
   private lastId: number = 0;
@@ -17,7 +18,7 @@ export class TestModelStore<T extends { id?: number }> implements IModelStore<T>
     return Promise.resolve(this.internalStore.get(id));
   }
 
-  public create(attributes: T): Promise<T> {
+  public create(attributes: ModelSaveRequest<T>): Promise<T> {
     return Promise.resolve({ ...this.synchronousCreate(attributes) });
   }
 
@@ -27,7 +28,8 @@ export class TestModelStore<T extends { id?: number }> implements IModelStore<T>
     return Promise.resolve({ ...attributesToUpdate });
   }
 
-  public async findOrCreateBy(attributes: T): Promise<T> {
+  public async findOrCreateBy(
+    attributes: ModelFindOrSaveRequest<T>): Promise<T> {
     const found = await this.findBy(attributes);
     if (!found) {
       return this.create(attributes);
@@ -42,9 +44,9 @@ export class TestModelStore<T extends { id?: number }> implements IModelStore<T>
     return Promise.resolve(matchingAttributes);
   }
 
-  private synchronousCreate(attributes: T): T {
+  private synchronousCreate(attributes: ModelSaveRequest<T>): T {
     this.lastId += 1;
-    const attributesToSave = { id: this.lastId, ...attributes };
+    const attributesToSave = { id: this.lastId, ...attributes } as T;
     this.internalStore.set(this.lastId, attributesToSave);
     return attributesToSave;
   }
