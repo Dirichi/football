@@ -51,21 +51,21 @@ export function authenticateRequest(req: express.Request): Promise<boolean> {
   });
 }
 
-export function login(req: express.Request): Promise<IUserAttributes> {
+export async function login(req: express.Request): Promise<IUserAttributes> {
   const nickName = req.body.nickName as string;
   const userStore = new UserStore();
-  return userStore.findOrCreateBy({ nickName }).then((user) => {
-    req.session.userId = user.id;
-    (req as ICustomizedRequest).user = user;
-    return user;
-  });
+  let user = await userStore.findBy({ nickName });
+  if (!user) { user = await userStore.create({ nickName }); }
+  req.session.userId = user.id;
+  (req as ICustomizedRequest).user = user;
+  return user;
 }
 
 // TODO: Promisify (?)
 // PART
 export function authorizeParticipation(
   user: IUserAttributes, intendedRoom: GameRoom): boolean {
-  return intendedRoom.participations.some((participation) => {
+    return intendedRoom.participations.some((participation) => {
     return participation.userId === user.id;
   });
 }

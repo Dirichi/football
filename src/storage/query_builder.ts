@@ -1,6 +1,13 @@
 import { ValueOf } from "../custom_types/types";
 import { IQuery } from "../interfaces/iquery";
-import { camelToSnakeCase, range } from "../utils/helper_functions";
+import { camelToSnakeCase, isEmpty } from "../utils/helper_functions";
+
+interface IFilter {
+  leftOperand: string;
+  operator: string;
+  rightOperand: any;
+  substitution: boolean;
+}
 
 export class QueryBuilder {
   public static withTable(tableName: string): QueryBuilder {
@@ -10,15 +17,14 @@ export class QueryBuilder {
   constructor(private tableName: string) { }
 
   public generateInsertQuery<A>(attributes: A): IQuery<A> {
-    const [columnsToChange, newValues] = this.getColumnsAndValues(attributes);
-    const parameterStrings = range(columnsToChange.length)
-      .map((index) => `$${index + 1}`)
-      .join(", ");
-
+    const entries = Array.from(Object.entries(attributes));
+    const columns = entries.map(([key, _]) => camelToSnakeCase(key));
+    const paramSubstitutions =
+      [...Array(entries.length).keys()].map((v) => `$${v + 1}`);
     const queryTemplate =
-      `INSERT INTO ${this.tableName}(${columnsToChange.join(", ")}) \
-      values(${parameterStrings}) RETURNING *`;
-    return this.build(queryTemplate, newValues);
+      `INSERT INTO ${this.tableName}(${columns.join(", ")}) \
+      values(${paramSubstitutions.join(", ")}) RETURNING *`;
+    return this.build(queryTemplate, entries.map(([_, val]) => val));
   }
 
   public generateSelectQuery<A>(
@@ -44,30 +50,48 @@ export class QueryBuilder {
 
   private generateFilterQuery<A>(
     attributes: A, exceptAttributeKeys: string[] = []): IQuery<A> {
-    const [columns, values] =
-      this.getColumnsAndValues(attributes, exceptAttributeKeys);
-    const filterExpressions =
-      columns.map((column, index) => `${column} = $${index + 1}`);
-    return this.build(filterExpressions.join(" AND "), values);
+    const defaultQuery = { template: "", parameters: [] } as IQuery<A>;
+    return Array.from(Object.entries(attributes))
+      .filter(([attrKey, _]) => !exceptAttributeKeys.includes(attrKey))
+      .map(([attrKey, attrValue]) => this.buildFilter(attrKey, attrValue))
+      .reduce((acc, filter) => this.addFilter<A>(acc, filter), defaultQuery);
   }
 
-  private getColumnsAndValues<A>(
-    attributes: A,
-    exceptAttributeKeys: string[] = []): [string[], Array<ValueOf<A>>] {
-    const columns: string[] = [];
-    const values: Array<ValueOf<A>> = [];
-    Object.entries(attributes)
-      .forEach(([attributeKey, attributeValue]) => {
-        if (!exceptAttributeKeys.includes(attributeKey)) {
-          const column = `${camelToSnakeCase(attributeKey)}`;
-          columns.push(column);
-          values.push(attributeValue);
-        }
-      });
-    return [columns, values];
+  private getFilterOperation(value: any): string {
+    if (Array.isArray(value)) { return "IN"; }
+    if (value === null) { return "IS"; }
+    return "=";
   }
 
-  private build<A>(template: string, parameters: Array<ValueOf<A>>): IQuery<A> {
+  private transformFilterParameters<A>(value: A): A | string {
+    if (Array.isArray(value)) { return `(${value.join(", ")})`; }
+    if (value === null) { return "NULL"; }
+    return value;
+  }
+
+  private buildFilter(key: string, value: any): IFilter {
+    return {
+      leftOperand: camelToSnakeCase(key),
+      operator: this.getFilterOperation(value),
+      rightOperand: this.transformFilterParameters(value),
+      substitution: value !== null && !Array.isArray(value),
+    };
+  }
+
+  private addFilter<A>(acc: IQuery<A>, filter: IFilter): IQuery<A> {
+    const {leftOperand, operator, rightOperand, substitution} = filter;
+    const queryParameter =
+      substitution ? `$${acc.parameters.length + 1}` : rightOperand;
+    const filterTemplate = `${leftOperand} ${operator} ${queryParameter}`;
+
+    if (substitution) { acc.parameters.push(rightOperand); }
+    acc.template =
+      isEmpty(acc.template) ? filterTemplate : `${acc.template} AND ${filterTemplate}`;
+    return acc;
+  }
+
+  private build<A>(
+    template: string, parameters: Array<ValueOf<A> | string>): IQuery<A> {
     return { parameters, template };
   }
 }
