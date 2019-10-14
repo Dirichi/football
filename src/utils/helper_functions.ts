@@ -62,3 +62,18 @@ export function snakeToCamelCase(value: string): string {
     return capturedGroup.toUpperCase();
   });
 }
+
+export function groupBy<K, V>(array: V[], callback: (element: V) => K): Map<K, V[]> {
+  const map: Map<K, V[]> = new Map([]);
+  array.forEach((element) => {
+    const key = callback.call(this, element);
+    const value = (map.get(key) || []);
+    value.push(element);
+    map.set(key, value);
+  });
+  return map;
+}
+
+export function isEmpty<T extends {length: number}>(val: T): boolean {
+  return !val.length;
+}
