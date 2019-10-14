@@ -37,8 +37,9 @@ import {
   BOX6B_INITIAL_COORDINATES, COLLISION_MARGIN_FACTOR, COMMAND_ID, constants,
   DEFAULT_TEAM_A_ROLES,
   DEFAULT_TEAM_B_ROLES, FIELD_INITIAL_COORDINATES, GAME_STATE_UPDATE_DELAY,
-  PLAYER_INITIAL_ARGS, PLAYER_ROLE, PLAYER_ROLE_TYPE,
-  POSTA_INITIAL_COORDINATES, POSTB_INITIAL_COORDINATES, PROCESS_MESSAGE_TYPE, RADIUS_FOR_CONGESTION, TEAM_ID, TEAM_SIDES
+  PLAYER_INITIAL_ARGS, PLAYER_ROLE,
+  PLAYER_ROLE_TYPE, POSTA_INITIAL_COORDINATES, POSTB_INITIAL_COORDINATES,
+  PROCESS_MESSAGE_TYPE, RADIUS_FOR_CONGESTION, TEAM_ID, TEAM_SIDES
 } from "./constants";
 import { EventQueue } from "./event_queue";
 import { Game } from "./game";
@@ -55,6 +56,7 @@ import { Team } from "./game_objects/team";
 import { ICommand } from "./interfaces/icommand";
 import { ICommandRequest } from "./interfaces/icommand_request";
 import { ICommandRequestHandler } from "./interfaces/icommand_request_handler";
+import { IParticipationAttributes } from "./interfaces/iparticipation_attributes";
 import { IPlayerState } from "./interfaces/iplayer_state";
 import { IProcessMessage } from "./interfaces/iprocess_message";
 import { BallPhysics } from "./physics/ball_physics";
@@ -294,18 +296,21 @@ setInterval(() => {
   if (game.isReadyToExit()) { sendGameOver(); }
 }, GAME_STATE_UPDATE_DELAY);
 
-const playersAvailableForRemoteControl = [...defaultPlayers];
+let playersAvailableForRemoteControl = [...defaultPlayers];
 const remoteControllers: PlayerHumanController[] = [];
 
 interface IAssignControllerRequest {
   clientId: string;
-  cursorColor: [number, number, number];
-  role: PLAYER_ROLE_TYPE;
+  participation: IParticipationAttributes;
+  team: TEAM_ID;
 }
 
+// TODO: Refactor this flow so that we initialize the process with the roles
+// rather than pass them in once the process is started
 const handleAssignControllerRequest = (request: IAssignControllerRequest) => {
   const selectedPlayer = playersAvailableForRemoteControl.find((player) => {
-    return player.getRoleType() === request.role;
+    return player.getRole().getId() === request.participation.role
+      && player.getTeam().getId() === request.participation.teamId;
   });
   if (!selectedPlayer) {
     // TODO: Consider throwing an error here i.e. if we were unable to assign
@@ -319,6 +324,9 @@ const handleAssignControllerRequest = (request: IAssignControllerRequest) => {
   selectedPlayer.disableControls();
   selectedPlayer.setController(controller);
   remoteControllers.push(controller);
+  playersAvailableForRemoteControl =
+    playersAvailableForRemoteControl
+      .filter((availablePlayer) => availablePlayer !== selectedPlayer);
   sendControllerAssigned(request.clientId, selectedPlayer.getGameObjectId());
 };
 

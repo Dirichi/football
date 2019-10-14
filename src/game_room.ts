@@ -141,7 +141,7 @@ export class GameRoom {
     const message = {
       data: {
         clientId: client.getId(),
-        role: client.getPreferredRoleType(),
+        participation: client.getParticipation(),
       },
       messageType: PROCESS_MESSAGE_TYPE.ASSIGN_CONTROLLER,
     };

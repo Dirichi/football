@@ -40,15 +40,15 @@ export function authenticateSocket(
   });
 }
 
-export function authenticateRequest(req: express.Request): Promise<boolean> {
-  const userId = req.session.userId;
-  if (!userId) { return Promise.resolve(false); }
+export async function authenticateRequest(req: express.Request): Promise<boolean> {
+  if (!req.session.userId) { return Promise.resolve(false); }
   const userStore = new UserStore();
-  return userStore.find(userId).then((user) => {
-    if (!user) { return false; }
-    (req as ICustomizedRequest).user = user;
-    return true;
-  });
+  const user = await userStore.find(req.session.userId);
+  if (!user) {
+    return false;
+  }
+  (req as ICustomizedRequest).user = user;
+  return true;
 }
 
 export async function login(req: express.Request): Promise<IUserAttributes> {

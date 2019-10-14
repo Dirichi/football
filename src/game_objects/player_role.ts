@@ -1,7 +1,6 @@
 import { PLAYER_ROLE, PLAYER_ROLE_TYPE, TEAM_SIDES } from "../constants";
 import { PLAYER_ROLES_CONFIGURATION } from "../game_configs/player_roles_config";
 import { Field } from "../game_objects/field";
-import { IRoleConfig } from "../interfaces/irole_config";
 import { Vector3D } from "../three_dimensional_vector";
 
 export class PlayerRole {
@@ -12,10 +11,11 @@ export class PlayerRole {
     const defendingPosition = new Vector3D(...config.defaultDefensivePosition);
 
     return new PlayerRole(
-      attackingPosition, defendingPosition, config.type, field);
+      roleId, attackingPosition, defendingPosition, config.type, field);
   }
 
   constructor(
+    private id: number,
     private defaultAttackingPosition: Vector3D,
     private defaultDefensivePosition: Vector3D,
     private roleType: PLAYER_ROLE_TYPE,
@@ -34,6 +34,10 @@ export class PlayerRole {
 
   public getType(): PLAYER_ROLE_TYPE {
     return this.roleType;
+  }
+
+  public getId(): PLAYER_ROLE {
+    return this.id;
   }
 
   private invert(position: Vector3D): Vector3D {
