@@ -29,7 +29,7 @@ export class Team {
 
   public getFieldPlayers(): Player[] {
     return this.players.filter((player) => {
-      return player.getRoleType() !== PLAYER_ROLE_TYPE.KEEPER;
+      return player.getRole().getType() !== PLAYER_ROLE_TYPE.KEEPER;
     });
   }
 

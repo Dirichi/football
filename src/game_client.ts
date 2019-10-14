@@ -1,6 +1,7 @@
-import { COMMAND_ID, IO_MESSAGE_TYPE, PLAYER_ROLE_TYPE } from "./constants";
+import { COMMAND_ID, IO_MESSAGE_TYPE } from "./constants";
 import { ICommandRequest } from "./interfaces/icommand_request";
 import { IGameClient } from "./interfaces/igame_client";
+import { IParticipationAttributes } from "./interfaces/iparticipation_attributes";
 import { IWebSocket } from "./interfaces/iweb_socket";
 
 export class GameClient implements IGameClient {
@@ -27,10 +28,10 @@ export class GameClient implements IGameClient {
     });
   }
 
-  public getPreferredRoleType(): PLAYER_ROLE_TYPE {
+  public getParticipation(): IParticipationAttributes {
     // PART
     // PARTFIX: Ensure that participation is cached on the client on creation?
-    return this.socket.getParticipation().roleType;
+    return this.socket.getParticipation();
   }
 
   public joinAssignedRoom(): void {

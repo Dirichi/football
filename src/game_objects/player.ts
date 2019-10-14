@@ -1,5 +1,5 @@
 import v4 from "uuid/v4";
-import { PLAYER_ROLE_TYPE, Y_BALL_MARGIN_FOR_KICKOFF_SUPPORT } from "../constants";
+import { PLAYER_ROLE, PLAYER_ROLE_TYPE, Y_BALL_MARGIN_FOR_KICKOFF_SUPPORT } from "../constants";
 import { EventQueue } from "../event_queue";
 import { ICircle } from "../interfaces/icircle";
 import { ICollidable } from "../interfaces/icollidable";
@@ -172,8 +172,8 @@ export class Player implements ICollidable {
     return this;
   }
 
-  public getRoleType(): PLAYER_ROLE_TYPE {
-    return this.role.getType();
+  public getRole(): PlayerRole {
+    return this.role;
   }
 
   public setController(controller: IPlayerController): Player {
