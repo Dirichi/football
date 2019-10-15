@@ -15,4 +15,5 @@ export interface IPlayerStateFeatureExtractor {
   receivedWaitMessage(player: Player): boolean;
   teamInControl(player: Player): boolean;
   expectedPassInterceptedOrCompleted(player: Player): boolean;
+  isNearestToBall(player: Player): boolean;
 }

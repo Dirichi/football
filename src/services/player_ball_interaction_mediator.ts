@@ -52,6 +52,10 @@ export class PlayerBallInteractionMediator
     player.moveTowards(this.ball.getPosition());
   }
 
+  public trackBall(player: Player): void {
+    player.moveTowards(new Vector3D(player.x, this.ball.y, 0));
+  }
+
   private temporarilyDisableKicking(
     player: Player, callback?: () => void): void {
     this.kickBlackList.add(player);

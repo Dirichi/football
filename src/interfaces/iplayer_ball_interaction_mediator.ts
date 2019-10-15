@@ -7,4 +7,5 @@ export interface IPlayerBallInteractionMediator {
     player: Player, destination: Vector3D, callback?: () => void): boolean;
   controlBall(player: Player): boolean;
   chaseBall(player: Player): void;
+  trackBall(player: Player): void;
 }

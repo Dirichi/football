@@ -120,6 +120,18 @@ export class PlayerStateFeatureExtractor implements IPlayerStateFeatureExtractor
     return ![null, waitMessage.sender].includes(currentPlayerInPossession);
   }
 
+  public isNearestToBall(player: Player): boolean {
+    const ballPosition = this.ball.getPosition();
+    const players =
+      [...player.getTeam().getPlayers(), ...player.getOpposingPlayers()];
+
+    const closestPlayer = minimumBy(players, (eachPlayer: Player) => {
+      return eachPlayer.getPosition().distanceTo(ballPosition);
+    });
+
+    return closestPlayer === player;
+  }
+
   private isNearestTeamMateToBall(player: Player): boolean {
     const ballPosition = this.ball.getPosition();
     const players = player.getTeam().getPlayers();

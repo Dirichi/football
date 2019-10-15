@@ -81,6 +81,7 @@ export enum COMMAND_ID {
   SHOOT_BALL = "shoot.ball",
   STOP = "player.stop",
   MOVE = "player.move",
+  GUARD_POST = "guard.post",
 }
 
 export const BALL_INITIAL_ARGS = [

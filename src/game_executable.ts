@@ -31,19 +31,20 @@ import { StopCommand } from "./commands/stop_command";
 import { Logger } from "./utils/logger";
 
 // TODO: This is starting to look ugly
+import { KeeperGuardPostCommand } from "./commands/keeper_guard_post_command";
 import {
   BALL_INITIAL_ARGS, BOX18A_INITIAL_COORDINATES,
   BOX18B_INITIAL_COORDINATES, BOX6A_INITIAL_COORDINATES,
   BOX6B_INITIAL_COORDINATES, COLLISION_MARGIN_FACTOR, COMMAND_ID, constants,
   DEFAULT_TEAM_A_ROLES,
   DEFAULT_TEAM_B_ROLES, FIELD_INITIAL_COORDINATES, GAME_STATE_UPDATE_DELAY,
-  PLAYER_INITIAL_ARGS, PLAYER_ROLE,
-  PLAYER_ROLE_TYPE, POSTA_INITIAL_COORDINATES, POSTB_INITIAL_COORDINATES,
+  PLAYER_INITIAL_ARGS, POSTA_INITIAL_COORDINATES, POSTB_INITIAL_COORDINATES,
   PROCESS_MESSAGE_TYPE, RADIUS_FOR_CONGESTION, TEAM_ID, TEAM_SIDES
 } from "./constants";
 import { EventQueue } from "./event_queue";
 import { Game } from "./game";
 import { PlayerHumanController } from "./game_ai/player/human_controller/player_human_controller";
+import { KeeperState } from "./game_ai/player/state_machine/keeper_state";
 import { PlayerStateMachine } from "./game_ai/player/state_machine/player_state_machine";
 import { Ball } from "./game_objects/ball";
 import { Box } from "./game_objects/box";
@@ -201,12 +202,14 @@ const COMMAND_ID_TO_COMMAND_MAPPING = new Map<COMMAND_ID, ICommand>([
   [COMMAND_ID.SHOOT_BALL, new ShootBallCommand()],
   [COMMAND_ID.PASS_BALL, new PassBallCommand()],
   [COMMAND_ID.STOP, new StopCommand()],
+  [COMMAND_ID.GUARD_POST, new KeeperGuardPostCommand()]
 ]);
 
 const commandFactory = new CommandFactory(COMMAND_ID_TO_COMMAND_MAPPING);
 
 const PLAYER_STATES: IPlayerState[] = [
   new WaitingState(commandFactory, featureExtractor),
+  new KeeperState(commandFactory, featureExtractor),
   new AttackingRunState(commandFactory, featureExtractor),
   new DefensiveRunState(commandFactory, featureExtractor),
   new ChasingBallState(commandFactory, featureExtractor),
