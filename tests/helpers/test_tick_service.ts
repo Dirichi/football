@@ -1,4 +1,3 @@
-import { EventQueue } from "../../src/event_queue";
 import { ITickService } from "../../src/interfaces/itick_service";
 
 export class TestTickService implements ITickService {
@@ -13,6 +12,13 @@ export class TestTickService implements ITickService {
   public after(numberOfTicks: number, callback: () => void): void {
     const deadline = this.tickCount + numberOfTicks;
     this.deadlineToCallBackMapping.push([deadline, callback])
+  }
+
+  public every(numberOfTicks: number, callback: () => void): void {
+    this.after(numberOfTicks, () => {
+      callback.call(this);
+      this.every(numberOfTicks, callback);
+    })
   }
 
   public fastForward(numberOfTicks: number): void {

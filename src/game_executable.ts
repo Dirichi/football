@@ -44,6 +44,7 @@ import {
 import { EventQueue } from "./event_queue";
 import { Game } from "./game";
 import { PlayerHumanController } from "./game_ai/player/human_controller/player_human_controller";
+import { FeatureExtractorCacher } from "./game_ai/player/state_machine/feature_extractor_cacher";
 import { KeeperState } from "./game_ai/player/state_machine/keeper_state";
 import { PlayerStateMachine } from "./game_ai/player/state_machine/player_state_machine";
 import { Ball } from "./game_objects/ball";
@@ -196,6 +197,12 @@ const featureExtractor =
     dribbleValueCalculator,
     defenceValueCalculator);
 
+const tickService = new TickService(queue);
+const cacher =
+  new FeatureExtractorCacher(featureExtractor, tickService, 5);
+const cachedFeatureExtractor = cacher.createCachingProxy();
+cacher.enableRefreshing();
+
 const COMMAND_ID_TO_COMMAND_MAPPING = new Map<COMMAND_ID, ICommand>([
   [COMMAND_ID.MOVE, new MoveCommand()],
   [COMMAND_ID.CHASE_BALL, new ChaseBallCommand()],
@@ -208,14 +215,14 @@ const COMMAND_ID_TO_COMMAND_MAPPING = new Map<COMMAND_ID, ICommand>([
 const commandFactory = new CommandFactory(COMMAND_ID_TO_COMMAND_MAPPING);
 
 const PLAYER_STATES: IPlayerState[] = [
-  new WaitingState(commandFactory, featureExtractor),
-  new KeeperState(commandFactory, featureExtractor),
-  new AttackingRunState(commandFactory, featureExtractor),
-  new DefensiveRunState(commandFactory, featureExtractor),
-  new ChasingBallState(commandFactory, featureExtractor),
-  new ShootingState(commandFactory, featureExtractor),
-  new DribblingState(commandFactory, featureExtractor),
-  new PassingState(commandFactory, featureExtractor),
+  new WaitingState(commandFactory, cachedFeatureExtractor),
+  new KeeperState(commandFactory, cachedFeatureExtractor),
+  new AttackingRunState(commandFactory, cachedFeatureExtractor),
+  new DefensiveRunState(commandFactory, cachedFeatureExtractor),
+  new ChasingBallState(commandFactory, cachedFeatureExtractor),
+  new ShootingState(commandFactory, cachedFeatureExtractor),
+  new DribblingState(commandFactory, cachedFeatureExtractor),
+  new PassingState(commandFactory, cachedFeatureExtractor),
 ];
 
 const buildStateMachine = (player: Player) => {
@@ -262,7 +269,6 @@ game.setBall(ball)
   .setGoalRecordService(goalRecordService)
   .setPositionValueDebugService(positionValueDebugService);
 
-const tickService = new TickService(queue);
 const mediator =
   new PlayerBallInteractionMediator(
     ball, ballPossessionService, tickService, 20);

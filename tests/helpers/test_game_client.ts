@@ -1,6 +1,7 @@
 import { EventQueue } from "../../src/event_queue";
 import { IGameClient } from "../../src/interfaces/igame_client";
 import { ICommandRequest } from "../../src/interfaces/icommand_request";
+import { IParticipationAttributes } from "../../src/interfaces/iparticipation_attributes";
 import { IO_MESSAGE_TYPE, PLAYER_ROLE_TYPE } from "../../src/constants";
 
 export class TestGameClient implements IGameClient {
@@ -40,5 +41,9 @@ export class TestGameClient implements IGameClient {
 
   public getPreferredRoleType(): PLAYER_ROLE_TYPE {
     return this.roleType;
+  }
+
+  public getParticipation(): IParticipationAttributes {
+    return {} as IParticipationAttributes;
   }
 }

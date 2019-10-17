@@ -39,4 +39,21 @@ describe('TickService', () => {
         expect(callback).not.to.have.been.called;
       });
   });
+
+  describe('`every`', () => {
+    it('triggers the provided callback in `numberOfTicks` intervals',
+      () => {
+        const queue = new EventQueue();
+        const service = new TickService(queue);
+        const callback = sinon.spy();
+
+        service.every(3, callback);
+
+        for(let i = 0; i < 12; i++) {
+          service.tick();
+        }
+
+        expect(callback).to.have.been.calledThrice;
+      });
+  });
 });

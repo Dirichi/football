@@ -19,4 +19,11 @@ export class TickService implements ITickService {
     const deadline = this.tickCount + numberOfTicks + 1;
     this.queue.once(`tickService.tickCount.${deadline}`, callback);
   }
+
+  public every(numberOfTicks: number, callback: () => void): void {
+    this.after(numberOfTicks, () => {
+      callback.call(this);
+      this.every(numberOfTicks, callback);
+    });
+  }
 }
