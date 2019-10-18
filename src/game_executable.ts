@@ -73,6 +73,8 @@ import { GoalRecordService } from "./services/goal_record_service";
 import { PlayerBallInteractionMediator } from "./services/player_ball_interaction_mediator";
 import { PositionValueDebugService } from "./services/position_value_debug_service";
 import { TickService } from "./services/tick_service";
+import { PassTrackerService } from "./stats/pass_tracker_service";
+import { PlayerReportService } from "./stats/player_report_service";
 import { TimerService } from "./timer_service";
 import { range } from "./utils/helper_functions";
 
@@ -205,11 +207,13 @@ const cacher =
 const cachedFeatureExtractor = cacher.createCachingProxy();
 cacher.enableRefreshing();
 
+const passTracker = new PassTrackerService(queue, ballPossessionService);
+const playerReportService = new PlayerReportService(passTracker);
 const COMMAND_ID_TO_COMMAND_MAPPING = new Map<COMMAND_ID, ICommand>([
   [COMMAND_ID.MOVE, new MoveCommand()],
   [COMMAND_ID.CHASE_BALL, new ChaseBallCommand()],
   [COMMAND_ID.SHOOT_BALL, new ShootBallCommand()],
-  [COMMAND_ID.PASS_BALL, new PassBallCommand()],
+  [COMMAND_ID.PASS_BALL, new PassBallCommand().setPassTracker(passTracker)],
   [COMMAND_ID.STOP, new StopCommand()],
   [COMMAND_ID.GUARD_POST, new KeeperGuardPostCommand()],
   [COMMAND_ID.REQUEST_PASS, new CallForBallCommand(ballPossessionService)],
@@ -255,6 +259,7 @@ const commandHandlerRouter = new Map<string, ICommandRequestHandler>([
   [".*", genericHandler],
 ]);
 
+playerReportService.monitorPlayers(defaultPlayers);
 const initialState = new KickOffState();
 const gameStateMachine = new GameStateMachine(initialState);
 const timer = new TimerService(0, 0.02, 90);
@@ -279,6 +284,10 @@ const mediator =
 
 defaultPlayers.forEach((player) => player.setBallInteractionMediator(mediator));
 
+const exit = () => {
+  Logger.log(playerReportService.getAllReports());
+  sendGameOver();
+};
 const sendGameState = () => {
   process.send({
     data: game.getState(),
@@ -306,7 +315,7 @@ setInterval(() => {
   collisionNotificationService.update();
   game.update();
   sendGameState();
-  if (game.isReadyToExit()) { sendGameOver(); }
+  if (game.isReadyToExit()) { exit(); }
 }, GAME_STATE_UPDATE_DELAY);
 
 let playersAvailableForRemoteControl = [...defaultPlayers];
@@ -340,6 +349,7 @@ const handleAssignControllerRequest = (request: IAssignControllerRequest) => {
   playersAvailableForRemoteControl =
     playersAvailableForRemoteControl
       .filter((availablePlayer) => availablePlayer !== selectedPlayer);
+  // playerReportService.monitorPlayer(selectedPlayer);
   sendControllerAssigned(request.clientId, selectedPlayer.getGameObjectId());
 };
 

@@ -25,4 +25,8 @@ export class TestEventQueue implements IEventQueue {
     callbacks.push(callback);
     this.events.set(event, callbacks);
   }
+
+  public once(event: string, callback: (payload: object) => void) {
+    throw new Error("unimplemented");
+  }
 }
