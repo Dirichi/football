@@ -1,5 +1,5 @@
 import v4 from "uuid/v4";
-import { PLAYER_ROLE_TYPE, Y_BALL_MARGIN_FOR_KICKOFF_SUPPORT } from "../constants";
+import { PLAYER_MESSAGES, PLAYER_ROLE_TYPE, Y_BALL_MARGIN_FOR_KICKOFF_SUPPORT } from "../constants";
 import { EventQueue } from "../event_queue";
 import { ICircle } from "../interfaces/icircle";
 import { ICollidable } from "../interfaces/icollidable";
@@ -201,9 +201,10 @@ export class Player implements ICollidable {
     this.moveTowards(this.defendingPosition());
   }
 
-  public sendMessage(player: Player, message: IPlayerMessage): void {
+  public sendMessage(player: Player, message: PLAYER_MESSAGES): void {
     this.messageQueue.trigger(
-      `player.${player.getGameObjectId()}.messaged`, message);
+      `player.${player.getGameObjectId()}.messaged`,
+      { title: message, sender: this });
   }
 
   public enableControls(): void {

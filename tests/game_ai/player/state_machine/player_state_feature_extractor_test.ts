@@ -12,17 +12,58 @@ import { TestBallPossessionService } from '../../../helpers/test_ball_possession
 import { Vector3D } from '../../../../src/three_dimensional_vector';
 import * as chai from 'chai';
 import * as sinon from 'sinon';
-import { COMMAND_ID, STATE_MACHINE_COMMANDS } from '../../../../src/constants';
+import { PLAYER_MESSAGES } from '../../../../src/constants';
 
 const sinonChai = require('sinon-chai');
 const expect = chai.expect;
 chai.use(sinonChai);
 
+class TestPassValueCalculator
+  implements IPassValueCalculator {
+  private playerToPassValueMapping: Map<Player, number> = new Map([]);
+  private defaultValue: number;
+
+  setValue(player: Player, score: number): void {
+    this.playerToPassValueMapping.set(player, score);
+  }
+
+  setDefaultValue(value: number): this {
+    this.defaultValue = value;
+    return this;
+  }
+
+  evaluate(player: Player): number {
+    const value = this.playerToPassValueMapping.get(player);
+    return value === undefined ? this.defaultValue : value;
+  }
+}
+
+class TestAttackingPositionValueCalculator
+  implements IAttackPositionValueCalculator {
+  private playerToAttackPositionValueMapping: Map<Player, number> = new Map([]);
+  private defaultValue: number;
+
+  setValue(player: Player, score: number): void {
+    this.playerToAttackPositionValueMapping.set(player, score);
+  }
+
+  setDefaultValue(value: number): this {
+    this.defaultValue = value;
+    return this;
+  }
+
+  evaluate(player: Player): number {
+    const value = this.playerToAttackPositionValueMapping.get(player);
+    return value === undefined ? this.defaultValue : value;
+  }
+}
+
+
 let player: Player;
 let ball: Ball;
-let passValueCalculator: IPassValueCalculator;
+let passValueCalculator: TestPassValueCalculator;
 let shotValueCalculator: IShotValueCalculator;
-let positionValueCalculator: IAttackPositionValueCalculator;
+let positionValueCalculator: TestAttackingPositionValueCalculator;
 let dribbleValueCalculator: IDribbleValueCalculator;
 let defenceValueCalculator: IDefenceValueCalculator;
 let possessionService: TestBallPossessionService;
@@ -32,15 +73,12 @@ describe('PlayerStateFeatureExtractor', () => {
   beforeEach(() => {
     player = new Player(0, 0, 0, 0, 5);
     ball = new Ball(0, 0, 0, 0, 5);
-    passValueCalculator = {
-      evaluate: (player: Player) => 0.5,
-    }
+    passValueCalculator = new TestPassValueCalculator().setDefaultValue(0.5);
     shotValueCalculator = {
       evaluate: (player: Player, shootingFrom?: Vector3D) => 0.5,
     }
-    positionValueCalculator = {
-      evaluate: (player: Player, position?: Vector3D) => 0.5,
-    }
+    positionValueCalculator =
+      new TestAttackingPositionValueCalculator().setDefaultValue(0.5);
 
     dribbleValueCalculator = {
       evaluate: (
@@ -96,7 +134,7 @@ describe('PlayerStateFeatureExtractor', () => {
         sinon.stub(
           possessionService, 'getLastPlayerInPossession').returns(player);
         expect(extractor.teamInControl(player)).to.be.true;
-    });
+      });
 
     it('returns false if the lastPlayerInPossession is not a player teamMate',
       () => {
@@ -107,7 +145,7 @@ describe('PlayerStateFeatureExtractor', () => {
         sinon.stub(
           possessionService, 'getLastPlayerInPossession').returns(otherPlayer);
         expect(extractor.teamInControl(player)).to.be.false;
-    });
+      });
   });
 
   describe('`bestPassingOption`', () => {
@@ -124,11 +162,10 @@ describe('PlayerStateFeatureExtractor', () => {
     });
   });
 
-
   describe('`receivedWaitMessage`', () => {
     it('returns true if the player has WAIT messages', () => {
       const message = {
-        title: STATE_MACHINE_COMMANDS.WAIT,
+        title: PLAYER_MESSAGES.WAIT,
         sender: new Player(0, 0, 0, 0, 0),
       } as IPlayerMessage;
       sinon.stub(player, 'getMessages').returns([message]);
@@ -148,7 +185,7 @@ describe('PlayerStateFeatureExtractor', () => {
       it('returns true if the player is in possesion (pass completed)', () => {
         const sender = new Player(0, 0, 0, 0, 0);
         const message = {
-          title: STATE_MACHINE_COMMANDS.WAIT,
+          title: PLAYER_MESSAGES.WAIT,
           sender: sender,
         } as IPlayerMessage;
         sinon.stub(player, 'getMessages').returns([message]);
@@ -162,7 +199,7 @@ describe('PlayerStateFeatureExtractor', () => {
         const sender = new Player(0, 0, 0, 0, 0);
         const interceptor = new Player(0, 0, 0, 0, 0);
         const message = {
-          title: STATE_MACHINE_COMMANDS.WAIT,
+          title: PLAYER_MESSAGES.WAIT,
           sender: sender,
         } as IPlayerMessage;
         sinon.stub(player, 'getMessages').returns([message]);
@@ -175,7 +212,7 @@ describe('PlayerStateFeatureExtractor', () => {
       it('returns false if the sender is with the ball', () => {
         const sender = new Player(0, 0, 0, 0, 0);
         const message = {
-          title: STATE_MACHINE_COMMANDS.WAIT,
+          title: PLAYER_MESSAGES.WAIT,
           sender: sender,
         } as IPlayerMessage;
         sinon.stub(player, 'getMessages').returns([message]);
@@ -189,7 +226,7 @@ describe('PlayerStateFeatureExtractor', () => {
       it('returns false if no player is currently in possession', () => {
         const sender = new Player(0, 0, 0, 0, 0);
         const message = {
-          title: STATE_MACHINE_COMMANDS.WAIT,
+          title: PLAYER_MESSAGES.WAIT,
           sender: sender,
         } as IPlayerMessage;
         sinon.stub(player, 'getMessages').returns([message]);
@@ -207,7 +244,43 @@ describe('PlayerStateFeatureExtractor', () => {
 
         expect(
           extractor.expectedPassInterceptedOrCompleted(player)).to.be.false;
-        });
+      });
+    });
+  });
+
+  describe('`receivedPassRequest`', () => {
+    it('returns true if there is a passRequest', () => {
+      const message = {
+        title: PLAYER_MESSAGES.PASS,
+        sender: new Player(0, 0, 0, 0, 0),
+      } as IPlayerMessage;
+      sinon.stub(player, 'getMessages').returns([message]);
+
+      expect(extractor.receivedPassRequest(player)).to.be.true;
+    });
+
+    it('returns false if there is no passRequest', () => {
+      expect(extractor.receivedPassRequest(player)).to.be.false;
+    });
+  });
+
+  describe('`getBestPositionedPassRequestSender`', () => {
+    it('returns the passRequester with highest attackingPositionValue', () => {
+      const requesterA = new Player(0, 0, 0, 0, 0);
+      const requesterB = new Player(0, 0, 0, 0, 0);
+      const messages = [requesterA, requesterB].map((requester) => {
+        return {
+          title: PLAYER_MESSAGES.PASS,
+          sender: requester,
+        } as IPlayerMessage;
+
+      });
+      sinon.stub(player, 'getMessages').returns(messages);
+      passValueCalculator.setValue(requesterA, 0.6);
+      passValueCalculator.setValue(requesterB, 0.8);
+
+      expect(extractor.getBestPositionedPassRequestSender(player))
+        .to.equal(requesterA);
     });
   });
 });

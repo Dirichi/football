@@ -1,5 +1,5 @@
 import { COMMAND_ID } from "../../../constants";
-import { STATE_MACHINE_COMMANDS } from "../../../constants";
+import { PLAYER_MESSAGES } from "../../../constants";
 import { Player } from "../../../game_objects/player";
 import { ICommandFactory } from "../../../interfaces/icommand_factory";
 import { IPlayerState } from "../../../interfaces/iplayer_state";
@@ -28,7 +28,7 @@ export class WaitingState implements IPlayerState {
     // `waitingStillValid` is true, because we would never get to clear the old
     // wait messages.
     if (this.waitingNoLongerValid(player)) {
-      player.clearMessagesByTitle(STATE_MACHINE_COMMANDS.WAIT);
+      player.clearMessagesByTitle(PLAYER_MESSAGES.WAIT);
       return;
     }
 

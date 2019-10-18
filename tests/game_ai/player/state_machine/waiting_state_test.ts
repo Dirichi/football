@@ -1,5 +1,5 @@
 import { CommandFactory } from '../../../../src/commands/command_factory';
-import { COMMAND_ID, STATE_MACHINE_COMMANDS } from '../../../../src/constants';
+import { COMMAND_ID, PLAYER_MESSAGES } from '../../../../src/constants';
 import { IPlayerStateFeatureExtractor } from '../../../../src/interfaces/iplayer_state_feature_extractor';
 import { WaitingState } from '../../../../src/game_ai/player/state_machine/waiting_state';
 import { Player } from '../../../../src/game_objects/player';
@@ -66,7 +66,7 @@ describe('WaitingState', () => {
       state.update(player);
 
       expect(player.clearMessagesByTitle).to.have.been.calledWith(
-        STATE_MACHINE_COMMANDS.WAIT);
+        PLAYER_MESSAGES.WAIT);
     });
 
     it('does nothing if the player does not have wait messages', () => {

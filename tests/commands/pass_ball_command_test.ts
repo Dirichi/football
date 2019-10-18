@@ -1,5 +1,5 @@
 import { PassBallCommand } from '../../src/commands/pass_ball_command';
-import { STATE_MACHINE_COMMANDS } from '../../src/constants';
+import { PLAYER_MESSAGES } from '../../src/constants';
 import { Player } from '../../src/game_objects/player';
 import * as chai from 'chai';
 import * as sinon from 'sinon';
@@ -35,8 +35,8 @@ describe('PassBallCommand', () => {
       const command = new PassBallCommand();
       command.execute(sender, receiver);
 
-      expect(sender.sendMessage).to.have.been.calledWith(receiver,
-        {sender: sender, title: STATE_MACHINE_COMMANDS.WAIT});
+      expect(sender.sendMessage).to.have.been
+        .calledWith(receiver, PLAYER_MESSAGES.WAIT);
     });
 
     it('does not send stop to the receiver if the ball was not kicked', () => {

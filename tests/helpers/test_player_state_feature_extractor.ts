@@ -60,4 +60,12 @@ export class TestPlayerStateFeatureExtractor
     public isNearestToBall(player: Player): boolean {
       return false;
     }
+
+    public receivedPassRequest(player: Player): boolean {
+      return false;
+    }
+
+    public getBestPositionedPassRequestSender(player: Player): Player {
+      return player;
+    }
 }
