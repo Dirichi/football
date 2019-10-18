@@ -56,4 +56,8 @@ export class TestPlayerStateFeatureExtractor
     public isEligibleToMark(player: Player): boolean {
       return false;
     }
+
+    public isNearestToBall(player: Player): boolean {
+      return false;
+    }
 }

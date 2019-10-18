@@ -77,3 +77,7 @@ export function groupBy<K, V>(array: V[], callback: (element: V) => K): Map<K, V
 export function isEmpty<T extends {length: number}>(val: T): boolean {
   return !val.length;
 }
+
+export function hasKey<T>(obj: T, key: keyof any): key is keyof T {
+  return key in obj;
+}

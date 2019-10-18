@@ -25,6 +25,8 @@ class TestPlayerBallInteractionMediator implements IPlayerBallInteractionMediato
   }
 
   chaseBall(player: Player): void {}
+
+  trackBall(player: Player): void {}
 }
 
 class TestController implements IPlayerController {
