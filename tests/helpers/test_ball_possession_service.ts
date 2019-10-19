@@ -17,4 +17,8 @@ export class TestBallPossessionService implements IBallPossessionService {
   public getLastPlayerInPossession(): Player | null {
     return this.last;
   }
+
+  public oncePossessionChanged(callback: (player: Player) => void): void {
+    throw new Error("unimplemented");
+  }
 }

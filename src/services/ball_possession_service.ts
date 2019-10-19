@@ -10,6 +10,7 @@ export class BallPossessionService implements IBallPossessionService {
   private lastPlayerInPossession?: Player;
   private players: Player[];
   private queue: IEventQueue;
+  private possessionChanged: boolean = false;
 
   constructor(ball: Ball, players: Player[], queue: IEventQueue) {
     this.ball = ball;
@@ -20,9 +21,12 @@ export class BallPossessionService implements IBallPossessionService {
   }
 
   public update(): void {
+    // run this before refreshing possesion data.
+    this.publishPossesionChangedEvents();
     // Clear data about the current player in possession.
     // It will be refreshed when another ball collision event
     // occurs
+    this.possessionChanged = false;
     this.currentPlayerInPossession = null;
   }
 
@@ -39,6 +43,10 @@ export class BallPossessionService implements IBallPossessionService {
     return this.currentPlayerInPossession;
   }
 
+  public oncePossessionChanged(callback: (player: Player) => void): void {
+    this.queue.once(`${this.eventTag()}.possessionChanged`, callback);
+  }
+
   private listenForBallCollisions(): void {
     this.queue.when(`${this.ball.getGameObjectId()}.collision`,
       (data: ICollisionPayload) => {
@@ -52,8 +60,21 @@ export class BallPossessionService implements IBallPossessionService {
     });
 
     if (playerInPossession) {
+      this.possessionChanged =
+        playerInPossession !== this.lastPlayerInPossession;
       this.currentPlayerInPossession = playerInPossession;
       this.lastPlayerInPossession = playerInPossession;
+    }
+  }
+
+  private eventTag(): string {
+    return this.constructor.name;
+  }
+
+  private publishPossesionChangedEvents(): void {
+    if (this.possessionChanged) {
+      this.queue.trigger(
+        `${this.eventTag()}.possessionChanged`, this.currentPlayerInPossession);
     }
   }
 }
