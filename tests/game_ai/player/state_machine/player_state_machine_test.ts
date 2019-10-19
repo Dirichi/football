@@ -2,7 +2,7 @@ import { PlayerStateMachine } from '../../../../src/game_ai/player/state_machine
 import { Player } from '../../../../src/game_objects/player';
 import * as chai from 'chai';
 import * as sinon from 'sinon';
-import { STATE_MACHINE_COMMANDS } from '../../../../src/constants';
+import { PLAYER_MESSAGES } from '../../../../src/constants';
 
 const sinonChai = require('sinon-chai');
 const expect = chai.expect;

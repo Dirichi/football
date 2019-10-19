@@ -16,4 +16,6 @@ export interface IPlayerStateFeatureExtractor {
   teamInControl(player: Player): boolean;
   expectedPassInterceptedOrCompleted(player: Player): boolean;
   isNearestToBall(player: Player): boolean;
+  receivedPassRequest(player: Player): boolean;
+  getBestPositionedPassRequestSender(player: Player): Player;
 }

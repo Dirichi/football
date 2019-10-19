@@ -31,6 +31,7 @@ import { StopCommand } from "./commands/stop_command";
 import { Logger } from "./utils/logger";
 
 // TODO: This is starting to look ugly
+import { CallForBallCommand } from "./commands/call_for_ball_command";
 import { KeeperGuardPostCommand } from "./commands/keeper_guard_post_command";
 import {
   BALL_INITIAL_ARGS, BOX18A_INITIAL_COORDINATES,
@@ -46,6 +47,7 @@ import { Game } from "./game";
 import { PlayerHumanController } from "./game_ai/player/human_controller/player_human_controller";
 import { FeatureExtractorCacher } from "./game_ai/player/state_machine/feature_extractor_cacher";
 import { KeeperState } from "./game_ai/player/state_machine/keeper_state";
+import { PassingToRequesterState } from "./game_ai/player/state_machine/passing_to_requester_state";
 import { PlayerStateMachine } from "./game_ai/player/state_machine/player_state_machine";
 import { Ball } from "./game_objects/ball";
 import { Box } from "./game_objects/box";
@@ -199,7 +201,7 @@ const featureExtractor =
 
 const tickService = new TickService(queue);
 const cacher =
-  new FeatureExtractorCacher(featureExtractor, tickService, 5);
+  new FeatureExtractorCacher(featureExtractor, tickService, 2);
 const cachedFeatureExtractor = cacher.createCachingProxy();
 cacher.enableRefreshing();
 
@@ -209,7 +211,8 @@ const COMMAND_ID_TO_COMMAND_MAPPING = new Map<COMMAND_ID, ICommand>([
   [COMMAND_ID.SHOOT_BALL, new ShootBallCommand()],
   [COMMAND_ID.PASS_BALL, new PassBallCommand()],
   [COMMAND_ID.STOP, new StopCommand()],
-  [COMMAND_ID.GUARD_POST, new KeeperGuardPostCommand()]
+  [COMMAND_ID.GUARD_POST, new KeeperGuardPostCommand()],
+  [COMMAND_ID.REQUEST_PASS, new CallForBallCommand(ballPossessionService)],
 ]);
 
 const commandFactory = new CommandFactory(COMMAND_ID_TO_COMMAND_MAPPING);
@@ -221,6 +224,7 @@ const PLAYER_STATES: IPlayerState[] = [
   new DefensiveRunState(commandFactory, cachedFeatureExtractor),
   new ChasingBallState(commandFactory, cachedFeatureExtractor),
   new ShootingState(commandFactory, cachedFeatureExtractor),
+  new PassingToRequesterState(commandFactory, cachedFeatureExtractor),
   new DribblingState(commandFactory, cachedFeatureExtractor),
   new PassingState(commandFactory, cachedFeatureExtractor),
 ];

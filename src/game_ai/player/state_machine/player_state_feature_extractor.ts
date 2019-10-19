@@ -1,5 +1,7 @@
-import { POSITION_DELTA_FOR_POSITION_VALUE_CALCULATION,
-  STATE_MACHINE_COMMANDS } from "../../../constants";
+import {
+  PLAYER_MESSAGES,
+  POSITION_DELTA_FOR_POSITION_VALUE_CALCULATION
+} from "../../../constants";
 import { Ball } from "../../../game_objects/ball";
 import { Player } from "../../../game_objects/player";
 import { Post } from "../../../game_objects/post";
@@ -78,7 +80,7 @@ export class PlayerStateFeatureExtractor implements IPlayerStateFeatureExtractor
   public bestPositionOption(player: Player): Vector3D {
     const positions = this.positionOptions(player);
     return maximumBy(positions, (position) => {
-      return this.positionValueCalculator.evaluate(player, position);
+      return this.positionValueCalculator.evaluate(player, position, position);
     });
   }
 
@@ -106,12 +108,12 @@ export class PlayerStateFeatureExtractor implements IPlayerStateFeatureExtractor
   public receivedWaitMessage(player: Player): boolean {
     return player.getMessages()
       .map((message) => message.title)
-      .includes(STATE_MACHINE_COMMANDS.WAIT);
+      .includes(PLAYER_MESSAGES.WAIT);
   }
 
   public expectedPassInterceptedOrCompleted(player: Player): boolean {
     const waitMessage = player.getMessages().find(
-      (message) => message.title === STATE_MACHINE_COMMANDS.WAIT);
+      (message) => message.title === PLAYER_MESSAGES.WAIT);
 
     if (!waitMessage) { return false; }
     const currentPlayerInPossession =
@@ -130,6 +132,22 @@ export class PlayerStateFeatureExtractor implements IPlayerStateFeatureExtractor
     });
 
     return closestPlayer === player;
+  }
+
+  public receivedPassRequest(player: Player): boolean {
+    return player
+      .getMessages()
+      .some((message) => message.title === PLAYER_MESSAGES.PASS);
+  }
+
+  public getBestPositionedPassRequestSender(player: Player): Player {
+    const requesters = player
+      .getMessages()
+      .filter((message) => message.title === PLAYER_MESSAGES.PASS)
+      .map((message) => message.sender);
+    return maximumBy(requesters, (requester) => {
+      return this.positionValueCalculator.evaluate(requester);
+    });
   }
 
   private isNearestTeamMateToBall(player: Player): boolean {

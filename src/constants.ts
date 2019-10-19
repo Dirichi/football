@@ -82,6 +82,7 @@ export enum COMMAND_ID {
   STOP = "player.stop",
   MOVE = "player.move",
   GUARD_POST = "guard.post",
+  REQUEST_PASS = "request.pass",
 }
 
 export const BALL_INITIAL_ARGS = [
@@ -138,6 +139,7 @@ export enum INPUT_KEY {
   ARROW_RIGHT = "ArrowRight",
   ARROW_UP = "ArrowUp",
   KEY_A = "KeyA",
+  KEY_D = "KeyD",
   KEY_F = "KeyF",
   KEY_S = "KeyS",
 }
@@ -148,6 +150,7 @@ export const COMMAND_ID_TO_KEY_COMBINATION: Map<COMMAND_ID, INPUT_KEY[]> =
 // pressing a direction key.
   new Map([
     [COMMAND_ID.SHOOT_BALL, [INPUT_KEY.KEY_A]],
+    [COMMAND_ID.REQUEST_PASS, [INPUT_KEY.KEY_D]],
     [COMMAND_ID.PASS_BALL_DOWN, [INPUT_KEY.ARROW_DOWN,  INPUT_KEY.KEY_S]],
     [COMMAND_ID.PASS_BALL_LEFT, [INPUT_KEY.ARROW_LEFT, INPUT_KEY.KEY_S]],
     [COMMAND_ID.PASS_BALL_RIGHT, [INPUT_KEY.ARROW_RIGHT, INPUT_KEY.KEY_S]],
@@ -187,9 +190,9 @@ export const POSTB_INITIAL_COORDINATES = [
   constants.POST_YLENGTH_TO_FIELD_YLENGTH as number,
 ];
 
-export enum STATE_MACHINE_COMMANDS {
+export enum PLAYER_MESSAGES {
   WAIT = "wait",
-  NO_NEED_TO_WAIT = "no.need.to.wait",
+  PASS = "pass",
 }
 
 export enum TEAM_SIDES {
