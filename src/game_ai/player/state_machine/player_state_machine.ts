@@ -6,21 +6,19 @@ import { IPlayerState } from "../../../interfaces/iplayer_state";
 // of the controller.
 export class PlayerStateMachine implements IPlayerController {
   private states: IPlayerState[];
-  private player: Player;
   private enabled: boolean;
 
-  constructor(player: Player, states: IPlayerState[]) {
-    this.player = player;
+  constructor(states: IPlayerState[]) {
     this.states = states;
     this.enabled = true;
   }
 
-  public update(): void {
+  public update(player: Player): void {
     if (!this.enabled) { return; }
 
     const eligibleState =
-      this.states.find((state) => state.eligibleFor(this.player));
-    eligibleState.update(this.player);
+      this.states.find((state) => state.eligibleFor(player));
+    eligibleState.update(player);
   }
 
   public enable(): void {

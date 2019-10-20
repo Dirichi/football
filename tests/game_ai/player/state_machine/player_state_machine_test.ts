@@ -35,8 +35,8 @@ describe('PlayerStateMachine', () => {
       sinon.spy(ineligibleState, 'update');
 
       const states = [ineligibleState, eligibleState];
-      const machine = new PlayerStateMachine(player, states);
-      machine.update();
+      const machine = new PlayerStateMachine(states);
+      machine.update(player);
 
       expect(ineligibleState.update).not.to.have.been.called;
       expect(eligibleState.update).to.have.been.calledWith(player);

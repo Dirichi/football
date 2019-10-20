@@ -234,13 +234,8 @@ const PLAYER_STATES: IPlayerState[] = [
   new PassingState(commandFactory, cachedFeatureExtractor),
 ];
 
-const buildStateMachine = (player: Player) => {
-  const machine = new PlayerStateMachine(player, PLAYER_STATES);
-  return machine;
-};
-
 defaultPlayers.forEach((player) => {
-  player.setController(buildStateMachine(player));
+  player.setController(new PlayerStateMachine(PLAYER_STATES));
 });
 // TODO: Replace this with a controller that listens to commands from a specific
 // user.
@@ -348,7 +343,7 @@ const handleAssignControllerRequest = (request: IAssignControllerRequest) => {
     return;
   }
   const controller =
-    new PlayerHumanController(selectedPlayer, commandHandlerRouter);
+    new PlayerHumanController(commandHandlerRouter);
   controller.setRemoteClientId(request.clientId);
   selectedPlayer.disableControls();
   selectedPlayer.setController(controller);

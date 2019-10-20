@@ -6,25 +6,23 @@ import { IPlayerController } from "../../../interfaces/iplayer_controller";
 type RequestRouter = Map<string, ICommandRequestHandler>;
 
 export class PlayerHumanController implements IPlayerController {
-  private player: Player;
   private commandRequestRouter: RequestRouter;
   private commandRequestList: ICommandRequest[];
   private enabled: boolean;
   private remoteClientId: string;
 
-  constructor(player: Player, commandRequestRouter: RequestRouter) {
-    this.player = player;
+  constructor(commandRequestRouter: RequestRouter) {
     this.commandRequestRouter = commandRequestRouter;
     this.commandRequestList = [];
     this.enabled = true;
   }
 
-  public update(): void {
+  public update(player: Player): void {
     if (!this.enabled) { return; }
 
     let request = this.commandRequestList.shift();
     while (request) {
-      this.applyCommandRequest(request);
+      this.applyCommandRequest(request, player);
       request = this.commandRequestList.shift();
     }
   }
@@ -50,13 +48,14 @@ export class PlayerHumanController implements IPlayerController {
     return this.remoteClientId;
   }
 
-  private applyCommandRequest(commandRequest: ICommandRequest): void {
+  private applyCommandRequest(
+    commandRequest: ICommandRequest, player: Player): void {
     const commandId = commandRequest.commandId as string;
 
     const routerEntries = [...this.commandRequestRouter.entries()];
     const matchingRouterEntry = routerEntries.find(([handlerKey, handler]) => {
       return commandId.match(handlerKey) !== null;
     });
-    matchingRouterEntry[1].handle(commandRequest, this.player);
+    matchingRouterEntry[1].handle(commandRequest, player);
   }
 }
