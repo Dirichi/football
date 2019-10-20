@@ -54,7 +54,7 @@ export class Player implements ICollidable {
   public update(): void {
     this.controlBall();
     this.physics.update(this);
-    this.controller.update();
+    this.controller.update(this);
   }
 
   public moveInDirection(direction: Vector3D): void {
