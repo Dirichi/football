@@ -27,7 +27,7 @@ export class Ball implements ICollidable {
   }
 
   public update() {
-    this.physics.update();
+    this.physics.update(this);
   }
 
   public moveTowards(target: Vector3D): void {
@@ -41,7 +41,6 @@ export class Ball implements ICollidable {
 
   public setPhysics(physics: BallPhysics): void {
     this.physics = physics;
-    this.physics.setBall(this);
   }
 
   public setMaximumSpeed(speed: number): void {

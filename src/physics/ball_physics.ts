@@ -3,7 +3,6 @@ import { IBoundary } from "../interfaces/iboundary";
 
 export class BallPhysics {
   private boundary: IBoundary;
-  private ball?: Ball;
   private friction: number;
 
   constructor(boundary: IBoundary) {
@@ -11,31 +10,28 @@ export class BallPhysics {
     this.friction = 0;
   }
 
-  public setBall(ball: Ball) {
-    this.ball = ball;
-  }
-
-  public update() {
-    const nextX = this.ball.x + this.ball.vx;
-    const nextY = this.ball.y + this.ball.vy;
+  public update(ball: Ball) {
+    const nextX = ball.x + ball.vx;
+    const nextY = ball.y + ball.vy;
     const withinBoundary =
-      this.boundary.containsCircle(nextX, nextY, this.ball.diameter);
-    withinBoundary ? this.move(nextX, nextY) : this.ball.stop();
+      this.boundary.containsCircle(nextX, nextY, ball.diameter);
+    withinBoundary ? this.move(ball, nextX, nextY) : ball.stop();
 
-    this.applyFriction();
+    this.applyFriction(ball);
   }
 
-  public setFriction(friction: number) {
+  public setFriction(friction: number): this {
     this.friction = friction;
+    return this;
   }
 
-  public applyFriction() {
-    this.ball.vx *= (1 - this.friction);
-    this.ball.vy *= (1 - this.friction);
+  public applyFriction(ball: Ball) {
+    ball.vx *= (1 - this.friction);
+    ball.vy *= (1 - this.friction);
   }
 
-  private move(x: number, y: number) {
-    this.ball.x = x;
-    this.ball.y = y;
+  private move(ball: Ball, x: number, y: number) {
+    ball.x = x;
+    ball.y = y;
   }
 }
