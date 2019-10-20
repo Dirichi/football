@@ -12,7 +12,7 @@ export class PassTrackerService {
     private ballPossessionService: IBallPossessionService) { }
 
   public setup(): void {
-    if (this.enabled) return;
+    if (this.enabled) { return; }
     this.listenForPossessionChange();
     this.enabled = true;
   }
@@ -45,7 +45,7 @@ export class PassTrackerService {
 
   private listenForPossessionChange(): void {
     this.ballPossessionService.whenPossessionChanged((playerInPossession) => {
-      if (!this.currentlyTrackedPass) return;
+      if (!this.currentlyTrackedPass) { return; }
       this.recordPassCompletion(playerInPossession);
     });
   }
