@@ -75,6 +75,7 @@ import { PositionValueDebugService } from "./services/position_value_debug_servi
 import { TickService } from "./services/tick_service";
 import { PassTrackerService } from "./stats/pass_tracker_service";
 import { PlayerReportService } from "./stats/player_report_service";
+import { ShotTrackerService } from "./stats/shot_tracker_service";
 import { TimerService } from "./timer_service";
 import { range } from "./utils/helper_functions";
 
@@ -207,12 +208,13 @@ const cacher =
 const cachedFeatureExtractor = cacher.createCachingProxy();
 cacher.enableRefreshing();
 
+const goalDetectionService = new GoalDetectionService(ball, posts, queue);
+const shotTracker = new ShotTrackerService(queue, ballPossessionService, goalDetectionService);
 const passTracker = new PassTrackerService(queue, ballPossessionService);
-const playerReportService = new PlayerReportService(passTracker);
 const COMMAND_ID_TO_COMMAND_MAPPING = new Map<COMMAND_ID, ICommand>([
   [COMMAND_ID.MOVE, new MoveCommand()],
   [COMMAND_ID.CHASE_BALL, new ChaseBallCommand()],
-  [COMMAND_ID.SHOOT_BALL, new ShootBallCommand()],
+  [COMMAND_ID.SHOOT_BALL, new ShootBallCommand().setShotTracker(shotTracker)],
   [COMMAND_ID.PASS_BALL, new PassBallCommand().setPassTracker(passTracker)],
   [COMMAND_ID.STOP, new StopCommand()],
   [COMMAND_ID.GUARD_POST, new KeeperGuardPostCommand()],
@@ -259,12 +261,11 @@ const commandHandlerRouter = new Map<string, ICommandRequestHandler>([
   [".*", genericHandler],
 ]);
 
-playerReportService.monitorPlayers(defaultPlayers);
 const initialState = new KickOffState();
 const gameStateMachine = new GameStateMachine(initialState);
 const timer = new TimerService(0, 0.02, 90);
-const goalDetectionService = new GoalDetectionService(ball, posts);
 const goalRecordService = new GoalRecordService(goalDetectionService, teams);
+const playerReportService = new PlayerReportService(passTracker, shotTracker);
 const game = new Game();
 game.setBall(ball)
   .setTeams(teams)
@@ -310,9 +311,16 @@ const sendControllerAssigned = (clientId: string, playerId: string) => {
 };
 
 setInterval(() => {
+ // ------------------------------
+  // these guys are updated here instead of inside the game loop because the
+  // update function is not part of their api. But maybe there's nothing
+  // wrong with putting them inside the main game loop.
   tickService.tick();
+  goalDetectionService.update();
+  goalRecordService.update();
   ballPossessionService.update();
   collisionNotificationService.update();
+// -----------------------------------
   game.update();
   sendGameState();
   if (game.isReadyToExit()) { exit(); }
@@ -349,7 +357,7 @@ const handleAssignControllerRequest = (request: IAssignControllerRequest) => {
   playersAvailableForRemoteControl =
     playersAvailableForRemoteControl
       .filter((availablePlayer) => availablePlayer !== selectedPlayer);
-  // playerReportService.monitorPlayer(selectedPlayer);
+  playerReportService.monitorPlayer(selectedPlayer);
   sendControllerAssigned(request.clientId, selectedPlayer.getGameObjectId());
 };
 

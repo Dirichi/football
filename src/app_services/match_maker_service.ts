@@ -7,6 +7,7 @@ import { IParticipationAttributes } from "../interfaces/iparticipation_attribute
 import { IUserAttributes } from "../interfaces/iuser_attributes";
 import { GameSessionStore } from "../models/game_session_store";
 import { ParticipationStore } from "../models/participation_store";
+import { sample } from "../utils/helper_functions";
 import { ParticipationFactory } from "./participation_factory";
 import { RoomFactory } from "./room_factory";
 
@@ -51,10 +52,11 @@ export class MatchMakerService {
   private async claimParticipation(
     participations: IParticipationAttributes[],
     request: IMatchRequest): Promise<IParticipationAttributes> {
-      const match =
-      participations.find((p) => {
+      const matches =
+      participations.filter((p) => {
         return p.roleType === request.roleType && p.userId === null;
       });
+      const match = sample(matches);
       return await this.participationStore.update(match.id, {userId: request.user.id});
   }
 

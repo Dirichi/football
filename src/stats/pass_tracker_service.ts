@@ -8,13 +8,10 @@ export class PassTrackerService {
     private eventQueue: EventQueue,
     private ballPossessionService: IBallPossessionService) { }
 
-  public registerPass(pass: IPass): void {
+  public track(pass: IPass): void {
     this.ballPossessionService.oncePossessionChanged((playerInPossession) => {
-      const receiverIsTeammate =
-        pass.sender.getTeam() === playerInPossession.getTeam();
-      pass.eventualReceiver = playerInPossession;
-      pass.isSuccessful = receiverIsTeammate;
-      this.eventQueue.trigger(this.playerEventTag(pass.sender), { ...pass });
+      const updatedPass = this.recordPassCompletion(pass, playerInPossession);
+      this.eventQueue.trigger(this.playerEventTag(pass.sender), updatedPass);
     });
   }
 
@@ -24,5 +21,13 @@ export class PassTrackerService {
 
   private playerEventTag(player: Player): string {
     return `${this.constructor.name}.${player.getGameObjectId()}.passed`;
+  }
+
+  private recordPassCompletion(pass: IPass, playerInPossession: Player): IPass {
+    const receiverIsTeammate =
+      pass.sender.getTeam() === playerInPossession.getTeam();
+    pass.eventualReceiver = playerInPossession;
+    pass.isSuccessful = receiverIsTeammate;
+    return {...pass};
   }
 }

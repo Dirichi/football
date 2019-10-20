@@ -1,4 +1,3 @@
-import { Ball } from "../game_objects/ball";
 import { Team } from "../game_objects/team";
 import { IGoalDetectionService } from "../interfaces/igoal_detection_service";
 
