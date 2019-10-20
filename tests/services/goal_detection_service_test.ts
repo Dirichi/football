@@ -3,6 +3,7 @@ import { Post } from '../../src/game_objects/post';
 import { GoalDetectionService } from '../../src/services/goal_detection_service';
 import * as chai from 'chai';
 import * as sinon from 'sinon';
+import { EventQueue } from '../../src/event_queue';
 
 const sinonChai = require('sinon-chai');
 const expect = chai.expect;
@@ -14,7 +15,8 @@ describe('GoalDetectionService', () => {
       const ball = new Ball(1, 1, 0, 0, 1); //x, y, vx, vy, diameter
       const postA = new Post(0, 0, 2, 2); //x, y, xlength, ylength
       const postB = new Post(4, 4, 2, 2); //x, y, xlength, ylength
-      const service = new GoalDetectionService(ball, [postA, postB]);
+      const service =
+        new GoalDetectionService(ball, [postA, postB], new EventQueue());
 
       service.update();
       expect(service.goalDetected()).to.be.true;
@@ -24,7 +26,8 @@ describe('GoalDetectionService', () => {
       const ball = new Ball(1, 1, 0, 0, 1); //x, y, vx, vy, diameter
       const postA = new Post(0, 0, 2, 2); //x, y, xlength, ylength
       const postB = new Post(4, 4, 2, 2); //x, y, xlength, ylength
-      const service = new GoalDetectionService(ball, [postA, postB]);
+      const service =
+        new GoalDetectionService(ball, [postA, postB], new EventQueue());
 
       service.update();
       expect(service.goalDetected()).to.be.true;
@@ -38,7 +41,8 @@ describe('GoalDetectionService', () => {
       const ball = new Ball(1, 1, 0, 0, 1); //x, y, vx, vy, diameter
       const postA = new Post(0, 0, 2, 2); //x, y, xlength, ylength
       const postB = new Post(4, 4, 2, 2); //x, y, xlength, ylength
-      const service = new GoalDetectionService(ball, [postA, postB]);
+      const service =
+        new GoalDetectionService(ball, [postA, postB], new EventQueue());
 
       service.update();
       expect(service.getPostContainingBall()).to.eql(postA);
@@ -48,7 +52,8 @@ describe('GoalDetectionService', () => {
       const ball = new Ball(1, 1, 0, 0, 1); //x, y, vx, vy, diameter
       const postA = new Post(0, 0, 2, 2); //x, y, xlength, ylength
       const postB = new Post(4, 4, 2, 2); //x, y, xlength, ylength
-      const service = new GoalDetectionService(ball, [postA, postB]);
+      const service =
+        new GoalDetectionService(ball, [postA, postB], new EventQueue());
 
       service.update();
       expect(service.getPostContainingBall()).to.eql(postA);
@@ -58,7 +63,8 @@ describe('GoalDetectionService', () => {
       const ball = new Ball(-1, -1, 0, 0, 1); //x, y, vx, vy, diameter
       const postA = new Post(0, 0, 2, 2); //x, y, xlength, ylength
       const postB = new Post(4, 4, 2, 2); //x, y, xlength, ylength
-      const service = new GoalDetectionService(ball, [postA, postB]);
+      const service =
+        new GoalDetectionService(ball, [postA, postB], new EventQueue());
 
       service.update();
       expect(service.getPostContainingBall()).to.be.null;
