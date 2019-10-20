@@ -5,7 +5,7 @@ import { IShot } from "../interfaces/ishot";
 import { GoalDetectionService } from "../services/goal_detection_service";
 
 export class ShotTrackerService {
-
+  private enabled: boolean = false;
   private currentlyTrackedShot?: IShot = null;
 
   constructor(
@@ -13,23 +13,38 @@ export class ShotTrackerService {
     private ballPossessionService: IBallPossessionService,
     private goalDetectionService: GoalDetectionService) { }
 
+    public setup(): void {
+      if (this.enabled) return;
+
+      this.listenForGoals();
+      this.listenForPossessionChange();
+      this.enabled = true;
+    }
+
   public track(shot: IShot): void {
+    this.checkEnabled();
     this.checkCurrentlyTrackedShot();
     this.currentlyTrackedShot = shot;
-    this.goalDetectionService.onceGoalDetected((unused) => {
-      if (this.currentlyTrackedShot) {
-        this.reportShotSuccessful();
-      }
-    });
-    this.ballPossessionService.oncePossessionChanged((player) => {
-      if (this.currentlyTrackedShot) {
-        this.reportShotInterceptedBy(player);
-      }
-    });
   }
 
   public whenTakesShot(player: Player, callback: (shot: IShot) => void): void {
     this.queue.when(this.playerEventTag(player), callback);
+  }
+
+  private listenForPossessionChange(): void {
+    this.ballPossessionService.whenPossessionChanged((player) => {
+      if (!this.currentlyTrackedShot) return;
+
+      this.reportShotInterceptedBy(player);
+    });
+  }
+
+  private listenForGoals(): void {
+    this.goalDetectionService.whenGoalDetected((unused) => {
+      if (!this.currentlyTrackedShot) return;
+
+      this.reportShotSuccessful();
+    });
   }
 
   private playerEventTag(player: Player): string {
@@ -51,10 +66,15 @@ export class ShotTrackerService {
     this.currentlyTrackedShot = null;
   }
 
-  private checkCurrentlyTrackedShot() {
+  private checkCurrentlyTrackedShot(): void {
     if (this.currentlyTrackedShot) {
-      throw new Error(
-        `Already tracking another shot: ${this.currentlyTrackedShot}`);
+      throw new Error("Already tracking another shot");
+    }
+  }
+
+  private checkEnabled(): void {
+    if (!this.enabled) {
+      throw new Error("ShotTrackerService not yet enabled.");
     }
   }
 }

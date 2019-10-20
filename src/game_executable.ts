@@ -205,7 +205,6 @@ const tickService = new TickService(queue);
 const cacher =
   new FeatureExtractorCacher(featureExtractor, tickService, 2);
 const cachedFeatureExtractor = cacher.createCachingProxy();
-cacher.enableRefreshing();
 
 const goalDetectionService = new GoalDetectionService(ball, posts, queue);
 const shotTracker = new ShotTrackerService(queue, ballPossessionService, goalDetectionService);
@@ -240,7 +239,6 @@ defaultPlayers.forEach((player) => {
 // TODO: Replace this with a controller that listens to commands from a specific
 // user.
 
-ballPossessionService.enable();
 collisionDetectionService.setCollisionMarginFactor(COLLISION_MARGIN_FACTOR);
 
 const genericHandler = new GenericRemoteCommandRequestHandler(commandFactory);
@@ -304,6 +302,11 @@ const sendControllerAssigned = (clientId: string, playerId: string) => {
   });
 };
 
+// Set up all the things that need setting up
+passTracker.setup();
+shotTracker.setup();
+cacher.enableRefreshing();
+ballPossessionService.setup();
 setInterval(() => {
  // ------------------------------
   // these guys are updated here instead of inside the game loop because the
