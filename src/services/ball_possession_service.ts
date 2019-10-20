@@ -57,8 +57,8 @@ export class BallPossessionService implements IBallPossessionService {
 
     if (!playerInPossession) { return; }
 
+    this.publishPossesionChangedEvents(playerInPossession);
     this.currentPlayerInPossession = playerInPossession;
-    this.publishPossesionChangedEvents();
     this.lastPlayerInPossession = playerInPossession;
   }
 
@@ -66,12 +66,10 @@ export class BallPossessionService implements IBallPossessionService {
     return this.constructor.name;
   }
 
-  private publishPossesionChangedEvents(): void {
-    if (!this.lastPlayerInPossession) { return; }
-
-    if (this.currentPlayerInPossession !== this.lastPlayerInPossession) {
+  private publishPossesionChangedEvents(playerInPossession: Player): void {
+    if (!this.currentPlayerInPossession) {
       this.queue.trigger(
-        `${this.eventTag()}.possessionChanged`, this.currentPlayerInPossession);
+          `${this.eventTag()}.possessionChanged`, playerInPossession);
     }
   }
 }

@@ -14,7 +14,7 @@ export class ShotTrackerService {
     private goalDetectionService: GoalDetectionService) { }
 
     public setup(): void {
-      if (this.enabled) return;
+      if (this.enabled) { return; }
 
       this.listenForGoals();
       this.listenForPossessionChange();
@@ -33,7 +33,7 @@ export class ShotTrackerService {
 
   private listenForPossessionChange(): void {
     this.ballPossessionService.whenPossessionChanged((player) => {
-      if (!this.currentlyTrackedShot) return;
+      if (!this.currentlyTrackedShot) { return; }
 
       this.reportShotInterceptedBy(player);
     });
@@ -41,7 +41,7 @@ export class ShotTrackerService {
 
   private listenForGoals(): void {
     this.goalDetectionService.whenGoalDetected((unused) => {
-      if (!this.currentlyTrackedShot) return;
+      if (!this.currentlyTrackedShot) { return; }
 
       this.reportShotSuccessful();
     });
