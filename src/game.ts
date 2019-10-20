@@ -30,8 +30,6 @@ export class Game {
 
   public update(): void {
     this.timer.update();
-    this.goalDetectionService.update();
-    this.goalRecordService.update();
     this.stateMachine.update(this);
     this.ball.update();
     this.teams.forEach((team) => team.update());

@@ -23,7 +23,7 @@ export class PassBallCommand implements ICommand {
   private registerPass(sender: Player, receiver: Player): void {
     if (!this.passTracker) { return; }
 
-    this.passTracker.registerPass({
+    this.passTracker.track({
       intendedReceiver: receiver,
       sender,
     });

@@ -1,11 +1,14 @@
 import { Player } from "../game_objects/player";
 import { IPlayerReport } from "../interfaces/iplayer_report";
 import { PassTrackerService } from "./pass_tracker_service";
+import { ShotTrackerService } from "./shot_tracker_service";
 
 export class PlayerReportService {
   private reports: Map<string, IPlayerReport> = new Map([]);
 
-  constructor(private passTracker: PassTrackerService) {}
+  constructor(
+    private passTracker: PassTrackerService,
+    private shotTracker: ShotTrackerService) {}
 
   public monitorPlayers(players: Player[]): void {
     players.forEach((player) => {
@@ -17,6 +20,7 @@ export class PlayerReportService {
     if (this.reports.get(player.getGameObjectId())) { return; }
     this.initializeReport(player);
     this.trackPasses(player);
+    this.trackShots(player);
   }
 
   public getAllReports(): Map<string, IPlayerReport> {
@@ -40,6 +44,16 @@ export class PlayerReportService {
         playerReport.completedPasses += 1;
       }
       playerReport.totalPasses += 1;
+    });
+  }
+
+  private trackShots(player: Player): void {
+    this.shotTracker.whenTakesShot(player, (shot) => {
+      const playerReport = this.reports.get(player.getGameObjectId());
+      if (shot.isGoal) {
+        playerReport.totalGoals += 1;
+      }
+      playerReport.totalShots += 1;
     });
   }
 }
