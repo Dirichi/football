@@ -33,9 +33,8 @@ describe('PlayerPhysics', () => {
       const [x, y, vx, vy, diameter] = [2, 3, 4, 8, 5];
       const player = new Player(x, y, vx, vy, diameter);
       const physics = new PlayerPhysics(boundary);
-      player.setPhysics(physics);
 
-      physics.update();
+      physics.update(player);
       expect([player.x, player.y]).to.eql([6, 11]);
     });
 
@@ -45,9 +44,8 @@ describe('PlayerPhysics', () => {
       const [x, y, vx, vy, diameter] = [2, 3, 4, 8, 5];
       const player = new Player(x, y, vx, vy, diameter);
       const physics = new PlayerPhysics(boundary);
-      player.setPhysics(physics);
 
-      physics.update();
+      physics.update(player);
       expect([player.x, player.y]).to.eql([2, 3]);
     });
 
@@ -57,9 +55,8 @@ describe('PlayerPhysics', () => {
       const [x, y, vx, vy, diameter] = [2, 3, 4, 8, 5];
       const player = new Player(x, y, vx, vy, diameter);
       const physics = new PlayerPhysics(boundary);
-      player.setPhysics(physics);
 
-      physics.update();
+      physics.update(player);
       expect([player.vx, player.vy]).to.eql([0, 0]);
     });
 
@@ -68,11 +65,9 @@ describe('PlayerPhysics', () => {
 
       const [x, y, vx, vy, diameter] = [2, 3, 4, 8, 5];
       const player = new Player(x, y, vx, vy, diameter);
-      const physics = new PlayerPhysics(boundary);
-      physics.setFriction(0.1);
-      player.setPhysics(physics);
+      const physics = new PlayerPhysics(boundary).setFriction(0.1);
 
-      physics.update();
+      physics.update(player);
       expect([player.vx, player.vy]).to.eql([3.6, 7.2]);
     });
   });

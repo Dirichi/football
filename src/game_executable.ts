@@ -126,9 +126,8 @@ const [playerx, playery, playervx, playervy, playerSpeed, playerDiameter]
   = PLAYER_INITIAL_ARGS;
 
 const buildDefaultPlayerPhysics = (): PlayerPhysics => {
-  const physics = new PlayerPhysics(field);
-  physics.setFriction(constants.PLAYER_PHYSICS_DEFAULT_FRICTION);
-  return physics;
+  return new PlayerPhysics(field)
+    .setFriction(constants.PLAYER_PHYSICS_DEFAULT_FRICTION);
 };
 
 const buildDefaultPlayer = (): Player => {

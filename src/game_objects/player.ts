@@ -53,7 +53,7 @@ export class Player implements ICollidable {
 
   public update(): void {
     this.controlBall();
-    this.physics.update();
+    this.physics.update(this);
     this.controller.update();
   }
 
@@ -79,7 +79,6 @@ export class Player implements ICollidable {
 
   public setPhysics(physics: PlayerPhysics): Player {
     this.physics = physics;
-    this.physics.setPlayer(this);
     return this;
   }
 
