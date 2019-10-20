@@ -23,6 +23,7 @@ export class ShotTrackerService {
 
   public track(shot: IShot): void {
     this.checkEnabled();
+    this.handleDoubleShotEdgeCase(shot);
     this.checkCurrentlyTrackedShot();
     this.currentlyTrackedShot = shot;
   }
@@ -75,6 +76,15 @@ export class ShotTrackerService {
   private checkEnabled(): void {
     if (!this.enabled) {
       throw new Error("ShotTrackerService not yet enabled.");
+    }
+  }
+
+  private handleDoubleShotEdgeCase(shot: IShot): void {
+    if (!this.currentlyTrackedShot) return;
+    if (this.currentlyTrackedShot.shooter === shot.shooter) {
+      // handle edge case where shooter shoots multiple times without possession
+      // changing to another user.
+      this.reportShotInterceptedBy(shot.shooter);
     }
   }
 }
