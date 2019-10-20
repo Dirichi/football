@@ -44,7 +44,7 @@ export class BallPossessionService implements IBallPossessionService {
   }
 
   public oncePossessionChanged(callback: (player: Player) => void): void {
-    this.queue.once(`${this.eventTag()}.possessionChanged`, callback);
+    this.queue.when(`${this.eventTag()}.possessionChanged`, callback);
   }
 
   private listenForBallCollisions(): void {

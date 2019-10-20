@@ -23,7 +23,7 @@ export class GoalDetectionService implements IGoalDetectionService {
   }
 
   public onceGoalDetected(callback: (post: Post) => void): void {
-    this.queue.once(this.eventTag(), callback);
+    this.queue.when(this.eventTag(), callback);
   }
 
   public goalDetected(): boolean {

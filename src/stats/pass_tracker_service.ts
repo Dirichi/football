@@ -2,17 +2,25 @@ import { EventQueue } from "../event_queue";
 import { Player } from "../game_objects/player";
 import { IBallPossessionService } from "../interfaces/iball_possession_service";
 import { IPass } from "../interfaces/ipass";
+import { Logger } from "../utils/logger";
 
 export class PassTrackerService {
+  private currentlyTrackedPass?: IPass = null;
+
   constructor(
     private eventQueue: EventQueue,
     private ballPossessionService: IBallPossessionService) { }
 
-  public track(pass: IPass): void {
+  public setup(): void {
     this.ballPossessionService.oncePossessionChanged((playerInPossession) => {
-      const updatedPass = this.recordPassCompletion(pass, playerInPossession);
-      this.eventQueue.trigger(this.playerEventTag(pass.sender), updatedPass);
+      if (!this.currentlyTrackedPass) return;
+      this.recordPassCompletion(playerInPossession);
     });
+  }
+
+  public track(pass: IPass): void {
+    this.checkCurrentlyTrackedPass();
+    this.currentlyTrackedPass = pass;
   }
 
   public whenMakesPass(player: Player, callback: (pass: IPass) => void): void {
@@ -23,11 +31,21 @@ export class PassTrackerService {
     return `${this.constructor.name}.${player.getGameObjectId()}.passed`;
   }
 
-  private recordPassCompletion(pass: IPass, playerInPossession: Player): IPass {
+  private checkCurrentlyTrackedPass(): void {
+    if (this.currentlyTrackedPass) {
+      throw new Error(
+        `Already tracking another pass: \
+        ${JSON.stringify(this.currentlyTrackedPass)})`);
+    }
+  }
+
+  private recordPassCompletion(playerInPossession: Player) {
+    const pass = this.currentlyTrackedPass;
     const receiverIsTeammate =
       pass.sender.getTeam() === playerInPossession.getTeam();
     pass.eventualReceiver = playerInPossession;
     pass.isSuccessful = receiverIsTeammate;
-    return {...pass};
+    this.eventQueue.trigger(this.playerEventTag(pass.sender), {...pass});
+    this.currentlyTrackedPass = null;
   }
 }

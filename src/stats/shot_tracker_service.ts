@@ -13,19 +13,22 @@ export class ShotTrackerService {
     private ballPossessionService: IBallPossessionService,
     private goalDetectionService: GoalDetectionService) { }
 
+    public enable(): void {
+      this.goalDetectionService.onceGoalDetected((unused) => {
+        if (!this.currentlyTrackedShot) { return; }
+
+        this.reportShotSuccessful();
+      });
+      this.ballPossessionService.oncePossessionChanged((player) => {
+        if (!this.currentlyTrackedShot) { return; }
+
+        this.reportShotInterceptedBy(player);
+      });
+    }
+
   public track(shot: IShot): void {
     this.checkCurrentlyTrackedShot();
     this.currentlyTrackedShot = shot;
-    this.goalDetectionService.onceGoalDetected((unused) => {
-      if (this.currentlyTrackedShot) {
-        this.reportShotSuccessful();
-      }
-    });
-    this.ballPossessionService.oncePossessionChanged((player) => {
-      if (this.currentlyTrackedShot) {
-        this.reportShotInterceptedBy(player);
-      }
-    });
   }
 
   public whenTakesShot(player: Player, callback: (shot: IShot) => void): void {
