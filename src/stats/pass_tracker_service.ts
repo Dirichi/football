@@ -2,9 +2,9 @@ import { EventQueue } from "../event_queue";
 import { Player } from "../game_objects/player";
 import { IBallPossessionService } from "../interfaces/iball_possession_service";
 import { IPass } from "../interfaces/ipass";
-import { Logger } from "../utils/logger";
 
 export class PassTrackerService {
+  private enabled: boolean = false;
   private currentlyTrackedPass?: IPass = null;
 
   constructor(
@@ -12,13 +12,13 @@ export class PassTrackerService {
     private ballPossessionService: IBallPossessionService) { }
 
   public setup(): void {
-    this.ballPossessionService.oncePossessionChanged((playerInPossession) => {
-      if (!this.currentlyTrackedPass) return;
-      this.recordPassCompletion(playerInPossession);
-    });
+    if (this.enabled) return;
+    this.listenForPossessionChange();
+    this.enabled = true;
   }
 
   public track(pass: IPass): void {
+    this.checkEnabled();
     this.checkCurrentlyTrackedPass();
     this.currentlyTrackedPass = pass;
   }
@@ -33,10 +33,21 @@ export class PassTrackerService {
 
   private checkCurrentlyTrackedPass(): void {
     if (this.currentlyTrackedPass) {
-      throw new Error(
-        `Already tracking another pass: \
-        ${JSON.stringify(this.currentlyTrackedPass)})`);
+      throw new Error("Already tracking another pass");
     }
+  }
+
+  private checkEnabled(): void {
+    if (!this.enabled) {
+      throw new Error("PassTrackerService not yet enabled.");
+    }
+  }
+
+  private listenForPossessionChange(): void {
+    this.ballPossessionService.whenPossessionChanged((playerInPossession) => {
+      if (!this.currentlyTrackedPass) return;
+      this.recordPassCompletion(playerInPossession);
+    });
   }
 
   private recordPassCompletion(playerInPossession: Player) {

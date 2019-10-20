@@ -31,12 +31,12 @@ describe('BallPossessionService', () => {
     queue = null;
   });
 
-  describe('`enable`', () => {
+  describe('`update`', () => {
     it('listens for ball collision events', () => {
       sinon.stub(queue, 'when');
 
       const service = new BallPossessionService(ball, [], queue);
-      service.enable();
+      service.setup();
       expect(queue.when).to.have.been.calledWith(
         `${ball.getGameObjectId()}.collision`);
     });
@@ -49,7 +49,7 @@ describe('BallPossessionService', () => {
 
       const service = new BallPossessionService(
         ball, [playerA, playerB], queue);
-      service.enable();
+      service.setup();
 
       triggerBallCollisionEventForPlayer(playerA);
       triggerBallCollisionEventForPlayer(playerB);
@@ -64,7 +64,7 @@ describe('BallPossessionService', () => {
 
       // notice that playerB is not registered with ballPossessionService
       const service = new BallPossessionService(ball, [playerA], queue);
-      service.enable();
+      service.setup();
 
       triggerBallCollisionEventForPlayer(playerA);
       triggerBallCollisionEventForPlayer(playerB);
@@ -78,7 +78,7 @@ describe('BallPossessionService', () => {
       const playerB = new Player(5, 0, 0, 0, 2); // x, y, vx, vy, diameter
 
       const service = new BallPossessionService(ball, [playerA, playerB], queue);
-      service.enable();
+      service.setup();
       const player = service.getCurrentPlayerInPossessionOrNull();
       expect(player).to.be.null;
     });
@@ -88,10 +88,11 @@ describe('BallPossessionService', () => {
     it('sets the currentPlayerInPossession to null', () => {
       const player = new Player(1, 1, 0, 0, 2); // x, y, vx, vy, diameter
       const service = new BallPossessionService(ball, [player], queue);
-      service.enable();
+      service.setup();
       triggerBallCollisionEventForPlayer(player);
 
       service.update();
+
       const playerInPossession = service.getCurrentPlayerInPossessionOrNull();
       expect(playerInPossession).to.be.null;
     });
@@ -101,10 +102,11 @@ describe('BallPossessionService', () => {
     it('returns the last (non-null) player in possession of the ball', () => {
       const player = new Player(1, 1, 0, 0, 2); // x, y, vx, vy, diameter
       const service = new BallPossessionService(ball, [player], queue);
-      service.enable();
+      service.setup();
       triggerBallCollisionEventForPlayer(player);
 
       service.update();
+
       const playerInPossession = service.getLastPlayerInPossession();
       expect(playerInPossession).to.equal(player);
     });

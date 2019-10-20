@@ -10,7 +10,6 @@ export class BallPossessionService implements IBallPossessionService {
   private lastPlayerInPossession?: Player;
   private players: Player[];
   private queue: IEventQueue;
-  private possessionChanged: boolean = false;
 
   constructor(ball: Ball, players: Player[], queue: IEventQueue) {
     this.ball = ball;
@@ -21,16 +20,13 @@ export class BallPossessionService implements IBallPossessionService {
   }
 
   public update(): void {
-    // run this before refreshing possesion data.
-    this.publishPossesionChangedEvents();
     // Clear data about the current player in possession.
     // It will be refreshed when another ball collision event
     // occurs
-    this.possessionChanged = false;
     this.currentPlayerInPossession = null;
   }
 
-  public enable(): void {
+  public setup(): void {
     this.listenForBallCollisions();
   }
 
@@ -43,7 +39,7 @@ export class BallPossessionService implements IBallPossessionService {
     return this.currentPlayerInPossession;
   }
 
-  public oncePossessionChanged(callback: (player: Player) => void): void {
+  public whenPossessionChanged(callback: (player: Player) => void): void {
     this.queue.when(`${this.eventTag()}.possessionChanged`, callback);
   }
 
@@ -59,12 +55,11 @@ export class BallPossessionService implements IBallPossessionService {
       return player.getGameObjectId() === payload.colliderId;
     });
 
-    if (playerInPossession) {
-      this.possessionChanged =
-        playerInPossession !== this.lastPlayerInPossession;
-      this.currentPlayerInPossession = playerInPossession;
-      this.lastPlayerInPossession = playerInPossession;
-    }
+    if (!playerInPossession) { return; }
+
+    this.currentPlayerInPossession = playerInPossession;
+    this.publishPossesionChangedEvents();
+    this.lastPlayerInPossession = playerInPossession;
   }
 
   private eventTag(): string {
@@ -72,7 +67,9 @@ export class BallPossessionService implements IBallPossessionService {
   }
 
   private publishPossesionChangedEvents(): void {
-    if (this.possessionChanged) {
+    if (!this.lastPlayerInPossession) { return; }
+
+    if (this.currentPlayerInPossession !== this.lastPlayerInPossession) {
       this.queue.trigger(
         `${this.eventTag()}.possessionChanged`, this.currentPlayerInPossession);
     }
