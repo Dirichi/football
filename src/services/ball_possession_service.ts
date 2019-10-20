@@ -67,7 +67,9 @@ export class BallPossessionService implements IBallPossessionService {
   }
 
   private publishPossesionChangedEvents(playerInPossession: Player): void {
-    if (!this.currentPlayerInPossession) {
+    if (!this.lastPlayerInPossession) { return; }
+
+    if (this.lastPlayerInPossession !== playerInPossession) {
       this.queue.trigger(
           `${this.eventTag()}.possessionChanged`, playerInPossession);
     }
