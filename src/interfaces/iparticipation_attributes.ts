@@ -5,6 +5,10 @@ export interface IParticipationAttributes {
   role: number;
   teamId: number;
   roleType: number;
+  completedPasses?: number;
+  totalPasses?: number;
+  totalShots?: number;
+  totalGoals?: number;
   createdAt?: number;
   updatedAt?: number;
 }

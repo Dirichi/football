@@ -3,5 +3,4 @@ export interface IPlayerReport {
   completedPasses: number;
   totalShots: number;
   totalGoals: number;
-  totalRepossessions: number;
 }

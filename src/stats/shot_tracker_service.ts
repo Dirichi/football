@@ -80,7 +80,7 @@ export class ShotTrackerService {
   }
 
   private handleDoubleShotEdgeCase(shot: IShot): void {
-    if (!this.currentlyTrackedShot) return;
+    if (!this.currentlyTrackedShot) { return; }
     if (this.currentlyTrackedShot.shooter === shot.shooter) {
       // handle edge case where shooter shoots multiple times without possession
       // changing to another user.

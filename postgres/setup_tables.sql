@@ -29,6 +29,10 @@ CREATE TABLE game_session_participations (
   role INT,
   user_id INT REFERENCES users,
   role_type INT,
+  completed_passes INT,
+  total_passes INT,
+  total_shots INT,
+  total_goals INT,
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
