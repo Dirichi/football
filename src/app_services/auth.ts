@@ -13,7 +13,7 @@ export function requiresLogin(
   req: express.Request,
   res: express.Response,
   next: express.NextFunction): void {
-  authenticateRequest(req).then((authenticated) => {
+    authenticateRequest(req).then((authenticated) => {
     authenticated ? next() : res.redirect("/login");
   });
 }

@@ -163,6 +163,10 @@ socket.on(IO_MESSAGE_TYPE.GAME_STATE, (data: { [x: string]: any; }) => {
   });
 });
 
+socket.on(IO_MESSAGE_TYPE.EXIT, (unused: any) => {
+  window.location.assign(`${window.location.href}/stats`);
+});
+
 document.onkeydown = (event: KeyboardEvent) => {
   manualInputHandler.handleKeyDown(event);
 };

@@ -31,6 +31,7 @@ export class GameRoom {
   private gameExecutablePath?: string;
   private startGameTimeout: number;
   private gameSessionStore: IModelStore<IGameSessionAttributes>;
+  private participationStore: IModelStore<IParticipationAttributes>;
 
   // TODO: Create a worker which runs every X seconds, inspects GameRooms that
   // have not started and then starts them automatically.
@@ -69,6 +70,10 @@ export class GameRoom {
 
   public setGameSessionStore(store: IModelStore<IGameSessionAttributes>): void {
     this.gameSessionStore = store;
+  }
+
+  public setParticipationStore(store: IModelStore<IParticipationAttributes>): void {
+    this.participationStore = store;
   }
 
   public setStartGameTimeout(timeout: number): void {
@@ -119,7 +124,7 @@ export class GameRoom {
     if (message.messageType === PROCESS_MESSAGE_TYPE.GAME_OVER) {
       this.gameProcess.termintate();
       const data = message.data as IPlayerIdToReportMapping;
-      await this.saveParticipationReports(data);
+      await this.saveParticipationReportsAndExitClients(data);
     }
   }
 
@@ -148,11 +153,13 @@ export class GameRoom {
     this.gameProcess.send(message);
   }
 
-  private async saveParticipationReports(
-    stats: IPlayerIdToReportMapping): Promise<IParticipationAttributes[]> {
-    const promises = Array.from(this.clients.values()).map((client) => {
+  private async saveParticipationReportsAndExitClients(
+    stats: IPlayerIdToReportMapping): Promise<void> {
+    const clients = Array.from(this.clients.values());
+    const statsPromises = clients.map((client) => {
       return client.saveParticipationReport(stats[client.getControllerId()]);
     });
-    return await Promise.all(promises);
+    await Promise.all(statsPromises);
+    clients.forEach((client) => client.exit());
   }
 }

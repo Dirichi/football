@@ -19,7 +19,9 @@ import { MatchMakerService } from "./app_services/match_maker_service";
 import { ROLE_TYPE_CHOICE_MAP } from "./constants";
 import { GameClient } from "./game_client";
 import { ICustomizedRequest } from "./interfaces/icustomized_request";
+import { GameSessionStore } from "./models/game_session_store";
 import { ParticipationStore } from "./models/participation_store";
+import { UserStore } from "./models/user_store";
 import { Logger } from "./utils/logger";
 import { WrappedSocket } from "./wrapped_socket";
 
@@ -34,7 +36,7 @@ const redisClient = redis.createClient({
 });
 const RedisStore = connectRedis(session);
 const sessionMiddleWare = session({
-  cookie: { maxAge: 600000 },
+  cookie: { maxAge: 3600000 },
   resave: false,
   saveUninitialized: true,
   secret: process.env.SESSION_SECRET,
@@ -88,6 +90,29 @@ app.get("/games/:roomId", requiresLogin, async (req, res) => {
   const authorized = await findParticipation(customReq.user.id, roomId);
 
   authorized ? res.render("game") : res.send("Not authorized to join gameRoom");
+});
+
+app.get("/games/:roomId/stats", requiresLogin, async (req, res) => {
+  const gameSessionStore = new GameSessionStore();
+  const userStore = new UserStore();
+  const gameSessions =
+    await gameSessionStore.where({gameRoomId: req.params.roomId});
+  const participations = gameSessions[0].participations;
+  const userIds =
+    participations.map((p) => p.userId).filter((id) => id !== null);
+  const users = await userStore.where({id: userIds});
+  const reports = participations.map((p) => {
+    const matchingUser = users.find((user) => user.id === p.userId);
+    const nickName = matchingUser === undefined ? "COM" : matchingUser.nickName;
+    return {
+      completedPasses: p.completedPasses,
+      nickName,
+      totalGoals: p.totalGoals,
+      totalPasses: p.totalPasses,
+      totalShots: p.totalShots,
+    };
+  });
+  res.render("stats", { reports });
 });
 
 httpServer.listen(port, () => {

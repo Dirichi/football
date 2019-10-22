@@ -11,4 +11,5 @@ export interface IGameClient {
   getControllerId(): string;
   saveParticipationReport(
     report: IPlayerReport): Promise<IParticipationAttributes>;
+  exit(): void;
 }

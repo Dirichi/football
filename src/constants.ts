@@ -205,6 +205,7 @@ export enum IO_MESSAGE_TYPE {
   COMMAND = "command",
   GAME_STATE = "game.state",
   CLIENT_ASSIGNED_PLAYER = "client.assigned.player",
+  EXIT = "exit",
 }
 
 export enum PROCESS_MESSAGE_TYPE {
