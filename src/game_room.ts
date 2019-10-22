@@ -7,6 +7,7 @@ import { IParticipationAttributes } from "./interfaces/iparticipation_attributes
 import { IProcess } from "./interfaces/iprocess";
 import { IProcessForker } from "./interfaces/iprocess_forker";
 import { IProcessMessage } from "./interfaces/iprocess_message";
+import { IPlayerIdToReportMapping } from "./stats/player_report_service";
 
 export class GameRoom {
   // TODO: Store GameRoom in postgres. Also move class to models.
@@ -105,7 +106,8 @@ export class GameRoom {
     });
   }
 
-  private handleGameProcessMessage(message: IProcessMessage): void {
+  private async handleGameProcessMessage(
+    message: IProcessMessage): Promise<void> {
     if (message.messageType === PROCESS_MESSAGE_TYPE.GAME_STATE) {
       this.clients.forEach((client) => {
         client.updateGameState(message.data);
@@ -122,6 +124,8 @@ export class GameRoom {
 
     if (message.messageType === PROCESS_MESSAGE_TYPE.GAME_OVER) {
       this.gameProcess.termintate();
+      const data = message.data as IPlayerIdToReportMapping;
+      await this.saveParticipationReports(data);
     }
   }
 
@@ -146,5 +150,13 @@ export class GameRoom {
       messageType: PROCESS_MESSAGE_TYPE.ASSIGN_CONTROLLER,
     };
     this.gameProcess.send(message);
+  }
+
+  private async saveParticipationReports(
+    stats: IPlayerIdToReportMapping): Promise<IParticipationAttributes[]> {
+    const promises = Array.from(this.clients.values()).map((client) => {
+      return client.saveParticipationReport(stats[client.getControllerId()]);
+    });
+    return await Promise.all(promises);
   }
 }

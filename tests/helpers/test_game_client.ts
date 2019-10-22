@@ -3,9 +3,11 @@ import { IGameClient } from "../../src/interfaces/igame_client";
 import { ICommandRequest } from "../../src/interfaces/icommand_request";
 import { IParticipationAttributes } from "../../src/interfaces/iparticipation_attributes";
 import { IO_MESSAGE_TYPE, PLAYER_ROLE_TYPE } from "../../src/constants";
+import { IPlayerReport } from "../../src/interfaces/iplayer_report";
 
 export class TestGameClient implements IGameClient {
   private id: string;
+  private controllerId?: string;
   private queue: EventQueue;
   private roleType: PLAYER_ROLE_TYPE;
 
@@ -27,6 +29,7 @@ export class TestGameClient implements IGameClient {
   }
 
   public assignControllerId(playerId: string): void {
+    this.controllerId = playerId;
     this.queue.trigger(IO_MESSAGE_TYPE.CLIENT_ASSIGNED_PLAYER, {playerId});
   }
 
@@ -45,5 +48,13 @@ export class TestGameClient implements IGameClient {
 
   public getParticipation(): IParticipationAttributes {
     return {} as IParticipationAttributes;
+  }
+
+  public saveParticipationReport(report: IPlayerReport): Promise<IParticipationAttributes> {
+    return Promise.resolve(this.getParticipation());
+  }
+
+  public getControllerId(): string {
+    return this.controllerId;
   }
 }

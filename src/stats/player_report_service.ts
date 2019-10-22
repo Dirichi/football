@@ -3,6 +3,9 @@ import { IPlayerReport } from "../interfaces/iplayer_report";
 import { PassTrackerService } from "./pass_tracker_service";
 import { ShotTrackerService } from "./shot_tracker_service";
 
+export interface IPlayerIdToReportMapping {
+  [id: string]: IPlayerReport;
+}
 export class PlayerReportService {
   private reports: Map<string, IPlayerReport> = new Map([]);
 
@@ -23,8 +26,13 @@ export class PlayerReportService {
     this.trackShots(player);
   }
 
-  public getAllReports(): Map<string, IPlayerReport> {
-    return this.reports;
+  public getAllReports(): IPlayerIdToReportMapping {
+    const obj = {} as IPlayerIdToReportMapping;
+    Array.from(this.reports).forEach(([playerId, playerReport]) => {
+      obj[playerId] = playerReport;
+    });
+
+    return obj;
   }
 
   private initializeReport(player: Player): void {
@@ -32,7 +40,6 @@ export class PlayerReportService {
       completedPasses: 0,
       totalGoals: 0,
       totalPasses: 0,
-      totalRepossessions: 0,
       totalShots: 0,
     });
   }

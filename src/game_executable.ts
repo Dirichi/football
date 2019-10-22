@@ -269,7 +269,8 @@ game.setBall(ball)
   .setTimer(timer)
   .setGoalDetectionService(goalDetectionService)
   .setGoalRecordService(goalRecordService)
-  .setPositionValueDebugService(positionValueDebugService);
+  .setPositionValueDebugService(positionValueDebugService)
+  .setEventQueue(new EventQueue());
 
 const mediator =
   new PlayerBallInteractionMediator(
@@ -277,21 +278,10 @@ const mediator =
 
 defaultPlayers.forEach((player) => player.setBallInteractionMediator(mediator));
 
-const exit = () => {
-  Logger.log(playerReportService.getAllReports());
-  sendGameOver();
-};
 const sendGameState = () => {
   process.send({
     data: game.getState(),
     messageType: PROCESS_MESSAGE_TYPE.GAME_STATE,
-  });
-};
-
-const sendGameOver = () => {
-  process.send({
-    data: {},
-    messageType: PROCESS_MESSAGE_TYPE.GAME_OVER,
   });
 };
 
@@ -307,7 +297,7 @@ passTracker.setup();
 shotTracker.setup();
 cacher.enableRefreshing();
 ballPossessionService.setup();
-setInterval(() => {
+const taskId = setInterval(() => {
  // ------------------------------
   // these guys are updated here instead of inside the game loop because the
   // update function is not part of their api. But maybe there's nothing
@@ -320,8 +310,16 @@ setInterval(() => {
 // -----------------------------------
   game.update();
   sendGameState();
-  if (game.isReadyToExit()) { exit(); }
 }, GAME_STATE_UPDATE_DELAY);
+
+const exit = () => {
+  clearInterval(taskId);
+  process.send({
+    data: playerReportService.getAllReports(),
+    messageType: PROCESS_MESSAGE_TYPE.GAME_OVER,
+  });
+};
+game.onReadyToExit(() => exit());
 
 let playersAvailableForRemoteControl = [...defaultPlayers];
 const remoteControllers: PlayerHumanController[] = [];

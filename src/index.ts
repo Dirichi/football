@@ -20,6 +20,7 @@ import { ROLE_TYPE_CHOICE_MAP } from "./constants";
 import { GameClient } from "./game_client";
 import { GameRoom } from "./game_room";
 import { ICustomizedRequest } from "./interfaces/icustomized_request";
+import { ParticipationStore } from "./models/participation_store";
 import { Logger } from "./utils/logger";
 import { WrappedSocket } from "./wrapped_socket";
 
@@ -99,5 +100,6 @@ io.use(authenticateSocket);
 io.on("connection", (socket) => {
   const wrappedSocket = new WrappedSocket(socket);
   const client = new GameClient(wrappedSocket);
+  client.setParticipationStore(new ParticipationStore());
   client.joinAssignedRoom();
 });

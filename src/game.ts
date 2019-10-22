@@ -1,4 +1,5 @@
 import { EVENTS, GAME_STATUS } from "./constants";
+import { EventQueue } from "./event_queue";
 import { Ball } from "./game_objects/ball";
 import { Box } from "./game_objects/box";
 import { Field } from "./game_objects/field";
@@ -27,12 +28,16 @@ export class Game {
   private goalDetectionService: GoalDetectionService;
   private timer: TimerService;
   private positionValueDebugService: PositionValueDebugService;
+  private queue: EventQueue;
 
   public update(): void {
     this.timer.update();
     this.stateMachine.update(this);
     this.ball.update();
     this.teams.forEach((team) => team.update());
+    if (this.isReadyToExit()) {
+      this.queue.trigger(`${this.constructor.name}.readyToExit`, {});
+    }
   }
 
   public setBall(ball: Ball): Game {
@@ -92,6 +97,11 @@ export class Game {
       return this;
   }
 
+  public setEventQueue(queue: EventQueue): Game {
+    this.queue = queue;
+    return this;
+  }
+
   public disableControls(): void {
     this.teams.forEach((team) => team.disableControls());
   }
@@ -124,10 +134,8 @@ export class Game {
     return this.timer.isFinished();
   }
 
-  public isReadyToExit(): boolean {
-    // This is an indirect way of checking the state. Perhaps allow the state
-    // to say when it is done.
-    return this.status === GAME_STATUS.GAME_OVER;
+  public onReadyToExit(callback: () => void): void {
+    this.queue.when(`${this.constructor.name}.readyToExit`, callback);
   }
 
   public prepareForKickOff(): void {
@@ -154,6 +162,12 @@ export class Game {
       [EVENTS.POSITION_VALUE_DEBUG_INFO]:
         this.positionValueDebugService.getDebugData(),
     };
+  }
+
+  private isReadyToExit(): boolean {
+    // This is an indirect way of checking the state. Perhaps allow the state
+    // to say when it is done.
+    return this.status === GAME_STATUS.GAME_OVER;
   }
 
   private players(): Player[] {

@@ -40,19 +40,25 @@ export class QueryBuilder {
 
   public generateUpdateQuery<A>(
     id: number, attributes: A): IQuery<A> {
-    const { parameters, template } =
-      this.generateFilterQuery(attributes, ["id"]);
+    const { parameters, template } = this.generateAssingmentQuery(attributes);
     const updateTemplate =
       `UPDATE ${this.tableName} SET ${template} WHERE \
         id = ${id} RETURNING *`;
     return this.build(updateTemplate, parameters);
   }
 
-  private generateFilterQuery<A>(
-    attributes: A, exceptAttributeKeys: string[] = []): IQuery<A> {
+  private generateAssingmentQuery<A>(attributes: A): IQuery<A> {
+    const entries = Object.entries(attributes);
+    const template = Array.from(entries)
+      .map(([attrKey, _], attrIndex) => {
+        return `${camelToSnakeCase(attrKey)} = $${attrIndex + 1}`;
+    }).join(" ,");
+    return this.build(template, entries.map(([_, val]) => val));
+  }
+
+  private generateFilterQuery<A>(attributes: A): IQuery<A> {
     const defaultQuery = { template: "", parameters: [] } as IQuery<A>;
     return Array.from(Object.entries(attributes))
-      .filter(([attrKey, _]) => !exceptAttributeKeys.includes(attrKey))
       .map(([attrKey, attrValue]) => this.buildFilter(attrKey, attrValue))
       .reduce((acc, filter) => this.addFilter<A>(acc, filter), defaultQuery);
   }
@@ -61,12 +67,6 @@ export class QueryBuilder {
     if (Array.isArray(value)) { return "IN"; }
     if (value === null) { return "IS"; }
     return "=";
-  }
-
-  private transformFilterParameters<A>(value: A): A | string {
-    if (Array.isArray(value)) { return `(${value.join(", ")})`; }
-    if (value === null) { return "NULL"; }
-    return value;
   }
 
   private buildFilter(key: string, value: any): IFilter {
@@ -78,8 +78,14 @@ export class QueryBuilder {
     };
   }
 
+  private transformFilterParameters<A>(value: A): A | string {
+    if (Array.isArray(value)) { return `(${value.join(", ")})`; }
+    if (value === null) { return "NULL"; }
+    return value;
+  }
+
   private addFilter<A>(acc: IQuery<A>, filter: IFilter): IQuery<A> {
-    const {leftOperand, operator, rightOperand, substitution} = filter;
+    const { leftOperand, operator, rightOperand, substitution } = filter;
     const queryParameter =
       substitution ? `$${acc.parameters.length + 1}` : rightOperand;
     const filterTemplate = `${leftOperand} ${operator} ${queryParameter}`;
