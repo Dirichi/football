@@ -131,6 +131,8 @@ export class GameRoom {
 
   private routeClientCommandsToGameProcess(client: IGameClient): void {
     client.onCommandRequest((request) => {
+      if (!this.gameProcess) { return; }
+
       const message = {
         data: request,
         messageType: PROCESS_MESSAGE_TYPE.COMMAND,
