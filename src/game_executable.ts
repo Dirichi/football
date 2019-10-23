@@ -313,6 +313,7 @@ const taskId = setInterval(() => {
 }, GAME_STATE_UPDATE_DELAY);
 
 const exit = () => {
+  Logger.log("ending game...");
   clearInterval(taskId);
   process.send({
     data: playerReportService.getAllReports(),
