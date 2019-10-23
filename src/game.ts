@@ -35,9 +35,6 @@ export class Game {
     this.stateMachine.update(this);
     this.ball.update();
     this.teams.forEach((team) => team.update());
-    if (this.isReadyToExit()) {
-      this.queue.trigger(`${this.constructor.name}.readyToExit`, {});
-    }
   }
 
   public setBall(ball: Ball): Game {
@@ -126,6 +123,10 @@ export class Game {
     this.status = GAME_STATUS.GAME_OVER;
   }
 
+  public runExitAnimation(): void {
+    this.queue.trigger(`${this.constructor.name}.readyToExit`, {});
+  }
+
   public goalScored(): boolean {
     return this.goalDetectionService.goalDetected();
   }
@@ -162,12 +163,6 @@ export class Game {
       [EVENTS.POSITION_VALUE_DEBUG_INFO]:
         this.positionValueDebugService.getDebugData(),
     };
-  }
-
-  private isReadyToExit(): boolean {
-    // This is an indirect way of checking the state. Perhaps allow the state
-    // to say when it is done.
-    return this.status === GAME_STATUS.GAME_OVER;
   }
 
   private players(): Player[] {
