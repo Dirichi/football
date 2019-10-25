@@ -26,9 +26,6 @@ export class Post {
     return this.getMidPoint().distanceTo(point);
   }
 
-  // TODO: It feels disatisfactory that there's a collision notification
-  // service and this piece of code is here. Will change this to use that
-  // service later.
   public containsBall(ball: Ball): boolean {
     return this.containsPoint(ball.getPosition());
   }

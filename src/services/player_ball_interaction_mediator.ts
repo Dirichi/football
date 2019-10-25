@@ -26,8 +26,7 @@ export class PlayerBallInteractionMediator
   }
 
   public hasBall(player: Player): boolean {
-    return player ===
-      this.possessionService.getCurrentPlayerInPossessionOrNull();
+    return this.possessionService.hasBall(player);
   }
 
   public kickBall(

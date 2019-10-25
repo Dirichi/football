@@ -1,4 +1,3 @@
-import { COMMAND_ID } from "../../../constants";
 import { Player } from "../../../game_objects/player";
 import { ICommandFactory } from "../../../interfaces/icommand_factory";
 import { IPlayerState } from "../../../interfaces/iplayer_state";

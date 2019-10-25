@@ -14,7 +14,7 @@ import * as chai from 'chai';
 import * as sinon from 'sinon';
 import { PLAYER_MESSAGES } from '../../../../src/constants';
 
-const sinonChai = require('sinon-chai');
+import sinonChai = require('sinon-chai');
 const expect = chai.expect;
 chai.use(sinonChai);
 
@@ -189,8 +189,7 @@ describe('PlayerStateFeatureExtractor', () => {
           sender: sender,
         } as IPlayerMessage;
         sinon.stub(player, 'getMessages').returns([message]);
-        sinon.stub(possessionService, 'getCurrentPlayerInPossessionOrNull')
-          .returns(player);
+        possessionService.setCurrent(player);
 
         expect(extractor.expectedPassInterceptedOrCompleted(player)).to.be.true;
       });
@@ -203,8 +202,7 @@ describe('PlayerStateFeatureExtractor', () => {
           sender: sender,
         } as IPlayerMessage;
         sinon.stub(player, 'getMessages').returns([message]);
-        sinon.stub(possessionService, 'getCurrentPlayerInPossessionOrNull')
-          .returns(interceptor);
+        possessionService.setCurrent(interceptor);
 
         expect(extractor.expectedPassInterceptedOrCompleted(player)).to.be.true;
       });
@@ -216,8 +214,7 @@ describe('PlayerStateFeatureExtractor', () => {
           sender: sender,
         } as IPlayerMessage;
         sinon.stub(player, 'getMessages').returns([message]);
-        sinon.stub(possessionService, 'getCurrentPlayerInPossessionOrNull')
-          .returns(sender);
+        possessionService.setCurrent(sender);
 
         expect(
           extractor.expectedPassInterceptedOrCompleted(player)).to.be.false;
@@ -230,8 +227,7 @@ describe('PlayerStateFeatureExtractor', () => {
           sender: sender,
         } as IPlayerMessage;
         sinon.stub(player, 'getMessages').returns([message]);
-        sinon.stub(possessionService, 'getCurrentPlayerInPossessionOrNull')
-          .returns(null);
+        possessionService.setCurrent(null);
 
         expect(
           extractor.expectedPassInterceptedOrCompleted(player)).to.be.false;

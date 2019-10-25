@@ -36,7 +36,7 @@ import { KeeperGuardPostCommand } from "./commands/keeper_guard_post_command";
 import {
   BALL_INITIAL_ARGS, BOX18A_INITIAL_COORDINATES,
   BOX18B_INITIAL_COORDINATES, BOX6A_INITIAL_COORDINATES,
-  BOX6B_INITIAL_COORDINATES, COLLISION_MARGIN_FACTOR, COMMAND_ID, constants,
+  BOX6B_INITIAL_COORDINATES, COMMAND_ID, constants,
   DEFAULT_TEAM_A_ROLES,
   DEFAULT_TEAM_B_ROLES, FIELD_INITIAL_COORDINATES, GAME_STATE_UPDATE_DELAY,
   PLAYER_INITIAL_ARGS, POSTA_INITIAL_COORDINATES, POSTB_INITIAL_COORDINATES,
@@ -66,8 +66,6 @@ import { IProcessMessage } from "./interfaces/iprocess_message";
 import { BallPhysics } from "./physics/ball_physics";
 import { PlayerPhysics } from "./physics/player_physics";
 import { BallPossessionService } from "./services/ball_possession_service";
-import { CollisionDetectionService } from "./services/collision_detection_service";
-import { CollisionNotificationService } from "./services/collision_notification_service";
 import { GoalDetectionService } from "./services/goal_detection_service";
 import { GoalRecordService } from "./services/goal_record_service";
 import { PlayerBallInteractionMediator } from "./services/player_ball_interaction_mediator";
@@ -82,9 +80,6 @@ import { range } from "./utils/helper_functions";
 Logger.log("started a new game process");
 
 const queue = new EventQueue();
-const collisionDetectionService = new CollisionDetectionService();
-const collisionNotificationService = new CollisionNotificationService(
-  collisionDetectionService, queue);
 
 // TODO: Perhaps if these game objects were initialized with hashes, this part
 // of the code would not look so messy.
@@ -172,7 +167,6 @@ const teamBroles =
 
 teamA.setRoles(teamAroles);
 teamB.setRoles(teamBroles);
-collisionNotificationService.registerCollisionGroup([ball, ...defaultPlayers]);
 
 const interceptionCalculator = new InterceptionCalculator();
 const shotValueCalculator =
@@ -203,7 +197,7 @@ const featureExtractor =
 
 const tickService = new TickService(queue);
 const cacher =
-  new FeatureExtractorCacher(featureExtractor, tickService, 2);
+  new FeatureExtractorCacher(featureExtractor, tickService, 0);
 const cachedFeatureExtractor = cacher.createCachingProxy();
 
 const goalDetectionService = new GoalDetectionService(ball, posts, queue);
@@ -216,7 +210,7 @@ const COMMAND_ID_TO_COMMAND_MAPPING = new Map<COMMAND_ID, ICommand>([
   [COMMAND_ID.PASS_BALL, new PassBallCommand().setPassTracker(passTracker)],
   [COMMAND_ID.STOP, new StopCommand()],
   [COMMAND_ID.GUARD_POST, new KeeperGuardPostCommand()],
-  [COMMAND_ID.REQUEST_PASS, new CallForBallCommand(ballPossessionService)],
+  [COMMAND_ID.REQUEST_PASS, new CallForBallCommand()],
 ]);
 
 const commandFactory = new CommandFactory(COMMAND_ID_TO_COMMAND_MAPPING);
@@ -236,10 +230,6 @@ const PLAYER_STATES: IPlayerState[] = [
 defaultPlayers.forEach((player) => {
   player.setController(new PlayerStateMachine(PLAYER_STATES));
 });
-// TODO: Replace this with a controller that listens to commands from a specific
-// user.
-
-collisionDetectionService.setCollisionMarginFactor(COLLISION_MARGIN_FACTOR);
 
 const genericHandler = new GenericRemoteCommandRequestHandler(commandFactory);
 const passHandler = new PassBallRemoteCommandRequestHandler(commandFactory);
@@ -296,7 +286,6 @@ const sendControllerAssigned = (clientId: string, playerId: string) => {
 passTracker.setup();
 shotTracker.setup();
 cacher.enableRefreshing();
-ballPossessionService.setup();
 const taskId = setInterval(() => {
  // ------------------------------
   // these guys are updated here instead of inside the game loop because the
@@ -306,7 +295,6 @@ const taskId = setInterval(() => {
   goalDetectionService.update();
   goalRecordService.update();
   ballPossessionService.update();
-  collisionNotificationService.update();
 // -----------------------------------
   game.update();
   sendGameState();

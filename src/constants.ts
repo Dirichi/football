@@ -121,8 +121,6 @@ export const BOX18B_INITIAL_COORDINATES = [
   constants.BOX18_YLENGTH_TO_FIELD_YLENGTH as number,
 ];
 
-export const COLLISION_MARGIN_FACTOR = 1.2;
-
 export const GOAL_ANIMATION_TIME = 180; // in number of `update` calls
 export const KICKOFF_ANIMATION_TIME = 180; // in number of `update` calls
 export const GAME_OVER_ANIMATION_TIME = 180;
