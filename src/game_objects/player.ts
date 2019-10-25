@@ -42,10 +42,10 @@ export class Player implements ICollidable {
     this.y = y;
     this.vx = vx;
     this.vy = vy;
-    this.diameter = diameter;
     // TODO: Details like this should maybe be hidden away in another object
     // Like a PhysicalRepresentation or something like that. So that we can
     // swap representations out as we see fit.
+    this.diameter = diameter;
     this.messages = [];
     this.ballControlEnabled = true;
     this.kicking = false;

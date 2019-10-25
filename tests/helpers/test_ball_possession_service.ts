@@ -10,6 +10,18 @@ export class TestBallPossessionService implements IBallPossessionService {
     this.last = last;
   }
 
+  public hasBall(player: Player): boolean {
+    return player === this.current;
+  }
+
+  public setCurrent(player: Player): void {
+    this.current = player;
+  }
+
+  public setLast(player: Player): void {
+    this.last = player;
+  }
+
   public getCurrentPlayerInPossessionOrNull(): Player | null {
     return this.current;
   }

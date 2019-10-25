@@ -5,20 +5,12 @@ import { TestEventQueue } from '../helpers/test_event_queue';
 import * as chai from 'chai';
 import * as sinon from 'sinon';
 
-const sinonChai = require('sinon-chai');
+import sinonChai = require('sinon-chai');
 const expect = chai.expect;
 chai.use(sinonChai);
 
 let ball: Ball;
 let queue: TestEventQueue;
-
-let triggerBallCollisionEventForPlayer = (player: Player) => {
-  queue.trigger(`${ball.getGameObjectId()}.collision`, {
-    colliderId: player.getGameObjectId(),
-    colliderType: 'player',
-    shape: player.getShape(),
-  });
-};
 
 describe('BallPossessionService', () => {
   beforeEach(() => {
@@ -32,82 +24,75 @@ describe('BallPossessionService', () => {
   });
 
   describe('`update`', () => {
-    it('listens for ball collision events', () => {
-      sinon.stub(queue, 'when');
-
-      const service = new BallPossessionService(ball, [], queue);
-      service.setup();
-      expect(queue.when).to.have.been.calledWith(
-        `${ball.getGameObjectId()}.collision`);
-    });
-  });
-
-  describe('`getCurrentPlayerInPossessionOrNull`', () => {
-    it('returns the most recent player to collide with the ball', () => {
+    it('sets playerInPossession to the closest player in contact with the ball',
+      () => {
       const playerA = new Player(1, 1, 0, 0, 2); // x, y, vx, vy, diameter
-      const playerB = new Player(5, 0, 0, 0, 2); // x, y, vx, vy, diameter
-
-      const service = new BallPossessionService(
-        ball, [playerA, playerB], queue);
-      service.setup();
-
-      triggerBallCollisionEventForPlayer(playerA);
-      triggerBallCollisionEventForPlayer(playerB);
-
-      const player = service.getCurrentPlayerInPossessionOrNull();
-      expect(player).to.equal(playerB);
-    });
-
-    it('disregards collisions with unregistered objects', () => {
-      const playerA = new Player(1, 1, 0, 0, 2); // x, y, vx, vy, diameter
-      const playerB = new Player(5, 0, 0, 0, 2); // x, y, vx, vy, diameter
-
-      // notice that playerB is not registered with ballPossessionService
-      const service = new BallPossessionService(ball, [playerA], queue);
-      service.setup();
-
-      triggerBallCollisionEventForPlayer(playerA);
-      triggerBallCollisionEventForPlayer(playerB);
-
-      const player = service.getCurrentPlayerInPossessionOrNull();
-      expect(player).to.equal(playerA);
-    });
-
-    it('returns null if there is no player in possession', () => {
-      const playerA = new Player(5, 0, 0, 0, 2); // x, y, vx, vy, diameter
-      const playerB = new Player(5, 0, 0, 0, 2); // x, y, vx, vy, diameter
-
-      const service = new BallPossessionService(ball, [playerA, playerB], queue);
-      service.setup();
-      const player = service.getCurrentPlayerInPossessionOrNull();
-      expect(player).to.be.null;
-    });
-  });
-
-  describe('`update`', () => {
-    it('sets the currentPlayerInPossession to null', () => {
-      const player = new Player(1, 1, 0, 0, 2); // x, y, vx, vy, diameter
-      const service = new BallPossessionService(ball, [player], queue);
-      service.setup();
-      triggerBallCollisionEventForPlayer(player);
+      const playerB = new Player(0.5, 0.5, 0, 0, 2); // x, y, vx, vy, diameter
+      const service =
+        new BallPossessionService(ball, [playerA, playerB], queue);
 
       service.update();
 
-      const playerInPossession = service.getCurrentPlayerInPossessionOrNull();
-      expect(playerInPossession).to.be.null;
+      expect(service.getCurrentPlayerInPossessionOrNull()).to.equal(playerB);
+    });
+
+    it('sets lastPlayerInPossession to the most recent playerInPossession',
+      () => {
+      const playerA = new Player(1, 1, 0, 0, 2); // x, y, vx, vy, diameter
+      const playerB = new Player(0.5, 0.5, 0, 0, 2); // x, y, vx, vy, diameter
+      const service =
+        new BallPossessionService(ball, [playerA, playerB], queue);
+      service.update();
+      [playerA.x, playerA.y] = [5, 5];
+      [playerB.x, playerB.y] = [5, 5];
+
+      service.update();
+
+      expect(service.getLastPlayerInPossession()).to.equal(playerB);
+    });
+
+
+    it('sets playerInPossession to null if no player is in contact with' +
+      ' the ball', () => {
+      const playerA = new Player(5, 0, 0, 0, 2); // x, y, vx, vy, diameter
+      const playerB = new Player(5, 0, 0, 0, 2); // x, y, vx, vy, diameter
+
+      const service =
+        new BallPossessionService(ball, [playerA, playerB], queue);
+
+      service.update();
+
+      expect(service.getCurrentPlayerInPossessionOrNull()).to.be.null;
+    });
+
+    it('triggers whenPossessionChanged callbacks if a new player gains ' +
+      'possession', () => {
+      const playerA = new Player(0, 0, 0, 0, 2); // x, y, vx, vy, diameter
+      const playerB = new Player(5, 0, 0, 0, 2); // x, y, vx, vy, diameter
+
+      const service =
+        new BallPossessionService(ball, [playerA, playerB], queue);
+      const callback = sinon.spy();
+      service.whenPossessionChanged((player) => callback.call(this, player));
+      service.update();
+      [playerA.x, playerA.y] = [5, 0];
+      [playerB.x, playerB.y] = [0, 0];
+
+      service.update();
+
+      expect(callback).to.have.been.calledOnceWith(playerB);
     });
   });
 
   describe('`getLastPlayerInPossession`', () => {
     it('returns the last (non-null) player in possession of the ball', () => {
-      const player = new Player(1, 1, 0, 0, 2); // x, y, vx, vy, diameter
+      const player = new Player(0.5, 0.5, 0, 0, 2); // x, y, vx, vy, diameter
       const service = new BallPossessionService(ball, [player], queue);
-      service.setup();
-      triggerBallCollisionEventForPlayer(player);
 
       service.update();
 
       const playerInPossession = service.getLastPlayerInPossession();
+
       expect(playerInPossession).to.equal(player);
     });
   });

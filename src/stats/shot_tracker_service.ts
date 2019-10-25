@@ -13,13 +13,13 @@ export class ShotTrackerService {
     private ballPossessionService: IBallPossessionService,
     private goalDetectionService: GoalDetectionService) { }
 
-    public setup(): void {
-      if (this.enabled) { return; }
+  public setup(): void {
+    if (this.enabled) { return; }
 
-      this.listenForGoals();
-      this.listenForPossessionChange();
-      this.enabled = true;
-    }
+    this.listenForGoals();
+    this.listenForPossessionChange();
+    this.enabled = true;
+  }
 
   public track(shot: IShot): void {
     this.checkEnabled();

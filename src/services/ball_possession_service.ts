@@ -1,8 +1,8 @@
 import { Ball } from "../game_objects/ball";
 import { Player } from "../game_objects/player";
 import { IBallPossessionService } from "../interfaces/iball_possession_service";
-import { ICollisionPayload } from "../interfaces/icollision_payload";
 import { IEventQueue } from "../interfaces/ievent_queue";
+import { minimumBy } from "../utils/helper_functions";
 
 export class BallPossessionService implements IBallPossessionService {
   private ball: Ball;
@@ -20,14 +20,15 @@ export class BallPossessionService implements IBallPossessionService {
   }
 
   public update(): void {
-    // Clear data about the current player in possession.
-    // It will be refreshed when another ball collision event
-    // occurs
-    this.currentPlayerInPossession = null;
+    this.currentPlayerInPossession = this.findCurrentPlayerInPossession();
+    if (this.currentPlayerInPossession) {
+      this.publishPossessionChangedEvents();
+      this.lastPlayerInPossession = this.currentPlayerInPossession;
+    }
   }
 
-  public setup(): void {
-    this.listenForBallCollisions();
+  public hasBall(player: Player): boolean {
+    return this.currentPlayerInPossession === player;
   }
 
   public getLastPlayerInPossession(): Player | null {
@@ -40,38 +41,35 @@ export class BallPossessionService implements IBallPossessionService {
   }
 
   public whenPossessionChanged(callback: (player: Player) => void): void {
-    this.queue.when(`${this.eventTag()}.possessionChanged`, callback);
+    this.queue.when(`${this.eventTag("possessionChanged")}`, callback);
   }
 
-  private listenForBallCollisions(): void {
-    this.queue.when(`${this.ball.getGameObjectId()}.collision`,
-      (data: ICollisionPayload) => {
-        this.updateBallPossessionData(data);
-      });
-  }
+  private findCurrentPlayerInPossession(): Player | null {
+    const playersInPossession =
+      this.players.filter((player) => this.closeToBall(player));
 
-  private updateBallPossessionData(payload: ICollisionPayload): void {
-    const playerInPossession = this.players.find((player) => {
-      return player.getGameObjectId() === payload.colliderId;
+    return minimumBy(playersInPossession, (player) => {
+      return player.getPosition().distanceTo(this.ball.getPosition());
     });
-
-    if (!playerInPossession) { return; }
-
-    this.publishPossesionChangedEvents(playerInPossession);
-    this.currentPlayerInPossession = playerInPossession;
-    this.lastPlayerInPossession = playerInPossession;
   }
 
-  private eventTag(): string {
-    return this.constructor.name;
+  private eventTag(event: string): string {
+    return `${this.constructor.name}.${event}`;
   }
 
-  private publishPossesionChangedEvents(playerInPossession: Player): void {
+  private closeToBall(player: Player): boolean {
+    const distanceToBall =
+      player.getPosition().distanceTo(this.ball.getPosition());
+    return distanceToBall < ((player.diameter / 2 + this.ball.diameter / 2));
+  }
+
+  private publishPossessionChangedEvents(): void {
     if (!this.lastPlayerInPossession) { return; }
 
-    if (this.lastPlayerInPossession !== playerInPossession) {
+    if (this.lastPlayerInPossession !== this.currentPlayerInPossession) {
       this.queue.trigger(
-          `${this.eventTag()}.possessionChanged`, playerInPossession);
+        `${this.eventTag("possessionChanged")}`,
+        this.currentPlayerInPossession);
     }
   }
 }
