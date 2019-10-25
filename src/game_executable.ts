@@ -39,12 +39,13 @@ import {
   BOX6B_INITIAL_COORDINATES, COMMAND_ID, constants,
   DEFAULT_TEAM_A_ROLES,
   DEFAULT_TEAM_B_ROLES, FIELD_INITIAL_COORDINATES, GAME_STATE_UPDATE_DELAY,
-  PLAYER_INITIAL_ARGS, POSTA_INITIAL_COORDINATES, POSTB_INITIAL_COORDINATES,
-  PROCESS_MESSAGE_TYPE, RADIUS_FOR_CONGESTION, TEAM_ID, TEAM_SIDES
+  NO_TEAM_IN_POSSESSION_TIMEOUT, PLAYER_INITIAL_ARGS, POSTA_INITIAL_COORDINATES,
+  POSTB_INITIAL_COORDINATES, PROCESS_MESSAGE_TYPE, RADIUS_FOR_CONGESTION, TEAM_ID, TEAM_SIDES
 } from "./constants";
 import { EventQueue } from "./event_queue";
 import { Game } from "./game";
 import { PlayerHumanController } from "./game_ai/player/human_controller/player_human_controller";
+import { TeamInControlCalculator } from "./game_ai/player/state_machine/calculators/team_in_control_calculator";
 import { FeatureExtractorCacher } from "./game_ai/player/state_machine/feature_extractor_cacher";
 import { KeeperState } from "./game_ai/player/state_machine/keeper_state";
 import { PassingToRequesterState } from "./game_ai/player/state_machine/passing_to_requester_state";
@@ -184,7 +185,9 @@ const defenceValueCalculator =
 
 const positionValueDebugService =
   new PositionValueDebugService(positionValueCalculator, defaultPlayers);
-
+const teamInControlCalculator =
+  new TeamInControlCalculator(
+    ballPossessionService, NO_TEAM_IN_POSSESSION_TIMEOUT);
 const featureExtractor =
   new PlayerStateFeatureExtractor(
     ball,
@@ -193,7 +196,8 @@ const featureExtractor =
     shotValueCalculator,
     positionValueCalculator,
     dribbleValueCalculator,
-    defenceValueCalculator);
+    defenceValueCalculator,
+    teamInControlCalculator);
 
 const tickService = new TickService(queue);
 const cacher =
@@ -295,6 +299,7 @@ const taskId = setInterval(() => {
   goalDetectionService.update();
   goalRecordService.update();
   ballPossessionService.update();
+  teamInControlCalculator.update();
 // -----------------------------------
   game.update();
   sendGameState();

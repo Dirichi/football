@@ -24,24 +24,24 @@ export class InterceptionCalculator {
         const playerRadius = player.getShape().getDiameter() / 2;
 
         const startToTarget = targetPosition.minus(startPosition);
-        const playerToStart = player.getPosition().minus(startPosition);
+        const startToPlayer = player.getPosition().minus(startPosition);
 
         // If the player is behind the ball return false
         // this assumes that the ball is always faster than the player
         // which reflects real life.
-        if (startToTarget.dotProduct(playerToStart) < 0) {
+        if (startToTarget.dotProduct(startToPlayer) < 0) {
+          return false;
+        }
+
+        if (startToPlayer.magnitude() > startToTarget.magnitude()) {
+          // TODO: Test and document this
           return false;
         }
 
         const playerDistanceToInterception =
-          playerToStart.perpendicularDistanceTo(startToTarget) - playerRadius;
+          startToPlayer.perpendicularDistanceTo(startToTarget) - playerRadius;
         const distanceToInterception =
-          playerToStart.scalarProjectionOnTo(startToTarget);
-
-        if (startToTarget.magnitude() < distanceToInterception) {
-          // TODO: Test and document this
-          return false;
-        }
+          startToPlayer.scalarProjectionOnTo(startToTarget);
 
         const playerTimeOfArrival =
           playerDistanceToInterception / player.getMaximumSpeed();

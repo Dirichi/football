@@ -326,3 +326,9 @@ export const DEFAULT_TEAM_B_ROLES = [
   PLAYER_ROLE.LF,
   PLAYER_ROLE.RF,
 ];
+
+// This dictates how long the TeamInControlCalculator should wait while there is
+// no current player in possession, before it changes the teamInPossession to
+// null. Otherwise it leaves the team in possession as the team of the last
+// player that touched the ball.
+export const NO_TEAM_IN_POSSESSION_TIMEOUT = 90; // in number of ticks
