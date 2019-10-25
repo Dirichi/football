@@ -12,6 +12,7 @@ import { TestBallPossessionService } from '../../../helpers/test_ball_possession
 import { Vector3D } from '../../../../src/three_dimensional_vector';
 import * as chai from 'chai';
 import * as sinon from 'sinon';
+import { ITeamInControlCalculator } from '../../../../src/interfaces/iteam_in_control_calculator';
 import { PLAYER_MESSAGES } from '../../../../src/constants';
 
 import sinonChai = require('sinon-chai');
@@ -58,6 +59,17 @@ class TestAttackingPositionValueCalculator
   }
 }
 
+class TestTeamInControlCalculator implements ITeamInControlCalculator {
+  private teamInControl: Team | null = null;
+
+  public setTeamInControl(team: Team): void {
+    this.teamInControl = team;
+  }
+  public getTeamInControl(): Team | null {
+    return this.teamInControl;
+  }
+}
+
 
 let player: Player;
 let ball: Ball;
@@ -68,6 +80,7 @@ let dribbleValueCalculator: IDribbleValueCalculator;
 let defenceValueCalculator: IDefenceValueCalculator;
 let possessionService: TestBallPossessionService;
 let extractor: PlayerStateFeatureExtractor;
+let teamInControlCalculator: TestTeamInControlCalculator;
 
 describe('PlayerStateFeatureExtractor', () => {
   beforeEach(() => {
@@ -89,6 +102,8 @@ describe('PlayerStateFeatureExtractor', () => {
       evaluate: (player: Player, position: Vector3D) => 0.5,
     }
 
+    teamInControlCalculator = new TestTeamInControlCalculator();
+
     possessionService = new TestBallPossessionService();
     extractor = new PlayerStateFeatureExtractor(
       ball,
@@ -97,7 +112,8 @@ describe('PlayerStateFeatureExtractor', () => {
       shotValueCalculator,
       positionValueCalculator,
       dribbleValueCalculator,
-      defenceValueCalculator
+      defenceValueCalculator,
+      teamInControlCalculator,
     );
   });
 
@@ -110,6 +126,7 @@ describe('PlayerStateFeatureExtractor', () => {
     dribbleValueCalculator = null;
     defenceValueCalculator = null;
     possessionService = null;
+    teamInControlCalculator = null;
     extractor = null;
   });
 
@@ -126,26 +143,29 @@ describe('PlayerStateFeatureExtractor', () => {
   });
 
   describe('`teamInControl`', () => {
-    it('returns true if the lastPlayerInPossession is a player teamMate',
-      () => {
-        const otherPlayer = new Player(0, 0, 0, 0, 5);
-        const team = new Team([]);
-        [player, otherPlayer].forEach((element) => element.setTeam(team));
-        sinon.stub(
-          possessionService, 'getLastPlayerInPossession').returns(player);
-        expect(extractor.teamInControl(player)).to.be.true;
-      });
+    it('returns true if the player\'s team is in control', () => {
+      const team = new Team([]);
+      player.setTeam(team);
+      teamInControlCalculator.setTeamInControl(team);
 
-    it('returns false if the lastPlayerInPossession is not a player teamMate',
-      () => {
-        const otherPlayer = new Player(0, 0, 0, 0, 5);
-        [player, otherPlayer].forEach((element) => {
-          element.setTeam(new Team([]))
-        });
-        sinon.stub(
-          possessionService, 'getLastPlayerInPossession').returns(otherPlayer);
-        expect(extractor.teamInControl(player)).to.be.false;
-      });
+      expect(extractor.teamInControl(player)).to.be.true;
+
+    });
+
+    it('returns false if a different team is in control', () => {
+      const teamA = new Team([]);
+      const teamB = new Team([]);
+      player.setTeam(teamA);
+      teamInControlCalculator.setTeamInControl(teamB);
+
+      expect(extractor.teamInControl(player)).to.be.false;
+    });
+
+    it('returns false if no team is in control', () => {
+      player.setTeam(new Team([]));
+
+      expect(extractor.teamInControl(player)).to.be.false;
+    });
   });
 
   describe('`bestPassingOption`', () => {

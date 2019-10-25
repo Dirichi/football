@@ -12,6 +12,7 @@ import { IDribbleValueCalculator } from "../../../interfaces/idribble_value_calc
 import { IPassValueCalculator } from "../../../interfaces/ipass_value_calculator";
 import { IPlayerStateFeatureExtractor } from "../../../interfaces/iplayer_state_feature_extractor";
 import { IShotValueCalculator } from "../../../interfaces/ishot_value_calculator";
+import { ITeamInControlCalculator } from "../../../interfaces/iteam_in_control_calculator";
 import { Vector3D } from "../../../three_dimensional_vector";
 import { distanceAheadOfBall, shotTargetOptions } from "../../../utils/game_functions";
 import { maximumBy, minimumBy } from "../../../utils/helper_functions";
@@ -24,18 +25,12 @@ export class PlayerStateFeatureExtractor implements IPlayerStateFeatureExtractor
     private shotValueCalculator: IShotValueCalculator,
     private positionValueCalculator: IAttackPositionValueCalculator,
     private dribbleValueCalculator: IDribbleValueCalculator,
-    private defenceValueCalculator: IDefenceValueCalculator) {
+    private defenceValueCalculator: IDefenceValueCalculator,
+    private teamInControlCalculator: ITeamInControlCalculator) {
   }
 
   public teamInControl(player: Player): boolean {
-    const lastPlayerInPossession =
-      this.ballPossessionService.getLastPlayerInPossession();
-
-    if (!lastPlayerInPossession) {
-      // TODO: Test this behavior
-      return false;
-    }
-    return lastPlayerInPossession.getTeam() === player.getTeam();
+    return this.teamInControlCalculator.getTeamInControl() === player.getTeam();
   }
 
   public hasBall(player: Player): boolean {
