@@ -43,11 +43,9 @@ const sketch = (p: p5) => {
       new KickingState(animationStore, soundPlayer),
       new IdleState(animationStore),
       new RunningState(animationStore),
-    ]
+    ];
 
-    const controller = new PlayerAnimationController(states);
-    controller.configure();
-    return controller;
+    return new PlayerAnimationController(states);
   }
   const spriteManager = new PlayerSpriteManager(animationControllerFactory);
   socket.on(
