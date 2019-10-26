@@ -5,24 +5,21 @@ import { AnimationStore } from "../animation_store";
 import { PlayerSprite } from "../player_sprite";
 
 export class IdleState implements IPlayerAnimationState {
-  private nextState: IPlayerAnimationState;
   private animation?: IAnimation;
 
   constructor(private animationStore: AnimationStore) {}
 
-  public animate(sprite: PlayerSprite): IPlayerAnimationState {
+  public enter(sprite: PlayerSprite): void {
     if (!this.animation) { this.initializeAnimation(sprite); }
-
-    if (sprite.isMoving() && this.nextState) {
-      return this.nextState.animate(sprite);
-    }
-
-    this.animation.render(sprite);
-    return this;
   }
 
-  public setNextState(state: IPlayerAnimationState): void {
-    this.nextState = state;
+  public eligibleFor(sprite: PlayerSprite): boolean {
+    return !sprite.isMoving();
+  }
+
+  public animate(sprite: PlayerSprite): void {
+    if (!this.eligibleFor(sprite)) { return; }
+    this.animation.render(sprite);
   }
 
   public exit(): void {

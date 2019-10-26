@@ -6,27 +6,24 @@ import { PlayerSprite } from "../player_sprite";
 import { SoundPlayer } from "../sound_player";
 
 export class KickingState implements IPlayerAnimationState {
-  private nextState: IPlayerAnimationState;
   private animation?: IAnimation;
 
   constructor(
     private animationStore: AnimationStore,
-    private soundPlayer: SoundPlayer) {}
+    private soundPlayer: SoundPlayer) { }
 
-  public animate(sprite: PlayerSprite): IPlayerAnimationState {
-    if (!this.animation) { this.initializeAnimation(sprite); }
-
-    if (!sprite.isKicking() && this.nextState) {
-      return this.nextState.animate(sprite);
-    }
-
+  public animate(sprite: PlayerSprite): void {
+    if (!this.eligibleFor(sprite)) { return; }
     this.animation.render(sprite);
-    this.soundPlayer.play(SOUND_ID.KICK);
-    return this;
   }
 
-  public setNextState(state: IPlayerAnimationState): void {
-    this.nextState = state;
+  public eligibleFor(sprite: PlayerSprite): boolean {
+    return sprite.isKicking();
+  }
+
+  public enter(sprite: PlayerSprite): void {
+    if (!this.animation) { this.initializeAnimation(sprite); }
+    this.soundPlayer.play(SOUND_ID.KICK);
   }
 
   public exit(): void {

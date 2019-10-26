@@ -6,22 +6,15 @@ export class PlayerAnimationController {
 
   constructor(private states: IPlayerAnimationState[]) {}
 
-  public configure(): void {
-    this.states.forEach((state, stateIndex) => {
-      const nextState = this.states[stateIndex + 1];
-      if (!nextState) { return; }
-      state.setNextState(nextState);
-    });
-  }
-
   public animate(playerSprite: PlayerSprite): void {
-    // This looks a little confusing because one might assume that only state[0]
-    // is ever evaluated
-    const nextState = this.states[0].animate(playerSprite);
-    if (this.currentState && nextState !== this.currentState) {
-      this.currentState.exit();
+    const nextState =
+      this.states.find((state) => state.eligibleFor(playerSprite));
+    if (this.currentState !== nextState) {
+      if (this.currentState) { this.currentState.exit(); }
+      nextState.enter(playerSprite);
     }
 
     this.currentState = nextState;
+    this.currentState.animate(playerSprite);
   }
 }
