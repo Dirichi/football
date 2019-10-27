@@ -1,4 +1,3 @@
-import { IDEAL_DISTANCE_FROM_GOAL } from "../../../../constants";
 import { Ball } from "../../../../game_objects/ball";
 import { Field } from "../../../../game_objects/field";
 import { Player } from "../../../../game_objects/player";
@@ -15,7 +14,11 @@ export class AttackPositionValueCalculator implements IAttackPositionValueCalcul
     private field: Field,
     private congestionCalculator: CongestionCalculator,
     private shotValueCalculator: ShotValueCalculator,
-    private idealDistanceFromGoal: number = IDEAL_DISTANCE_FROM_GOAL) {
+    private idealDistanceFromGoal: number,
+    private congestionWeight: number,
+    private proximityToOpposingPostWeight: number,
+    private trackingBallWeight: number,
+    private shotValueWeight: number) {
   }
 
   public evaluate(
@@ -33,9 +36,10 @@ export class AttackPositionValueCalculator implements IAttackPositionValueCalcul
         this.trackingBallScore(position, ballPosition);
 
       const weightedScore =
-        // TODO: Make these weights constants
-        (congestion * -0.03) +  (proximity * 0.2) + (trackingBall * 0.2)
-        + (shotValue * 0.2);
+        (congestion * this.congestionWeight) +
+        (proximity * this.proximityToOpposingPostWeight) +
+        (trackingBall * this.trackingBallWeight) +
+        (shotValue * this.shotValueWeight);
       return weightedScore;
   }
 

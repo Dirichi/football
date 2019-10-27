@@ -1,12 +1,12 @@
 import { Team } from "../../../../game_objects/team";
+import { IBallPossessionService } from "../../../../interfaces/iball_possession_service";
 import { ITeamInControlCalculator } from "../../../../interfaces/iteam_in_control_calculator";
-import { BallPossessionService } from "../../../../services/ball_possession_service";
 
 export class TeamInControlCalculator implements ITeamInControlCalculator {
   private teamInControl: Team | null;
 
   constructor(
-    private possessionService: BallPossessionService,
+    private possessionService: IBallPossessionService,
     private controlTimeout: number,
     private controlTimer: number = 0) {}
 

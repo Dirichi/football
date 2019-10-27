@@ -1,22 +1,5 @@
 import { GameStateMachine } from "./game_ai/game/game_state_machine";
 import { KickOffState } from "./game_ai/game/kickoff_state";
-import { AttackingRunState } from "./game_ai/player/state_machine/attacking_run_state";
-import {
-  AttackPositionValueCalculator
-} from "./game_ai/player/state_machine/calculators/attack_position_value_calculator";
-import { CongestionCalculator } from "./game_ai/player/state_machine/calculators/congestion_calculator";
-import { DefenceValueCalculator } from "./game_ai/player/state_machine/calculators/defence_value_calculator";
-import { DribbleValueCalculator } from "./game_ai/player/state_machine/calculators/dribble_value_calculator";
-import { InterceptionCalculator } from "./game_ai/player/state_machine/calculators/interception_calculator";
-import { PassValueCalculator } from "./game_ai/player/state_machine/calculators/pass_value_calculator";
-import { ShotValueCalculator } from "./game_ai/player/state_machine/calculators/shot_value_calculator";
-import { ChasingBallState } from "./game_ai/player/state_machine/chasing_ball_state";
-import { DefensiveRunState } from "./game_ai/player/state_machine/defensive_run_state";
-import { DribblingState } from "./game_ai/player/state_machine/dribbling_state";
-import { PassingState } from "./game_ai/player/state_machine/passing_state";
-import { PlayerStateFeatureExtractor } from "./game_ai/player/state_machine/player_state_feature_extractor";
-import { ShootingState } from "./game_ai/player/state_machine/shooting_state";
-import { WaitingState } from "./game_ai/player/state_machine/waiting_state";
 
 import { ChaseBallCommand } from "./commands/chase_ball_command";
 import { CommandFactory } from "./commands/command_factory";
@@ -39,17 +22,13 @@ import {
   BOX6B_INITIAL_COORDINATES, COMMAND_ID, constants,
   DEFAULT_TEAM_A_ROLES,
   DEFAULT_TEAM_B_ROLES, FIELD_INITIAL_COORDINATES, GAME_STATE_UPDATE_DELAY,
-  NO_TEAM_IN_POSSESSION_TIMEOUT, PLAYER_INITIAL_ARGS, POSTA_INITIAL_COORDINATES,
-  POSTB_INITIAL_COORDINATES, PROCESS_MESSAGE_TYPE, RADIUS_FOR_CONGESTION, TEAM_ID, TEAM_SIDES
+  PLAYER_INITIAL_ARGS, POSTA_INITIAL_COORDINATES,
+  POSTB_INITIAL_COORDINATES, PROCESS_MESSAGE_TYPE, TEAM_ID, TEAM_SIDES
 } from "./constants";
 import { EventQueue } from "./event_queue";
 import { Game } from "./game";
 import { PlayerHumanController } from "./game_ai/player/human_controller/player_human_controller";
-import { TeamInControlCalculator } from "./game_ai/player/state_machine/calculators/team_in_control_calculator";
-import { FeatureExtractorCacher } from "./game_ai/player/state_machine/feature_extractor_cacher";
-import { KeeperState } from "./game_ai/player/state_machine/keeper_state";
-import { PassingToRequesterState } from "./game_ai/player/state_machine/passing_to_requester_state";
-import { PlayerStateMachine } from "./game_ai/player/state_machine/player_state_machine";
+import { PlayerStateMachineModule } from "./game_ai/player/state_machine/player_state_machine_module";
 import { Ball } from "./game_objects/ball";
 import { Box } from "./game_objects/box";
 import { Field } from "./game_objects/field";
@@ -62,7 +41,6 @@ import { ICommand } from "./interfaces/icommand";
 import { ICommandRequest } from "./interfaces/icommand_request";
 import { ICommandRequestHandler } from "./interfaces/icommand_request_handler";
 import { IParticipationAttributes } from "./interfaces/iparticipation_attributes";
-import { IPlayerState } from "./interfaces/iplayer_state";
 import { IProcessMessage } from "./interfaces/iprocess_message";
 import { BallPhysics } from "./physics/ball_physics";
 import { PlayerPhysics } from "./physics/player_physics";
@@ -121,14 +99,11 @@ const boxes = [box18A, box18B, box6A, box6B];
 const [playerx, playery, playervx, playervy, playerSpeed, playerDiameter]
   = PLAYER_INITIAL_ARGS;
 
-const buildDefaultPlayerPhysics = (): PlayerPhysics => {
-  return new PlayerPhysics(field)
-    .setFriction(constants.PLAYER_PHYSICS_DEFAULT_FRICTION);
-};
-
 const buildDefaultPlayer = (): Player => {
   const player = new Player(0, 0, 0, 0, playerDiameter);
-  return player.setPhysics(buildDefaultPlayerPhysics())
+  const physics = new PlayerPhysics(field)
+    .setFriction(constants.PLAYER_PHYSICS_DEFAULT_FRICTION);
+  return player.setPhysics(physics)
     .setMaximumSpeed(playerSpeed)
     .setMessageQueue(queue);
 };
@@ -169,41 +144,6 @@ const teamBroles =
 teamA.setRoles(teamAroles);
 teamB.setRoles(teamBroles);
 
-const interceptionCalculator = new InterceptionCalculator();
-const shotValueCalculator =
-  new ShotValueCalculator(ball, interceptionCalculator);
-const congestionCalculator =
-  new CongestionCalculator(RADIUS_FOR_CONGESTION);
-const positionValueCalculator = new AttackPositionValueCalculator(
-  ball, field, congestionCalculator, shotValueCalculator);
-const passValueCalculator = new PassValueCalculator(
-  ball, interceptionCalculator, positionValueCalculator);
-const dribbleValueCalculator =
-  new DribbleValueCalculator(positionValueCalculator, interceptionCalculator);
-const defenceValueCalculator =
-  new DefenceValueCalculator(ball, field, congestionCalculator);
-
-const positionValueDebugService =
-  new PositionValueDebugService(positionValueCalculator, defaultPlayers);
-const teamInControlCalculator =
-  new TeamInControlCalculator(
-    ballPossessionService, NO_TEAM_IN_POSSESSION_TIMEOUT);
-const featureExtractor =
-  new PlayerStateFeatureExtractor(
-    ball,
-    ballPossessionService,
-    passValueCalculator,
-    shotValueCalculator,
-    positionValueCalculator,
-    dribbleValueCalculator,
-    defenceValueCalculator,
-    teamInControlCalculator);
-
-const tickService = new TickService(queue);
-const cacher =
-  new FeatureExtractorCacher(featureExtractor, tickService, 0);
-const cachedFeatureExtractor = cacher.createCachingProxy();
-
 const goalDetectionService = new GoalDetectionService(ball, posts, queue);
 const shotTracker = new ShotTrackerService(queue, ballPossessionService, goalDetectionService);
 const passTracker = new PassTrackerService(queue, ballPossessionService);
@@ -217,22 +157,23 @@ const COMMAND_ID_TO_COMMAND_MAPPING = new Map<COMMAND_ID, ICommand>([
   [COMMAND_ID.REQUEST_PASS, new CallForBallCommand()],
 ]);
 
+const tickService = new TickService(queue);
 const commandFactory = new CommandFactory(COMMAND_ID_TO_COMMAND_MAPPING);
 
-const PLAYER_STATES: IPlayerState[] = [
-  new WaitingState(commandFactory, cachedFeatureExtractor),
-  new KeeperState(commandFactory, cachedFeatureExtractor),
-  new AttackingRunState(commandFactory, cachedFeatureExtractor),
-  new DefensiveRunState(commandFactory, cachedFeatureExtractor),
-  new ChasingBallState(commandFactory, cachedFeatureExtractor),
-  new ShootingState(commandFactory, cachedFeatureExtractor),
-  new PassingToRequesterState(commandFactory, cachedFeatureExtractor),
-  new DribblingState(commandFactory, cachedFeatureExtractor),
-  new PassingState(commandFactory, cachedFeatureExtractor),
-];
+const playerStateMachineModule = new PlayerStateMachineModule(
+      ball,
+      field,
+      ballPossessionService,
+      tickService,
+      commandFactory);
+
+const positionValueDebugService =
+  new PositionValueDebugService(
+    playerStateMachineModule.getAttackingPositionValueCalculator(),
+    defaultPlayers);
 
 defaultPlayers.forEach((player) => {
-  player.setController(new PlayerStateMachine(PLAYER_STATES));
+  player.setController(playerStateMachineModule.getStateMachine());
 });
 
 const genericHandler = new GenericRemoteCommandRequestHandler(commandFactory);
@@ -289,7 +230,6 @@ const sendControllerAssigned = (clientId: string, playerId: string) => {
 // Set up all the things that need setting up
 passTracker.setup();
 shotTracker.setup();
-cacher.enableRefreshing();
 const taskId = setInterval(() => {
  // ------------------------------
   // these guys are updated here instead of inside the game loop because the
@@ -299,7 +239,6 @@ const taskId = setInterval(() => {
   goalDetectionService.update();
   goalRecordService.update();
   ballPossessionService.update();
-  teamInControlCalculator.update();
 // -----------------------------------
   game.update();
   sendGameState();

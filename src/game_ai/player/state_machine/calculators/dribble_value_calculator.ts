@@ -2,7 +2,6 @@ import { Player } from "../../../../../src/game_objects/player";
 import { Vector3D } from "../../../../../src/three_dimensional_vector";
 import { IAttackPositionValueCalculator } from "../../../../interfaces/iattack_position_value_calculator";
 import { IDribbleValueCalculator } from "../../../../interfaces/idribble_value_calculator";
-import { scale } from "../../../../utils/helper_functions";
 import { InterceptionCalculator } from "./interception_calculator";
 
 interface IDribble {
