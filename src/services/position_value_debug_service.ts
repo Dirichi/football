@@ -1,4 +1,4 @@
-import { POSITION_DELTA_FOR_POSITION_VALUE_CALCULATION } from "../constants";
+import { DEFAULT_PLAYER_STATE_MACHINE_CONFIG } from "../constants";
 import { Player } from "../game_objects/player";
 import { IAttackPositionValueCalculator } from "../interfaces/iattack_position_value_calculator";
 import { IPositionValueSchema } from "../interfaces/iposition_value_schema";
@@ -29,7 +29,8 @@ export class PositionValueDebugService {
   }
 
   private buildPositionValues(player: Player): IPositionValueSchema {
-    const delta = POSITION_DELTA_FOR_POSITION_VALUE_CALCULATION;
+    const delta =
+      DEFAULT_PLAYER_STATE_MACHINE_CONFIG.featureExtractorPositionDelta;
     const potentialPositionDiffs = [
       new Vector3D(0, 0, 0),
       new Vector3D(delta, 0, 0),

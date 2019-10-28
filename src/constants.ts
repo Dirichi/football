@@ -1,3 +1,5 @@
+import { IPlayerStateMachineConfig } from "./interfaces/iplayer_state_machine_config";
+
 export const BALL_CONTROL_REFRESH_TIME = 200;
 
 // TODO: This should not be an enum;
@@ -235,16 +237,8 @@ export enum PLAYER_ROLE_TYPE {
 }
 
 export const GAME_EXECUTABLE_FILE = "dist/game_executable.js";
-export const IDEAL_DISTANCE_FROM_GOAL = constants.FIELD_INITIAL_XLENGTH / 3;
-export const SHOT_VALUE_PROXIMITY_TO_POST_WEIGHT = 0.7;
-export const SHOT_VALUE_INTERCEPTION_LIKELIHOOD_WEIGHT = 0.3;
 export const Y_BALL_MARGIN_FOR_KICKOFF_SUPPORT = constants.PLAYER_DIAMETER_TO_FIELD_YLENGTH * 6;
-export const RADIUS_FOR_CONGESTION = constants.PLAYER_DIAMETER_TO_FIELD_YLENGTH * 5;
-export const POSITION_DELTA_FOR_POSITION_VALUE_CALCULATION = RADIUS_FOR_CONGESTION / 2;
-export const SHOOTING_STATE_SHOT_VALUE_THRESHOLD = 0.7;
 export const NUM_SHOT_TARGETS = 6;
-export const MARKING_MARGIN = RADIUS_FOR_CONGESTION / 2;
-export const CURSOR_DIAMETER = constants.PLAYER_DIAMETER_TO_FIELD_YLENGTH / 4;
 export const ROLE_TYPE_CHOICE_MAP = new Map([
   ["defender", PLAYER_ROLE_TYPE.DEFENDER],
   ["midfielder", PLAYER_ROLE_TYPE.MIDFIELDER],
@@ -327,8 +321,23 @@ export const DEFAULT_TEAM_B_ROLES = [
   PLAYER_ROLE.RF,
 ];
 
-// This dictates how long the TeamInControlCalculator should wait while there is
-// no current player in possession, before it changes the teamInPossession to
-// null. Otherwise it leaves the team in possession as the team of the last
-// player that touched the ball.
-export const NO_TEAM_IN_POSSESSION_TIMEOUT = 90; // in number of ticks
+export const DEFAULT_PLAYER_STATE_MACHINE_CONFIG: IPlayerStateMachineConfig = {
+  attackCongestionWeight: -0.03,
+  attackIdealDistanceFromGoal: constants.FIELD_INITIAL_XLENGTH / 3,
+  attackProximityToOpposingPostWeight: 0.2,
+  attackShotValueWeight: 0.2,
+  attackTrackingBallWeight: 0.2,
+  congestionRadiusOfInterest: constants.PLAYER_DIAMETER_TO_FIELD_YLENGTH * 5,
+  defenceAheadOfBallWeight: 0.2,
+  defenceCongestionWeight: -0.1,
+  defenceMarkingMargin: constants.PLAYER_DIAMETER_TO_FIELD_YLENGTH * 2.5,
+  defenceMarkingWeight: 0.2,
+  featureExtractorPositionDelta: constants.PLAYER_DIAMETER_TO_FIELD_YLENGTH * 2.5,
+  featureExtractorRefreshInterval: 0,
+  shootingStateShotValueThreshold: 0.7,
+  // This dictates how long the TeamInControlCalculator should wait while there is
+  // no current player in possession, before it changes the teamInPossession to
+  // null. Otherwise it leaves the team in possession as the team of the last
+  // player that touched the ball.
+  teamInControlPossessionTimeOut: 90, // in number of ticks.
+};

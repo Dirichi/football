@@ -1,6 +1,6 @@
 import {
   PLAYER_MESSAGES,
-  POSITION_DELTA_FOR_POSITION_VALUE_CALCULATION
+  DEFAULT_PLAYER_STATE_MACHINE_CONFIG
 } from "../../../constants";
 import { Ball } from "../../../game_objects/ball";
 import { Player } from "../../../game_objects/player";
@@ -26,7 +26,8 @@ export class PlayerStateFeatureExtractor implements IPlayerStateFeatureExtractor
     private positionValueCalculator: IAttackPositionValueCalculator,
     private dribbleValueCalculator: IDribbleValueCalculator,
     private defenceValueCalculator: IDefenceValueCalculator,
-    private teamInControlCalculator: ITeamInControlCalculator) {
+    private teamInControlCalculator: ITeamInControlCalculator,
+    private positionDelta: number = DEFAULT_PLAYER_STATE_MACHINE_CONFIG.featureExtractorPositionDelta) {
   }
 
   public teamInControl(player: Player): boolean {
@@ -165,12 +166,11 @@ export class PlayerStateFeatureExtractor implements IPlayerStateFeatureExtractor
   }
 
   private positionOptions(player: Player): Vector3D[] {
-    const delta = POSITION_DELTA_FOR_POSITION_VALUE_CALCULATION;
     const positionDiffs = [
-      new Vector3D(delta, 0, 0),
-      new Vector3D(-delta, 0, 0),
-      new Vector3D(0, delta, 0),
-      new Vector3D(0, -delta, 0),
+      new Vector3D(this.positionDelta, 0, 0),
+      new Vector3D(-this.positionDelta, 0, 0),
+      new Vector3D(0, this.positionDelta, 0),
+      new Vector3D(0, -this.positionDelta, 0),
       new Vector3D(0, 0, 0),
     ];
 

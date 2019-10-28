@@ -1,4 +1,3 @@
-import { MARKING_MARGIN } from "../../../../constants";
 import { Ball } from "../../../../game_objects/ball";
 import { Field } from "../../../../game_objects/field";
 import { Player } from "../../../../game_objects/player";
@@ -12,7 +11,10 @@ export class DefenceValueCalculator {
     private ball: Ball,
     private field: Field,
     private congestionCalculator: CongestionCalculator,
-    private markingMargin: number = MARKING_MARGIN) {}
+    private markingMargin: number,
+    private congestionWeight: number,
+    private markingWeight: number,
+    private aheadOfBallWeight: number) {}
 
   public evaluate(player: Player, position: Vector3D): number {
     if (!this.field.containsPoint(position)) {
@@ -23,8 +25,11 @@ export class DefenceValueCalculator {
     const congestion = this.congestionScore(player, position);
     const marking = this.markingScore(player, position);
 
-    // TODO: make these weights constants
-    return (congestion * -0.1) + (marking * 0.2) + (ahead * 0.2);
+    const weightedScore =
+    (congestion * this.congestionWeight) + (marking * this.markingWeight) +
+      (ahead * this.aheadOfBallWeight);
+
+    return weightedScore;
   }
 
   private aheadOfBallScore(player: Player, position: Vector3D): number {
