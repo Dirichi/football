@@ -3,7 +3,9 @@ import { Socket } from "socket.io";
 import { GameRoom } from "../game_room";
 import { ICustomizedRequest } from "../interfaces/icustomized_request";
 import { ICustomizedSocket } from "../interfaces/icustomized_socket";
+import { IParticipationAttributes } from "../interfaces/iparticipation_attributes";
 import { IUserAttributes } from "../interfaces/iuser_attributes";
+import { GameSessionStore } from "../models/game_session_store";
 import { UserStore } from "../models/user_store";
 import { Logger } from "../utils/logger";
 
@@ -16,37 +18,25 @@ export function requiresLogin(
   });
 }
 
-export function authenticateSocket(
-  socket: Socket, next: (err?: any) => void): void {
+export async function authenticateSocket(
+  socket: Socket, next: (err?: any) => void): Promise<void> {
   const userId = socket.handshake.session.userId;
-  const intendedRoom = getIntendedRoomFromSocket(socket);
-  if (!(userId && intendedRoom)) {
-    Logger.log(`User (${userId}) or room (${intendedRoom}) do not exist.`);
+  const roomId = getIntendedRoomIdFromSocket(socket);
+  const participation = await findParticipation(userId, roomId);
+  if (!participation) {
+    Logger.log(`User ${userId} not allowed to join room ${roomId}`);
     return;
   }
-  const userStore = new UserStore();
-  userStore.find(userId).then((user) => {
-    // PART
-    // PARTFIX: Replace with a a query like Participation.findBy({userId: , gameRoom:})
-    const allowedSocket = user && authorizeParticipation(user, intendedRoom);
-    if (!allowedSocket) {
-      Logger.log(
-        `User ${userId} not allowed to join room ${intendedRoom.getId()}`);
-      return;
-    }
-    const customizedSocket = socket as ICustomizedSocket;
-    [customizedSocket.user, customizedSocket.gameRoom] = [user, intendedRoom];
-    next();
-  });
+  const customizedSocket = socket as ICustomizedSocket;
+  customizedSocket.participation = participation;
+  customizedSocket.gameRoom = GameRoom.find(roomId);
+  next();
 }
 
 export async function authenticateRequest(req: express.Request): Promise<boolean> {
   if (!req.session.userId) { return Promise.resolve(false); }
-  const userStore = new UserStore();
-  const user = await userStore.find(req.session.userId);
-  if (!user) {
-    return false;
-  }
+  const user = await new UserStore().find(req.session.userId);
+  if (!user) { return false; }
   (req as ICustomizedRequest).user = user;
   return true;
 }
@@ -61,19 +51,17 @@ export async function login(req: express.Request): Promise<IUserAttributes> {
   return user;
 }
 
-// TODO: Promisify (?)
-// PART
-export function authorizeParticipation(
-  user: IUserAttributes, intendedRoom: GameRoom): boolean {
-    return intendedRoom.participations.some((participation) => {
-    return participation.userId === user.id;
-  });
+export async function findParticipation(
+  userId: number, roomId: string): Promise<IParticipationAttributes> {
+  const gameSession =
+    await new GameSessionStore().findBy(
+      { gameRoomId: roomId, participations: { userId } });
+  if (!gameSession) { return null; }
+  return gameSession.participations.find((p) => p.userId === userId);
 }
 
-function getIntendedRoomFromSocket(socket: Socket): GameRoom {
+function getIntendedRoomIdFromSocket(socket: Socket): string | null {
   const url = socket.handshake.headers.referer;
   const match = url.match(`.*/games/(.+)`, url);
-  const roomId = match ? match[1] : null;
-  if (roomId) { return GameRoom.find(roomId); }
-  return null;
+  return match ? match[1] : null;
 }

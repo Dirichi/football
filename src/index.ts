@@ -11,14 +11,13 @@ import socketIo from "socket.io";
 import {
   authenticateRequest,
   authenticateSocket,
-  authorizeParticipation,
+  findParticipation,
   login,
   requiresLogin
 } from "./app_services/auth";
 import { MatchMakerService } from "./app_services/match_maker_service";
 import { ROLE_TYPE_CHOICE_MAP } from "./constants";
 import { GameClient } from "./game_client";
-import { GameRoom } from "./game_room";
 import { ICustomizedRequest } from "./interfaces/icustomized_request";
 import { ParticipationStore } from "./models/participation_store";
 import { Logger } from "./utils/logger";
@@ -83,12 +82,12 @@ app.post("/search", urlencodedParser, requiresLogin, (req, res) => {
   });
 });
 
-app.get("/games/:roomId", requiresLogin, (req, res) => {
-  const gameRoom = GameRoom.find(req.params.roomId);
+app.get("/games/:roomId", requiresLogin, async (req, res) => {
+  const roomId = req.params.roomId;
   const customReq = req as ICustomizedRequest;
-  const authorized = authorizeParticipation(customReq.user, gameRoom);
+  const authorized = await findParticipation(customReq.user.id, roomId);
 
-  authorized ? res.render("game") : res.render("error");
+  authorized ? res.render("game") : res.send("Not authorized to join gameRoom");
 });
 
 httpServer.listen(port, () => {

@@ -26,19 +26,16 @@ export class MatchMakerService {
   public async match(request: IMatchRequest): Promise<GameRoom | null> {
     let gameSession = await this.findMatchingSession(request);
     if (!gameSession) { gameSession = await this.newGameSession(); }
-    const participation =
-      await this.claimParticipation(gameSession.participations, request);
-    return this.buildRoom(gameSession, participation);
+    await this.claimParticipation(gameSession.participations, request);
+    return this.buildRoom(gameSession);
   }
 
   private async findMatchingSession(
     request: IMatchRequest): Promise<IGameSessionAttributes> {
-      // TODO: This should be a findBy
-    const sessions = await this.gameSessionStore.where({
+    return await this.gameSessionStore.findBy({
       participations: { userId: null, roleType: request.roleType },
       startedAt: null,
     });
-    return sessions[0];
   }
 
   private async newGameSession(): Promise<IGameSessionAttributes> {
@@ -60,11 +57,8 @@ export class MatchMakerService {
       return await this.participationStore.update(match.id, {userId: request.user.id});
   }
 
-  private buildRoom(
-    gameSession: IGameSessionAttributes,
-    participation: IParticipationAttributes): GameRoom {
+  private buildRoom(gameSession: IGameSessionAttributes): GameRoom {
     const room = this.roomFactory.findOrCreateFromSession(gameSession);
-    room.addParticipation(participation);
     room.save();
     return room;
   }

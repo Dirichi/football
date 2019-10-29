@@ -1,6 +1,6 @@
 import {
-  PLAYER_MESSAGES,
-  DEFAULT_PLAYER_STATE_MACHINE_CONFIG
+  DEFAULT_PLAYER_STATE_MACHINE_CONFIG,
+  PLAYER_MESSAGES
 } from "../../../constants";
 import { Ball } from "../../../game_objects/ball";
 import { Player } from "../../../game_objects/player";
