@@ -34,7 +34,7 @@ const redisClient = redis.createClient({
 });
 const RedisStore = connectRedis(session);
 const sessionMiddleWare = session({
-  cookie: { maxAge: 60000 },
+  cookie: { maxAge: 600000 },
   resave: false,
   saveUninitialized: true,
   secret: process.env.SESSION_SECRET,
