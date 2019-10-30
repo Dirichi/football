@@ -4,9 +4,10 @@ export type Shape = ICircle;
 export interface IRecordable {id?: number; }
 
 type Flatten<T> = T extends Array<infer R> ? R : T;
+type ArrayOrSingle<T> = T[] | T;
 
 export type ModelQueryRequest<T extends IRecordable> = {
-  [K in keyof T]?: T[K] extends IRecordable[] ? ModelQueryRequest<Flatten<T[K]>> : T[K] | Array<T[K]>
+  [K in keyof T]?: T[K] extends ArrayOrSingle<IRecordable> ? ModelQueryRequest<Flatten<T[K]>> : T[K] | Array<T[K]>
 };
 
 type AnyFunction = (...args: any[]) => any;

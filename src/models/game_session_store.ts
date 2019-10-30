@@ -14,6 +14,14 @@ export class GameSessionStore extends BaseModelStore<IGameSessionAttributes> {
     this.participationStore = new ParticipationStore();
   }
 
+  public async findBy(
+    query: ModelQueryRequest<IGameSessionAttributes>
+  ): Promise<IGameSessionAttributes> {
+      // TODO: This sucks.
+    const matches = await this.where(query);
+    return matches[0];
+  }
+
   public async where(
     query: ModelQueryRequest<IGameSessionAttributes>
   ): Promise<IGameSessionAttributes[]> {

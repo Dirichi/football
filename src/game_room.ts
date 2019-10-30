@@ -24,7 +24,6 @@ export class GameRoom {
   }
 
   private static records = new Map<string, GameRoom>();
-  public participations: IParticipationAttributes[];
   private id: string;
   private clients: Set<IGameClient>;
   private gameProcess?: IProcess;
@@ -38,7 +37,6 @@ export class GameRoom {
   constructor(id?: string) {
     this.id = id || v4();
     this.clients = new Set([]);
-    this.participations = [];
     this.startGameTimeout = DEFAULT_START_GAME_TIMEOUT;
   }
 
@@ -48,10 +46,6 @@ export class GameRoom {
 
   public getClients(): IGameClient[] {
     return [...this.clients];
-  }
-
-  public addParticipation(participation: IParticipationAttributes): void {
-    this.participations.push(participation);
   }
 
   public async addClient(client: IGameClient): Promise<void> {
