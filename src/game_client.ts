@@ -63,4 +63,8 @@ export class GameClient implements IGameClient {
     const updateParams = report as Partial<IParticipationAttributes>;
     return await this.participationStore.update(participationId, updateParams);
   }
+
+  public exit(): void {
+    this.socket.emit(IO_MESSAGE_TYPE.EXIT, {});
+  }
 }

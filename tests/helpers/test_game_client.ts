@@ -57,4 +57,8 @@ export class TestGameClient implements IGameClient {
   public getControllerId(): string {
     return this.controllerId;
   }
+
+  public exit(): void {
+    return;
+  }
 }

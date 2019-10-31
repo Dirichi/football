@@ -190,7 +190,7 @@ const commandHandlerRouter = new Map<string, ICommandRequestHandler>([
 
 const initialState = new KickOffState();
 const gameStateMachine = new GameStateMachine(initialState);
-const timer = new TimerService(0, 0.02, 90);
+const timer = new TimerService(0, 0.04, 90);
 const goalRecordService = new GoalRecordService(goalDetectionService, teams);
 const playerReportService = new PlayerReportService(passTracker, shotTracker);
 const game = new Game();
@@ -239,6 +239,7 @@ const taskId = setInterval(() => {
   goalDetectionService.update();
   goalRecordService.update();
   ballPossessionService.update();
+  playerReportService.monitorPlayers(defaultPlayers);
 // -----------------------------------
   game.update();
   sendGameState();
@@ -276,8 +277,7 @@ const handleAssignControllerRequest = (request: IAssignControllerRequest) => {
     Logger.log(`Could not find a position for client ${request.clientId}`);
     return;
   }
-  const controller =
-    new PlayerHumanController(commandHandlerRouter);
+  const controller = new PlayerHumanController(commandHandlerRouter);
   controller.setRemoteClientId(request.clientId);
   selectedPlayer.disableControls();
   selectedPlayer.setController(controller);
@@ -285,7 +285,6 @@ const handleAssignControllerRequest = (request: IAssignControllerRequest) => {
   playersAvailableForRemoteControl =
     playersAvailableForRemoteControl
       .filter((availablePlayer) => availablePlayer !== selectedPlayer);
-  playerReportService.monitorPlayer(selectedPlayer);
   sendControllerAssigned(request.clientId, selectedPlayer.getGameObjectId());
 };
 
