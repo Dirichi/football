@@ -95,18 +95,17 @@ app.get("/games/:roomId", requiresLogin, async (req, res) => {
 app.get("/games/:roomId/stats", requiresLogin, async (req, res) => {
   const gameSessionStore = new GameSessionStore();
   const userStore = new UserStore();
-  const gameSessions =
-    await gameSessionStore.where({gameRoomId: req.params.roomId});
-  const participations = gameSessions[0].participations;
-  const userIds =
-    participations.map((p) => p.userId).filter((id) => id !== null);
-  const users = await userStore.where({id: userIds});
+  const gameSession =
+    await gameSessionStore.findBy({gameRoomId: req.params.roomId});
+  const participations =
+    gameSession.participations.filter((p) => p.userId !== null);
+  const users =
+    await userStore.where({id: participations.map((p) => p.userId)});
   const reports = participations.map((p) => {
     const matchingUser = users.find((user) => user.id === p.userId);
-    const nickName = matchingUser === undefined ? "COM" : matchingUser.nickName;
     return {
       completedPasses: p.completedPasses,
-      nickName,
+      nickName: matchingUser.nickName,
       totalGoals: p.totalGoals,
       totalPasses: p.totalPasses,
       totalShots: p.totalShots,

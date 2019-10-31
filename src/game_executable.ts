@@ -190,7 +190,7 @@ const commandHandlerRouter = new Map<string, ICommandRequestHandler>([
 
 const initialState = new KickOffState();
 const gameStateMachine = new GameStateMachine(initialState);
-const timer = new TimerService(0, 0.02, 90);
+const timer = new TimerService(0, 0.04, 90);
 const goalRecordService = new GoalRecordService(goalDetectionService, teams);
 const playerReportService = new PlayerReportService(passTracker, shotTracker);
 const game = new Game();

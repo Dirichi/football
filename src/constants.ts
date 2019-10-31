@@ -245,7 +245,7 @@ export const ROLE_TYPE_CHOICE_MAP = new Map([
   ["midfielder", PLAYER_ROLE_TYPE.MIDFIELDER],
   ["forward", PLAYER_ROLE_TYPE.FORWARD],
 ]);
-export const DEFAULT_START_GAME_TIMEOUT = 5000;
+export const DEFAULT_START_GAME_TIMEOUT = 30000;
 export const GAME_STATE_UPDATE_DELAY = 20; // milliseconds
 export enum SOUND_ID {
   KICK = 0,
