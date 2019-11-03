@@ -13,13 +13,14 @@ import { SpriteImage } from "./sprite_image";
 export class P5AnimationEngine implements IAnimationEngine {
   constructor(private animator: p5) { }
 
-  public displayText(text: ITextSchema, size: number = 64) {
+  public displayText(
+    text: ITextSchema, size: number = 64, color: number = 255) {
     if (!text.value) { return; }
 
     this.animator.push();
     this.animator.textAlign(this.animator.CENTER);
     this.animator.textSize(size);
-    this.animator.fill(255);
+    this.animator.fill(color);
     this.animator.text(text.value, text.x, text.y);
     this.animator.pop();
   }
