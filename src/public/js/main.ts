@@ -22,6 +22,7 @@ import { AnimationStore } from "../../client/animation_store";
 import { FlipLeftToRightOperator } from "../../client/flip_left_to_right_operator";
 import { PlayerAnimationController } from "../../client/animation_states/player_animation_controller";
 
+let started = false;
 const socket = io();
 const queue = new EventQueue();
 const manualInputHandler = new ManualInputHandler(socket);
@@ -150,6 +151,14 @@ const sketch = (p: p5) => {
   };
 
   p.draw = () => {
+    if (!started) {
+      animationEngine.displayText(
+        {
+          value: "STARTING GAME IN A FEW SECONDS.",
+          x: p.windowWidth / 2,
+          y: p.windowHeight / 2
+        }, 96, 0);
+    }
     manualInputHandler.sendInput();
     graphics.forEach((graphic) => graphic.animate());
   };
@@ -157,6 +166,7 @@ const sketch = (p: p5) => {
 
 // TODO: Socket configuration could be encapsulated in another class
 socket.on(IO_MESSAGE_TYPE.GAME_STATE, (data: { [x: string]: any; }) => {
+  started = true;
   Object.keys(data).forEach((event) => {
     const payload = data[event];
     queue.trigger(event, payload);
