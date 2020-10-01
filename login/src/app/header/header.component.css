@@ -1,0 +1,8 @@
+ul a {
+    /* removing defaults */
+    text-decoration: none;
+}
+
+ul a:hover {
+    border-bottom: solid 2px;
+}
