@@ -596,27 +596,27 @@ body {
 /*----------------------------------------------------- border radius-------------------------------------------- */
 
 .rad-1 {
-    border-radius: 1%;
+    border-radius: 5px;
 }
 
 .rad-2 {
-    border-radius: 2%;
+    border-radius: 10px;
 }
 
 .rad-3 {
-    border-radius: 3%;
+    border-radius: 15px;
 }
 
 .rad-4 {
-    border-radius: 4%;
+    border-radius: 20px;
 }
 
 .rad-5 {
-    border-radius: 5%;
+    border-radius: 25px;
 }
 
 .rad-6 {
-    border-radius: 6%;
+    border-radius: 30px;
 }
 
 .rad-7 {

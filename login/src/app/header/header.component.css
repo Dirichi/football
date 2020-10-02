@@ -1,6 +1,7 @@
 ul a {
     /* removing defaults */
     text-decoration: none;
+    border: 2px solid transparent;
 }
 
 ul a:hover {
