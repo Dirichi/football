@@ -1,3 +1,4 @@
+import { TipsAndRules } from './../tipsAndRulesInterface';
 import { Component, OnInit} from '@angular/core';
 import { Console } from 'console';
 @Component({
@@ -10,12 +11,12 @@ export class TipsComponent implements OnInit {
 
 
   // hard coded tips
-  tips = [
-    'Use direction (Arrow Keys) to move...',
-    'Press A to shoot...',
-    'Press S to pass...',
-    'Press D to request a pass. (only works on non-player characters)...',
-    'Press F to chase after the ball...'
+  tips: TipsAndRules[] = [
+    {htmlReference: 1 , content: 'Use direction (Arrow Keys) to move...'},
+    {htmlReference: 2 , content: 'Press A to shoot...'},
+    {htmlReference: 3 , content: 'Press S to pass...'},
+    {htmlReference: 4 , content: 'Press D to request a pass. (only works on non-player characters)...'},
+    {htmlReference: 5 , content: 'Press F to chase after the ball...'}
   ];
 
 
@@ -31,7 +32,7 @@ export class TipsComponent implements OnInit {
 
 
     // update the display (pass the current index )
-    this.updateDisplay(this.currentTip, this.currentTipIndex);
+    this.updateDisplay(this.currentTip.content, this.currentTip.htmlReference);
 
     // increment the value of the tipIndex
     this.currentTipIndex++;
@@ -43,11 +44,8 @@ export class TipsComponent implements OnInit {
 
 
   // update the display
-  updateDisplay(tip, tipIndex){
-
+  updateDisplay(tip, htmlReference){
     // find the container or element who's value is equal to the tip index and put  the word in that one
-
-
 
     // define the current index of the character being displayed
     let characterIndex = 0 ;
