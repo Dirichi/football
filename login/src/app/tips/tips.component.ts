@@ -57,7 +57,9 @@ export class TipsComponent implements OnInit {
     const attachCharacter = setInterval(() => {
       word += tip[characterIndex];
       // display the word
-      document.querySelector('[data-testOutput]').innerHTML = word ;
+
+      document.getElementById(htmlReference).innerHTML = word;
+
       // increment the value of the characterIndex
       characterIndex ++ ;
       // range check
