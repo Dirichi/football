@@ -1,6 +1,12 @@
 /* ikenjokudc@gmail.com */
 
 
+/* background image */
+
+
+/* <a href="https://www.freepik.com/photos/sport">Sport photo created by freepik - www.freepik.com</a> */
+
+
 /* designed by ike-njoku David .C. 30th September 2020 */
 
 
@@ -9,6 +15,10 @@
 body {
     padding: 0px;
     border: 0px;
+    color: grey;
+    background-image: url('assets/backgroundImage.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
 }
 
 .container {
