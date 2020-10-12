@@ -1,0 +1,21 @@
+<div class="container col-12 pad-5 mg-4 rad-2 shd-1">
+    <!-- header -->
+    <div class="header text-center col-12 mg-b-5">
+        <h1>Real FootBall</h1>
+    </div>
+    <!-- form -->
+    <input name="nickName" placeholder="Nick Name" class="pad-2 col-12 mg-b-10" type="text">
+    <div class="col-12 mg-b-5 bold">Play as :</div>
+    <!-- select a role to play -->
+    <div *ngFor="let positon of positions" class="col-4">
+        {{positon}}
+        <!-- indicator(check box) -->
+        <i class="fa fa-circle-thin" (click)="select(positon)"></i>
+    </div>
+
+
+    <div class="col-12 mg-t-5">
+        <hr>
+        <button class="f-right pad-2 rad-2 pad-2" type="submit">Play</button>
+    </div>
+</div>

@@ -1,0 +1,732 @@
+/* ikenjokudc@gmail.com */
+
+
+/* background image */
+
+
+/* <a href="https://www.freepik.com/photos/sport">Sport photo created by freepik - www.freepik.com</a> */
+
+
+/* designed by ike-njoku David .C. 30th September 2020 */
+
+
+/* removing borders */
+
+body {
+    padding: 0px;
+    border: 0px;
+    color: grey;
+    background-image: url('assets/backgroundImage.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.container {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+}
+
+
+/* --------------------------paddings-------------------------- */
+
+.pad-none {
+    padding: 0px;
+}
+
+.pad-half {
+    padding: 0.5%;
+}
+
+.pad-1 {
+    padding: 1%;
+}
+
+.pad-2 {
+    padding: 2%;
+}
+
+.pad-3 {
+    padding: 3%;
+}
+
+.pad-4 {
+    padding: 4%;
+}
+
+.pad-5 {
+    padding: 5%;
+}
+
+.pad-6 {
+    padding: 6%;
+}
+
+.pad-7 {
+    padding: 7%;
+}
+
+.pad-8 {
+    padding: 8%;
+}
+
+.pad-9 {
+    padding: 9%;
+}
+
+.pad-10 {
+    padding: 10%;
+}
+
+
+/* padding (right) */
+
+.pad-r-half {
+    padding-right: 0.5%;
+}
+
+.pad-r-1 {
+    padding-right: 1%;
+}
+
+.pad-r-2 {
+    padding-right: 2%;
+}
+
+.pad-r-3 {
+    padding-right: 3%;
+}
+
+.pad-r-4 {
+    padding-right: 4%;
+}
+
+.pad-r-5 {
+    padding-right: 5%;
+}
+
+.pad-r-6 {
+    padding-right: 6%;
+}
+
+.pad-r-7 {
+    padding-right: 7%;
+}
+
+.pad-r-8 {
+    padding-right: 8%;
+}
+
+.pad-r-9 {
+    padding-right: 9%;
+}
+
+.pad-r-10 {
+    padding-right: 10%;
+}
+
+
+/* padding left */
+
+.pad-l-half {
+    padding-left: 0.5%;
+}
+
+.pad-l-1 {
+    padding-left: 1%;
+}
+
+.pad-l-2 {
+    padding-left: 2%;
+}
+
+.pad-l-3 {
+    padding-left: 3%;
+}
+
+.pad-l-4 {
+    padding-left: 4%;
+}
+
+.pad-l-5 {
+    padding-left: 5%;
+}
+
+.pad-l-6 {
+    padding-left: 6%;
+}
+
+.pad-l-7 {
+    padding-left: 7%;
+}
+
+.pad-l-8 {
+    padding-left: 8%;
+}
+
+.pad-l-9 {
+    padding-left: 9%;
+}
+
+.pad-l-10 {
+    padding-left: 10%;
+}
+
+
+/* pading top */
+
+.pad-t-half {
+    padding-top: 0.5%;
+}
+
+.pad-t-1 {
+    padding-top: 1%;
+}
+
+.pad-t-2 {
+    padding-top: 2%;
+}
+
+.pad-t-3 {
+    padding-top: 3%;
+}
+
+.pad-t-4 {
+    padding-top: 4%;
+}
+
+.pad-t-5 {
+    padding-top: 5%;
+}
+
+.pad-t-6 {
+    padding-top: 6%;
+}
+
+.pad-t-7 {
+    padding-top: 7%;
+}
+
+.pad-t-8 {
+    padding-top: 8%;
+}
+
+.pad-t-9 {
+    padding-top: 9%;
+}
+
+.pad-t-10 {
+    padding-top: 10%;
+}
+
+
+/* padding bottom */
+
+.pad-b-half {
+    padding-bottom: 0.5%;
+}
+
+.pad-b-1 {
+    padding-bottom: 1%;
+}
+
+.pad-b-2 {
+    padding-bottom: 2%;
+}
+
+.pad-b-3 {
+    padding-bottom: 3%;
+}
+
+.pad-b-4 {
+    padding-bottom: 4%;
+}
+
+.pad-b-5 {
+    padding-bottom: 5%;
+}
+
+.pad-b-6 {
+    padding-bottom: 6%;
+}
+
+.pad-b-7 {
+    padding-bottom: 7%;
+}
+
+.pad-b-8 {
+    padding-bottom: 8%;
+}
+
+.pad-b-9 {
+    padding-bottom: 9%;
+}
+
+.pad-b-10 {
+    padding-bottom: 10%;
+}
+
+
+/* ------------------------------margins-----------------------------   */
+
+.mg-none {
+    margin: 0px;
+}
+
+.mg-half {
+    margin: 0.5%;
+}
+
+.mg-1 {
+    margin: 1%;
+}
+
+.mg-2 {
+    margin: 2%;
+}
+
+.mg-3 {
+    margin: 3%;
+}
+
+.mg-4 {
+    margin: 4%;
+}
+
+.mg-5 {
+    margin: 5%;
+}
+
+.mg-6 {
+    margin: 6%;
+}
+
+.mg-7 {
+    margin: 7%;
+}
+
+.mg-8 {
+    margin: 8%;
+}
+
+.mg-9 {
+    margin: 9%;
+}
+
+.mg-10 {
+    margin: 10%;
+}
+
+
+/* left margin */
+
+.mg-l-half {
+    margin-left: 0.5%;
+}
+
+.mg-l-1 {
+    margin-left: 1%;
+}
+
+.mg-l-2 {
+    margin-left: 2%;
+}
+
+.mg-l-3 {
+    margin-left: 3%;
+}
+
+.mg-l-4 {
+    margin-left: 4%;
+}
+
+.mg-l-5 {
+    margin-left: 5%;
+}
+
+.mg-l-6 {
+    margin-left: 6%;
+}
+
+.mg-l-7 {
+    margin-left: 7%;
+}
+
+.mg-l-8 {
+    margin-left: 8%;
+}
+
+.mg-l-9 {
+    margin-left: 9%;
+}
+
+.mg-l-10 {
+    margin-left: 10%;
+}
+
+
+/* right margins */
+
+.mg-r-half {
+    margin-right: 0.5%;
+}
+
+.mg-r-1 {
+    margin-right: 1%;
+}
+
+.mg-r-2 {
+    margin-right: 2%;
+}
+
+.mg-r-3 {
+    margin-right: 3%;
+}
+
+.mg-r-4 {
+    margin-right: 4%;
+}
+
+.mg-r-5 {
+    margin-right: 5%;
+}
+
+.mg-r-6 {
+    margin-right: 6%;
+}
+
+.mg-r-7 {
+    margin-right: 7%;
+}
+
+.mg-r-8 {
+    margin-right: 8%;
+}
+
+.mg-r-9 {
+    margin-right: 9%;
+}
+
+.mg-r-10 {
+    margin-right: 10%;
+}
+
+
+/* margin top */
+
+.mg-t-half {
+    margin-top: 0.5%;
+}
+
+.mg-t-1 {
+    margin-top: 1%;
+}
+
+.mg-t-2 {
+    margin-top: 2%;
+}
+
+.mg-t-3 {
+    margin-top: 3%;
+}
+
+.mg-t-4 {
+    margin-top: 4%;
+}
+
+.mg-t-5 {
+    margin-top: 5%;
+}
+
+.mg-t-6 {
+    margin-top: 6%;
+}
+
+.mg-t-7 {
+    margin-top: 7%;
+}
+
+.mg-t-8 {
+    margin-top: 8%;
+}
+
+.mg-t-9 {
+    margin-top: 9%;
+}
+
+.mg-t-10 {
+    margin-top: 10%;
+}
+
+
+/* margin bottom */
+
+.mg-b-half {
+    margin-bottom: 0.5%;
+}
+
+.mg-b-1 {
+    margin-bottom: 1%;
+}
+
+.mg-b-2 {
+    margin-bottom: 2%;
+}
+
+.mg-b-3 {
+    margin-bottom: 3%;
+}
+
+.mg-b-4 {
+    margin-bottom: 4%;
+}
+
+.mg-b-5 {
+    margin-bottom: 5%;
+}
+
+.mg-b-6 {
+    margin-bottom: 6%;
+}
+
+.mg-b-7 {
+    margin-bottom: 7%;
+}
+
+.mg-b-8 {
+    margin-bottom: 8%;
+}
+
+.mg-b-9 {
+    margin-bottom: 9%;
+}
+
+.mg-b-10 {
+    margin-bottom: 10%;
+}
+
+.mg-b-1 {
+    margin-bottom: 1%;
+}
+
+
+/* ----------------------------------grid template columns---------------------------------------------- */
+
+.col-1 {
+    grid-column: span 1;
+}
+
+.col-2 {
+    grid-column: span 2;
+}
+
+.col-3 {
+    grid-column: span 3;
+}
+
+.col-4 {
+    grid-column: span 4;
+}
+
+.col-5 {
+    grid-column: span 5;
+}
+
+.col-6 {
+    grid-column: span 6;
+}
+
+.col-7 {
+    grid-column: span 7;
+}
+
+.col-8 {
+    grid-column: span 8;
+}
+
+.col-9 {
+    grid-column: span 9;
+}
+
+.col-10 {
+    grid-column: span 10;
+}
+
+.col-11 {
+    grid-column: span 11;
+}
+
+.col-12 {
+    grid-column: span 12;
+}
+
+
+/* -------------------------------------------------------grid template rows ------------------------------*/
+
+.row-1 {
+    grid-row: span 1;
+}
+
+.row-2 {
+    grid-row: span 2;
+}
+
+.row-3 {
+    grid-row: span 3;
+}
+
+.row-4 {
+    grid-row: span 4;
+}
+
+.row-5 {
+    grid-row: span 5;
+}
+
+.row-6 {
+    grid-row: span 6;
+}
+
+.row-7 {
+    grid-row: span 7;
+}
+
+.row-8 {
+    grid-row: span 8;
+}
+
+.row-9 {
+    grid-row: span 9;
+}
+
+.row-10 {
+    grid-row: span 10;
+}
+
+
+/*----------------------------------------------------- border radius-------------------------------------------- */
+
+.rad-1 {
+    border-radius: 5px;
+}
+
+.rad-2 {
+    border-radius: 10px;
+}
+
+.rad-3 {
+    border-radius: 15px;
+}
+
+.rad-4 {
+    border-radius: 20px;
+}
+
+.rad-5 {
+    border-radius: 25px;
+}
+
+.rad-6 {
+    border-radius: 30px;
+}
+
+.rad-7 {
+    border-radius: 7%;
+}
+
+.rad-8 {
+    border-radius: 8%;
+}
+
+.rad-9 {
+    border-radius: 9%;
+}
+
+.rad-10 {
+    border-radius: 10%;
+}
+
+
+/* perfect circle */
+
+.circle {
+    text-overflow: hidden;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+}
+
+
+/* --------------------------------------box shadows-------------------------------------- */
+
+.shd-1 {
+    box-shadow: gray 1px 1px 1px 1px;
+}
+
+.shd-2 {
+    box-shadow: gray 2px 2px 2px 2px;
+}
+
+.shd-3 {
+    box-shadow: gray 3px 3px 3px 3px;
+}
+
+.shd-4 {
+    box-shadow: gray 4px 4px 4px 4px;
+}
+
+.shd-5 {
+    box-shadow: gray 5px 5px 5px 5px;
+}
+
+
+/* ---------------------------------------align texts--------------------------------------- */
+
+.text-center {
+    text-align: center;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.text-left {
+    text-align: left;
+}
+
+
+/* ---------------------------------------------------lengths--------------------------------- */
+
+.full-width {
+    width: 100%;
+}
+
+
+/* -----------------------------------------font weights----------------------------------------- */
+
+.lighter {
+    font-weight: lighter;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+.bolder {
+    font-weight: bolder;
+}
+
+.header {
+    font-size: larger;
+    font-weight: bold;
+}
+
+
+/* -----------------------------------------floats-----------------------------------------  */
+
+.f-right {
+    float: right;
+}
+
+.f-left {
+    float: left;
+}

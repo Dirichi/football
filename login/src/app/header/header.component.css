@@ -1,0 +1,10 @@
+ul a {
+    /* removing defaults */
+    text-decoration: none;
+    border: 2px solid transparent;
+    color: #F54703;
+}
+
+ul a:hover {
+    border-bottom: solid 2px;
+}
