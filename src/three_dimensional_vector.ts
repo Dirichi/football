@@ -85,6 +85,10 @@ export class Vector3D {
     return this.dotProduct(b) / (this.magnitude() * b.magnitude());
   }
 
+  public angleTo(b: Vector3D): number {
+    return Math.acos(this.cosineOfAngleTo(b));
+  }
+
   public scalarProjectionOnTo(b: Vector3D): number {
     return this.magnitude() * this.cosineOfAngleTo(b);
   }
